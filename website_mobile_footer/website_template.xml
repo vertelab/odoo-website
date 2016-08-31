@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="footer_mobile" inherit_id="website.layout" name="Automatic Mobile Footer" priority="99">
+            <xpath expr="//footer" position="attributes">
+                <attribute name="class">hidden-xs</attribute>
+            </xpath>
+        </template>
+    </data>
+</openerp>
