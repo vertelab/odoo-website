@@ -40,6 +40,7 @@
                     <t t-raw="head or ''" name="layout_head"/>
 
                     <link href="/website_mobile/static/src/css/website_mobile.css" rel="stylesheet"/>
+                    <link href="/website_mobile/static/src/css/bootstrap-switch.css" rel="stylesheet"/>
                 </head>
                 <body>
                     <div id="wrapwrap">
@@ -105,7 +106,8 @@
                         ga('create', _.str.trim('<t t-esc="website.google_analytics_key"/>'), 'auto');
                         ga('send','pageview');
                     </script>
-                    <script src="/website_mobile/static/src/js/website_mobile.js" type="text/javascript"></script>
+                    <script src="/website_mobile/static/src/js/website_mobile.js" type="text/javascript"/>
+                    <script src="/website_mobile/static/src/js/bootstrap-switch.js" type="text/javascript"/>
                 </body>
             </html>
         </template>
