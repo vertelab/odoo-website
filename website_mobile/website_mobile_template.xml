@@ -139,5 +139,10 @@
                 </body>
             </html>
         </template>
+        <template id="hide_footer" inherit_id="website.layout">
+            <xpath expr="//footer" position="attributes">
+                <attribute name="class">hidden</attribute>
+            </xpath>
+        </template>
     </data>
 </openerp>
