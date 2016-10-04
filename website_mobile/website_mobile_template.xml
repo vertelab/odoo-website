@@ -95,11 +95,11 @@
                                             <h4 class="modal-title text-center">Search</h4>
                                         </div>
                                         <div class="modal-body">
-                                            <form method="post" t-attf-action="#{ search }" class="pagination col-xs-12">
+                                            <form id="search_form" method="post" t-attf-action="#{ search }" class="pagination" style="display: block;">
                                                 <div class="input-group">
-                                                    <input type="text" class="search-query form-control" placeholder="Search..." t-attf-name="#{ search_words }" />
+                                                    <input type="text" class="search-query form-control" placeholder="Search..." name="search_words" />
                                                     <span class="input-group-btn">
-                                                        <button class="btn btn-default" name="btn-search" value="btn-search" type="submit"><i class="fa fa-search"></i></button>
+                                                        <button type="submit" class="btn btn-primary"><i class="fa fa-search"/> Search</button>
                                                     </span>
                                                 </div>
                                             </form>
