@@ -92,6 +92,7 @@
                                     <!-- Modal content-->
                                     <div class="modal-content">
                                         <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">x</button>
                                             <h4 class="modal-title text-center">Search</h4>
                                         </div>
                                         <div class="modal-body">
@@ -138,11 +139,6 @@
                     <script src="/website_mobile/static/src/js/bootstrap-switch.js" type="text/javascript"/>
                 </body>
             </html>
-        </template>
-        <template id="hide_footer" inherit_id="website.layout">
-            <xpath expr="//footer" position="attributes">
-                <attribute name="class">hidden</attribute>
-            </xpath>
         </template>
     </data>
 </openerp>
