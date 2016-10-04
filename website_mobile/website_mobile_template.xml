@@ -56,7 +56,7 @@
                                         </button>
                                         <h3 id="title" class="text-center">
                                             <strong>
-                                                <a t-attf-href="#{ root }"><i class="fa fa-angle-left pull-left"/></a>
+                                                <a onclick="return window.history.back();"><i class="fa fa-angle-left pull-left"/></a>
                                                 <span t-esc="title"/>
                                             </strong>
                                         </h3>
@@ -86,11 +86,39 @@
                             </div>
                         </header>
                         <main>
+                            <!-- Search Modal -->
+                            <div id="search_modal" class="modal fade" role="dialog">
+                                <div class="modal-dialog">
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title text-center">Search</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" t-attf-action="#{ search }" class="pagination col-xs-12">
+                                                <div class="input-group">
+                                                    <input type="text" class="search-query form-control" placeholder="Search..." t-attf-name="#{ search_words }" />
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-default" name="btn-search" value="btn-search" type="submit"><i class="fa fa-search"></i></button>
+                                                    </span>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
                             <t t-raw="0"/>
                         </main>
                         <footer class="footer-fixed-bottom footer-default">
                             <div id="footer_container">
-                                <ul class="nav nav-tabs nav-justified text-center"/>
+                                <ul class="nav nav-tabs nav-justified text-center">
+                                    <li id="li-left"><h3><a t-attf-href="#{ root }"><i class="fa fa-home"/></a></h3></li>
+                                    <li id="li-middle"><h3><a t-attf-href="#{ add }"><i class="fa fa-plus"/></a></h3></li>
+                                    <li id="li-right"><h3><a><i id="search_button" class="fa fa-search" data-toggle="modal" data-target="#search_modal"/></a></h3></li>
+                                </ul>
                             </div>
                         </footer>
                     </div>
