@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <!--
+        **
+        **     Mobile layout
+        **
+        -->
         <template id="mobile_layout" name="Mobile Main layout">&lt;!DOCTYPE html&gt;
             <html t-att-lang="lang and lang.replace('_', '-')"
                   t-att-data-website-id="website.id if editable and website else None"
@@ -116,7 +121,7 @@
                         <footer class="footer-fixed-bottom footer-default">
                             <div id="footer_container">
                                 <ul class="nav nav-tabs nav-justified text-center">
-                                    <li id="li-left"><h3><a t-attf-href="#{ root }"><i class="fa fa-home"/></a></h3></li>
+                                    <li id="li-left"><h3><a t-attf-href="#{ crud.root }"><i class="fa fa-home"/></a></h3></li>
                                     <li id="li-middle"><h3><a t-attf-href="#{ add }"><i class="fa fa-plus"/></a></h3></li>
                                     <li id="li-right"><h3><a><i id="search_button" class="fa fa-search" data-toggle="modal" data-target="#search_modal"/></a></h3></li>
                                 </ul>
@@ -140,5 +145,213 @@
                 </body>
             </html>
         </template>
+        
+        <!--
+        **
+        **   Object listing
+        **
+        **
+        -->
+        
+        
+            <template id="list" name="Object List">
+            <t t-call="website_crm_partner.layout_extend_partner">
+                <div>
+                    <!-- Content Zone -->
+                    <div class="content">
+                        <!-- List Contacts -->
+                        <ul t-if="objects" class="">
+                            <li t-foreach="objects" t-as="object" class="">
+                                <a class="navigate-right" t-attf-href="#{ crud.root }#{ object.id }" data-transition="slide-in">
+                                    <h3>
+                                        <span t-esc="object.name" />
+                                        <i class="fa fa-angle-right pull-right" style="padding-right: 40px;"/>
+                                    </h3>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!--
+        *
+        *   Object detail
+        *
+        *
+        -->
+
+
+        <template id="detail" name="Object Detail Information">
+            <t t-call="website_crm_partner.layout_extend_partner">
+                <!-- Content Zone -->
+                <div class="container mt32 mb32">
+                    <!-- Customer Info -->
+<!--
+                    <t t-set="ttype" t-value="request.env[model].fields_get(['name'])"/>
+                    <span t-esc="ttype"/>
+-->
+        
+            <form t-attf-action="" method="post">
+                <div t-foreach="crud.fields_info" t-as="field" class="form-group">
+                    
+                    <t t-if="field.type == 'text'      and mode =='edit'"><t t-call="website_mobile.input_text"/></t>
+                    <t t-if="field.type == 'email'     and mode =='edit'"><t t-call="website_mobile.input_email"/></t>
+                    <t t-if="field.type == 'number'    and mode =='edit'"><t t-call="website_mobile.input_number"/></t>
+                    <t t-if="field.type == 'boolean'   and mode =='edit'"><t t-call="website_mobile.input_boolean"/></t>
+                    <t t-if="field.type == 'selection' and mode =='edit'"><t t-call="website_mobile.input_selection"/></t>
+                    <t t-if="field.type == 'textarea'  and mode =='edit'"><t t-call="website_mobile.input_textarea"/></t>
+
+                    <t t-if="field.type == 'boolean' and mode =='view'"><t t-call="website_mobile.view_boolean"/></t>
+                    <t t-if="field.type != 'boolean' and mode =='view'"><t t-call="website_mobile.view_text"/></t>
+
+                </div>
+                <button t-if="mode == 'edit'" class="btn btn-success btn-lg mt32 mb32" name="btn-save" value="btn-save" type="submit">Save</button>
+            </form>
+                    <div class="container">
+                        <t t-if="object">
+                            <h2><a t-if="mode=='view'" class="fa fa-trash pull-left" t-attf-href="#{ crud.root }#{ object.id }/delete" onclick="return confirm('Are you sure?')" ontouchend="return confirm('Are you sure?')" /></h2>
+                            <h2><a t-if="mode=='view'" class="fa fa-pencil-square-o pull-right" t-attf-href="#{ crud.root }#{ object.id }/edit" /></h2>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <!-- form fileds -->
+        <template id="input_text">
+                    <!-- field label -->
+                    <label><t t-esc="field.string" /></label>
+                        <!-- text -->
+                        <input class="form-control input-xs" t-att-name="field.name" t-att-type="field.type"
+                            t-att-value="field.get_value(object)"
+                            t-att-placeholder="field.placeholder"
+                            t-att-required="field.required"
+                            t-att-help="field.help" />
+        </template>
+        <template id="input_email">
+                    <!-- field label -->
+                    <label><t t-esc="field.string" /></label>
+                        <!-- text -->
+                        <input class="form-control input-xs" t-att-name="field.name" t-att-type="field.type"
+                            t-att-value="field.get_value(object)"
+                            t-att-placeholder="field.placeholder"
+                            t-att-required="field.required"
+                            t-att-help="field.help" />
+        </template>
+        <template id="input_number">
+                    <!-- field label -->
+                    <label><t t-esc="field.string" /></label>
+                        <!-- text -->
+                        <input class="form-control input-xs" t-att-name="field.name" t-att-type="field.type"
+                            t-att-value="field.get_value(object)"
+                            t-att-placeholder="field.placeholder"
+                            t-att-required="field.required"
+                            t-att-help="field.help" 
+                            t-att-step="field.step"/>
+        </template>
+        <template id="input_boolean">
+                    <!-- field label -->
+                    <label><t t-esc="field.string" /></label>
+                    <input t-att-name="field.name" type="checkbox" class="switch-checkbox" t-att-checked="1 if field.get_value(object) else 0"/>
+        </template>
+        <template id="input_selection">
+                    <!-- field label -->
+                    <label><t t-esc="field.string" /></label>
+                        <select t-att-name="field.name" class="form-control selectpicker dropdown">
+                            <t t-foreach="field.get_selection(object)" t-as="option">
+                                <option t-att-value="option[0]" t-att="{'selected': 'checked'} if option[0] == field.get_value(object) else {}"><t t-raw="option[1]"/></option>
+                            </t>
+                        </select>
+        </template>
+        <template id="input_textarea">
+                    <label><t t-esc="field.string" /></label>
+                        <textarea  class="form-control input-xs" t-att-name="field.name" t-att-type="field.type"
+                            t-att-placeholder="field.placeholder"
+                            t-att-required="field.required"
+                            t-att-help="field.help"><t t-esc='field.get_value(object)'/></textarea>
+        </template>      
+      
+      <template id="view_boolean">
+          <label><t t-esc="field.string" /></label>
+                        <span t-esc="'Yes' if field.get_value(object) else 'No'" />      
+      </template>
+      <template id="view_text">
+          <label><t t-esc="field.string" /></label>
+         <span t-esc="field.get_value(object)" />      
+      </template>
+      
+      
+
+        <!-- hide footer -->
+        <template id="hide_footer" inherit_id="website.layout">
+            <xpath expr="//footer" position="attributes">
+                <attribute name="class">hidden</attribute>
+            </xpath>
+        </template>
+        <!-- inherit bottom menu -->
+        <template id="bottom_menu" inherit_id="website_mobile.mobile_layout">
+            <xpath expr="//div[@id='footer_container']/ul" position="inside">
+            </xpath>
+        </template>
+        <!-- set login -->
+<!--
+        <template id="set_login" name="Set Login">
+            <t t-call="website_crm_partner.layout_extend_partner">
+                <t t-set="title">Set Login</t>
+                <div>
+                    <header class="bar bar-nav">
+                        <h1 class="title">Set Login</h1>
+                        <a class="icon icon-left-nav pull-left" t-attf-href="/mobile/logout/#{ db }/#{ crud.root[1:] }" />
+                    </header>
+                    <div class="content">
+                        <form id="set_login" method="post">
+                            <input id="database" name="database" type="text" placeholder="Database" required="1" />
+                            <input id="username" name="username" type="text" placeholder="User name" required="1" />
+                            <input id="password" type="password" placeholder="Password" required="1" />
+                            <button class="btn btn-positive btn-block" name="btn-set_login_save" value="btn-set_login_save" type="submit" onclick="set_login()">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </t>
+        </template>
+-->
+        <!-- css -->
+        <template id="crm_partner_css" inherit_id="website_mobile.mobile_layout">
+            <xpath expr="//t[@t-call-assets='website.assets_frontend']" position="after">
+                <style>
+
+                    .btn-lg {
+                        margin: auto;
+                        display: block;
+                    }
+
+                </style>
+            </xpath>
+        </template>
+        <!-- javascript -->
+        <template id="crm_partner_javascript" inherit_id="website_mobile.mobile_layout">
+            <xpath expr="//body" position="inside">
+                <script>
+                    $(".switch-checkbox").bootstrapSwitch();
+
+                    /*
+                    $(document).ready(function() {
+                        document.getElementById("database").value = localStorage.getItem("database");
+                        document.getElementById("username").value = localStorage.getItem("username");
+                        document.getElementById("password").value = localStorage.getItem("password");
+                    });
+
+                    function set_login(){
+                        localStorage.setItem("database", document.getElementById("database").value);
+                        localStorage.setItem("username", document.getElementById("username").value);
+                        localStorage.setItem("password", document.getElementById("password").value);
+                    }
+                    */
+                </script>
+            </xpath>
+        </template>
+        
+        
     </data>
 </openerp>
