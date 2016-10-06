@@ -46,14 +46,16 @@ class mobile_input_field(object):
             self.type = 'email'
         else:
             self.type = 'text'
+        # text, password, datetime, datetime-local, date, month, time, week, number, email, url, search, tel, color  (select,textarea, checkbox, radio)
         self.string = string if string else request.env[model].fields_get([field])[field]['string']
         self.value = default_value if default_value else ''
         self.placeholder = planceholder if placeholder else request.env[model].fields_get([field])[field]['string']
         self.required = required if required else request.env[model].fields_get([field])[field]['required']
         self.help = help if help else request.env[model].fields_get([field])[field]['help']
-        self.step = step if step else 1
+        self.step = step if step else 1  # Numeriskt
         self.write = True
         self.create = True
+       
         
     def get_value(self,obj):
         if not obj:
@@ -61,21 +63,22 @@ class mobile_input_field(object):
                 return request.httprequest.args.get(self.name)
         else:
             return obj.read([self.name])[0][self.name]
-            
-    def get_info(self,obj):
-        if not obj:
-             if request.httprequest.args.get(self.name):
-                return request.httprequest.args.get(self.name)
+
+# server-side-controls
+# focus, disabled, validation  has-warning, has-error, has-success,  
+# http://getbootstrap.com/css/#forms-help-text
+    def state(self):
+        if request.context.get('form_state',{}).get(self.name):
+            return request.context.get('form_state',{}).get(self.name,{})
         else:
-            return obj.read([self.name])[0][self.name]
-            
+            return {}
 
     def get_selection(self,obj):
         if self.ttype == 'selection':
             return request.env[self.model].fields_get([self.name])[self.name]['selection']  # add selected
         elif self.ttype == 'Many2one':
             return [('','')]
-        else:
+        else:  # Many2many should be a multi selection
             return [(None,None)]
 
 class mobile_crud(http.Controller):
@@ -89,6 +92,13 @@ class mobile_crud(http.Controller):
         #~ self.template = {'list': '%s.object_list' % __name__, 'detail': '%s.object_detail' % __name__}
         self.limit = 25
         self.order = 'name'
+        self.form_type = ''  # Basic=='' / form-inline / form-horizontal http://getbootstrap.com/css/#forms-example
+        self.input_size = 'input-lg' # input-lg, input-sm http://getbootstrap.com/css/#forms-control-sizes
+        self.button_size = 'btn-lg' # btn-lg, btn-sm, btn-xs
+        self.footer_icons = [('home','','fa-home'),('add','add','fa-plus'),('search_button','','fa-search')]
+        self.footer_list = None
+        self.footer_view = None
+        self.footer_edit = None
         
 
     def load_fields(self,fields):
@@ -109,29 +119,73 @@ class mobile_crud(http.Controller):
 
     def do_delete(self,obj=None):        
         if obj:
-            obj.unlink()
-            return werkzeug.utils.redirect(MODULE_BASE_PATH, 302)
-
+            try:
+                obj.unlink()
+                return werkzeug.utils.redirect(MODULE_BASE_PATH, 302)
+            except:  # Catch exception message
+                request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not deleted'),'type': 'error'}]
+                return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
+            
 
     def do_edit(self,obj=None,**post):        
         if request.httprequest.method == 'GET':
             return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
         else:
-            obj.write({f.name: post.get(f.name) for f in self.fields_info if f.write})
-            return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
+            try:
+                self.validate_form()
+            except Exception as e:
+                return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
+            else:
+                try: 
+                    obj.write({f.name: post.get(f.name) for f in self.fields_info if f.write})
+                    request.context['alerts']=[{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
+                    return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
+                except: # Catch exception message
+                    request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved'),'type': 'error'}]
+                    return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
   
 
-    def do_add(self,notifications=None,**post):
+    def do_add(self,alerts=None,**post):
         if request.httprequest.method == 'GET':
-            return request.render(self.template['detail'], {'crud': self, 'object': None, 'notifications': notifications, 'title': 'Add','mode': 'edit'})
+            return request.render(self.template['detail'], {'crud': self, 'object': None, 'title': 'Add','mode': 'edit'})
         else:
-            obj = request.env[self.model].create({f.name: post.get(f.name) for f in self.fields_info if f.create})
-            return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
+            try:
+                self.validate_form()
+            except Exception as e:
+                return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name, 'mode': 'edit'})
+            else:
+                try:
+                    obj = request.env[self.model].create({f.name: post.get(f.name) for f in self.fields_info if f.create})
+                    request.context['alerts'] = [{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
+                    return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
+                except: # Catch exception message
+                    request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved'),'type': 'error'}]
+                    return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
 
-
-    def do_list(self,obj=None,search=None):
+    def do_list(self,obj=None,search=None,alerts=None):
         if obj:
-            return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name, 'mode': 'view'})
+            return request.render(self.template['detail'], {'crud': self, 'object': obj,'alerts': alerts,'title': obj.name, 'mode': 'view'})
         return request.render(self.template['list'], {'crud': self,'objects': self.search(search=search),'title': 'Module Title'})
+
+###############
+
+    def validate_form(self):
+        return True
+        request.context['alerts'] = [{'subject': _('Alert'),'message':_('Validation are done'),'type': 'danger'}]
+        request.context['form_state'] = {'name': {'validation': 'has-warning','help': _('name already taken')}}  # focus ?
+        raise Exception(request.context)
+        
+        
+# Alerts http://getbootstrap.com/components/#alerts-examples
+#  alerts = [
+#              {
+#               'subject': '..',
+#               'message': '..',
+#               'type': 'success,info,warning,danger',
+#               'dismissible': True,
+#               'link': '...',
+#               'fade-out': nn (sec),
+#
+#           },]
 
 
