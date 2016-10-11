@@ -109,7 +109,7 @@
                       <h4 class="modal-title text-center">Search</h4>
                     </div>
                     <div class="modal-body">
-                      <form id="search_form" method="post" t-attf-action="#{ search }" class="pagination" style="display: block;">
+                      <form id="search_form" method="post" t-att-action="'%s%s' %(crud.root, 'search')" class="pagination" style="display: block;">
                         <div class="input-group">
                           <input type="text" class="search-query form-control" placeholder="Search..." name="search_words" />
                           <span class="input-group-btn">
@@ -131,30 +131,17 @@
             </main>
             <footer class="footer-fixed-bottom footer-default">
               <div id="footer_container">
-                  <!--  use footer_icons ---  self.footer_view = [('home','','fa-home'),('add','add','fa-plus'),('search_button','','fa-search')]  -->
+                  <!--  use footer_icons  self.footer_view = [('home','','fa-home'),('add','add','fa-plus'),('search_button','','fa-search')]  -->
 
                 <ul class="nav nav-tabs nav-justified text-center">
-                  <li id="li-left">
-                    <h3>
-                      <a t-attf-href="#{ crud.root }">
-                        <i class="fa fa-home" />
-                      </a>
-                    </h3>
-                  </li>
-                  <li id="li-middle">
-                    <h3>
-                      <a t-attf-href="#{ add }">
-                        <i class="fa fa-plus" />
-                      </a>
-                    </h3>
-                  </li>
-                  <li id="li-right">
-                    <h3>
-                      <a>
-                        <i id="search_button" class="fa fa-search" data-toggle="modal" data-target="#search_modal" />
-                      </a>
-                    </h3>
-                  </li>
+                    <t t-foreach="crud.footer_icons" t-as="f">
+                        <li t-att-id="f[0]">
+                            <h3><a t-att="{'href': '%s%s' %(crud.root, f[1])} if f[1] != '' else {}"><i t-att-class="f[2]" /></a></h3>
+                        </li>
+                    </t>
+                    <li id="li-right">
+                        <h3><a><i id="search_button" class="fa fa-search" data-toggle="modal" data-target="#search_modal" /></a></h3>
+                    </li>
                 </ul>
               </div>
             </footer>
@@ -166,7 +153,7 @@
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-            
+
             ga('create', _.str.trim('
             <t t-esc="website.google_analytics_key" />
             '), 'auto');
@@ -184,7 +171,7 @@
          **
     -->
     <template id="list" name="Object List">
-      <t t-set='footer_icons' t-value="crud.footer_list or crut.footer_icons"/>
+      <t t-set='footer_icons' t-value="crud.footer_list or crud.footer_icons"/>
       <t t-call="website_mobile.mobile_layout">
         <div>
           <!-- Content Zone -->
@@ -196,7 +183,7 @@
                 <span t-esc="alert.get('message')" />
               </div>
             </t>
-              
+
             <!-- List Contacts -->
             <ul t-if="objects" class="">
               <li t-foreach="objects" t-as="object" class="">
@@ -401,14 +388,14 @@
     <template id="mobile_javascript" inherit_id="website_mobile.mobile_layout">
       <xpath expr="//body" position="inside">
         <script>$(".switch-checkbox").bootstrapSwitch();
-          
+
           /*
           $(document).ready(function() {
           document.getElementById("database").value = localStorage.getItem("database");
           document.getElementById("username").value = localStorage.getItem("username");
           document.getElementById("password").value = localStorage.getItem("password");
           });
-          
+
           function set_login(){
           localStorage.setItem("database", document.getElementById("database").value);
           localStorage.setItem("username", document.getElementById("username").value);

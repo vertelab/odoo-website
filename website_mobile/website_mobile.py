@@ -55,8 +55,8 @@ class mobile_input_field(object):
         self.step = step if step else 1  # Numeriskt
         self.write = True
         self.create = True
-       
-        
+
+
     def get_value(self,obj):
         if not obj:
              if request.httprequest.args.get(self.name):
@@ -65,7 +65,7 @@ class mobile_input_field(object):
             return obj.read([self.name])[0][self.name]
 
 # server-side-controls
-# focus, disabled, validation  has-warning, has-error, has-success,  
+# focus, disabled, validation  has-warning, has-error, has-success,
 # http://getbootstrap.com/css/#forms-help-text
     def state(self):
         if request.context.get('form_state',{}).get(self.name):
@@ -76,15 +76,16 @@ class mobile_input_field(object):
     def get_selection(self,obj):
         if self.ttype == 'selection':
             return request.env[self.model].fields_get([self.name])[self.name]['selection']  # add selected
-        elif self.ttype == 'Many2one':
+        elif self.ttype == 'many2one':
             return [('','')]
         else:  # Many2many should be a multi selection
             return [(None,None)]
 
 class mobile_crud(http.Controller):
-    
+
     def __init__(self):
         self.model = 'res.partner'
+        self.root = '/'
         self.search_domain = [('type','=','contact')]
         self.load_fields(['name','is_company','phone','email','type'])
         #self.fields_info = {'is_company': {'type': 'hidden','default': 'true'}}
@@ -95,17 +96,17 @@ class mobile_crud(http.Controller):
         self.form_type = ''  # Basic=='' / form-inline / form-horizontal http://getbootstrap.com/css/#forms-example
         self.input_size = 'input-lg' # input-lg, input-sm http://getbootstrap.com/css/#forms-control-sizes
         self.button_size = 'btn-lg' # btn-lg, btn-sm, btn-xs
-        self.footer_icons = [('home','','fa-home'),('add','add','fa-plus'),('search_button','','fa-search')]
+                        # tuple(id, link, icon_name)
+        self.footer_icons = [('home_button','#','fa fa-home'),('add_button','add','fa fa-plus')]
         self.footer_list = None
         self.footer_view = None
         self.footer_edit = None
-        
+
 
     def load_fields(self,fields):
         self.fields_info = []
         for f in fields:
             self.fields_info.append(mobile_input_field(self.model,f))
-
 
     def search(self,search=None):
         if search:
@@ -117,17 +118,17 @@ class mobile_crud(http.Controller):
 #  Methods for crud
 #
 
-    def do_delete(self,obj=None):        
+    def do_delete(self,obj=None,base_path='/'):
         if obj:
             try:
                 obj.unlink()
-                return werkzeug.utils.redirect(MODULE_BASE_PATH, 302)
+                return werkzeug.utils.redirect(base_path, 302)
             except:  # Catch exception message
                 request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not deleted'),'type': 'error'}]
                 return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
-            
 
-    def do_edit(self,obj=None,**post):        
+
+    def do_edit(self,obj=None,**post):
         if request.httprequest.method == 'GET':
             return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
         else:
@@ -136,14 +137,14 @@ class mobile_crud(http.Controller):
             except Exception as e:
                 return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
             else:
-                try: 
+                try:
                     obj.write({f.name: post.get(f.name) for f in self.fields_info if f.write})
                     request.context['alerts']=[{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
                     return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
                 except: # Catch exception message
                     request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved'),'type': 'error'}]
                     return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
-  
+
 
     def do_add(self,alerts=None,**post):
         if request.httprequest.method == 'GET':
@@ -174,8 +175,8 @@ class mobile_crud(http.Controller):
         request.context['alerts'] = [{'subject': _('Alert'),'message':_('Validation are done'),'type': 'danger'}]
         request.context['form_state'] = {'name': {'validation': 'has-warning','help': _('name already taken')}}  # focus ?
         raise Exception(request.context)
-        
-        
+
+
 # Alerts http://getbootstrap.com/components/#alerts-examples
 #  alerts = [
 #              {
