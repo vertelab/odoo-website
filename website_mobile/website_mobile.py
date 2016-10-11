@@ -109,9 +109,10 @@ class mobile_crud(http.Controller):
             self.fields_info.append(mobile_input_field(self.model,f))
 
     def search(self,search=None):
+        domain = list(self.search_domain)
         if search:
-            self.search_domain.append(('name','ilike',search))
-        return request.env[self.model].sudo().search(self.search_domain, order=self.order, limit=self.limit)
+            domain.append(('name','ilike',search))
+        return request.env[self.model].sudo().search(domain, order=self.order, limit=self.limit)
 
 #
 #
