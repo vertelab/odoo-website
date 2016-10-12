@@ -30,6 +30,7 @@ _logger = logging.getLogger(__name__)
 
 
 class mobile_input_field(object):
+    # type is the input widget type, ttype is the field type
     def __init__(self,model,field,type=None,ttype=None,string=None,default_value=None,placeholder=None,required=None,help=None,step=None):
         self.model = model
         self.name = field
@@ -42,6 +43,8 @@ class mobile_input_field(object):
             self.type = 'number'
         elif self.ttype == 'boolean':
             self.type = 'boolean'
+        elif self.ttype in ['selection', 'many2one']:
+            self.type = 'selection'
         elif 'mail' in field:
             self.type = 'email'
         else:
@@ -84,10 +87,9 @@ class mobile_input_field(object):
 class mobile_crud(http.Controller):
 
     def __init__(self):
-        self.model = 'res.partner'
+        self.model = ''
         self.root = '/'
-        self.search_domain = [('type','=','contact')]
-        self.load_fields(['name','is_company','phone','email','type'])
+        self.search_domain = []
         #self.fields_info = {'is_company': {'type': 'hidden','default': 'true'}}
         self.template = {'list': 'website_mobile.list', 'detail': 'website_mobile.detail'}
         #~ self.template = {'list': '%s.object_list' % __name__, 'detail': '%s.object_detail' % __name__}

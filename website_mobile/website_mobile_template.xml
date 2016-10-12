@@ -99,34 +99,7 @@
               </div>
             </header>
             <main>
-              <!-- Search Modal -->
-              <div id="search_modal" class="modal fade" role="dialog">
-                <div class="modal-dialog">
-                  <!-- Modal content-->
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal">x</button>
-                      <h4 class="modal-title text-center">Search</h4>
-                    </div>
-                    <div class="modal-body">
-                      <form id="search_form" method="post" t-att-action="'%s%s' %(crud.root, 'search')" class="pagination" style="display: block;">
-                        <div class="input-group">
-                          <input type="text" class="search-query form-control" placeholder="Search..." name="search_words" />
-                          <span class="input-group-btn">
-                            <button type="submit" class="btn btn-primary">
-                              <i class="fa fa-search" />
-                              Search
-                            </button>
-                          </span>
-                        </div>
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <t t-call="website_mobile.search_template" />
               <t t-raw="0" />
             </main>
             <footer class="footer-fixed-bottom footer-default">
@@ -292,7 +265,7 @@
         <t t-esc="field.string" />
       </label>
       <!-- text -->
-      <input class="form-control input-xs" t-att-name="field.name" t-att-type="field.type" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help" />
+      <input t-att-class="' '.join(['form-control',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" type="email" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help" />
     </template>
     <!--
     *
@@ -305,7 +278,7 @@
         <t t-esc="field.string" />
       </label>
       <!-- text -->
-      <input class="form-control input-xs" t-att-name="field.name" t-att-type="field.type" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help" t-att-step="field.step" />
+      <input t-att-class="' '.join(['form-control',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" type="number" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help" t-att-step="field.step" />
     </template>
     <!--
     *
@@ -317,7 +290,7 @@
       <label>
         <t t-esc="field.string" />
       </label>
-      <input t-att-name="field.name" type="checkbox" class="switch-checkbox" t-att-checked="1 if field.get_value(object) else 0" />
+      <input t-att-name="field.name" type="checkbox" t-att-class="' '.join(['form-control switch-checkbox',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-checked="1 if field.get_value(object) else 0" />
     </template>
     <!--
     *
@@ -328,7 +301,7 @@
       <label>
         <t t-esc="field.string" />
       </label>
-      <select t-att-name="field.name" class="form-control selectpicker dropdown">
+      <select t-att-class="' '.join(['form-control selectpicker dropdown',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder">
         <t t-foreach="field.get_selection(object)" t-as="option">
           <option t-att-value="option[0]" t-att="{'selected': 'checked'} if option[0] == field.get_value(object) else {}">
             <t t-raw="option[1]" />
@@ -345,9 +318,7 @@
       <label>
         <t t-esc="field.string" />
       </label>
-      <textarea class="form-control input-xs" t-att-name="field.name" t-att-type="field.type" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help">
-        <t t-esc='field.get_value(object)' />
-      </textarea>
+      <textarea class="form-control input-xs" t-att-name="field.name" t-att-type="field.type" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help"><t t-esc="field.get_value(object)" /></textarea>
     </template>
     <!--
     *
@@ -372,6 +343,37 @@
       </label>
       <span t-esc="field.get_value(object)" />
     </template>
+    <!-- search modal -->
+    <template id="search_template" name="Search Modal">
+      <!-- Search Modal -->
+      <div id="search_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">x</button>
+              <h4 class="modal-title text-center">Search</h4>
+            </div>
+            <div class="modal-body">
+              <form id="search_form" method="post" t-att-action="'%s%s' %(crud.root, 'search')" class="pagination" style="display: block;">
+                <div class="input-group">
+                  <input type="text" class="search-query form-control input-lg" placeholder="Search..." name="search_words" />
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                      <i class="fa fa-search" />
+                      Search
+                    </button>
+                  </span>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default btn-lg pull-right" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
     <!-- hide footer -->
     <template id="hide_footer" inherit_id="website.layout">
       <xpath expr="//footer" position="attributes">
@@ -382,7 +384,6 @@
     <template id="bottom_menu" inherit_id="website_mobile.mobile_layout">
       <xpath expr="//div[@id='footer_container']/ul" position="inside" />
     </template>
-
 
     <!-- javascript -->
     <template id="mobile_javascript" inherit_id="website_mobile.mobile_layout">
