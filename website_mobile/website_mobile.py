@@ -59,6 +59,18 @@ class mobile_input_field(object):
         self.write = True
         self.create = True
 
+    def get_post_value(self, post):
+        if self.ttype in ['char', 'text', 'html', 'date', 'datetime']:
+            return post.get(self.name, '')
+        elif self.ttype in ['integer', 'many2one']:
+            return int(post.get(self.name, None)) if post.get(self.name, '') != '' else None
+        elif self.ttype == 'float':
+            return float(post.get(self.name, None)) if post.get(self.name, '') != '' else None
+        elif self.ttype == 'boolean':
+            return True if post.get(self.name) in ['True', '1'] else False
+        else:
+            raise Warning('Unknow type')
+
     def get_value(self,obj):
         if not obj:
              if request.httprequest.args.get(self.name):
@@ -169,11 +181,11 @@ class mobile_crud(http.Controller):
                 return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
             else:
                 try:
-                    obj.write({f.name: post.get(f.name) for f in self.fields_info if f.write})
+                    obj.write({f.name: f.get_post_value(post) for f in self.fields_info if f.write})
                     request.context['alerts']=[{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
                     return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
-                except: # Catch exception message
-                    request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved'),'type': 'error'}]
+                except Exception as e:
+                    request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved\n%s') %(e),'type': 'error'}]
                     return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
 
 
@@ -194,10 +206,12 @@ class mobile_crud(http.Controller):
                     request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved'),'type': 'error'}]
                     return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
 
+
     def do_list(self,obj=None,search=None,alerts=None):
         if obj:
             return request.render(self.template['detail'], {'crud': self, 'object': obj,'alerts': alerts,'title': obj.name, 'mode': 'view'})
         return request.render(self.template['list'], {'crud': self,'objects': self.search(search=search),'title': 'Module Title'})
+
 
 ###############
 
@@ -206,6 +220,8 @@ class mobile_crud(http.Controller):
         request.context['alerts'] = [{'subject': _('Alert'),'message':_('Validation are done'),'type': 'danger'}]
         request.context['form_state'] = {'name': {'validation': 'has-warning','help': _('name already taken')}}  # focus ?
         raise Exception(request.context)
+
+
 
 
 # Alerts http://getbootstrap.com/components/#alerts-examples
