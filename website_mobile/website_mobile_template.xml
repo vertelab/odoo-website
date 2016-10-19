@@ -311,9 +311,6 @@
       <label>
         <t t-esc="field.string" />
       </label>
-      <t t-esc="field.get_selection(object)"/>
-      <br/>
-      <t t-esc="field.get_value(object)"/>
       <select t-att-class="' '.join(['form-control selectpicker dropdown',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder">
         <t t-foreach="field.get_selection(object)" t-as="option">
           <option t-att-value="option[0]" t-att="{'selected': 'checked'} if option[0] == field.get_value(object) else {}"><t t-raw="option[1]" /></option>
