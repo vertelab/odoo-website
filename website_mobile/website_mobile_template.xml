@@ -104,16 +104,23 @@
             </main>
             <footer class="footer-fixed-bottom footer-default">
               <div id="footer_container">
-                  <!--  use footer_icons  self.footer_view = [('home','','fa-home'),('add','add','fa-plus'),('search_button','','fa-search')]  -->
-
+                <!--  use footer_icons  self.footer_view = [('home','','fa-home'),('add','add','fa-plus'),('search_button','','fa-search')]  -->
                 <ul class="nav nav-tabs nav-justified text-center">
                     <t t-foreach="crud.footer_icons" t-as="f">
                         <li t-att-id="f[0]">
-                            <h3><a t-att="{'href': '%s%s' %(crud.root, f[1])} if f[1] != '' else {}"><i t-att-class="f[2]" /></a></h3>
+                            <div class="footer_items">
+                                <a t-att="{'href': '%s%s' %(crud.root, f[1])} if f[1] != '' else {}">
+                                    <i t-att-class="f[2]" />
+                                </a>
+                            </div>
                         </li>
                     </t>
                     <li id="li-right">
-                        <h3><a><i id="search_button" class="fa fa-search" data-toggle="modal" data-target="#search_modal" /></a></h3>
+                        <div class="footer_items">
+                            <a>
+                                <i id="search_button" class="fa fa-search" data-toggle="modal" data-target="#search_modal" />
+                            </a>
+                        </div>
                     </li>
                 </ul>
               </div>
@@ -214,10 +221,13 @@
               <t t-if="field.type == 'textarea'  and mode =='edit'">
                 <t t-call="website_mobile.input_textarea" />
               </t>
+              <t t-if="field.type in ['selection', 'many2one']  and mode =='view'">
+                <t t-call="website_mobile.view_selection" />
+              </t>
               <t t-if="field.type == 'boolean' and mode =='view'">
                 <t t-call="website_mobile.view_boolean" />
               </t>
-              <t t-if="field.type != 'boolean' and mode =='view'">
+              <t t-if="field.type not in ['boolean', 'selection', 'many2one'] and mode =='view'">
                 <t t-call="website_mobile.view_text" />
               </t>
             </div>
@@ -301,11 +311,12 @@
       <label>
         <t t-esc="field.string" />
       </label>
+      <t t-esc="field.get_selection(object)"/>
+      <br/>
+      <t t-esc="field.get_value(object)"/>
       <select t-att-class="' '.join(['form-control selectpicker dropdown',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder">
         <t t-foreach="field.get_selection(object)" t-as="option">
-          <option t-att-value="option[0]" t-att="{'selected': 'checked'} if option[0] == field.get_value(object) else {}">
-            <t t-raw="option[1]" />
-          </option>
+          <option t-att-value="option[0]" t-att="{'selected': 'checked'} if option[0] == field.get_value(object) else {}"><t t-raw="option[1]" /></option>
         </t>
       </select>
     </template>
@@ -342,6 +353,17 @@
         <t t-esc="field.string" />
       </label>
       <span t-esc="field.get_value(object)" />
+    </template>
+    <!--
+    *
+    *   view_selection
+    *
+    -->
+    <template id="view_selection">
+      <label>
+        <t t-esc="field.string" />
+      </label>
+      <span t-esc="field.get_selection_value(object)" />
     </template>
     <!-- search modal -->
     <template id="search_template" name="Search Modal">

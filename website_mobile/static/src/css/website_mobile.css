@@ -37,6 +37,16 @@ a { text-decoration: none !important; }
     display: table-cell;
     width: 1%;
     margin-bottom: 0;
-    top: -8px;
+}
+
+.footer_items {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.footer_items > a {
+    font-size: 2.0em;
 }
 

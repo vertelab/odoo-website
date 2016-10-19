@@ -59,13 +59,34 @@ class mobile_input_field(object):
         self.write = True
         self.create = True
 
-
     def get_value(self,obj):
         if not obj:
              if request.httprequest.args.get(self.name):
                 return request.httprequest.args.get(self.name)
         else:
-            return obj.read([self.name])[0][self.name]
+            if self.ttype == 'many2one':
+                if obj.read([self.name])[0][self.name]:
+                    return obj.read([self.name])[0][self.name][0]
+                else:
+                    return None
+            else:
+                return obj.read([self.name])[0][self.name]
+
+    def get_selection_value(self,obj):
+        if not obj:
+             if request.httprequest.args.get(self.name):
+                return request.httprequest.args.get(self.name)
+        else:
+            if self.ttype == 'many2one':
+                if obj.read([self.name])[0][self.name]:
+                    return obj.read([self.name])[0][self.name][1]
+                else:
+                    return None
+            else:
+                if obj.read([self.name])[0][self.name]:
+                    return [x for x in self.get_selection(obj) if x[0] == obj.read([self.name])[0][self.name]][0][1]
+                else:
+                    return None
 
 # server-side-controls
 # focus, disabled, validation  has-warning, has-error, has-success,
@@ -78,11 +99,18 @@ class mobile_input_field(object):
 
     def get_selection(self,obj):
         if self.ttype == 'selection':
-            return request.env[self.model].fields_get([self.name])[self.name]['selection']  # add selected
+            dropdown_list = [(None, None)]
+            for r in request.env[self.model].fields_get([self.name])[self.name]['selection']:
+                dropdown_list.append(r)
+            return dropdown_list  # add selected
         elif self.ttype == 'many2one':
-            return [('','')]
+            dropdown_list = [(None, None)]
+            record_list = request.env[request.env[self.model].fields_get([self.name])[self.name]['relation']].search([]) # a list of records related to this filed
+            for r in record_list:
+                dropdown_list.append((r.id, r.name))
+            return dropdown_list
         else:  # Many2many should be a multi selection
-            return [(None,None)]
+            return [(None, None)]
 
 class mobile_crud(http.Controller):
 
