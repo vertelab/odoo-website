@@ -203,44 +203,60 @@
             </t>
             <!-- fields -->
             <div t-foreach="crud.fields_info" t-as="field" class="form-group">
-              <t t-if="field.type == 'text'      and mode =='edit'">
+              <t t-if="field.type == 'text' and mode =='edit'">
                 <t t-call="website_mobile.input_text" />
               </t>
-              <t t-if="field.type == 'email'     and mode =='edit'">
+              <t t-if="field.type == 'date' and mode =='edit'">
+                <t t-call="website_mobile.input_date" />
+              </t>
+              <t t-if="field.type == 'email' and mode =='edit'">
                 <t t-call="website_mobile.input_email" />
               </t>
-              <t t-if="field.type == 'number'    and mode =='edit'">
+              <t t-if="field.type == 'number' and mode =='edit'">
                 <t t-call="website_mobile.input_number" />
               </t>
-              <t t-if="field.type == 'boolean'   and mode =='edit'">
+              <t t-if="field.type == 'boolean' and mode =='edit'">
                 <t t-call="website_mobile.input_boolean" />
               </t>
               <t t-if="field.type == 'selection' and mode =='edit'">
                 <t t-call="website_mobile.input_selection" />
               </t>
-              <t t-if="field.type == 'textarea'  and mode =='edit'">
+              <t t-if="field.type == 'textarea' and mode =='edit'">
                 <t t-call="website_mobile.input_textarea" />
               </t>
-              <t t-if="field.type in ['selection', 'many2one']  and mode =='view'">
+              <t t-if="field.type == 'hidden' and mode =='edit'">
+                <t t-call="website_mobile.input_hidden" />
+              </t>
+              <t t-if="field.type in ['selection', 'many2one'] and mode =='view'">
                 <t t-call="website_mobile.view_selection" />
               </t>
               <t t-if="field.type == 'boolean' and mode =='view'">
                 <t t-call="website_mobile.view_boolean" />
               </t>
-              <t t-if="field.type not in ['boolean', 'selection', 'many2one'] and mode =='view'">
+              <t t-if="field.type == 'one2many' and mode =='view'">
+                <t t-call="website_mobile.view_table" />
+              </t>
+              <t t-if="field.type == 'datetime' and mode =='view'">
+                <t t-call="website_mobile.view_datetime" />
+              </t>
+              <t t-if="field.type == 'hidden' and mode =='view'">
+              </t>
+              <t t-if="field.type not in ['boolean', 'selection', 'many2one', 'one2many', 'datetime', 'hidden'] and mode =='view'">
                 <t t-call="website_mobile.view_text" />
               </t>
             </div>
             <button t-if="mode == 'edit'" class="btn btn-success btn-lg mt32 mb32" name="btn-save" value="btn-save" type="submit">Save</button>
           </form>
-          <div class="container">
+          <div id="edit-button-group" class="container">
             <t t-if="object">
-              <h2>
-                <a t-if="mode=='view'" class="fa fa-trash pull-left" t-attf-href="#{ crud.root }#{ object.id }/delete" onclick="return confirm('Are you sure?')" ontouchend="return confirm('Are you sure?')" />
-              </h2>
-              <h2>
-                <a t-if="mode=='view'" class="fa fa-pencil-square-o pull-right" t-attf-href="#{ crud.root }#{ object.id }/edit" />
-              </h2>
+              <div class="row mt16 mb16">
+                <a t-if="mode=='view'" class="pull-left" t-attf-href="#{ crud.root }#{ object.id }/delete" onclick="return confirm('Are you sure?')" ontouchend="return confirm('Are you sure?')" >
+                  <button class="btn btn-danger btn-lg"><i class="fa fa-trash fa-2x"/></button>
+                </a>
+                <a t-if="mode=='view'" class="pull-right" t-attf-href="#{ crud.root }#{ object.id }/edit">
+                  <button class="btn btn-default btn-lg"><i class="fa fa-pencil-square-o fa-2x"/></button>
+                </a>
+              </div>
             </t>
           </div>
         </div>
@@ -263,6 +279,17 @@
         <t t-esc="field.help" />
         <strong t-esc="field.state().get('help')" />
       </span>
+    </template>
+    <!--
+    *
+    *   input_date
+    *
+    -->
+    <template id="input_date">
+      <label>
+        <t t-esc="field.string" />
+      </label>
+      <input t-att-class="' '.join(['form-control',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" type="date" t-att-value="website.convert_to_local(field.get_value(object))" t-att-required="field.required" />
     </template>
     <!--
     *
@@ -311,7 +338,7 @@
       <label>
         <t t-esc="field.string" />
       </label>
-      <select t-att-class="' '.join(['form-control selectpicker dropdown',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder">
+      <select t-att-class="' '.join(['form-control selectpicker dropdown',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" t-att-placeholder="field.placeholder">
         <t t-foreach="field.get_selection(object)" t-as="option">
           <option t-att-value="option[0]" t-att="{'selected': 'checked'} if option[0] == field.get_value(object) else {}"><t t-raw="option[1]" /></option>
         </t>
@@ -327,6 +354,14 @@
         <t t-esc="field.string" />
       </label>
       <textarea class="form-control input-xs" t-att-name="field.name" t-att-type="field.type" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help"><t t-esc="field.get_value(object)" /></textarea>
+    </template>
+    <!--
+    *
+    *   input_hidden
+    *
+    -->
+    <template id="input_hidden">
+      <input t-att-name="field.name" t-att-type="field.type" t-att-value="field.get_value(object)" />
     </template>
     <!--
     *
@@ -353,6 +388,17 @@
     </template>
     <!--
     *
+    *   view_datetime
+    *
+    -->
+    <template id="view_datetime">
+      <label>
+        <t t-esc="field.string" />
+      </label>
+      <span t-esc="website.convert_to_local(field.get_value(object))" />
+    </template>
+    <!--
+    *
     *   view_selection
     *
     -->
@@ -361,6 +407,17 @@
         <t t-esc="field.string" />
       </label>
       <span t-esc="field.get_selection_value(object)" />
+    </template>
+    <!--
+    *
+    *   view_table
+    *
+    -->
+    <template id="view_table">
+      <label>
+        <t t-esc="field.string" />
+      </label>
+      <span t-esc="field.get_child_values(object)" />
     </template>
     <!-- search modal -->
     <template id="search_template" name="Search Modal">

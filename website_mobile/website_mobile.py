@@ -24,9 +24,29 @@ from openerp.exceptions import except_orm, Warning, RedirectWarning
 from openerp import http
 from openerp.http import request
 import werkzeug
+import pytz
 
 import logging
 _logger = logging.getLogger(__name__)
+
+class website(models.Model):
+    _inherit = 'website'
+
+    @api.multi
+    def convert_to_local(self, timestamp, tz_name=None):
+        if not tz_name:
+            tz_name = self._context.get('tz') or self.env.user.tz
+        dt = fields.Datetime.from_string(timestamp)
+        local_dt = pytz.utc.localize(dt).astimezone(pytz.timezone(tz_name))
+        return fields.Datetime.to_string(local_dt)
+
+    @api.multi
+    def convert_to_utc(self, timestamp, tz_name=None):
+        if not tz_name:
+            tz_name = self._context.get('tz') or self.env.user.tz
+        dt = fields.Datetime.from_string(timestamp)
+        utc_dt = pytz.timezone(tz_name).localize(dt).astimezone(pytz.utc)
+        return fields.Datetime.to_string(utc_dt)
 
 
 class mobile_input_field(object):
@@ -38,13 +58,15 @@ class mobile_input_field(object):
         if type:
             self.type = type
         elif self.ttype in ['date', 'datetime']:
-            self.type = 'date'
+            self.type = self.ttype
         elif self.ttype in ['float', 'integer']:
             self.type = 'number'
         elif self.ttype == 'boolean':
             self.type = 'boolean'
         elif self.ttype in ['selection', 'many2one']:
             self.type = 'selection'
+        elif self.ttype == 'one2many':
+            self.type = 'table'
         elif 'mail' in field:
             self.type = 'email'
         else:
@@ -60,7 +82,7 @@ class mobile_input_field(object):
         self.create = True
 
     def get_post_value(self, post):
-        if self.ttype in ['char', 'text', 'html', 'date', 'datetime']:
+        if self.ttype in ['char', 'text', 'html']:
             return post.get(self.name, '')
         elif self.ttype in ['integer', 'many2one']:
             return int(post.get(self.name, None)) if post.get(self.name, '') != '' else None
@@ -68,13 +90,31 @@ class mobile_input_field(object):
             return float(post.get(self.name, None)) if post.get(self.name, '') != '' else None
         elif self.ttype == 'boolean':
             return True if post.get(self.name) in ['True', '1'] else False
+        elif self.ttype == 'date':
+            return post.get(self.name, fields.Date.today())
+        elif self.ttype == 'datetime':
+            return post.get(self.name, fields.Datetime.now())
         else:
             raise Warning('Unknow type')
 
     def get_value(self,obj):
         if not obj:
-             if request.httprequest.args.get(self.name):
-                return request.httprequest.args.get(self.name)
+            if request.httprequest.args.get(self.name):
+                if self.ttype in ['char', 'text', 'html']:
+                    return request.httprequest.args.get(self.name, '')
+                elif self.ttype in ['integer', 'many2one']:
+                    return int(request.httprequest.args.get(self.name, None)) if request.httprequest.args.get(self.name, '') != '' else None
+                elif self.ttype == 'float':
+                    return float(request.httprequest.args.get(self.name, None)) if request.httprequest.args.get(self.name, '') != '' else None
+                elif self.ttype == 'boolean':
+                    return True if request.httprequest.args.get(self.name) in ['True', '1'] else False
+                elif self.ttype == 'date':
+                    return request.httprequest.args.get(self.name, fields.Date.today())
+                elif self.ttype == 'datetime':
+                    return request.httprequest.args.get(self.name, fields.Datetime.now())
+                else:
+                    raise Warning('Unknow type')
+            return None
         else:
             if self.ttype == 'many2one':
                 if obj.read([self.name])[0][self.name]:
@@ -83,6 +123,18 @@ class mobile_input_field(object):
                     return None
             else:
                 return obj.read([self.name])[0][self.name]
+
+    #~ def get_child_values(self,obj):
+        #~ if not obj:
+             #~ if request.httprequest.args.get(self.name):
+                #~ return request.httprequest.args.get(self.name)
+        #~ else:
+            #~ if self.ttype == 'one2many':
+                #~ _logger.warn(obj.read([self.name])[0][self.name])
+                #~ return obj.read([self.name])[0][self.name]
+                #~ return request.env[obj.fields_get([self.name])[self.name]['relation']].search([])
+            #~ else:
+                #~ return obj.read([self.name])[0][self.name]
 
     def get_selection_value(self,obj):
         if not obj:
@@ -150,8 +202,9 @@ class mobile_crud(http.Controller):
         for f in fields:
             self.fields_info.append(mobile_input_field(self.model,f))
 
-    def search(self,search=None):
-        domain = list(self.search_domain)
+    def search(self,search=None,domain=None):
+        if not domain:
+            domain = list(self.search_domain)
         if search:
             domain.append(('name','ilike',search))
         return request.env[self.model].sudo().search(domain, order=self.order, limit=self.limit)
@@ -181,6 +234,7 @@ class mobile_crud(http.Controller):
                 return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
             else:
                 try:
+                    _logger.debug({f.name: f.get_post_value(post) for f in self.fields_info})
                     obj.write({f.name: f.get_post_value(post) for f in self.fields_info if f.write})
                     request.context['alerts']=[{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
                     return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
@@ -199,18 +253,38 @@ class mobile_crud(http.Controller):
                 return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name, 'mode': 'edit'})
             else:
                 try:
-                    obj = request.env[self.model].create({f.name: post.get(f.name) for f in self.fields_info if f.create})
+                    _logger.debug({f.name: f.get_post_value(post) for f in self.fields_info})
+                    obj = request.env[self.model].create({f.name: f.get_post_value(post) for f in self.fields_info if f.create})
                     request.context['alerts'] = [{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
                     return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
-                except: # Catch exception message
-                    request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved'),'type': 'error'}]
-                    return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
+                except Exception as e:
+                    request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved\n%s') %(e),'type': 'error'}]
+                    return request.render(self.template['detail'], {'crud': self, 'object': None, 'title': None, 'mode': 'edit'})
 
 
-    def do_list(self,obj=None,search=None,alerts=None):
+    def do_list(self,obj=None,search=None,domain=None,alerts=None):
         if obj:
             return request.render(self.template['detail'], {'crud': self, 'object': obj,'alerts': alerts,'title': obj.name, 'mode': 'view'})
-        return request.render(self.template['list'], {'crud': self,'objects': self.search(search=search),'title': 'Module Title'})
+        return request.render(self.template['list'], {'crud': self,'objects': self.search(search=search,domain=domain),'title': 'Module Title'})
+
+    def do_edit_grid(self,obj_ids=None,alerts=None):
+        if request.httprequest.method == 'GET':
+            return request.render(self.template['detail_grid'], {'crud': self, 'objects': obj_ids, 'title': 'Grid', 'mode': 'edit_grid'})
+        #~ else:
+            #~ try:
+                #~ self.validate_form()
+            #~ except Exception as e:
+                #~ return request.render(self.template['detail_grid'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit_grid'})
+            #~ else:
+                #~ try:
+                    #~ _logger.debug({f.name: f.get_post_value(post) for f in self.fields_info})
+                    #~ obj.write({f.name: f.get_post_value(post) for f in self.fields_info if f.write})
+                    #~ request.context['alerts']=[{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
+                    #~ return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
+                #~ except Exception as e:
+                    #~ request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved\n%s') %(e),'type': 'error'}]
+                    #~ return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
+
 
 
 ###############
