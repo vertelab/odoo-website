@@ -60,7 +60,7 @@ class mobile_input_field(object):
         elif self.ttype in ['date', 'datetime']:
             self.type = self.ttype
         elif self.ttype in ['float', 'integer']:
-            self.type = 'number'
+            self.type = 'number' if self.name != 'id' else 'hidden'
         elif self.ttype == 'boolean':
             self.type = 'boolean'
         elif self.ttype in ['selection', 'many2one']:
@@ -78,7 +78,7 @@ class mobile_input_field(object):
         self.required = required if required else request.env[model].fields_get([field])[field]['required']
         self.help = help if help else (request.env[model].fields_get([field])[field]['help'] if 'help' in request.env[model].fields_get([field])[field] else '')
         self.step = step if step else 1  # Numeriskt
-        self.write = True
+        self.write = True if self.name != 'id' else False
         self.create = True
 
     def get_post_value(self, post):
@@ -215,7 +215,7 @@ class mobile_crud(http.Controller):
         self.footer_edit = None
 
     def load_fields(self,fields):
-        self.fields_info = []
+        self.fields_info = [mobile_input_field(self.model, 'id')]
         for f in fields:
             self.fields_info.append(mobile_input_field(self.model,f))
 
@@ -299,12 +299,14 @@ class mobile_crud(http.Controller):
                 return request.render(self.template['detail_grid'], {'crud': self, 'objects': obj_ids, 'title': 'Grid', 'mode': 'edit_grid'})
             else:
                 try:
+                    ids = []
+                    for i in form['id']:
+                        ids.append(int(i))
                     i = 0
-                    for obj in request.env[self.model].browse(form['id']):
+                    for obj in request.env[self.model].browse(ids):
                         obj.write({ f.name: f.get_form_value(form, i) for f in self.fields_info if f.write })
                         i += 1
-                    #~ obj.write({f.name: f.get_post_value(post) for f in self.fields_info if f.write})
-                    #~ request.context['alerts']=[{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
+                    request.context['alerts']=[{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
                     return request.render(self.template['detail_grid'], {'crud': self, 'objects': obj_ids, 'title': 'Grid', 'mode': 'view'})
                 except Exception as e:
                     request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved\n%s') %(e),'type': 'error'}]
