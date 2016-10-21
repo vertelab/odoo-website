@@ -163,7 +163,6 @@
                 <span t-esc="alert.get('message')" />
               </div>
             </t>
-
             <!-- List Contacts -->
             <ul t-if="objects" class="">
               <li t-foreach="objects" t-as="object" class="">
@@ -201,51 +200,12 @@
                 <span t-esc="alert.get('message')" />
               </div>
             </t>
-            <!-- fields -->
-            <div t-foreach="crud.fields_info" t-as="field" class="form-group">
-              <t t-if="field.type == 'text' and mode =='edit'">
-                <t t-call="website_mobile.input_text" />
-              </t>
-              <t t-if="field.type == 'date' and mode =='edit'">
-                <t t-call="website_mobile.input_date" />
-              </t>
-              <t t-if="field.type == 'email' and mode =='edit'">
-                <t t-call="website_mobile.input_email" />
-              </t>
-              <t t-if="field.type == 'number' and mode =='edit'">
-                <t t-call="website_mobile.input_number" />
-              </t>
-              <t t-if="field.type == 'boolean' and mode =='edit'">
-                <t t-call="website_mobile.input_boolean" />
-              </t>
-              <t t-if="field.type == 'selection' and mode =='edit'">
-                <t t-call="website_mobile.input_selection" />
-              </t>
-              <t t-if="field.type == 'textarea' and mode =='edit'">
-                <t t-call="website_mobile.input_textarea" />
-              </t>
-              <t t-if="field.type == 'hidden' and mode =='edit'">
-                <t t-call="website_mobile.input_hidden" />
-              </t>
-              <t t-if="field.type in ['selection', 'many2one'] and mode =='view'">
-                <t t-call="website_mobile.view_selection" />
-              </t>
-              <t t-if="field.type == 'boolean' and mode =='view'">
-                <t t-call="website_mobile.view_boolean" />
-              </t>
-              <t t-if="field.type == 'one2many' and mode =='view'">
-                <t t-call="website_mobile.view_table" />
-              </t>
-              <t t-if="field.type == 'datetime' and mode =='view'">
-                <t t-call="website_mobile.view_datetime" />
-              </t>
-              <t t-if="field.type == 'hidden' and mode =='view'">
-              </t>
-              <t t-if="field.type not in ['boolean', 'selection', 'many2one', 'one2many', 'datetime', 'hidden'] and mode =='view'">
-                <t t-call="website_mobile.view_text" />
-              </t>
-            </div>
-            <button t-if="mode == 'edit'" class="btn btn-success btn-lg mt32 mb32" name="btn-save" value="btn-save" type="submit">Save</button>
+            <t t-call="website_mobile.fields_fields">
+                <t t-set="edit_type" t-value="'edit'"/>
+                <t t-set="col_width_edit" t-value="crud.col_size_edit"/>
+                <t t-set="col_width_view" t-value="crud.col_size_view"/>
+            </t>
+            <button t-if="mode == 'edit'" class="btn btn-success btn-lg mt32 mb32" type="submit">Save</button>
           </form>
           <div id="edit-button-group" class="container">
             <t t-if="object">
@@ -262,7 +222,99 @@
         </div>
       </t>
     </template>
-    <!-- form fileds -->
+    <!--
+         **
+         **   Objects detail grid
+         **
+         **
+    -->
+    <template id="detail_grid" name="Objects Detail Grid Information">
+        <t t-set="footer_icons" t-value="crud.footer_view or crud.footer_icons"/>
+        <t t-if="mode == 'edit_grid'">
+            <t t-set="footer_icons" t-value="crud.footer_edit or crud.footer_icons"/>
+        </t>
+        <t t-call="website_mobile.mobile_layout">
+            <div class="container mt32 mb32">
+                <form t-attf-action="" method="post" t-att-class="crud.form_type">
+                    <!-- Alerts -->
+                    <t t-foreach="request.context.get('alerts',[])" t-as="alert" >
+                        <div t-att-class="' '.join(['alert','alert-'+alert.get('type','success')])" role='alert'>
+                            <strong t-esc="alert.get('subject')" />
+                            <span t-esc="alert.get('message')" />
+                        </div>
+                    </t>
+                    <t t-foreach="objects" t-as="object">
+                        <div class="container">
+                            <t t-call="website_mobile.fields_fields">
+                                <t t-set="edit_type" t-value="'edit_grid'"/>
+                                <t t-set="col_width_edit" t-value="crud.col_size_edit"/>
+                                <t t-set="col_width_view" t-value="crud.col_size_view"/>
+                                <a t-if="mode=='view'" class="pull-right" t-attf-href="#{ crud.root }#{ object.id }/delete" onclick="return confirm('Are you sure?')" >
+                                    <button class="btn btn-danger btn-lg"><i class="fa fa-trash fa-2x"/></button>
+                                </a>
+                            </t>
+                        </div>
+                    </t>
+                    <button t-if="mode == 'edit_grid'" class="btn btn-success btn-lg mt32 mb32" type="submit">Save</button>
+                </form>
+            </div>
+        </t>
+    </template>
+    <!--
+         **   fields to render to html
+         **   parameter: edit_type (which kind of edit to do)
+         **   parameter: col_width_edit (column with in edit mode: 1-12)
+         **   parameter: col_width_view (column with in view mode: 1-12)
+    -->
+    <template id="fields_fields" name="Fields">
+        <t t-foreach="crud.fields_info" t-as="field">
+            <div t-if="mode == edit_type" t-att-class="'form-group col-xs-%s col-sm-%s col-md-%s col-lg-%s %s' %(col_width_edit, col_width_edit, col_width_edit, col_width_edit, 'hidden' if field.type == 'hidden' else '')">
+              <t t-if="field.type == 'text'">
+                <t t-call="website_mobile.input_text" />
+              </t>
+              <t t-if="field.type == 'date'">
+                <t t-call="website_mobile.input_date" />
+              </t>
+              <t t-if="field.type == 'email'">
+                <t t-call="website_mobile.input_email" />
+              </t>
+              <t t-if="field.type == 'number'">
+                <t t-call="website_mobile.input_number" />
+              </t>
+              <t t-if="field.type == 'boolean'">
+                <t t-call="website_mobile.input_boolean" />
+              </t>
+              <t t-if="field.type == 'selection'">
+                <t t-call="website_mobile.input_selection" />
+              </t>
+              <t t-if="field.type == 'textarea'">
+                <t t-call="website_mobile.input_textarea" />
+              </t>
+              <t t-if="field.type == 'hidden'">
+                <t t-call="website_mobile.input_hidden" />
+              </t>
+            </div>
+            <div t-if="mode == 'view'" t-att-class="'form-group col-xs-%s col-sm-%s col-md-%s col-lg-%s %s' %(col_width_view, col_width_view, col_width_view, col_width_view, 'hidden' if field.type == 'hidden' else '')">
+              <t t-if="field.type in ['selection', 'many2one']">
+                <t t-call="website_mobile.view_selection" />
+              </t>
+              <t t-if="field.type == 'boolean'">
+                <t t-call="website_mobile.view_boolean" />
+              </t>
+              <t t-if="field.type == 'one2many'">
+                <t t-call="website_mobile.view_table" />
+              </t>
+              <t t-if="field.type == 'datetime'">
+                <t t-call="website_mobile.view_datetime" />
+              </t>
+              <t t-if="field.type == 'hidden'">
+              </t>
+              <t t-if="field.type not in ['boolean', 'selection', 'many2one', 'one2many', 'datetime', 'hidden']">
+                <t t-call="website_mobile.view_text" />
+              </t>
+            </div>
+        </t>
+    </template>
     <!--
     *
     *   input_text

@@ -76,7 +76,7 @@ class mobile_input_field(object):
         self.value = default_value if default_value else ''
         self.placeholder = planceholder if placeholder else request.env[model].fields_get([field])[field]['string']
         self.required = required if required else request.env[model].fields_get([field])[field]['required']
-        self.help = help if help else request.env[model].fields_get([field])[field]['help']
+        self.help = help if help else (request.env[model].fields_get([field])[field]['help'] if 'help' in request.env[model].fields_get([field])[field] else '')
         self.step = step if step else 1  # Numeriskt
         self.write = True
         self.create = True
@@ -94,6 +94,22 @@ class mobile_input_field(object):
             return post.get(self.name, fields.Date.today())
         elif self.ttype == 'datetime':
             return post.get(self.name, fields.Datetime.now())
+        else:
+            raise Warning('Unknow type')
+
+    def get_form_value(self, form, index):
+        if self.ttype in ['char', 'text', 'html']:
+            return form.get(self.name)[index]
+        elif self.ttype in ['integer', 'many2one']:
+            return int(form.get(self.name)[index] if form.get(self.name)[index] else 0)
+        elif self.ttype == 'float':
+            return float(form.get(self.name)[index] if form.get(self.name)[index] else 0.0)
+        elif self.ttype == 'boolean':
+            return True if form.get(self.name)[index] in ['True', '1'] else False
+        elif self.ttype == 'date':
+            return form.get(self.name)[index] if form.get(self.name)[index] else fields.Date.today()
+        elif self.ttype == 'datetime':
+            return form.get(self.name)[index] if form.get(self.name)[index] else fields.Datetime.now()
         else:
             raise Warning('Unknow type')
 
@@ -183,19 +199,20 @@ class mobile_crud(http.Controller):
         self.root = '/'
         self.search_domain = []
         #self.fields_info = {'is_company': {'type': 'hidden','default': 'true'}}
-        self.template = {'list': 'website_mobile.list', 'detail': 'website_mobile.detail'}
+        self.template = {'list': 'website_mobile.list', 'detail': 'website_mobile.detail', 'detail_grid': 'website_mobile.detail_grid'}
         #~ self.template = {'list': '%s.object_list' % __name__, 'detail': '%s.object_detail' % __name__}
         self.limit = 25
         self.order = 'name'
         self.form_type = ''  # Basic=='' / form-inline / form-horizontal http://getbootstrap.com/css/#forms-example
         self.input_size = 'input-lg' # input-lg, input-sm http://getbootstrap.com/css/#forms-control-sizes
+        self.col_size_edit = '12'
+        self.col_size_view = '12'
         self.button_size = 'btn-lg' # btn-lg, btn-sm, btn-xs
                         # tuple(id, link, icon_name)
         self.footer_icons = [('home_button','#','fa fa-home'),('add_button','add','fa fa-plus')]
         self.footer_list = None
         self.footer_view = None
         self.footer_edit = None
-
 
     def load_fields(self,fields):
         self.fields_info = []
@@ -267,23 +284,31 @@ class mobile_crud(http.Controller):
             return request.render(self.template['detail'], {'crud': self, 'object': obj,'alerts': alerts,'title': obj.name, 'mode': 'view'})
         return request.render(self.template['list'], {'crud': self,'objects': self.search(search=search,domain=domain),'title': 'Module Title'})
 
-    def do_edit_grid(self,obj_ids=None,alerts=None):
+    def do_grid(self, obj_ids=None, alerts=None):
+
         if request.httprequest.method == 'GET':
             return request.render(self.template['detail_grid'], {'crud': self, 'objects': obj_ids, 'title': 'Grid', 'mode': 'edit_grid'})
-        #~ else:
-            #~ try:
-                #~ self.validate_form()
-            #~ except Exception as e:
-                #~ return request.render(self.template['detail_grid'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit_grid'})
-            #~ else:
-                #~ try:
-                    #~ _logger.debug({f.name: f.get_post_value(post) for f in self.fields_info})
+        else:
+            form_data = request.httprequest.form
+            form = {}
+            for f in request.httprequest.form:
+                form[f] = form_data.getlist(f)
+            try:
+                self.validate_form()
+            except Exception as e:
+                return request.render(self.template['detail_grid'], {'crud': self, 'objects': obj_ids, 'title': 'Grid', 'mode': 'edit_grid'})
+            else:
+                try:
+                    i = 0
+                    for obj in request.env[self.model].browse(form['id']):
+                        obj.write({ f.name: f.get_form_value(form, i) for f in self.fields_info if f.write })
+                        i += 1
                     #~ obj.write({f.name: f.get_post_value(post) for f in self.fields_info if f.write})
                     #~ request.context['alerts']=[{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
-                    #~ return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
-                #~ except Exception as e:
-                    #~ request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved\n%s') %(e),'type': 'error'}]
-                    #~ return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
+                    return request.render(self.template['detail_grid'], {'crud': self, 'objects': obj_ids, 'title': 'Grid', 'mode': 'view'})
+                except Exception as e:
+                    request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved\n%s') %(e),'type': 'error'}]
+                    return request.render(self.template['detail_grid'], {'crud': self, 'objects': obj_ids, 'title': 'Grid', 'mode': 'edit_grid'})
 
 
 
