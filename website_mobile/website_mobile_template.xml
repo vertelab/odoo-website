@@ -300,13 +300,13 @@
               </t>
             </div>
             <div t-if="mode == 'view'" t-att-class="'form-group col-xs-%s col-sm-%s col-md-%s col-lg-%s %s' %(col_width_view, col_width_view, col_width_view, col_width_view, 'hidden' if field.type == 'hidden' else '')">
-              <t t-if="field.type in ['selection', 'many2one']">
+              <t t-if="field.type == 'selection'">
                 <t t-call="website_mobile.view_selection" />
               </t>
               <t t-if="field.type == 'boolean'">
                 <t t-call="website_mobile.view_boolean" />
               </t>
-              <t t-if="field.type == 'one2many'">
+              <t t-if="field.type == 'table'">
                 <t t-call="website_mobile.view_table" />
               </t>
               <t t-if="field.type == 'datetime'">
@@ -314,7 +314,7 @@
               </t>
               <t t-if="field.type == 'hidden'">
               </t>
-              <t t-if="field.type not in ['boolean', 'selection', 'many2one', 'one2many', 'datetime', 'hidden']">
+              <t t-if="field.type not in ['boolean', 'selection', 'table', 'datetime', 'hidden']">
                 <t t-call="website_mobile.view_text" />
               </t>
             </div>
@@ -429,6 +429,7 @@
       <label>
         <t t-esc="field.string" />
       </label>
+      banan
       <!-- form-control-static -->
       <span t-esc="'Yes' if field.get_value(object) else 'No'" />
     </template>
@@ -474,7 +475,24 @@
       <label>
         <t t-esc="field.string" />
       </label>
-      <span t-esc="field.get_child_values(object)" />
+      <table class="table">
+        <thead>
+          <tr>
+            <t t-foreach="crud.child_fileds" t-as="ct">
+              <th t-esc="ct"/>
+            </t>
+          </tr>
+        </thead>
+        <tbody>
+          <t t-foreach="field.get_child_values(object)" t-as="child">
+            <tr>
+              <t t-foreach="crud.child_fileds" t-as="ct">
+                <td t-esc="crud.child_filed_value(child, ct)"/>
+              </t>
+            </tr>
+          </t>
+        </tbody>
+      </table>
     </template>
     <!-- search modal -->
     <template id="search_template" name="Search Modal">

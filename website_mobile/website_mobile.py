@@ -140,17 +140,15 @@ class mobile_input_field(object):
             else:
                 return obj.read([self.name])[0][self.name]
 
-    #~ def get_child_values(self,obj):
-        #~ if not obj:
-             #~ if request.httprequest.args.get(self.name):
-                #~ return request.httprequest.args.get(self.name)
-        #~ else:
-            #~ if self.ttype == 'one2many':
-                #~ _logger.warn(obj.read([self.name])[0][self.name])
-                #~ return obj.read([self.name])[0][self.name]
-                #~ return request.env[obj.fields_get([self.name])[self.name]['relation']].search([])
-            #~ else:
-                #~ return obj.read([self.name])[0][self.name]
+    def get_child_values(self, obj):
+        if not obj:
+             if request.httprequest.args.get(self.name):
+                return request.httprequest.args.get(self.name)
+        else:
+            if self.ttype == 'one2many':
+                return request.env[obj.fields_get([self.name])[self.name]['relation']].browse(obj.read([self.name])[0][self.name])
+            else:
+                return obj.read([self.name])[0][self.name]
 
     def get_selection_value(self,obj):
         if not obj:
@@ -198,6 +196,7 @@ class mobile_crud(http.Controller):
         self.model = ''
         self.root = '/'
         self.search_domain = []
+        self.child_fileds = []
         #self.fields_info = {'is_company': {'type': 'hidden','default': 'true'}}
         self.template = {'list': 'website_mobile.list', 'detail': 'website_mobile.detail', 'detail_grid': 'website_mobile.detail_grid'}
         #~ self.template = {'list': '%s.object_list' % __name__, 'detail': '%s.object_detail' % __name__}
@@ -218,6 +217,17 @@ class mobile_crud(http.Controller):
         self.fields_info = [mobile_input_field(self.model, 'id')]
         for f in fields:
             self.fields_info.append(mobile_input_field(self.model,f))
+
+    def child_filed_value(self, child, field):
+        record = getattr(child, field)
+        # TODO: check if record is a openerp record ?
+        #~ if isinstance(record, openerp.api.res.users):
+            #~ _logger.warn(record)
+        #~ try:
+            #~ record = self.env[record.partition('(')[0]].browse(record.partition('(')[-1].rpartition(',')[0]).name
+        #~ except:
+            #~ pass
+        return record
 
     def search(self,search=None,domain=None):
         if not domain:
