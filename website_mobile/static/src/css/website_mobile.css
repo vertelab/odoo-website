@@ -56,6 +56,10 @@ a { text-decoration: none !important; }
     align-items: center;
 }
 
+.grid-container .form-group {
+    padding: 0px 5px;
+}
+
 .no-padding-div {
     padding: 0px;
 }
