@@ -234,25 +234,30 @@
             <t t-set="footer_icons" t-value="crud.footer_edit or crud.footer_icons"/>
         </t>
         <t t-call="website_mobile.mobile_layout">
-            <div class="container mt32 mb32">
+            <div id="grid-main" class="container mt32 mb32">
                 <form t-attf-action="" method="post" t-att-class="crud.form_type">
                     <!-- Alerts -->
                     <t t-foreach="request.context.get('alerts',[])" t-as="alert" >
-                        <div t-att-class="' '.join(['alert','alert-'+alert.get('type','success')])" role='alert'>
+                        <div t-att-class="' '.join(['alert','alert-'+alert.get('type','success')])" role="alert">
                             <strong t-esc="alert.get('subject')" />
                             <span t-esc="alert.get('message')" />
                         </div>
                     </t>
                     <t t-foreach="objects" t-as="object">
-                        <div class="container">
-                            <t t-call="website_mobile.fields_fields">
-                                <t t-set="edit_type" t-value="'edit_grid'"/>
-                                <t t-set="col_width_edit" t-value="crud.col_size_edit"/>
-                                <t t-set="col_width_view" t-value="crud.col_size_view"/>
-                                <a t-if="mode=='view'" class="pull-right" t-attf-href="#{ crud.root }#{ object.id }/delete" onclick="return confirm('Are you sure?')" >
-                                    <button class="btn btn-danger btn-lg"><i class="fa fa-trash fa-2x"/></button>
-                                </a>
-                            </t>
+                        <div class="container grid-container">
+                            <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11 no-padding-div">
+                                <t t-call="website_mobile.fields_fields">
+                                    <t t-set="edit_type" t-value="'edit_grid'"/>
+                                    <t t-set="col_width_edit" t-value="crud.col_size_edit"/>
+                                    <t t-set="col_width_view" t-value="crud.col_size_view"/>
+                                </t>
+                            </div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+<!--
+                                <i t-if="mode == 'edit_grid'" class="fa fa-trash fa-2x" t-att-onclick="crud.do_grid_delete(object)"/>
+-->
+                                <i t-if="mode == 'edit_grid'" class="fa fa-trash fa-2x" t-att-onclick="'grid_delete(&quot;%s&quot;)' %object"/>
+                            </div>
                         </div>
                     </t>
                     <button t-if="mode == 'edit_grid'" class="btn btn-success btn-lg mt32 mb32" type="submit">Save</button>
@@ -516,7 +521,21 @@
     <!-- javascript -->
     <template id="mobile_javascript" inherit_id="website_mobile.mobile_layout">
       <xpath expr="//body" position="inside">
-        <script>$(".switch-checkbox").bootstrapSwitch();
+        <script>
+            $(".switch-checkbox").bootstrapSwitch();
+
+            /* grid delete */
+            function grid_delete(obj){
+                if (confirm("Are you sure?") == true) {
+                    openerp.jsonRpc("/grid_delete", 'call', {
+                        'obj': obj,
+                    }).done(function(data){
+                        if(data == "grid_obj_deleted"){
+                            $("#grid-main").load(document.URL +  " #grid-main");
+                        }
+                    });
+                }
+            }
 
           /*
           $(document).ready(function() {

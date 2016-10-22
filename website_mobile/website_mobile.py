@@ -285,7 +285,6 @@ class mobile_crud(http.Controller):
         return request.render(self.template['list'], {'crud': self,'objects': self.search(search=search,domain=domain),'title': 'Module Title'})
 
     def do_grid(self, obj_ids=None, alerts=None):
-
         if request.httprequest.method == 'GET':
             return request.render(self.template['detail_grid'], {'crud': self, 'objects': obj_ids, 'title': 'Grid', 'mode': 'edit_grid'})
         else:
@@ -312,6 +311,18 @@ class mobile_crud(http.Controller):
                     request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved\n%s') %(e),'type': 'error'}]
                     return request.render(self.template['detail_grid'], {'crud': self, 'objects': obj_ids, 'title': 'Grid', 'mode': 'edit_grid'})
 
+
+    @http.route(['/grid_delete'],type='json', auth="user", website=True)
+    def do_grid_delete(self, obj=None, **kw):
+        if obj:
+            try:
+                record = request.env[obj.rpartition('(')[0]].browse(int(obj.partition('(')[-1].rpartition(',')[0]))
+                record.unlink()
+                request.context['alerts']=[{'subject': _('Saved'),'message':_('The record has been deleted'),'type': 'success'}]
+                return 'grid_obj_deleted'
+            except:  # Catch exception message
+                request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not deleted'),'type': 'error'}]
+                return None
 
 
 ###############

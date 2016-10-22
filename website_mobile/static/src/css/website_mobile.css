@@ -50,3 +50,19 @@ a { text-decoration: none !important; }
     font-size: 2.0em;
 }
 
+.grid-container {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+}
+
+.no-padding-div {
+    padding: 0px;
+}
+
+.no-padding-div label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: auto;
+}
