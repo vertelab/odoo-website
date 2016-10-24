@@ -307,7 +307,9 @@
                 <t t-call="website_mobile.view_boolean" />
               </t>
               <t t-if="field.type == 'table'">
-                <t t-call="website_mobile.view_table" />
+                <t t-if="field.child_class">
+                    <t t-raw="field.child_class.do_grid(obj_ids=field.get_value(object)).render()"/>
+                </t>
               </t>
               <t t-if="field.type == 'datetime'">
                 <t t-call="website_mobile.view_datetime" />
@@ -466,33 +468,9 @@
       </label>
       <span t-esc="field.get_selection_value(object)" />
     </template>
-    <!--
-    *
-    *   view_table
-    *
-    -->
-    <template id="view_table">
-      <label>
-        <t t-esc="field.string" />
-      </label>
-      <table class="table">
-        <thead>
-          <tr>
-            <t t-foreach="crud.child_fileds" t-as="ct">
-              <th t-esc="ct"/>
-            </t>
-          </tr>
-        </thead>
-        <tbody>
-          <t t-foreach="field.get_child_values(object)" t-as="child">
-            <tr>
-              <t t-foreach="crud.child_fileds" t-as="ct">
-                <td t-esc="crud.child_filed_value(child, ct)"/>
-              </t>
-            </tr>
-          </t>
-        </tbody>
-      </table>
+<!--
+      <t t-esc="crud.fields_info[4].child_class.work_edit_grid(task=object)"/>
+-->
     </template>
     <!-- search modal -->
     <template id="search_template" name="Search Modal">

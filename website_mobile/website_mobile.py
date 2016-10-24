@@ -53,8 +53,10 @@ class mobile_input_field(object):
     # type is the input widget type, ttype is the field type
     def __init__(self,model,field,type=None,ttype=None,string=None,default_value=None,placeholder=None,required=None,help=None,step=None):
         self.model = model
+        self.child_class = None
         self.name = field
         self.ttype = ttype if ttype else request.env[model].fields_get([field])[field]['type']
+        self.relation = None
         if type:
             self.type = type
         elif self.ttype in ['date', 'datetime']:
@@ -65,8 +67,9 @@ class mobile_input_field(object):
             self.type = 'boolean'
         elif self.ttype in ['selection', 'many2one']:
             self.type = 'selection'
-        elif self.ttype == 'one2many':
+        elif self.ttype in ['one2many', 'many2many']:
             self.type = 'table'
+            self.relation = request.env[model].fields_get([field])[field]['relation']
         elif 'mail' in field:
             self.type = 'email'
         else:
@@ -137,16 +140,8 @@ class mobile_input_field(object):
                     return obj.read([self.name])[0][self.name][0]
                 else:
                     return None
-            else:
-                return obj.read([self.name])[0][self.name]
-
-    def get_child_values(self, obj):
-        if not obj:
-             if request.httprequest.args.get(self.name):
-                return request.httprequest.args.get(self.name)
-        else:
-            if self.ttype == 'one2many':
-                return request.env[obj.fields_get([self.name])[self.name]['relation']].browse(obj.read([self.name])[0][self.name])
+            elif self.ttype in ['one2many', 'many2many']:
+                return obj.env[self.relation].browse(obj.read([self.name])[0][self.name])
             else:
                 return obj.read([self.name])[0][self.name]
 
@@ -196,8 +191,7 @@ class mobile_crud(http.Controller):
         self.model = ''
         self.root = '/'
         self.search_domain = []
-        self.child_fileds = []
-        #self.fields_info = {'is_company': {'type': 'hidden','default': 'true'}}
+        self.fields_info = [mobile_input_field(self.model, 'id')]
         self.template = {'list': 'website_mobile.list', 'detail': 'website_mobile.detail', 'detail_grid': 'website_mobile.detail_grid'}
         #~ self.template = {'list': '%s.object_list' % __name__, 'detail': '%s.object_detail' % __name__}
         self.limit = 25
@@ -214,20 +208,8 @@ class mobile_crud(http.Controller):
         self.footer_edit = None
 
     def load_fields(self,fields):
-        self.fields_info = [mobile_input_field(self.model, 'id')]
         for f in fields:
-            self.fields_info.append(mobile_input_field(self.model,f))
-
-    def child_filed_value(self, child, field):
-        record = getattr(child, field)
-        # TODO: check if record is a openerp record ?
-        #~ if isinstance(record, openerp.api.res.users):
-            #~ _logger.warn(record)
-        #~ try:
-            #~ record = self.env[record.partition('(')[0]].browse(record.partition('(')[-1].rpartition(',')[0]).name
-        #~ except:
-            #~ pass
-        return record
+            self.fields_info.append(mobile_input_field(self.model, f))
 
     def search(self,search=None,domain=None):
         if not domain:
@@ -296,7 +278,7 @@ class mobile_crud(http.Controller):
 
     def do_grid(self, obj_ids=None, alerts=None):
         if request.httprequest.method == 'GET':
-            return request.render(self.template['detail_grid'], {'crud': self, 'objects': obj_ids, 'title': 'Grid', 'mode': 'edit_grid'})
+            return request.render(self.template['detail_grid'], {'crud': self, 'objects': obj_ids or [], 'title': 'Grid', 'mode': 'edit_grid'})
         else:
             form_data = request.httprequest.form
             form = {}
