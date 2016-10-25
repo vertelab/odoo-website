@@ -217,6 +217,7 @@
                   <button class="btn btn-default btn-lg"><i class="fa fa-pencil-square-o fa-2x"/></button>
                 </a>
               </div>
+              <t t-raw="0"/>
             </t>
           </div>
         </div>
@@ -261,6 +262,9 @@
                         </div>
                     </t>
                     <button t-if="mode == 'edit_grid'" class="btn btn-success btn-lg mt32 mb32" type="submit">Save</button>
+<!--
+                    <a t-if="mode=='view'" type="button" t-att-href="'%swork/add/?task_id=%s&amp;user_id=%s&amp;date=%s' %(crud.root, object.id, user_id.id, str(datetime.datetime.now()).rpartition('.')[0])"><button class="btn btn-primary btn-lg">Add</button></a>
+-->
                 </form>
             </div>
         </t>
@@ -308,6 +312,7 @@
               </t>
               <t t-if="field.type == 'table'">
                 <t t-if="field.child_class">
+                    <label><t t-esc="field.string"/></label>
                     <t t-raw="field.child_class.do_grid(obj_ids=field.get_value(object)).render()"/>
                 </t>
               </t>
@@ -471,7 +476,6 @@
 <!--
       <t t-esc="crud.fields_info[4].child_class.work_edit_grid(task=object)"/>
 -->
-    </template>
     <!-- search modal -->
     <template id="search_template" name="Search Modal">
       <!-- Search Modal -->

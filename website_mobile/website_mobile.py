@@ -191,7 +191,7 @@ class mobile_crud(http.Controller):
         self.model = ''
         self.root = '/'
         self.search_domain = []
-        self.fields_info = [mobile_input_field(self.model, 'id')]
+        self.fields_info = []
         self.template = {'list': 'website_mobile.list', 'detail': 'website_mobile.detail', 'detail_grid': 'website_mobile.detail_grid'}
         #~ self.template = {'list': '%s.object_list' % __name__, 'detail': '%s.object_detail' % __name__}
         self.limit = 25
@@ -208,6 +208,7 @@ class mobile_crud(http.Controller):
         self.footer_edit = None
 
     def load_fields(self,fields):
+        self.fields_info = [mobile_input_field(self.model, 'id')]
         for f in fields:
             self.fields_info.append(mobile_input_field(self.model, f))
 
@@ -271,10 +272,14 @@ class mobile_crud(http.Controller):
                     return request.render(self.template['detail'], {'crud': self, 'object': None, 'title': None, 'mode': 'edit'})
 
 
-    def do_list(self,obj=None,search=None,domain=None,alerts=None):
+    def do_list(self,obj=None,search=None,domain=None,alerts=None,template_list=None,template_detail=None):
         if obj:
-            return request.render(self.template['detail'], {'crud': self, 'object': obj,'alerts': alerts,'title': obj.name, 'mode': 'view'})
-        return request.render(self.template['list'], {'crud': self,'objects': self.search(search=search,domain=domain),'title': 'Module Title'})
+            if not template_detail:
+                template_detail = self.template['detail']
+            return request.render(template_detail, {'crud': self, 'object': obj,'alerts': alerts,'title': obj.name, 'mode': 'view'})
+        if not template_list:
+            template_list = self.template['list']
+        return request.render(template_list, {'crud': self,'objects': self.search(search=search,domain=domain),'title': 'Module Title'})
 
     def do_grid(self, obj_ids=None, alerts=None):
         if request.httprequest.method == 'GET':
