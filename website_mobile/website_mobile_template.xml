@@ -237,34 +237,32 @@
         <t t-if="mode == 'edit_grid'">
             <t t-set="footer_icons" t-value="crud.footer_edit or crud.footer_icons"/>
         </t>
-        <t t-call="website_mobile.mobile_layout">
-            <div id="grid-main" class="container mt32 mb32">
-                <form t-attf-action="" method="post" t-att-class="crud.form_type">
-                    <!-- Alerts -->
-                    <t t-foreach="request.context.get('alerts',[])" t-as="alert" >
-                        <div t-att-class="' '.join(['alert','alert-'+alert.get('type','success')])" role="alert">
-                            <strong t-esc="alert.get('subject')" />
-                            <span t-esc="alert.get('message')" />
+        <div id="grid-main" class="container mt32 mb32">
+            <form t-attf-action="" method="post" t-att-class="crud.form_type">
+                <!-- Alerts -->
+                <t t-foreach="request.context.get('alerts',[])" t-as="alert" >
+                    <div t-att-class="' '.join(['alert','alert-'+alert.get('type','success')])" role="alert">
+                        <strong t-esc="alert.get('subject')" />
+                        <span t-esc="alert.get('message')" />
+                    </div>
+                </t>
+                <t t-foreach="objects" t-as="object">
+                    <div class="container grid-container">
+                        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11 no-padding-div">
+                            <t t-call="website_mobile.fields_fields">
+                                <t t-set="edit_type" t-value="'edit_grid'"/>
+                                <t t-set="col_width_edit" t-value="crud.col_size_edit"/>
+                                <t t-set="col_width_view" t-value="crud.col_size_view"/>
+                            </t>
                         </div>
-                    </t>
-                    <t t-foreach="objects" t-as="object">
-                        <div class="container grid-container">
-                            <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11 no-padding-div">
-                                <t t-call="website_mobile.fields_fields">
-                                    <t t-set="edit_type" t-value="'edit_grid'"/>
-                                    <t t-set="col_width_edit" t-value="crud.col_size_edit"/>
-                                    <t t-set="col_width_view" t-value="crud.col_size_view"/>
-                                </t>
-                            </div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                <i t-if="mode == 'edit_grid'" class="fa fa-trash fa-2x" t-att-onclick="'grid_delete(&quot;%s&quot;)' %object"/>
-                            </div>
+                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                            <i t-if="mode == 'edit_grid'" class="fa fa-trash fa-2x" t-att-onclick="'grid_delete(&quot;%s&quot;)' %object"/>
                         </div>
-                    </t>
-                    <button t-if="mode == 'edit_grid'" class="btn btn-success btn-lg mt32 mb32 pull-right" type="submit">Save</button>
-                </form>
-            </div>
-        </t>
+                    </div>
+                </t>
+                <button t-if="mode == 'edit_grid'" class="btn btn-success btn-lg mt32 mb32 pull-right" type="submit">Save</button>
+            </form>
+        </div>
     </template>
     <!--
          **   fields to render to html
