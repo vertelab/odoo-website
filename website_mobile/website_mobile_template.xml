@@ -391,7 +391,7 @@
       <label>
         <t t-esc="field.string" />
       </label>
-      <input t-att-name="field.name" type="checkbox" t-att-class="' '.join(['form-control switch-checkbox',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-checked="1 if field.get_value(object) else 0" />
+      <input t-att-name="field.name" type="checkbox" t-att-class="' '.join(['form-control switch-checkbox',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" value="1" t-att-checked="1 if field.get_value(object) else 0" />
     </template>
     <!--
     *
@@ -436,7 +436,6 @@
       <label>
         <t t-esc="field.string" />
       </label>
-      banan
       <!-- form-control-static -->
       <span t-esc="'Yes' if field.get_value(object) else 'No'" />
     </template>

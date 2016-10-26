@@ -98,7 +98,8 @@ class mobile_input_field(object):
         elif self.ttype == 'datetime':
             return post.get(self.name, fields.Datetime.now())
         else:
-            raise Warning('Unknow type')
+            #~ raise Warning('Unknow type')
+            pass # when boolean field is unchecked, post will not have this field in list. Instead, method will return False.
 
     def get_form_value(self, form, index):
         if self.ttype in ['char', 'text', 'html']:
@@ -244,8 +245,13 @@ class mobile_crud(http.Controller):
                 return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
             else:
                 try:
-                    _logger.debug({f.name: f.get_post_value(post) for f in self.fields_info})
-                    obj.write({f.name: f.get_post_value(post) for f in self.fields_info if f.write})
+                    _logger.warn(post)
+                    for f in self.fields_info:
+                        if f.write:
+                            _logger.warn(f.name)
+                            obj.write({f.name: f.get_post_value(post)})
+                    #~ _logger.warn({f.name: f.get_post_value(post) for f in self.fields_info})
+                    #~ obj.write({f.name: f.get_post_value(post) for f in self.fields_info if f.write})
                     request.context['alerts']=[{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
                     return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
                 except Exception as e:
@@ -263,7 +269,6 @@ class mobile_crud(http.Controller):
                 return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name, 'mode': 'edit'})
             else:
                 try:
-                    _logger.debug({f.name: f.get_post_value(post) for f in self.fields_info})
                     obj = request.env[self.model].create({f.name: f.get_post_value(post) for f in self.fields_info if f.create})
                     request.context['alerts'] = [{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
                     return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
