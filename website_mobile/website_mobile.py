@@ -89,6 +89,8 @@ class mobile_input_field(object):
             return post.get(self.name, '')
         elif self.ttype in ['integer', 'many2one']:
             return int(post.get(self.name, None)) if post.get(self.name, '') != '' else None
+        elif self.ttype == 'selection':
+            return post.get(self.name, None)
         elif self.ttype == 'float':
             return float(post.get(self.name, None)) if post.get(self.name, '') != '' else None
         elif self.ttype == 'boolean':
@@ -106,6 +108,8 @@ class mobile_input_field(object):
             return form.get(self.name)[index]
         elif self.ttype in ['integer', 'many2one']:
             return int(form.get(self.name)[index] if form.get(self.name)[index] else 0)
+        elif self.ttype == 'selection':
+            return form.get(self.name)[index] if form.get(self.name)[index] else ''
         elif self.ttype == 'float':
             return float(form.get(self.name)[index] if form.get(self.name)[index] else 0.0)
         elif self.ttype == 'boolean':
@@ -124,6 +128,8 @@ class mobile_input_field(object):
                     return request.httprequest.args.get(self.name, '')
                 elif self.ttype in ['integer', 'many2one']:
                     return int(request.httprequest.args.get(self.name, None)) if request.httprequest.args.get(self.name, '') != '' else None
+                elif self.ttype == 'selection':
+                    return request.httprequest.args.get(self.name, None)
                 elif self.ttype == 'float':
                     return float(request.httprequest.args.get(self.name, None)) if request.httprequest.args.get(self.name, '') != '' else None
                 elif self.ttype == 'boolean':
@@ -250,9 +256,8 @@ class mobile_crud(http.Controller):
                         if f.write:
                             _logger.warn(f.name)
                             obj.write({f.name: f.get_post_value(post)})
-                    #~ _logger.warn({f.name: f.get_post_value(post) for f in self.fields_info})
-                    #~ obj.write({f.name: f.get_post_value(post) for f in self.fields_info if f.write})
                     request.context['alerts']=[{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
+                    _logger.warn(obj.type)
                     return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
                 except Exception as e:
                     request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved\n%s') %(e),'type': 'error'}]
