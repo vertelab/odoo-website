@@ -46,8 +46,8 @@
           <t t-call-assets="web.assets_common" t-js="false" />
           <t t-call-assets="website.assets_frontend" t-js="false" />
           <t t-raw="head or ''" name="layout_head" />
-          <link href="/website_mobile/static/src/css/website_mobile.css" rel="stylesheet" />
           <link href="/website_mobile/static/src/css/bootstrap-switch.css" rel="stylesheet" />
+          <link href="/website_mobile/static/src/css/website_mobile.css" rel="stylesheet" />
         </head>
         <body>
           <div id="wrapwrap">
@@ -104,7 +104,6 @@
             </main>
             <footer class="footer-fixed-bottom footer-default">
               <div id="footer_container">
-                <!--  use footer_icons  self.footer_view = [('home','','fa-home'),('add','add','fa-plus'),('search_button','','fa-search')]  -->
                 <ul class="nav nav-tabs nav-justified text-center">
                     <t t-foreach="crud.footer_icons" t-as="f">
                         <li t-att-id="f[0]">
@@ -205,19 +204,23 @@
                 <t t-set="col_width_edit" t-value="crud.col_size_edit"/>
                 <t t-set="col_width_view" t-value="crud.col_size_view"/>
             </t>
-            <button t-if="mode == 'edit'" class="btn btn-success btn-lg mt32 mb32" type="submit">Save</button>
+            <button t-if="mode == 'edit'" class="btn btn-success btn-lg mt32 mb32 pull-right" type="submit">Save</button>
           </form>
           <div id="edit-button-group" class="container">
             <t t-if="object">
-              <div class="row mt16 mb16">
-                <a t-if="mode=='view'" class="pull-left" t-attf-href="#{ crud.root }#{ object.id }/delete" onclick="return confirm('Are you sure?')" ontouchend="return confirm('Are you sure?')" >
-                  <button class="btn btn-danger btn-lg"><i class="fa fa-trash fa-2x"/></button>
-                </a>
-                <a t-if="mode=='view'" class="pull-right" t-attf-href="#{ crud.root }#{ object.id }/edit">
-                  <button class="btn btn-default btn-lg"><i class="fa fa-pencil-square-o fa-2x"/></button>
-                </a>
-              </div>
-              <t t-raw="0"/>
+              <ul>
+                  <li>
+                    <a t-if="mode=='view'" t-attf-href="#{ crud.root }#{ object.id }/delete" onclick="return confirm('Are you sure?')" ontouchend="return confirm('Are you sure?')" >
+                        <button class="btn btn-danger btn-lg"><i class="fa fa-trash fa-2x"/></button>
+                    </a>
+                  </li>
+                  <t t-raw="0"/>
+                  <li>
+                    <a t-if="mode=='view'" t-attf-href="#{ crud.root }#{ object.id }/edit">
+                        <button class="btn btn-default btn-lg"><i class="fa fa-pencil-square-o fa-2x"/></button>
+                    </a>
+                  </li>
+              </ul>
             </t>
           </div>
         </div>
@@ -254,17 +257,11 @@
                                 </t>
                             </div>
                             <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-<!--
-                                <i t-if="mode == 'edit_grid'" class="fa fa-trash fa-2x" t-att-onclick="crud.do_grid_delete(object)"/>
--->
                                 <i t-if="mode == 'edit_grid'" class="fa fa-trash fa-2x" t-att-onclick="'grid_delete(&quot;%s&quot;)' %object"/>
                             </div>
                         </div>
                     </t>
-                    <button t-if="mode == 'edit_grid'" class="btn btn-success btn-lg mt32 mb32" type="submit">Save</button>
-<!--
-                    <a t-if="mode=='view'" type="button" t-att-href="'%swork/add/?task_id=%s&amp;user_id=%s&amp;date=%s' %(crud.root, object.id, user_id.id, str(datetime.datetime.now()).rpartition('.')[0])"><button class="btn btn-primary btn-lg">Add</button></a>
--->
+                    <button t-if="mode == 'edit_grid'" class="btn btn-success btn-lg mt32 mb32 pull-right" type="submit">Save</button>
                 </form>
             </div>
         </t>
@@ -472,12 +469,8 @@
       </label>
       <span t-esc="field.get_selection_value(object)" />
     </template>
-<!--
-      <t t-esc="crud.fields_info[4].child_class.work_edit_grid(task=object)"/>
--->
     <!-- search modal -->
     <template id="search_template" name="Search Modal">
-      <!-- Search Modal -->
       <div id="search_modal" class="modal fade" role="dialog">
         <div class="modal-dialog">
           <!-- Modal content-->
@@ -536,19 +529,7 @@
                 }
             }
 
-          /*
-          $(document).ready(function() {
-          document.getElementById("database").value = localStorage.getItem("database");
-          document.getElementById("username").value = localStorage.getItem("username");
-          document.getElementById("password").value = localStorage.getItem("password");
-          });
-
-          function set_login(){
-          localStorage.setItem("database", document.getElementById("database").value);
-          localStorage.setItem("username", document.getElementById("username").value);
-          localStorage.setItem("password", document.getElementById("password").value);
-          }
-          */</script>
+            </script>
       </xpath>
     </template>
   </data>
