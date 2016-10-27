@@ -82,7 +82,7 @@ class mobile_input_field(object):
         self.help = help if help else (request.env[model].fields_get([field])[field]['help'] if 'help' in request.env[model].fields_get([field])[field] else '')
         self.step = step if step else 1  # Numeriskt
         self.write = True if self.name != 'id' else False
-        self.create = True
+        self.create = True if self.name != 'id' else False
 
     def get_post_value(self, post):
         if self.ttype in ['char', 'text', 'html']:
