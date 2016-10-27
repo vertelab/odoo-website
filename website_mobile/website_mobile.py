@@ -238,7 +238,7 @@ class mobile_crud(http.Controller):
                 return werkzeug.utils.redirect(base_path, 302)
             except:  # Catch exception message
                 request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not deleted'),'type': 'error'}]
-                return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
+                return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'view'})
 
 
     def do_edit(self,obj=None,**post):
@@ -251,13 +251,13 @@ class mobile_crud(http.Controller):
                 return request.render(self.template['detail'], {'crud': self, 'object': obj, 'title': obj.name, 'mode': 'edit'})
             else:
                 try:
-                    _logger.warn(post)
                     for f in self.fields_info:
-                        if f.write:
-                            _logger.warn(f.name)
+                        if f.ttype in ['one2many', 'many2many']:
+                            f.write = False
+                        if f.write and f.name != 'id':
+                            #~ _logger.warn('name: %s\nwrite: %s\nshould update: %s' %(f.name, f.write, 'Yes' if f.ttype not in ['one2many', 'many2many'] else 'No'))
                             obj.write({f.name: f.get_post_value(post)})
                     request.context['alerts']=[{'subject': _('Saved'),'message':_('The record is saved'),'type': 'success'}]
-                    _logger.warn(obj.type)
                     return request.render(self.template['detail'], {'crud': self, 'object': obj,'title': obj.name,'mode': 'view'})
                 except Exception as e:
                     request.context['alerts']=[{'subject': _('Error'),'message':_('The record is not saved\n%s') %(e),'type': 'error'}]
