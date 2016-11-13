@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Custom Snippet CSS and javascript -->
+        <template id="snippet_image_css_and_js" inherit_id="website.layout" name="Snippet Image Custom CSS and JS">
+            <!-- Customize javascript -->
+            <xpath expr="//body" position="inside">
+            </xpath>
+            <!-- Customize CSS -->
+            <xpath expr="//t[@t-call-assets='website.assets_frontend']" position="before">
+                <link href="/snippet_image/static/src/css/image_block.css" rel="stylesheet"/>
+                <link href="/snippet_image/static/src/css/image_block_title.css" rel="stylesheet"/>
+                <link href="/snippet_image/static/src/css/round_hover_button.css" rel="stylesheet"/>
+                <link href="/snippet_image/static/src/css/cubes.css" rel="stylesheet"/>
+                <link href="/snippet_image/static/src/css/fade_slider.css" rel="stylesheet"/>
+                <link href="/snippet_image/static/src/css/blurbg_slider.css" rel="stylesheet"/>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>
