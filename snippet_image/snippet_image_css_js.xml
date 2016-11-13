@@ -8,6 +8,7 @@
             </xpath>
             <!-- Customize CSS -->
             <xpath expr="//t[@t-call-assets='website.assets_frontend']" position="before">
+                <link href="/snippet_image/static/src/css/main.css" rel="stylesheet"/>
                 <link href="/snippet_image/static/src/css/image_block.css" rel="stylesheet"/>
                 <link href="/snippet_image/static/src/css/image_block_title.css" rel="stylesheet"/>
                 <link href="/snippet_image/static/src/css/round_hover_button.css" rel="stylesheet"/>

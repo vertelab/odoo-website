@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="0">
+    <data noupdate="1">
         <!-- default images -->
         <record id="default_image_field" model="ir.attachment">
             <field name="name">Default Image (field.jpg)</field>

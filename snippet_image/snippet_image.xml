@@ -13,10 +13,6 @@
                         <span class="oe_snippet_thumbnail_title">Banner Fade</span>
                     </div>
                     <section class="oe_snippet_body">
-                        <t t-set="img_field" t-value="request.env.ref('snippet_image.default_image_field')"/>
-                        <t t-set="img_island" t-value="request.env.ref('snippet_image.default_image_island')"/>
-                        <t t-set="img_volcano" t-value="request.env.ref('snippet_image.default_image_volcano')"/>
-                        <img t-att-src="website.imagemagick_url(img_field, 'datas', 'snippet_image.image_panorama')"/>
                         <div class="carousel slide carousel-fade" data-ride="carousel" id="fade_carousel" style="overflow: hidden;">
                             <ol class="carousel-indicators">
                                 <li class="active" data-slide-to="0" data-target="fade_carousel"/>
@@ -25,7 +21,7 @@
                             </ol>
                             <div class="carousel-inner">
                                 <div class="item active" style="">
-                                    <img class="img-responsive" src="/website/static/src/img/fields.jpg" style="position: relative;"/>
+                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_field').id, request.env.ref('snippet_image.image_panorama').id)" style="position: relative;"/>
                                      <div class="container" style="position: absolute; top: 20%; left: 20%;">
                                         <div class="row content">
                                             <div class="col-md-6 col-sm-12">
@@ -39,7 +35,7 @@
                                     </div>
                                 </div>
                                 <div class="item">
-                                    <img class="img-responsive" src="/website/static/src/img/island.jpg" style="position: relative;"/>
+                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_island').id, request.env.ref('snippet_image.image_panorama').id)" style="position: relative;"/>
                                     <div class="container" style="position: absolute; top: 20%; left: 20%;">
                                         <div class="row content">
                                             <div class="col-md-6 col-sm-12">
@@ -53,7 +49,7 @@
                                     </div>
                                 </div>
                                 <div class="item">
-                                    <img class="img-responsive" src="/website/static/src/img/volcano.jpg" style="position: relative;"/>
+                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_panorama').id)" style="position: relative;"/>
                                     <div class="container" style="position: absolute; top: 20%; left: 20%;">
                                         <div class="row content">
                                             <div class="col-md-6 col-sm-12">
@@ -85,10 +81,10 @@
                         <span class="oe_snippet_thumbnail_title">Banner Blur Background</span>
                     </div>
                     <section class="oe_snippet_body">
-                        <div class="carousel slide carousel-blurbg" data-ride="carousel" id="blurbg_arousel" style="height: 640px; overflow: hidden;">
+                        <div class="carousel slide carousel-blurbg" data-ride="carousel" id="blurbg_arousel" style="overflow: hidden;">
                             <div class="carousel-inner">
                                 <div class="item active" style="">
-                                    <img class="img-responsive" src="/website/static/src/img/fields.jpg" style="position: relative;"/>
+                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_field').id, request.env.ref('snippet_image.image_wide').id)" style="position: relative;"/>
                                      <div class="container" style="position: absolute; top: 20%; width: 100%;">
                                         <div class="row content text-center">
                                             <div class="col-md-12 col-sm-12" style="color: #fff; font-size: 4em;">
@@ -99,7 +95,7 @@
                                     </div>
                                 </div>
                                 <div class="item">
-                                    <img class="img-responsive" src="/website/static/src/img/island.jpg" style="position: relative;"/>
+                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_island').id, request.env.ref('snippet_image.image_wide').id)" style="position: relative;"/>
                                     <div class="container" style="position: absolute; top: 20%; width: 100%;">
                                         <div class="row content text-center">
                                             <div class="col-md-12 col-sm-12" style="color: #fff; font-size: 4em;">
@@ -110,7 +106,7 @@
                                     </div>
                                 </div>
                                 <div class="item">
-                                    <img class="img-responsive" src="/website/static/src/img/volcano.jpg" style="position: relative;"/>
+                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_wide').id)" style="position: relative;"/>
                                     <div class="container" style="position: absolute; top: 20%; width: 100%;">
                                         <div class="row content text-center">
                                             <div class="col-md-12 col-sm-12" style="color: #fff; font-size: 4em;">
@@ -140,28 +136,28 @@
                     </div>
                     <section class="s_cubes oe_snippet_body">
                         <div class="container-fluid">
-                            <div class="row">
-                                <section class="col-md-6 cube cube-big col-xs-12 col-sm-12 cube-big-bg" style="background-image: url('/website/static/src/img/fields.jpg');"/>
-                                <div class="cube-big col-md-6 col-xs-12 col-sm-12">
-                                    <div class="row">
-                                        <div class="cube cube-text col-md-6 col-sm-6 col-xs-12">
-                                            <div class="cube-heading">
-                                                <h4 class="text-center">Lorem ipsum dolor sit amet</h4>
-                                                <p class="text-center">Lorem ipsum dolor sit amet, class pharetra id elit leo. Massa leo per orci ullamcorper egestas, in diam, fermentum phasellus elit praesent morbi.</p>
-                                                <a href="/"><p class="text-center">Read more...</p></a>
-                                            </div>
-                                        </div>
-                                        <section class="cube cube-small col-md-6 col-sm-6 col-xs-12 cube-medium-bg" style="background-image: url('/website/static/src/img/volcano.jpg');"/>
+                            <div class="col-md-6 col-xs-12 col-sm-12 cube-big">
+                                <img t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_field').id, request.env.ref('snippet_image.image_normal').id)"/>
+                            </div>
+                            <div class="col-md-6 col-xs-12 col-sm-12 cube-big">
+                                <div class="col-md-6 col-sm-6 col-xs-12 cube-text">
+                                    <div class="cube-heading">
+                                        <h4 class="text-center">Lorem ipsum dolor sit amet</h4>
+                                        <p class="text-center">Lorem ipsum dolor sit amet, class pharetra id elit leo. Massa leo per orci ullamcorper egestas, in diam, fermentum phasellus elit praesent morbi.</p>
+                                        <a href="/"><p class="text-center">Read more...</p></a>
                                     </div>
-                                    <div class="row">
-                                        <section class="cube cube-small col-md-6 col-sm-6 col-xs-12 cube-medium-bg" style="background-image: url('/website/static/src/img/island.jpg');"/>
-                                        <div class="cube cube-text col-md-6 col-sm-6 col-xs-12 last">
-                                            <div class="cube-heading">
-                                                <h4 class="text-center">Lorem ipsum dolor sit amet</h4>
-                                                <p class="text-center">Lorem ipsum dolor sit amet, class pharetra id elit leo. Massa leo per orci ullamcorper egestas, in diam, fermentum phasellus elit praesent morbi.</p>
-                                                <a href="/"><p class="text-center">Read more...</p></a>
-                                            </div>
-                                        </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12 cube-medium">
+                                    <img t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_normal').id)"/>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12 cube-medium">
+                                    <img t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_island').id, request.env.ref('snippet_image.image_normal').id)"/>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12 cube-text">
+                                    <div class="cube-heading">
+                                        <h4 class="text-center">Lorem ipsum dolor sit amet</h4>
+                                        <p class="text-center">Lorem ipsum dolor sit amet, class pharetra id elit leo. Massa leo per orci ullamcorper egestas, in diam, fermentum phasellus elit praesent morbi.</p>
+                                        <a href="/"><p class="text-center">Read more...</p></a>
                                     </div>
                                 </div>
                             </div>
