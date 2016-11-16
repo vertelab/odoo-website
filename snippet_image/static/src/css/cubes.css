@@ -1,0 +1,26 @@
+.s_cubes .container-fluid {
+    padding: 0px;
+}
+
+.s_cubes .cube-big{
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    padding: 0px;
+}
+
+.s_cubes .cube-medium {
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    padding: 0px;
+}
+
+.s_cubes .cube-heading {
+
+}
+
+.cube-big img, .cube-medium img {
+    width: 100%;
+    height: 100%;
+}

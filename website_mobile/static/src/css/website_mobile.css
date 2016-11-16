@@ -37,6 +37,47 @@ a { text-decoration: none !important; }
     display: table-cell;
     width: 1%;
     margin-bottom: 0;
-    top: -8px;
 }
 
+.footer_items {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.footer_items > a {
+    font-size: 2.0em;
+}
+
+.grid-container {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+}
+
+.form-group {
+    padding: 0px 5px;
+}
+
+.no-padding-div {
+    padding: 0px;
+}
+
+.no-padding-div label, .form-group label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: auto;
+}
+
+btn-lg {
+    margin: auto;
+    display: block;
+}
+
+#edit-button-group > ul > li {
+    display: table-cell;
+    width: 1%;
+    text-align: center;
+}

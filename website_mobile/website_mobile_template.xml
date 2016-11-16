@@ -46,8 +46,8 @@
           <t t-call-assets="web.assets_common" t-js="false" />
           <t t-call-assets="website.assets_frontend" t-js="false" />
           <t t-raw="head or ''" name="layout_head" />
-          <link href="/website_mobile/static/src/css/website_mobile.css" rel="stylesheet" />
           <link href="/website_mobile/static/src/css/bootstrap-switch.css" rel="stylesheet" />
+          <link href="/website_mobile/static/src/css/website_mobile.css" rel="stylesheet" />
         </head>
         <body>
           <div id="wrapwrap">
@@ -99,62 +99,28 @@
               </div>
             </header>
             <main>
-              <!-- Search Modal -->
-              <div id="search_modal" class="modal fade" role="dialog">
-                <div class="modal-dialog">
-                  <!-- Modal content-->
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal">x</button>
-                      <h4 class="modal-title text-center">Search</h4>
-                    </div>
-                    <div class="modal-body">
-                      <form id="search_form" method="post" t-attf-action="#{ search }" class="pagination" style="display: block;">
-                        <div class="input-group">
-                          <input type="text" class="search-query form-control" placeholder="Search..." name="search_words" />
-                          <span class="input-group-btn">
-                            <button type="submit" class="btn btn-primary">
-                              <i class="fa fa-search" />
-                              Search
-                            </button>
-                          </span>
-                        </div>
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <t t-call="website_mobile.search_template" />
               <t t-raw="0" />
             </main>
             <footer class="footer-fixed-bottom footer-default">
               <div id="footer_container">
-                  <!--  use footer_icons ---  self.footer_view = [('home','','fa-home'),('add','add','fa-plus'),('search_button','','fa-search')]  -->
-
                 <ul class="nav nav-tabs nav-justified text-center">
-                  <li id="li-left">
-                    <h3>
-                      <a t-attf-href="#{ crud.root }">
-                        <i class="fa fa-home" />
-                      </a>
-                    </h3>
-                  </li>
-                  <li id="li-middle">
-                    <h3>
-                      <a t-attf-href="#{ add }">
-                        <i class="fa fa-plus" />
-                      </a>
-                    </h3>
-                  </li>
-                  <li id="li-right">
-                    <h3>
-                      <a>
-                        <i id="search_button" class="fa fa-search" data-toggle="modal" data-target="#search_modal" />
-                      </a>
-                    </h3>
-                  </li>
+                    <t t-foreach="crud.footer_icons" t-as="f">
+                        <li t-att-id="f[0]">
+                            <div class="footer_items">
+                                <a t-att="{'href': '%s%s' %(crud.root, f[1])} if f[1] != '' else {}">
+                                    <i t-att-class="f[2]" />
+                                </a>
+                            </div>
+                        </li>
+                    </t>
+                    <li id="li-right">
+                        <div class="footer_items">
+                            <a>
+                                <i id="search_button" class="fa fa-search" data-toggle="modal" data-target="#search_modal" />
+                            </a>
+                        </div>
+                    </li>
                 </ul>
               </div>
             </footer>
@@ -166,7 +132,7 @@
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-            
+
             ga('create', _.str.trim('
             <t t-esc="website.google_analytics_key" />
             '), 'auto');
@@ -184,7 +150,7 @@
          **
     -->
     <template id="list" name="Object List">
-      <t t-set='footer_icons' t-value="crud.footer_list or crut.footer_icons"/>
+      <t t-set='footer_icons' t-value="crud.footer_list or crud.footer_icons"/>
       <t t-call="website_mobile.mobile_layout">
         <div>
           <!-- Content Zone -->
@@ -196,7 +162,6 @@
                 <span t-esc="alert.get('message')" />
               </div>
             </t>
-              
             <!-- List Contacts -->
             <ul t-if="objects" class="">
               <li t-foreach="objects" t-as="object" class="">
@@ -234,49 +199,129 @@
                 <span t-esc="alert.get('message')" />
               </div>
             </t>
-            <!-- fields -->
-            <div t-foreach="crud.fields_info" t-as="field" class="form-group">
-              <t t-if="field.type == 'text'      and mode =='edit'">
-                <t t-call="website_mobile.input_text" />
-              </t>
-              <t t-if="field.type == 'email'     and mode =='edit'">
-                <t t-call="website_mobile.input_email" />
-              </t>
-              <t t-if="field.type == 'number'    and mode =='edit'">
-                <t t-call="website_mobile.input_number" />
-              </t>
-              <t t-if="field.type == 'boolean'   and mode =='edit'">
-                <t t-call="website_mobile.input_boolean" />
-              </t>
-              <t t-if="field.type == 'selection' and mode =='edit'">
-                <t t-call="website_mobile.input_selection" />
-              </t>
-              <t t-if="field.type == 'textarea'  and mode =='edit'">
-                <t t-call="website_mobile.input_textarea" />
-              </t>
-              <t t-if="field.type == 'boolean' and mode =='view'">
-                <t t-call="website_mobile.view_boolean" />
-              </t>
-              <t t-if="field.type != 'boolean' and mode =='view'">
-                <t t-call="website_mobile.view_text" />
-              </t>
-            </div>
-            <button t-if="mode == 'edit'" class="btn btn-success btn-lg mt32 mb32" name="btn-save" value="btn-save" type="submit">Save</button>
+            <t t-call="website_mobile.fields_fields">
+                <t t-set="edit_type" t-value="'edit'"/>
+                <t t-set="col_width_edit" t-value="crud.col_size_edit"/>
+                <t t-set="col_width_view" t-value="crud.col_size_view"/>
+            </t>
+            <button t-if="mode == 'edit'" class="btn btn-success btn-lg mt32 mb32 pull-right" type="submit">Save</button>
           </form>
-          <div class="container">
+          <div id="edit-button-group" class="container">
             <t t-if="object">
-              <h2>
-                <a t-if="mode=='view'" class="fa fa-trash pull-left" t-attf-href="#{ crud.root }#{ object.id }/delete" onclick="return confirm('Are you sure?')" ontouchend="return confirm('Are you sure?')" />
-              </h2>
-              <h2>
-                <a t-if="mode=='view'" class="fa fa-pencil-square-o pull-right" t-attf-href="#{ crud.root }#{ object.id }/edit" />
-              </h2>
+              <ul>
+                  <li>
+                    <a t-if="mode=='view'" t-attf-href="#{ crud.root }#{ object.id }/delete" onclick="return confirm('Are you sure?')" ontouchend="return confirm('Are you sure?')" >
+                        <button class="btn btn-danger btn-lg"><i class="fa fa-trash fa-2x"/></button>
+                    </a>
+                  </li>
+                  <t t-raw="0"/>
+                  <li>
+                    <a t-if="mode=='view'" t-attf-href="#{ crud.root }#{ object.id }/edit">
+                        <button class="btn btn-default btn-lg"><i class="fa fa-pencil-square-o fa-2x"/></button>
+                    </a>
+                  </li>
+              </ul>
             </t>
           </div>
         </div>
       </t>
     </template>
-    <!-- form fileds -->
+    <!--
+         **
+         **   Objects detail grid
+         **
+         **
+    -->
+    <template id="detail_grid" name="Objects Detail Grid Information">
+        <t t-set="footer_icons" t-value="crud.footer_view or crud.footer_icons"/>
+        <t t-if="mode == 'edit_grid'">
+            <t t-set="footer_icons" t-value="crud.footer_edit or crud.footer_icons"/>
+        </t>
+        <div id="grid-main" class="container mt32 mb32">
+            <form t-attf-action="" method="post" t-att-class="crud.form_type">
+                <!-- Alerts -->
+                <t t-foreach="request.context.get('alerts',[])" t-as="alert" >
+                    <div t-att-class="' '.join(['alert','alert-'+alert.get('type','success')])" role="alert">
+                        <strong t-esc="alert.get('subject')" />
+                        <span t-esc="alert.get('message')" />
+                    </div>
+                </t>
+                <t t-foreach="objects" t-as="object">
+                    <div class="container grid-container">
+                        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11 no-padding-div">
+                            <t t-call="website_mobile.fields_fields">
+                                <t t-set="edit_type" t-value="'edit_grid'"/>
+                                <t t-set="col_width_edit" t-value="crud.col_size_edit"/>
+                                <t t-set="col_width_view" t-value="crud.col_size_view"/>
+                            </t>
+                        </div>
+                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                            <i t-if="mode == 'edit_grid'" class="fa fa-trash fa-2x" t-att-onclick="'grid_delete(&quot;%s&quot;)' %object"/>
+                        </div>
+                    </div>
+                </t>
+                <button t-if="mode == 'edit_grid'" class="btn btn-success btn-lg mt32 mb32 pull-right" type="submit">Save</button>
+            </form>
+        </div>
+    </template>
+    <!--
+         **   fields to render to html
+         **   parameter: edit_type (which kind of edit to do)
+         **   parameter: col_width_edit (column with in edit mode: 1-12)
+         **   parameter: col_width_view (column with in view mode: 1-12)
+    -->
+    <template id="fields_fields" name="Fields">
+        <t t-foreach="crud.fields_info" t-as="field">
+            <div t-if="mode == edit_type" t-att-class="'form-group col-xs-%s col-sm-%s col-md-%s col-lg-%s %s' %(col_width_edit, col_width_edit, col_width_edit, col_width_edit, 'hidden' if field.type == 'hidden' else '')">
+              <t t-if="field.type == 'text'">
+                <t t-call="website_mobile.input_text" />
+              </t>
+              <t t-if="field.type == 'date'">
+                <t t-call="website_mobile.input_date" />
+              </t>
+              <t t-if="field.type == 'email'">
+                <t t-call="website_mobile.input_email" />
+              </t>
+              <t t-if="field.type == 'number'">
+                <t t-call="website_mobile.input_number" />
+              </t>
+              <t t-if="field.type == 'boolean'">
+                <t t-call="website_mobile.input_boolean" />
+              </t>
+              <t t-if="field.type == 'selection'">
+                <t t-call="website_mobile.input_selection" />
+              </t>
+              <t t-if="field.type == 'textarea'">
+                <t t-call="website_mobile.input_textarea" />
+              </t>
+              <t t-if="field.type == 'hidden'">
+                <t t-call="website_mobile.input_hidden" />
+              </t>
+            </div>
+            <div t-if="mode == 'view'" t-att-class="'form-group col-xs-%s col-sm-%s col-md-%s col-lg-%s %s' %(col_width_view, col_width_view, col_width_view, col_width_view, 'hidden' if field.type == 'hidden' else '')">
+              <t t-if="field.type == 'selection'">
+                <t t-call="website_mobile.view_selection" />
+              </t>
+              <t t-if="field.type == 'boolean'">
+                <t t-call="website_mobile.view_boolean" />
+              </t>
+              <t t-if="field.type == 'table'">
+                <t t-if="field.child_class">
+                    <label><t t-esc="field.string"/></label>
+                    <t t-raw="field.child_class.do_grid(obj_ids=field.get_value(object)).render()"/>
+                </t>
+              </t>
+              <t t-if="field.type == 'datetime'">
+                <t t-call="website_mobile.view_datetime" />
+              </t>
+              <t t-if="field.type == 'hidden'">
+              </t>
+              <t t-if="field.type not in ['boolean', 'selection', 'table', 'datetime', 'hidden']">
+                <t t-call="website_mobile.view_text" />
+              </t>
+            </div>
+        </t>
+    </template>
     <!--
     *
     *   input_text
@@ -296,6 +341,17 @@
     </template>
     <!--
     *
+    *   input_date
+    *
+    -->
+    <template id="input_date">
+      <label>
+        <t t-esc="field.string" />
+      </label>
+      <input t-att-class="' '.join(['form-control',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" type="date" t-att-value="website.convert_to_local(field.get_value(object))" t-att-required="field.required" />
+    </template>
+    <!--
+    *
     *   input_email
     *
     -->
@@ -305,7 +361,7 @@
         <t t-esc="field.string" />
       </label>
       <!-- text -->
-      <input class="form-control input-xs" t-att-name="field.name" t-att-type="field.type" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help" />
+      <input t-att-class="' '.join(['form-control',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" type="email" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help" />
     </template>
     <!--
     *
@@ -318,7 +374,7 @@
         <t t-esc="field.string" />
       </label>
       <!-- text -->
-      <input class="form-control input-xs" t-att-name="field.name" t-att-type="field.type" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help" t-att-step="field.step" />
+      <input t-att-class="' '.join(['form-control',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" type="number" t-att-value="field.get_value(object)" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help" t-att-step="field.step" />
     </template>
     <!--
     *
@@ -330,7 +386,7 @@
       <label>
         <t t-esc="field.string" />
       </label>
-      <input t-att-name="field.name" type="checkbox" class="switch-checkbox" t-att-checked="1 if field.get_value(object) else 0" />
+      <input t-att-name="field.name" type="checkbox" t-att-class="' '.join(['form-control switch-checkbox',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" value="1" t-att-checked="1 if field.get_value(object) else 0" />
     </template>
     <!--
     *
@@ -341,11 +397,9 @@
       <label>
         <t t-esc="field.string" />
       </label>
-      <select t-att-name="field.name" class="form-control selectpicker dropdown">
+      <select t-att-class="' '.join(['form-control selectpicker dropdown',crud.input_size or '',field.state().get('focus',''),field.state().get('validation',''),field.state().get('disabled','')])" t-att-name="field.name" t-att-placeholder="field.placeholder">
         <t t-foreach="field.get_selection(object)" t-as="option">
-          <option t-att-value="option[0]" t-att="{'selected': 'checked'} if option[0] == field.get_value(object) else {}">
-            <t t-raw="option[1]" />
-          </option>
+          <option t-att-value="option[0]" t-att="{'selected': 'checked'} if option[0] == field.get_value(object) else {}"><t t-raw="option[1]" /></option>
         </t>
       </select>
     </template>
@@ -358,9 +412,15 @@
       <label>
         <t t-esc="field.string" />
       </label>
-      <textarea class="form-control input-xs" t-att-name="field.name" t-att-type="field.type" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help">
-        <t t-esc='field.get_value(object)' />
-      </textarea>
+      <textarea class="form-control input-xs" t-att-name="field.name" t-att-type="field.type" t-att-placeholder="field.placeholder" t-att-required="field.required" t-att-help="field.help"><t t-esc="field.get_value(object)" /></textarea>
+    </template>
+    <!--
+    *
+    *   input_hidden
+    *
+    -->
+    <template id="input_hidden">
+      <input t-att-name="field.name" t-att-type="field.type" t-att-value="field.get_value(object)" />
     </template>
     <!--
     *
@@ -385,6 +445,58 @@
       </label>
       <span t-esc="field.get_value(object)" />
     </template>
+    <!--
+    *
+    *   view_datetime
+    *
+    -->
+    <template id="view_datetime">
+      <label>
+        <t t-esc="field.string" />
+      </label>
+      <span t-esc="website.convert_to_local(field.get_value(object))" />
+    </template>
+    <!--
+    *
+    *   view_selection
+    *
+    -->
+    <template id="view_selection">
+      <label>
+        <t t-esc="field.string" />
+      </label>
+      <span t-esc="field.get_selection_value(object)" />
+    </template>
+    <!-- search modal -->
+    <template id="search_template" name="Search Modal">
+      <div id="search_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">x</button>
+              <h4 class="modal-title text-center">Search</h4>
+            </div>
+            <div class="modal-body">
+              <form id="search_form" method="post" t-att-action="'%s%s' %(crud.root, 'search')" class="pagination" style="display: block;">
+                <div class="input-group">
+                  <input type="text" class="search-query form-control input-lg" placeholder="Search..." name="search_words" />
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                      <i class="fa fa-search" />
+                      Search
+                    </button>
+                  </span>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default btn-lg pull-right" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
     <!-- hide footer -->
     <template id="hide_footer" inherit_id="website.layout">
       <xpath expr="//footer" position="attributes">
@@ -396,25 +508,26 @@
       <xpath expr="//div[@id='footer_container']/ul" position="inside" />
     </template>
 
-
     <!-- javascript -->
     <template id="mobile_javascript" inherit_id="website_mobile.mobile_layout">
       <xpath expr="//body" position="inside">
-        <script>$(".switch-checkbox").bootstrapSwitch();
-          
-          /*
-          $(document).ready(function() {
-          document.getElementById("database").value = localStorage.getItem("database");
-          document.getElementById("username").value = localStorage.getItem("username");
-          document.getElementById("password").value = localStorage.getItem("password");
-          });
-          
-          function set_login(){
-          localStorage.setItem("database", document.getElementById("database").value);
-          localStorage.setItem("username", document.getElementById("username").value);
-          localStorage.setItem("password", document.getElementById("password").value);
-          }
-          */</script>
+        <script>
+            $(".switch-checkbox").bootstrapSwitch();
+
+            /* grid delete */
+            function grid_delete(obj){
+                if (confirm("Are you sure?") == true) {
+                    openerp.jsonRpc("/grid_delete", 'call', {
+                        'obj': obj,
+                    }).done(function(data){
+                        if(data == "grid_obj_deleted"){
+                            $("#grid-main").load(document.URL +  " #grid-main");
+                        }
+                    });
+                }
+            }
+
+            </script>
       </xpath>
     </template>
   </data>

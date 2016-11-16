@@ -1,0 +1,29 @@
+.image_block_title_section .image_block_title,
+.image_block_title_section .oe_img_bg {
+    overflow: hidden;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.image_block_title_section .image_block_title:after,
+.image_block_title_section .oe_img_bg:after {
+    padding-top: 75%;
+    display: block;
+    content: '';
+}
+
+.image_block_title_section .image_block_title_field{
+    position: absolute;
+    opacity: 0.5;
+}
+
+.image_block_title:hover .image_block_title_field{
+    transition: all 0.3s ease-in;
+    opacity: 1;
+}
+

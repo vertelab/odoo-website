@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <!-- default images -->
+        <record id="default_image_field" model="ir.attachment">
+            <field name="name">Default Image (field.jpg)</field>
+            <field name="type">url</field>
+            <field name="res_model">ir.ui.view</field>
+            <field name="url">/website/static/src/img/fields.jpg</field>
+        </record>
+        <record id="default_image_island" model="ir.attachment">
+            <field name="name">Default Image (island.jpg)</field>
+            <field name="type">url</field>
+            <field name="res_model">ir.ui.view</field>
+            <field name="url">/website/static/src/img/island.jpg</field>
+        </record>
+        <record id="default_image_volcano" model="ir.attachment">
+            <field name="name">Default Image (volcano.jpg)</field>
+            <field name="type">url</field>
+            <field name="res_model">ir.ui.view</field>
+            <field name="url">/website/static/src/img/volcano.jpg</field>
+        </record>
+
+        <!-- aspect ratio -->
+        <!-- image cube -->
+        <record id="image_cube" model="image.recipe">
+            <field name="name">Image Cube (1:1)</field>
+            <field name="description">For cube images, aspect ratio 1:1</field>
+            <field name="recipe">if image.width &gt;= image.height:
+    image.crop(width=int(image.height), height=int(image.height), gravity='center')
+else:
+    image.crop(width=int(image.width), height=int(image.width), gravity='center')
+            </field>
+        </record>
+
+        <!-- image normal -->
+        <record id="image_normal" model="image.recipe">
+            <field name="name">Image Normal (4:3)</field>
+            <field name="description">For normal images, aspect ratio 4:3</field>
+            <field name="recipe">if image.width &gt;= image.height: #landscape
+    image.transform(resize='%sx>' %image.width)
+    if float(image.width)/float(image.height) &gt;= float(4)/float(3):
+        image.crop(width=int(image.height)*4/3, height=int(image.height), gravity='center')
+    else:
+        image.crop(width=int(image.width), height=int(image.width)*3/4, gravity='center')
+else: #portrait
+    image.transform(resize='%sx>' %image.height)
+            </field>
+        </record>
+
+        <!-- image wide -->
+        <record id="image_wide" model="image.recipe">
+            <field name="name">Image Wide (16:9)</field>
+            <field name="description">For wide images, aspect ratio 16:9</field>
+            <field name="recipe">if image.width &gt;= image.height: #landscape
+    image.transform(resize='%sx>' %image.width)
+    if float(image.width)/float(image.height) &gt;= float(16)/float(9):
+        image.crop(width=int(image.height)*16/9, height=int(image.height), gravity='center')
+    else:
+        image.crop(width=int(image.width), height=int(image.width)*9/16, gravity='center')
+else: #portrait
+    image.transform(resize='%sx>' %image.height)
+            </field>
+        </record>
+
+        <!-- image panorama -->
+        <record id="image_panorama" model="image.recipe">
+            <field name="name">Image Panorama (32:9)</field>
+            <field name="description">For panorama images, aspect ratio 32:9</field>
+            <field name="recipe">if image.width &gt;= image.height: #landscape
+    image.transform(resize='%sx>' %image.width)
+    if float(image.width)/float(image.height) &gt;= float(32)/float(9):
+        image.crop(width=int(image.height)*32/9, height=int(image.height), gravity='center')
+    else:
+        image.crop(width=int(image.width), height=int(image.width)*9/32, gravity='center')
+else: #portrait
+    image.transform(resize='%sx>' %image.height)
+            </field>
+        </record>
+
+    </data>
+</openerp>
+
+
