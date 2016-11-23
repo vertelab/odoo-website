@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    
+    <template id="product" inherit_id="website_sale.product" customize_show="True" name="Previous Products">
+      <xpath expr="//div[@id='product_full_description']" position="after">
+        <t t-call="website_product_templates.product_gridbox">
+          <t t-set="product_list" t-value="website.sale_get_previous_products()"/>
+          <t t-set="gridbox_title" t-value="'Previously Viewed Products'"/>
+        </t>
+      </xpath>
+    </template>
+    
+  </data>
+</openerp>

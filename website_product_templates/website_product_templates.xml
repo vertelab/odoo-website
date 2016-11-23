@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    
+    <template id="product_gridbox" name="Product Gridbox">
+      <div class="container mt32 oe_vertel_product_gridbox" t-if="product_list">
+        <h3 t-esc="gridbox_title" class="oe_vertel_gridbox_title"/>
+        <div class='row mt16'>
+        <t t-foreach="product_list" t-as="product">
+          <t t-call="website_product_templates.product_view">
+            <t t-set="product_view_width" t-value="250"/>
+            <t t-set="product_view_heigth" t-value="150"/>
+          </t>
+        </t>
+        </div>
+      </div>
+    </template>
+    
+    <template id="product_view" name="Product View">
+      <div class='col-md-2 thumbnail oe_vertel_product_view_box' t-att-style="'%s %s' % (('width: %spx;' % product_view_width) if product_view_width else '', ('height: %spx;' % product_view_heigth) if product_view_heigth else '')">
+        <div class='mt16 text-center'>
+          <span t-field="product.image_small" t-field-options='{"widget": "image", "class": "img-rounded shadow" }'/>
+          <h5>
+            <a t-attf-href="/shop/product/#{ slug(product) }" style="display: block">
+              <span t-field='product.name' style="display: block"/>
+            </a>
+          </h5>
+          <b>
+            <t t-if="(compute_currency(product.lst_price) - product.price) &gt; 0.1">
+              <del class="text-danger oe_vertel_product_view_old_price" t-field="product.lst_price" t-field-options='{
+                "widget": "monetary",
+                "from_currency": "product.company_id.currency_id",
+                "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+              }'/>&amp;nbsp;
+            </t>
+            <span class="oe_vertel_product_view_price" t-field="product.price" t-field-options='{
+                 "widget": "monetary",
+                 "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+             }'>
+            </span>
+          </b>
+        </div>
+      </div>
+    </template>
+    
+    <template id="layout" inherit_id="website.layout" name="Product Templates">
+      <xpath expr="//t[@t-call-assets='website.assets_frontend']" position="after">
+        <link href="/website_product_templates/static/src/css/website_product_templates.css" rel="stylesheet"/>
+      </xpath>
+    </template>
+    
+  </data>
+</openerp>
