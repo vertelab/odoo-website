@@ -26,6 +26,17 @@
           </table>
         </div>
       </t>
+      <!-- Product listing on shop page -->
+    </template>
+    <template id="product" inherit_id="website_sale.product" customize_show="True" name="Product Range">
+      <xpath expr="//div[@id='product_full_description']" position="after">
+        <div class="container mt32">
+          <h3 class="Xoe_vertel_gridbox_title text-center">Product range</h3>
+          <div t-foreach="request.env['product.template'].search([('public_categ_ids','in',product.public_categ_ids.mapped('id')),('website_published','=',True),('id','!=',product.id)])[:4]" t-as="p">
+            <t t-call="website_product_templates.product_view" />
+          </div>
+        </div>
+      </xpath>
     </template>
     <!-- product listing (snippet) -->
     <!--
@@ -46,11 +57,10 @@
          
     -->
     <template id="category_products_snippet_editor" name="website_product_pcategory assets" inherit_id="website.assets_editor" groups="base.group_website_publisher">
-           <xpath expr="." position="inside">
-               <script type="text/javascript" src="/website_product_pcategory/static/src/js/website_product_pcategory.js"/>
-           </xpath>
-       </template> 
-    
+      <xpath expr="." position="inside">
+        <script type="text/javascript" src="/website_product_pcategory/static/src/js/website_product_pcategory.js" />
+      </xpath>
+    </template>
     <template id="category_products_snippet" inherit_id="website.snippets" name="show_category_products">
       <xpath expr="//div[@id='snippet_content']" position="inside">
         <div>
@@ -60,63 +70,62 @@
             <span class="oe_snippet_thumbnail_title">Category products</span>
           </div>
           <section class="oe_snippet_body">
-            <div class="parametricTemplate mt16 mb16">Hejsan
-<!--
-              <t t-call="website_product_pcategory.product_view" t-ignore-branding="1">
-                <t t-ignore-branding="1" t-set="category_ids" t-value="product.public_categ_ids" />
-              </t>
--->
+            <div class="parametricTemplate mt16 mb16">
+              Hejsan
+              <!--
+                   <t t-call="website_product_pcategory.product_view" t-ignore-branding="1">
+                   <t t-ignore-branding="1" t-set="category_ids" t-value="product.public_categ_ids" />
+                   </t>
+              -->
             </div>
           </section>
         </div>
       </xpath>
-      
       <xpath expr="//div[@id='snippet_options']" position="inside">
-              <div data-snippet-option-id="blg_entry" data-selector=".jq_blg_entry"
-               data-selector-siblings="p, h1, h2, h3, blockquote, .well, .panel, .oe_share"
-               data-selector-children=".content">
-                 <li class="dropdown-submenu"    data-required="false">
-                     <a tabindex="-1" href="#">View from blog </a>
-                     <!--todo usure how to unify setting and loop tags check code -->
-                     <t t-set="blogs" t-value="request.env['blog.blog'].search([])"/>
-                     <ul class="dropdown-menu">
-                         <li t-foreach="blogs" t-as="blog"  data-value="blog.id" class="dropdown-submenu">
-                             <t t-esc="blog.name"/>
-                             <t t-set="blog_posts" t-value="request.env['blog.post'].search([('blog_id', '=', blog.id)])"/>
-                             <ul class="dropdown-menu">
-                                 <li t-if="len(blog_posts) > 0" t-attf-data-value="-1_#{blog.id}">
-                                     <a>Last Blog Post </a>
-                                 </li>
-                                 <li t-if="len(blog_posts) > 1" t-attf-data-value="-2_#{blog.id}">
-                                     <a>Second-Last Blog Post</a>
-                                 </li>
-                                 <li t-if="len(blog_posts) > 2" t-attf-data-value="-3_#{blog.id}">
-                                     <a>Third-Last Blog Post</a>
-                                 </li>
-                                 <li t-if="len(blog_posts) > 3" t-attf-data-value="-4_#{blog.id}">
-                                     <a>Fourth Last Blog Post</a>
-                                 </li>
-                                 <li t-if="len(blog_posts) > 4" t-attf-data-value="-5_#{blog.id}">
-                                     <a>Fifth Last Blog Post</a>
-                                 </li>
-                                 <li class="dropdown-submenu" data-value="0_0" data-required="false">
-                                     <a tabindex="-1" href="#">Or select post directly</a>
-                                     <!--todo usure how to unify setting and loop tags check code -->
-                                     <ul class="dropdown-menu">
-                                         <t t-foreach="blog_posts[:len(blog_posts)]" t-as="blog_post">
-                                             <li t-attf-data-value="#{blog_post.id}_#{blog.id}">
-                                                 <a> <t t-esc="blog_post.name"/> </a>
-                                             </li>
-                                         </t>
-                                     </ul>
-                                 </li>
-                             </ul>
-                         </li>
-                     </ul>
-                 </li>
-             </div>
-          </xpath>
-      
+        <div data-snippet-option-id="blg_entry" data-selector=".jq_blg_entry" data-selector-siblings="p, h1, h2, h3, blockquote, .well, .panel, .oe_share" data-selector-children=".content">
+          <li class="dropdown-submenu" data-required="false">
+            <a tabindex="-1" href="#">View from blog</a>
+            <!--todo usure how to unify setting and loop tags check code -->
+            <t t-set="blogs" t-value="request.env['blog.blog'].search([])" />
+            <ul class="dropdown-menu">
+              <li t-foreach="blogs" t-as="blog" data-value="blog.id" class="dropdown-submenu">
+                <t t-esc="blog.name" />
+                <t t-set="blog_posts" t-value="request.env['blog.post'].search([('blog_id', '=', blog.id)])" />
+                <ul class="dropdown-menu">
+                  <li t-if="len(blog_posts) > 0" t-attf-data-value="-1_#{blog.id}">
+                    <a>Last Blog Post</a>
+                  </li>
+                  <li t-if="len(blog_posts) > 1" t-attf-data-value="-2_#{blog.id}">
+                    <a>Second-Last Blog Post</a>
+                  </li>
+                  <li t-if="len(blog_posts) > 2" t-attf-data-value="-3_#{blog.id}">
+                    <a>Third-Last Blog Post</a>
+                  </li>
+                  <li t-if="len(blog_posts) > 3" t-attf-data-value="-4_#{blog.id}">
+                    <a>Fourth Last Blog Post</a>
+                  </li>
+                  <li t-if="len(blog_posts) > 4" t-attf-data-value="-5_#{blog.id}">
+                    <a>Fifth Last Blog Post</a>
+                  </li>
+                  <li class="dropdown-submenu" data-value="0_0" data-required="false">
+                    <a tabindex="-1" href="#">Or select post directly</a>
+                    <!--todo usure how to unify setting and loop tags check code -->
+                    <ul class="dropdown-menu">
+                      <t t-foreach="blog_posts[:len(blog_posts)]" t-as="blog_post">
+                        <li t-attf-data-value="#{blog_post.id}_#{blog.id}">
+                          <a>
+                            <t t-esc="blog_post.name" />
+                          </a>
+                        </li>
+                      </t>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </div>
+      </xpath>
     </template>
     <!-- Product view -->
     <template id="product_view">
