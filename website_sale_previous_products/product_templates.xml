@@ -8,6 +8,7 @@
           <t t-set="product_list" t-value="website.sale_get_previous_products()"/>
           <t t-set="gridbox_title" t-value="'Previously Viewed Products'"/>
         </t>
+        <t t-set="useless_var_6446547657" t-value="website.sale_add_previous_product(product.id)"/>
       </xpath>
     </template>
     

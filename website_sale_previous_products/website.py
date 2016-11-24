@@ -40,8 +40,9 @@ class website(models.Model):
     def sale_add_previous_product(self, product_id):
         self.ensure_one()
         product_ids = request.session.get('previous_product_ids', [])
-        if product_id not in product_ids:
-            product_ids.append(product_id)
-            if len(product_ids) > self.qty_previous_products:
-                product_ids = product_ids[-self.qty_previous_products:]
-            request.session['previous_product_ids'] = product_ids
+        while product_id in product_ids:
+            product_ids.remove(product_id)
+        product_ids.append(product_id)
+        if len(product_ids) > self.qty_previous_products:
+            product_ids = product_ids[-self.qty_previous_products:]
+        request.session['previous_product_ids'] = product_ids
