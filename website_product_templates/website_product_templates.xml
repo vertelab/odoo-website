@@ -34,7 +34,7 @@
               }' />
               &amp;nbsp;
             </t>
-            <span class="oe_vertel_product_view_price" t-field="product.price" t-field-options='{
+            <span class="oe_vertel_product_view_price" t-field="p.price" t-field-options='{
                  "widget": "monetary",
                  "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
              }' />
