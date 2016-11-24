@@ -4,10 +4,9 @@
     <!-- landing page -->
     <template id="landing_page" name="Category Page">
       <t t-call="website.layout">
-        <div id="wrap">
-          <t t-raw="0" />
+        <div id="wrap container">
           <div class="oe_structure oe_empty" />
-          <t t-field="category.landing_page" />
+          <div t-field="category.landing_page" />
           <div class="oe_structure oe_empty" />
         </div>
       </t>
@@ -15,10 +14,26 @@
     <!-- category  listing -->
     <template id="category_listing" name="Category Listing">
       <t t-call="website.layout">
+        <div id="wrap" class="container">
+          <div class="oe_structure oe_empty" />
+          <div  class="row col-md-offset-2" >
+            <dl t-foreach="request.env['product.public.category'].search([('website_published','=',True)])" t-as="category">
+                <dt><span  t-field="category.name" /></dt>
+                <dd><span t-field="category.website_short_desc" /></dd>
+            </dl>
+          </div>
+        </div>
+      </t>
+    </template>
+    <!-- Product  listing -->
+    <template id="product_listing" name="Product Listing">
+      <t t-call="website.layout">
         <div id="wrap">
+            <h1 t-field="category.name"/>
+            <div t-field="category.wesbite_description"/>
           <div class="oe_structure oe_empty" />
           <table>
-            <tr t-foreach="request.env['product.template'].search([('public_categ_ids','in',category_ids.mapped('id'))])" t-as="product">
+            <tr t-foreach="product_ids" t-as="product">
               <td>
                 <span t-field="product.name" />
               </td>
@@ -26,12 +41,13 @@
           </table>
         </div>
       </t>
+
       <!-- Product listing on shop page -->
     </template>
     <template id="product" inherit_id="website_sale.product" customize_show="True" name="Product Range">
       <xpath expr="//div[@id='product_full_description']" position="after">
         <div class="container mt32">
-          <h3 class="Xoe_vertel_gridbox_title text-center">Product range</h3>
+          <h3 class="text-center">Product range</h3>
           <div t-foreach="request.env['product.template'].search([('public_categ_ids','in',product.public_categ_ids.mapped('id')),('website_published','=',True),('id','!=',product.id)])[:4]" t-as="p">
             <t t-call="website_product_templates.product_view" />
           </div>
@@ -127,33 +143,29 @@
         </div>
       </xpath>
     </template>
-    <!-- Product view -->
-    <template id="product_view">
-      <table>
-        <tr t-foreach="request.env['product.template'].search([('public_categ_ids','in',category_ids.mapped('id'))])" t-as="product">
-          <td>
-            <span t-field="product.name" />
-          </td>
-        </tr>
-      </table>
-    </template>
+
     <!-- category fields -->
     <record id="product_public_category_form_view" model="ir.ui.view">
       <field name="name">product.public.category.form</field>
       <field name="model">product.public.category</field>
+      <field name="inherit_id" ref="website_sale.product_public_category_form_view" />
       <field name="arch" type="xml">
-        <form string="Public Categories">
-          <sheet>
-            <field name="image_medium" widget='image' class="oe_avatar oe_right" />
-            <div class="oe_left">
-              <group>
-                <field name="name" />
-                <field name="parent_id" />
-                <field name="sequence" />
-              </group>
-            </div>
-          </sheet>
-        </form>
+        <field name="image_medium" position="after">
+          <field name="website_published" class="pull-right" widget="website_button" />
+        </field>
+        <field name="sequence" position="before">
+          <field name="website_short_desc" />
+        </field>
+        <div class="oe_left" position="after">
+          <notebook>
+            <page string="Landing Page">
+              <field name="landing_page" />
+            </page>
+            <page string="Website Description">
+              <field name="website_description" />
+            </page>
+          </notebook>
+        </div>
       </field>
     </record>
   </data>
