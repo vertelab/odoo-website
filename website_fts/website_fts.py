@@ -39,7 +39,8 @@ class fts_fts(models.Model):
     _order = "name, rank, count"
     
     name = fields.Char(index=True)
-    res_model = fields.Many2one(comodel_name='ir.model')
+    #~ res_model = fields.Many2one(comodel_name='ir.model')
+    res_model = fields.Char()
     res_id    = fields.Integer()
     count = fields.Integer(default=1)
     rank = fields.Integer(default=10)
@@ -55,19 +56,17 @@ class fts_fts(models.Model):
         models = self.env['ir.model'].search([('state', '!=', 'manual')])
         return [(model.model, model.name) for model in models if not model.model.startswith('ir.')]    
     model_record = fields.Reference(string="Record",selection="_reference_models",compute="_model_record",store=True,index=True)
-    model_name = fields.Char(string="Model Name",related="model_record.name")
-    model_type = fields.Char(string="Model Type",related="res_model.name")
+    #~ model_name = fields.Char(string="Model Name",related="model_record.name")
+    #~ model_type = fields.Char(string="Model Type",related="res_model.name")
 
-    #~ @api.model
-    #~ def update_html(self,res_model,res_id,html='',groups=None):
-        #~ pass
-#        self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id)]).unlink()
+    @api.model
+    def update_html(self,res_model,res_id,html='',groups=None):
+        self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id)]).unlink()
         #~ long_list = [w for w in re.sub(' +',' ',html2text(html.decode('utf-8')).encode('utf-8').strip().replace('\n','').lower()).split(' ') if not w in STOP_WORDS]
-        #long_list = re.sub(' +',' ',html2text(html.decode('utf-8')).encode('utf-8').strip().replace('\n','').lower()).split(' ')
-        #_logger.warn(long_list)
-        #~ raise Warning( Counter(long_list).items())
-        #~ for word,count in Counter(long_list).items():
-            #~ self.create({'res_model': res_model,'res_id': res_id, 'name': word,'count': count,'groups_ids': groups})
+        long_list = re.sub(' +',' ',html2text(html.decode('utf-8')).encode('utf-8').strip().replace('\n','').lower()).split(' ')
+        _logger.warn(long_list)
+        for word,count in Counter(long_list).items():
+            self.create({'res_model': res_model,'res_id': res_id, 'name': word,'count': count,'groups_ids': groups})
         
 class view(models.Model):
     _inherit = 'ir.ui.view'
