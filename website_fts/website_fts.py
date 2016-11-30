@@ -22,10 +22,10 @@
 from openerp import models, fields, api, _
 from openerp import http
 from openerp.http import request
-from datetime import datetime
-import werkzeug
 
-#from openerp.addons.website_fts.html2text import html2text
+from openerp.addons.website_fts.html2text import html2text
+import re
+from collections import Counter
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -38,7 +38,6 @@ class fts_fts(models.Model):
     _name = 'fts.fts'
     _order = "name, rank, count"
     
-
     name = fields.Char(index=True)
     res_model = fields.Many2one(comodel_name='ir.model')
     res_id    = fields.Integer()
@@ -54,27 +53,47 @@ class fts_fts(models.Model):
     @api.model
     def _reference_models(self):
         models = self.env['ir.model'].search([('state', '!=', 'manual')])
-#        return self.env[self.model].browse(self.res_id)
-        return [(model.model, model.name)
-                for model in models
-                if not model.model.startswith('ir.')]    
-    #~ model_record = fields.Reference(string="Record",selection="_reference_models",compute="_model_record",store=True,index=True)
-    #~ model_name = fields.Char(string="Model Name",related="model_record.name")
+        return [(model.model, model.name) for model in models if not model.model.startswith('ir.')]    
+    model_record = fields.Reference(string="Record",selection="_reference_models",compute="_model_record",store=True,index=True)
+    model_name = fields.Char(string="Model Name",related="model_record.name")
     model_type = fields.Char(string="Model Type",related="res_model.name")
 
-    @api.one
-    def update_html(self,res_model,res_id,html):
-        self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id)]).unlink()
+    #~ @api.model
+    #~ def update_html(self,res_model,res_id,html='',groups=None):
+        #~ pass
+#        self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id)]).unlink()
+        #~ long_list = [w for w in re.sub(' +',' ',html2text(html.decode('utf-8')).encode('utf-8').strip().replace('\n','').lower()).split(' ') if not w in STOP_WORDS]
+        #long_list = re.sub(' +',' ',html2text(html.decode('utf-8')).encode('utf-8').strip().replace('\n','').lower()).split(' ')
+        #_logger.warn(long_list)
+        #~ raise Warning( Counter(long_list).items())
+        #~ for word,count in Counter(long_list).items():
+            #~ self.create({'res_model': res_model,'res_id': res_id, 'name': word,'count': count,'groups_ids': groups})
         
-        pass
-    #~ if html2text:
-        #~ html = html2text(html.decode('utf-8')).encode('utf-8')
-        #~ html = self._removeSymbols(html.decode('utf-8'), '[', ']').encode('utf-8')
-        #~ html = self._removeSymbols(html.decode('utf-8'), '\n').encode('utf-8')
-        #~ html = self._removeSymbols(html.decode('utf-8'), '#').encode('utf-8')
+class view(models.Model):
+    _inherit = 'ir.ui.view'
 
-    
-    
+    @api.one
+    @api.onchange('arch','groups_id')
+    def _full_text_search_update(self):
+        self.env['fts.fts'].update_html(self._name,self.id,html=self.arch,groups=self.groups_id)
+
+#~ class WebsiteFullTextSearch(http.Controller):
+    #~ _results_per_page = 10
+    #~ _max_text_content_len=500
+    #~ _text_segment_back=100
+    #~ _text_segment_forward=300
+    #~ _min_search_len=3
+    #~ _search_on_pages=True
+    #~ _search_on_blogposts=True
+    #~ _search_on_comments=True
+    #~ _search_on_customers=True
+    #~ _search_on_jobs=True
+    #~ _search_on_products=True
+    #~ _case_sensitive=False
+    #~ _search_advanced=False
+
+
+
     #~ def _removeSymbols(self, html_txt, symbol1, symbol2=False):
 
         #~ if not symbol1 and not symbol2:
@@ -99,5 +118,51 @@ class fts_fts(models.Model):
             #~ return html_txt
 
         #~ return txt
+
+   
+ 
+
+    #~ @http.route(['/search'], type='http', auth="public", website=True)
+    #~ def search_page(self, search_advanced=False, search_on_pages=True, search_on_blogposts=True, search_on_comments=True, search_on_customers=True,
+                       #~ search_on_jobs=True, search_on_products=True, case_sensitive=False, search='', **post):
+
+        #~ # Process search parameters
+        #~ if isinstance(search_on_pages, unicode):
+            #~ self._search_on_pages=self._normalize_bool(search_on_pages)
+        #~ if isinstance(search_on_blogposts, unicode):
+            #~ self._search_on_blogposts=self._normalize_bool(search_on_blogposts)
+        #~ if isinstance(search_on_comments, unicode):
+            #~ self._search_on_comments=self._normalize_bool(search_on_comments)
+        #~ if isinstance(search_on_customers, unicode):
+            #~ self._search_on_customers=self._normalize_bool(search_on_customers)
+        #~ if isinstance(search_on_jobs, unicode):
+            #~ self._search_on_jobs=self._normalize_bool(search_on_jobs)
+        #~ if isinstance(search_on_products, unicode):
+            #~ self._search_on_products=self._normalize_bool(search_on_products)
+        #~ if isinstance(case_sensitive, unicode):
+            #~ self._case_sensitive=self._normalize_bool(case_sensitive)
+        #~ self._search_advanced=False
+
+        #~ user = request.registry['res.users'].browse(request.cr, request.uid, request.uid, context=request.context)
+        #~ values = {'user': user,
+                  #~ 'is_public_user': user.id == request.website.user_id.id,
+                  #~ 'header': post.get('header', dict()),
+                  #~ 'searches': post.get('searches', dict()),
+                  #~ 'results_count': 0,
+                  #~ 'results': dict(),
+                  #~ 'pager': None,
+                  #~ 'search_on_pages': self._search_on_pages,
+                  #~ 'search_on_blogposts': self._search_on_blogposts,
+                  #~ 'search_on_comments': self._search_on_comments,
+                  #~ 'search_on_customers': self._search_on_customers,
+                  #~ 'search_on_jobs': self._search_on_jobs,
+                  #~ 'search_on_products': self._search_on_products,
+                  #~ 'case_sensitive': self._case_sensitive,
+                  #~ 'search_advanced': False,
+                  #~ 'sorting': False,
+                  #~ 'search': search
+                  #~ }
+
+        #~ return request.website.render("website_search.search_page", values)
 
 
