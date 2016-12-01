@@ -20,22 +20,23 @@
 ##############################################################################
 
 {
-    'name': 'Website Full Text Search',
+    'name': 'Website Full Text Search Attachment',
     'version': '0.1',
     'category': 'website',
-    'summary': "Search in blogs and static web pages",
+    'summary': "Search in blogs",
     'description': """
-Search in blogs and static web pages
+Search in documents (Attachments)
 
 Financed by Dermanord AB
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website'],
-    'data': ['website_fts_data.xml','website_fts_view.xml','website_search.xml'
+    'depends': ['website_fts','document'],
+    'data': [
     ],
     'application': False,
     'installable': True,
+    'autoinstall': True,
 }
 
 # vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:

@@ -23,10 +23,9 @@ from openerp import models, fields, api, _
 from openerp import http
 from openerp.http import request
 
-from openerp.addons.website_fts.html2text import html2text
+#from openerp.addons.website_fts.html2text import html2text
 import re
 from collections import Counter
-import nltk   # pip install
 from bs4 import BeautifulSoup
 
 import logging
@@ -40,7 +39,7 @@ class fts_fts(models.Model):
     _name = 'fts.fts'
     _order = "name, rank, count"
     
-    name = fields.Char(string="Term",index=True)
+    name = fields.Char(string="Term",index=True) 
     #~ res_model = fields.Many2one(comodel_name='ir.model')
     res_model = fields.Char()
     res_id    = fields.Integer()
@@ -84,13 +83,16 @@ class fts_fts(models.Model):
     def term_search(self,word_list=[],facet=None,res_model=None):
         words = request.env['fts.fts'].search([('name','ilike', word_list[0])], order='rank,count')
         for w in word_list[1:]:  # TODO  same object
+            #for object in words.mapped(lambda )
             words = words.filtered(lambda word: w in word.name)
         facets = []
-        for f in words.mapped('facet'):
-            facets.append(Counter(words.filtered(lambda w: w.facet == f)).items())
+        for f in set(words.mapped('facet')):
+            w,c = Counter(words.filtered(lambda w: w.facet == f)).items()[0]
+            facets.append((w.facet,c))
         models = []
-        for m in words.mapped('res_model'):
-            models.append(Counter(words.filtered(lambda w: w.res_model == m)).items())
+        for m in set(words.mapped('res_model')):
+            w,c = Counter(words.filtered(lambda w: w.res_model == m)).items()[0]
+            models.append((w.res_model,c))
         return {'terms': words,'facets': facets,'models': models}
         
     
@@ -100,97 +102,59 @@ class view(models.Model):
     @api.one
     @api.depends('arch','groups_id')
     def _full_text_search_update(self):
-        self.env['fts.fts'].update_html(self._name,self.id,html=self.arch,groups=self.groups_id)
+        if self.type == 'qweb':
+            self.env['fts.fts'].update_html(self._name,self.id,html=self.arch,groups=self.groups_id)
             self.full_text_search_update = ''
             # SEO metadata ????
     full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
 
-#~ class WebsiteFullTextSearch(http.Controller):
-    #~ _results_per_page = 10
-    #~ _max_text_content_len=500
-    #~ _text_segment_back=100
-    #~ _text_segment_forward=300
-    #~ _min_search_len=3
-    #~ _search_on_pages=True
-    #~ _search_on_blogposts=True
-    #~ _search_on_comments=True
-    #~ _search_on_customers=True
-    #~ _search_on_jobs=True
-    #~ _search_on_products=True
-    #~ _case_sensitive=False
-    #~ _search_advanced=False
+class WebsiteFullTextSearch(http.Controller):
 
+    @http.route(['/search'], type='http', auth="public", website=True)
+    def search_page(self, search_advanced=False, search_on_pages=True, search_on_blogposts=True, search_on_comments=True, search_on_customers=True,
+                       search_on_jobs=True, search_on_products=True, case_sensitive=False, search='', **post):
 
+        # Process search parameters
+        if isinstance(search_on_pages, unicode):
+            self._search_on_pages=self._normalize_bool(search_on_pages)
+        if isinstance(search_on_blogposts, unicode):
+            self._search_on_blogposts=self._normalize_bool(search_on_blogposts)
+        if isinstance(search_on_comments, unicode):
+            self._search_on_comments=self._normalize_bool(search_on_comments)
+        if isinstance(search_on_customers, unicode):
+            self._search_on_customers=self._normalize_bool(search_on_customers)
+        if isinstance(search_on_jobs, unicode):
+            self._search_on_jobs=self._normalize_bool(search_on_jobs)
+        if isinstance(search_on_products, unicode):
+            self._search_on_products=self._normalize_bool(search_on_products)
+        if isinstance(case_sensitive, unicode):
+            self._case_sensitive=self._normalize_bool(case_sensitive)
+        self._search_advanced=False
 
-    #~ def _removeSymbols(self, html_txt, symbol1, symbol2=False):
+        user = request.registry['res.users'].browse(request.cr, request.uid, request.uid, context=request.context)
+        values = {'user': user,
+                  'is_public_user': user.id == request.website.user_id.id,
+                  'header': post.get('header', dict()),
+                  'searches': post.get('searches', dict()),
+                  'results_count': 0,
+                  'results': dict(),
+                  'pager': None,
+                  'search_on_pages': self._search_on_pages,
+                  'search_on_blogposts': self._search_on_blogposts,
+                  'search_on_comments': self._search_on_comments,
+                  'search_on_customers': self._search_on_customers,
+                  'search_on_jobs': self._search_on_jobs,
+                  'search_on_products': self._search_on_products,
+                  'case_sensitive': self._case_sensitive,
+                  'search_advanced': False,
+                  'sorting': False,
+                  'search': search
+                  }
 
-        #~ if not symbol1 and not symbol2:
-            #~ return html_txt
+        return request.website.render("website_fts.search_page", values)
 
-        #~ # Function to eliminate text between: symbol1 and symbol2
-        #~ index=html_txt.find(symbol1)
-        #~ start=0
-        #~ txt=''
-        #~ while index>0:
-            #~ if symbol2:
-                #~ index2=html_txt.find(symbol2, index)
-                #~ if index2<=0:
-                    #~ break
-            #~ else:
-                #~ index2=index+len(symbol1)-1
-            #~ txt+=html_txt[start:index]
-            #~ start=index2+1
-            #~ index=html_txt.find(symbol1, start)
-
-        #~ if len(txt)==0:
-            #~ return html_txt
-
-        #~ return txt
-
-   
- 
-
-    #~ @http.route(['/search'], type='http', auth="public", website=True)
-    #~ def search_page(self, search_advanced=False, search_on_pages=True, search_on_blogposts=True, search_on_comments=True, search_on_customers=True,
-                       #~ search_on_jobs=True, search_on_products=True, case_sensitive=False, search='', **post):
-
-        #~ # Process search parameters
-        #~ if isinstance(search_on_pages, unicode):
-            #~ self._search_on_pages=self._normalize_bool(search_on_pages)
-        #~ if isinstance(search_on_blogposts, unicode):
-            #~ self._search_on_blogposts=self._normalize_bool(search_on_blogposts)
-        #~ if isinstance(search_on_comments, unicode):
-            #~ self._search_on_comments=self._normalize_bool(search_on_comments)
-        #~ if isinstance(search_on_customers, unicode):
-            #~ self._search_on_customers=self._normalize_bool(search_on_customers)
-        #~ if isinstance(search_on_jobs, unicode):
-            #~ self._search_on_jobs=self._normalize_bool(search_on_jobs)
-        #~ if isinstance(search_on_products, unicode):
-            #~ self._search_on_products=self._normalize_bool(search_on_products)
-        #~ if isinstance(case_sensitive, unicode):
-            #~ self._case_sensitive=self._normalize_bool(case_sensitive)
-        #~ self._search_advanced=False
-
-        #~ user = request.registry['res.users'].browse(request.cr, request.uid, request.uid, context=request.context)
-        #~ values = {'user': user,
-                  #~ 'is_public_user': user.id == request.website.user_id.id,
-                  #~ 'header': post.get('header', dict()),
-                  #~ 'searches': post.get('searches', dict()),
-                  #~ 'results_count': 0,
-                  #~ 'results': dict(),
-                  #~ 'pager': None,
-                  #~ 'search_on_pages': self._search_on_pages,
-                  #~ 'search_on_blogposts': self._search_on_blogposts,
-                  #~ 'search_on_comments': self._search_on_comments,
-                  #~ 'search_on_customers': self._search_on_customers,
-                  #~ 'search_on_jobs': self._search_on_jobs,
-                  #~ 'search_on_products': self._search_on_products,
-                  #~ 'case_sensitive': self._case_sensitive,
-                  #~ 'search_advanced': False,
-                  #~ 'sorting': False,
-                  #~ 'search': search
-                  #~ }
-
-        #~ return request.website.render("website_search.search_page", values)
-
+    @http.route(['/search_results'], type='http', auth="public", website=True)
+    def search_result(self,search='', **post):
+        
+        return request.website.render("website_fts.search_result", request.env['fts.fts'].term_search(search.split(' ')))
 
