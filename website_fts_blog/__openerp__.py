@@ -20,10 +20,10 @@
 ##############################################################################
 
 {
-    'name': 'Website Free Text Search Blog',
+    'name': 'Website Full Text Search Blog',
     'version': '0.1',
-    'category': '',
-    'summary': "Free Text Search in blogs",
+    'category': 'website',
+    'summary': "Search in blogs",
     'description': """
 Search in blogs
 
@@ -31,9 +31,8 @@ Financed by Dermanord AB
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website_fts'],
+    'depends': ['website_fts','website_blog'],
     'data': [
-        '',
     ],
     'application': False,
     'installable': True,
