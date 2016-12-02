@@ -101,11 +101,13 @@
     <div class="question row">
         <div class="col-md-1 text-left text-muted">
             <div t-attf-class="box text-muted">
-                
+
                 <div t-esc="terms.mapped('name')"/>
+                <hr/>
                 <div t-esc="facets"/>
+                <hr/>
                 <div t-esc="models"/>
-                
+                <hr/>
 <!--
                     <div t-if="result['type']=='Customer'">
                         <a class="pull-left" style="{'width': 50px; 'heigth': 50px;}" t-attf-href="#{result['url']}"

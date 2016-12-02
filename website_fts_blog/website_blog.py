@@ -29,14 +29,14 @@ class fts_fts(models.Model):
     _inherit = 'fts.fts'
 
     facet = fields.Selection(selection_add=[('blog_tag','Blog Tag'),('blog','Blog'),('author','Author')])
-    
+
     @api.one
     def get_object(self,words):
         if self.res_model == 'blog.post':
             blog = self.env['blog.post'].browse(self.res_id)
             return {'name': blog.name, 'body': self.get_text([blog.name,blog.subtitle,self.content],words)}
         return super(fts_fts, self).get_object()
-        
+
 class Blog(models.Model):
     _inherit = 'blog.post'
 
@@ -45,13 +45,13 @@ class Blog(models.Model):
     def _full_text_search_update(self):
         if self.website_published:
             self.env['fts.fts'].update_html(self._name,self.id,html=self.content+' '+self.name+' '+self.subtitle,rank=int(self.ranking))
-            self.full_text_search_update = ''
             self.env['fts.fts'].update_text(self._name,self.id,text=self.author_id.name,facet='author',rank=int(self.ranking))
             self.env['fts.fts'].update_text(self._name,self.id,text=self.blog_id.name,facet='blog',rank=int(self.ranking))
             #self.env['fts.fts'].update_text(self._name,self.id,text=' '.join([self.])self.blog_id.name,facet='blog_tag',rank=int(self.ranking))
             # SEO metadata ????
+        self.full_text_search_update = ''
 
     full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
 
-        
+
 

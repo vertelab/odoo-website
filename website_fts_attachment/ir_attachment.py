@@ -29,7 +29,7 @@ class fts_fts(models.Model):
     _inherit = 'fts.fts'
 
     facet = fields.Selection(selection_add=[('document','Document'),('image','Image')])
-    
+
     @api.one
     def get_object(self,words):
         if self.res_model == 'ir.attachment':
@@ -43,9 +43,10 @@ class document_file(models.Model):
     @api.one
     @api.depends('index_content','name','description')
     def _full_text_search_update(self):
+        _logger.warn(self.id)
         self.env['fts.fts'].update_text(self._name,self.id,html=self.index_content+' '+self.name+' '+self.description)
         self.full_text_search_update = ''
-        if 'document' in self.file_type: 
+        if 'document' in self.file_type:
             self.env['fts.fts'].update_text(self._name,self.id,text=self.name,facet='document')
         if 'image' in self.file_type:
             self.env['fts.fts'].update_text(self._name,self.id,text=self.name,facet='image')
@@ -53,5 +54,5 @@ class document_file(models.Model):
 
     full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
 
-    
+
 
