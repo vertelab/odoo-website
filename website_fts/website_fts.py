@@ -56,25 +56,26 @@ class fts_fts(models.Model):
             #~ self.model_record = (self.res_model,self.res_id)
         else:
             self.model_record = None
-
     @api.model
     def _reference_models(self):
         models = self.env['ir.model'].search([('state', '!=', 'manual')])
         return [(model.model, model.name) for model in models if not model.model.startswith('ir.')]
-    model_record = fields.Reference(string="Record", selection="_reference_models",compute="_model_record") # ,store=True,index=True)
+    model_record = fields.Reference(string="Record",selection="_reference_models",compute="_model_record",store=True) # ,store=True,index=True)
 
     @api.model
-    def get_text(texts,words):
+    def get_text(self,texts,words):
+        _logger.warn(texts)
         text = ''
         for t in texts:
-            text += ' '.join(BeautifulSoup(t.decode('utf-8').encode('utf-8'), 'html.parser').findAll(text=True))
+            text += ' '.join(BeautifulSoup(t, 'html.parser').findAll(text=True))
+        _logger.warn(text)
         return text
 
     @api.model
     def update_html(self,res_model,res_id,html='',groups=None,facet='term',rank=10):
         self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id),('facet','=',facet)]).unlink()
         soup = BeautifulSoup(html.strip().lower(), 'html.parser') #decode('utf-8').encode('utf-8')
-        texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in soup.findAll(text=True) if not w in STOP_WORDS + [' ','\n']]).split(' ')]
+        texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in soup.findAll(text=True) if not w in STOP_WORDS + [';','=',':','(',')',' ','\n']]).split(' ')]
         _logger.warn(texts)
         for word,count in Counter(texts).items():
             self.create({'res_model': res_model,'res_id': res_id, 'name': word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
@@ -82,7 +83,7 @@ class fts_fts(models.Model):
     @api.model
     def update_text(self,res_model,res_id,text='',groups=None,facet='term',rank=10):
         self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id),('facet','=',facet)]).unlink()
-        text = text.decode('utf-8').encode('utf-8').strip().lower().split(' ')
+        text = text.strip().lower().split(' ')
         texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in text if not w in STOP_WORDS + [' ','\n']]).split(' ')]
         _logger.warn(texts)
         for word,count in Counter(texts).items():
@@ -102,7 +103,7 @@ class fts_fts(models.Model):
         for m in set(words.mapped('res_model')):
             w,c = Counter(words.filtered(lambda w: w.res_model == m)).items()[0]
             models.append((w.res_model,c))
-        return {'terms': words,'facets': facets,'models': models}
+        return {'terms': words,'facets': facets,'models': models, 'docs': words.mapped('model_record')}
 
     @api.one
     def get_object(self,words):
@@ -113,6 +114,16 @@ class fts_fts(models.Model):
         return {'name': '<none>', 'body': '<empty>'}
 
 
+class fts_website(models.Model):
+    _name = 'fts.website'
+
+    name = fields.Char(string="Url")
+    xml_id = fields.Char()
+    body = fields.Text()
+    group_ids = fields.Many2many(comodel_name="res.groups")
+    res_id = fields.Integer()
+ 
+
 class view(models.Model):
     _inherit = 'ir.ui.view'
 
@@ -121,7 +132,12 @@ class view(models.Model):
     def _full_text_search_update(self):
         _logger.warn(self.name)
         if self.type == 'qweb' and 't-call="website.layout"' in self.arch:
-            self.env['fts.fts'].update_html(self._name,self.id,html=self.arch,groups=self.groups_id)
+            website = self.env['fts.website'].search([('res_id','=',self.id)])
+            if website:
+                website.write({'name': self.name, 'xml_id': self.xml_id, 'body': self.env['fts.fts'].get_text([self.arch],[]), 'res_id': self.id, 'group_ids': self.groups_id })
+            else:
+                website = self.env['fts.website'].create({'name': self.name, 'xml_id': self.xml_id, 'body': self.env['fts.fts'].get_text([self.arch],[]), 'res_id': self.id, 'group_ids': self.groups_id })
+            self.env['fts.fts'].update_html('fts.website',website.id,html=website.body,groups=website.group_ids)
         self.full_text_search_update = ''
     full_text_search_update = fields.Char(compute="_full_text_search_update", store=True)
 

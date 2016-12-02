@@ -102,8 +102,19 @@
         <div class="col-md-1 text-left text-muted">
             <div t-attf-class="box text-muted">
 
-                <div t-esc="terms.mapped('name')"/>
+                <h1>Docs</h1>
+<!--
+                <div t-esc="docs.mapped('name')"/>
+-->
+                <div t-esc="docs"/>
+                <h1>Terms</h1>
+
+                <div t-esc="set(terms.mapped('name'))"/>
+                
+                
                 <hr/>
+                                <h1>Facets</h1>
+
                 <div t-esc="facets"/>
                 <hr/>
                 <div t-esc="models"/>

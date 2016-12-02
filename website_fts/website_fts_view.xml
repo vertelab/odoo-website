@@ -18,6 +18,7 @@
           <group expand='0' string='Group by...'>
             <filter string='Model' domain="[]" context="{'group_by' : 'res_model'}" />
             <filter string='Facet' domain="[]" context="{'group_by' : 'facet'}" />
+            <filter string='Object' domain="[]" context="{'group_by' : 'model_record'}" />
           </group>
         </search>
       </field>
