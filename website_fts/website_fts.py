@@ -62,6 +62,13 @@ class fts_fts(models.Model):
     model_record = fields.Reference(string="Record", selection="_reference_models",compute="_model_record") # ,store=True,index=True)
 
     @api.model
+    def get_text(texts,words):
+        text = ''
+        for t in texts:
+            text += ' '.join(BeautifulSoup(t.decode('utf-8').encode('utf-8'), 'html.parser').findAll(text=True))
+        return text
+
+    @api.model
     def update_html(self,res_model,res_id,html='',groups=None,facet='term',rank=10):
         self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id),('facet','=',facet)]).unlink()
         soup = BeautifulSoup(html.decode('utf-8').encode('utf-8').strip().lower(), 'html.parser')
@@ -95,6 +102,13 @@ class fts_fts(models.Model):
             models.append((w.res_model,c))
         return {'terms': words,'facets': facets,'models': models}
         
+    @api.one
+    def get_object(self,words):
+        if self.res_model == 'ir.ui.view':
+            page = self.env['ir.ui.view'].browse(self.res_id)
+            return {'name': page.name, 'body': self.get_text([page.arch],words)}
+        return {'name': '<none>', 'body': '<empty>'}
+
     
 class view(models.Model):
     _inherit = 'ir.ui.view'
@@ -107,6 +121,7 @@ class view(models.Model):
             self.full_text_search_update = ''
             # SEO metadata ????
     full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
+    
 
 class WebsiteFullTextSearch(http.Controller):
 
