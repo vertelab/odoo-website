@@ -43,7 +43,7 @@ class document_file(models.Model):
     @api.one
     @api.depends('index_content','name','description')
     def _full_text_search_update(self):
-        self.env['fts.fts'].update_text(self._name,self.id,html=self.index_content or ''+' '+self.name+' '+self.description or '')
+        self.env['fts.fts'].update_html(self._name,self.id,html=self.index_content or ''+' '+self.name+' '+self.description or '')
         self.full_text_search_update = ''
         if 'document' in self.file_type:
             self.env['fts.fts'].update_text(self._name,self.id,text=self.name,facet='document')
