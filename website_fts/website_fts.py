@@ -64,11 +64,11 @@ class fts_fts(models.Model):
 
     @api.model
     def get_text(self,texts,words):
-        _logger.warn(texts)
+        #~ _logger.warn(texts)
         text = ''
         for t in texts:
             text += ' '.join(BeautifulSoup(t, 'html.parser').findAll(text=True))
-        _logger.warn(text)
+        #~ _logger.warn(text)
         return text
 
     @api.model
@@ -76,7 +76,7 @@ class fts_fts(models.Model):
         self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id),('facet','=',facet)]).unlink()
         soup = BeautifulSoup(html.strip().lower(), 'html.parser') #decode('utf-8').encode('utf-8')
         texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in soup.findAll(text=True) if not w in STOP_WORDS + [';','=',':','(',')',' ','\n']]).split(' ')]
-        _logger.warn(texts)
+        #~ _logger.warn(texts)
         for word,count in Counter(texts).items():
             self.create({'res_model': res_model,'res_id': res_id, 'name': word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
 
@@ -85,7 +85,7 @@ class fts_fts(models.Model):
         self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id),('facet','=',facet)]).unlink()
         text = text.strip().lower().split(' ')
         texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in text if not w in STOP_WORDS + [' ','\n']]).split(' ')]
-        _logger.warn(texts)
+        #~ _logger.warn(texts)
         for word,count in Counter(texts).items():
             self.create({'res_model': res_model,'res_id': res_id, 'name': word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
 
@@ -107,7 +107,7 @@ class fts_fts(models.Model):
 
     @api.one
     def get_object(self,words):
-        _logger.warn('get_object')
+        #~ _logger.warn('get_object')
         if self.res_model == 'ir.ui.view':
             page = self.env['ir.ui.view'].browse(self.res_id)
             return {'name': page.name, 'body': self.get_text([page.arch],words)}
@@ -122,7 +122,7 @@ class fts_website(models.Model):
     body = fields.Text()
     group_ids = fields.Many2many(comodel_name="res.groups")
     res_id = fields.Integer()
- 
+
 
 class view(models.Model):
     _inherit = 'ir.ui.view'
@@ -130,7 +130,7 @@ class view(models.Model):
     @api.one
     @api.depends('arch','groups_id')
     def _full_text_search_update(self):
-        _logger.warn(self.name)
+        #~ _logger.warn(self.name)
         if self.type == 'qweb' and 't-call="website.layout"' in self.arch:
             website = self.env['fts.website'].search([('res_id','=',self.id)])
             if website:
@@ -147,7 +147,7 @@ class WebsiteFullTextSearch(http.Controller):
     @http.route(['/search'], type='http', auth="public", website=True)
     def search_page(self, search_advanced=False, search_on_pages=True, search_on_blogposts=True, search_on_comments=True, search_on_customers=True,
                        search_on_jobs=True, search_on_products=True, case_sensitive=False, search='', **post):
-        _logger.warn(isinstance(search_on_pages, unicode))
+        #~ _logger.warn(isinstance(search_on_pages, unicode))
         # Process search parameters
         if isinstance(search_on_pages, unicode):
             self._search_on_pages=self._normalize_bool(search_on_pages)
