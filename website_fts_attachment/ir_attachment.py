@@ -43,11 +43,11 @@ class document_file(models.Model):
     @api.one
     @api.depends('index_content','name','description')
     def _full_text_search_update(self):
-        self.env['fts.fts'].update_html(self._name,self.id,html=self.index_content or ''+' '+self.name+' '+self.description or '')
+        self.env['fts.fts'].update_html(self._name,self.id,html=' '.join([h for h in [self.index_content,self.name,self.description] if h]))
         self.full_text_search_update = ''
-        if 'document' in self.file_type:
+        if self.file_type and 'document' in self.file_type:
             self.env['fts.fts'].update_text(self._name,self.id,text=self.name,facet='document')
-        if 'image' in self.file_type:
+        if self.file_type and 'image' in self.file_type:
             self.env['fts.fts'].update_text(self._name,self.id,text=self.name,facet='image')
         # Exif metadata ????
 

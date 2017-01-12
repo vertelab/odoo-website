@@ -22,6 +22,7 @@
 from openerp import models, fields, api, _
 from openerp import http
 from openerp.http import request
+from openerp.exceptions import Warning
 
 #from openerp.addons.website_fts.html2text import html2text
 import re
@@ -76,9 +77,9 @@ class fts_fts(models.Model):
         self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id),('facet','=',facet)]).unlink()
         soup = BeautifulSoup(html.strip().lower(), 'html.parser') #decode('utf-8').encode('utf-8')
         texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in soup.findAll(text=True) if not w in STOP_WORDS + [';','=',':','(',')',' ','\n']]).split(' ')]
-        #~ _logger.warn(texts)
+        #~ raise Warning(Counter(texts).items())
         for word,count in Counter(texts).items():
-            self.create({'res_model': res_model,'res_id': res_id, 'name': word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
+            self.create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
 
     @api.model
     def update_text(self,res_model,res_id,text='',groups=None,facet='term',rank=10):
@@ -86,8 +87,9 @@ class fts_fts(models.Model):
         text = text.strip().lower().split(' ')
         texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in text if not w in STOP_WORDS + [' ','\n']]).split(' ')]
         #~ _logger.warn(texts)
+        #~ _logger.warn(Counter(texts).items())
         for word,count in Counter(texts).items():
-            self.create({'res_model': res_model,'res_id': res_id, 'name': word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
+            self.create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
 
     @api.model
     def term_search(self,word_list=[],facet=None,res_model=None):
