@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2004-2016 Vertel AB (<http://vertel.se>).
+#    Copyright (C) 2004-2017 Vertel AB (<http://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,21 +20,18 @@
 ##############################################################################
 
 {
-    'name': 'Website Help PDF',
+    'name': 'Help Online Calendar',
     'version': '0.1',
     'category': 'website',
-    'summary': "Launch PDF-document instead of html-page",
-    'description': """
-Launch PDF-document instead of html-page
-
-Financed by Dermanord AB
-""",
+    'summary': "Adds help button to calendar views.",
+    'description': """""",
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website'],
-    'data': ['ir_ui_view_view.xml'],
+    'depends': ['help_online', 'web_calendar'],
+    'data': ['website_help_view.xml'],
     'application': False,
     'installable': True,
+    'autoinstall': True,
 }
 
 # vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:
