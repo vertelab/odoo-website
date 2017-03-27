@@ -1,186 +1,40 @@
 # -*- coding: utf-8 -*-
-import cStringIO
-import datetime
-from itertools import islice
-import json
-import xml.etree.ElementTree as ET
-
-import logging
-import re
-
-import werkzeug.utils
-import urllib2
-import werkzeug.wrappers
-from PIL import Image
-
+##############################################################################
+#
+#    OpenERP, Open Source Management Solution, third party addon
+#    Copyright (C) 2004-2017 Vertel AB (<http://vertel.se>).
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
+from cStringIO import StringIO
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, Warning, RedirectWarning
-
-import openerp
 from openerp.addons.web.controllers.main import WebClient
-from openerp.addons.web import http
-from openerp.http import request, STATIC_CACHE
-from openerp.tools import image_save_for_web
-import urllib2
+from openerp import http
+from openerp.http import request
+from openerp.addons.web.controllers.main import serialize_exception, content_disposition
+import base64
+import werkzeug
 
-logger = logging.getLogger(__name__)
-
-# Completely arbitrary limits
-MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT = IMAGE_LIMITS = (1024, 768)
-LOC_PER_SITEMAP = 45000
-SITEMAP_CACHE_TIME = datetime.timedelta(hours=12)
-
-class Website(openerp.addons.web.controllers.main.Home):
-
-    @http.route('/page/<page:page>', type='http', auth="public", website=True)
-    def page(self, page, **opt):
-        values = {
-            'path': page,
-        }
-        # /page/website.XXX --> /page/XXX
-        if page.startswith('website.'):
-            return request.redirect('/page/' + page[8:], code=301)
-        elif '.' not in page:
-            page = 'website.%s' % page
-
-        try:
-            request.website.get_template(page)
-        except ValueError, e:
-            # page not found
-            if request.website.is_publisher():
-                page = 'website.page_404'
-            else:
-                return request.registry['ir.http']._handle_exception(e, 404)
-
-        return request.render(page, values)
-
-
-class Website_page(models.Model):
-    _inherit = "website"
-
-  
-    
-    def get_template(self, cr, uid, ids, template, context=None):
-        if isinstance(template, (int, long)):
-            view_id = template
-        else:
-            if '.' not in template:
-                template = 'website.%s' % template
-            module, xmlid = template.split('.', 1)
-            model, view_id = request.registry["ir.model.data"].get_object_reference(cr, uid, module, xmlid)
-        return self.pool["ir.ui.view"].browse(cr, uid, view_id, context=context)
-
-    #~ def _render(self, cr, uid, ids, template, values=None, context=None):
-        #~ # TODO: remove this. (just kept for backward api compatibility for saas-3)
-        #~ return self.pool['ir.ui.view'].render(cr, uid, template, values=values, context=context)
-
-    #~ def render(self, cr, uid, ids, template, values=None, status_code=None, context=None):
-        #~ # TODO: remove this. (just kept for backward api compatibility for saas-3)
-        #~ return request.render(template, values, uid=uid)
-
-#~ class HttpRequest(openerp.http.WebRequest):
-    #~ """ Handler for the ``http`` request type.
-
-    #~ matched routing parameters, query string parameters, form_ parameters
-    #~ and files are passed to the handler method as keyword arguments.
-
-    #~ In case of name conflict, routing parameters have priority.
-
-    #~ The handler method's result can be:
-
-    #~ * a falsy value, in which case the HTTP response will be an
-      #~ `HTTP 204`_ (No Content)
-    #~ * a werkzeug Response object, which is returned as-is
-    #~ * a ``str`` or ``unicode``, will be wrapped in a Response object and
-      #~ interpreted as HTML
-
-    #~ .. _form: http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.2
-    #~ .. _HTTP 204: http://tools.ietf.org/html/rfc7231#section-6.3.5
-    #~ """
-    #~ _request_type = "http"
-
-    #~ def __init__(self, *args):
-        #~ super(HttpRequest, self).__init__(*args)
-        #~ params = self.httprequest.args.to_dict()
-        #~ params.update(self.httprequest.form.to_dict())
-        #~ params.update(self.httprequest.files.to_dict())
-        #~ params.pop('session_id', None)
-        #~ self.params = params
-
-    #~ def _handle_exception(self, exception):
-        #~ """Called within an except block to allow converting exceptions
-           #~ to abitrary responses. Anything returned (except None) will
-           #~ be used as response."""
-        #~ try:
-            #~ return super(HttpRequest, self)._handle_exception(exception)
-        #~ except SessionExpiredException:
-            #~ if not request.params.get('noredirect'):
-                #~ query = werkzeug.urls.url_encode({
-                    #~ 'redirect': request.httprequest.url,
-                #~ })
-                #~ return werkzeug.utils.redirect('/web/login?%s' % query)
-        #~ except werkzeug.exceptions.HTTPException, e:
-            #~ return e
-
-    #~ def dispatch(self):
-        #~ if request.httprequest.method == 'OPTIONS' and request.endpoint and request.endpoint.routing.get('cors'):
-            #~ headers = {
-                #~ 'Access-Control-Max-Age': 60 * 60 * 24,
-                #~ 'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, X-Debug-Mode'
-            #~ }
-            #~ return Response(status=200, headers=headers)
-
-        #~ r = self._call_function(**self.params)
-        #~ if not r:
-            #~ r = Response(status=204)  # no content
-        #~ return r
-
-    #~ def make_response(self, data, headers=None, cookies=None):
-        #~ """ Helper for non-HTML responses, or HTML responses with custom
-        #~ response headers or cookies.
-
-        #~ While handlers can just return the HTML markup of a page they want to
-        #~ send as a string if non-HTML data is returned they need to create a
-        #~ complete response object, or the returned data will not be correctly
-        #~ interpreted by the clients.
-
-        #~ :param basestring data: response body
-        #~ :param headers: HTTP headers to set on the response
-        #~ :type headers: ``[(name, value)]``
-        #~ :param collections.Mapping cookies: cookies to set on the client
-        #~ """
-        #~ response = Response(data, headers=headers)
-        #~ if cookies:
-            #~ for k, v in cookies.iteritems():
-                #~ response.set_cookie(k, v)
-        #~ return response
-
-    #~ def render(self, template, qcontext=None, lazy=True, **kw):
-        #~ """ Lazy render of a QWeb template.
-
-        #~ The actual rendering of the given template will occur at then end of
-        #~ the dispatching. Meanwhile, the template and/or qcontext can be
-        #~ altered or even replaced by a static response.
-
-        #~ :param basestring template: template to render
-        #~ :param dict qcontext: Rendering context to use
-        #~ :param bool lazy: whether the template rendering should be deferred
-                          #~ until the last possible moment
-        #~ :param kw: forwarded to werkzeug's Response object
-        #~ """
-        #~ raise Warning('Hello')
-        #~ response = Response(template=template, qcontext=qcontext, **kw)
-        #~ if not lazy:
-            #~ return response.render()
-        #~ return response
-
-
+import logging
+_logger = logging.getLogger(__name__)
 
 class view(models.Model):
     _inherit = 'ir.ui.view'
-
+    
     pdf_file = fields.Binary(string="PDF-file")
-
 
 #~ class Reports(http.Controller):
     #~ POLLING_DELAY = 0.25
@@ -347,3 +201,38 @@ class view(models.Model):
             #~ return self.read_template(cr, uid, name, context=context)
 
         #~ return self.pool[engine].render(cr, uid, id_or_xml_id, qcontext, loader=loader, context=context)
+    #~ pdf_filename = fields.Char(string="PDF-file")
+    
+    @api.cr_uid_ids_context
+    def render(self, cr, uid, id_or_xml_id, values=None, engine='ir.qweb', context=None):
+        if isinstance(id_or_xml_id, list):
+            id_or_xml_id = id_or_xml_id[0]
+        if isinstance(id_or_xml_id, basestring):
+            module, xmlid = id_or_xml_id.split('.', 1)
+            model, view_id = self.pool["ir.model.data"].get_object_reference(cr, uid, module, xmlid)
+            view_vals = self.pool[model].read(cr, uid, view_id, ['pdf_file'], context)
+            if view_vals['pdf_file']:
+                response = werkzeug.wrappers.Response()
+                data = view_vals['pdf_file']
+                #response.set_etag(hashlib.sha1(data).hexdigest())
+                response.make_conditional(request.httprequest)
+
+                data = data.decode('base64')
+                data = StringIO(data)
+                #~ response.mimetype = Image.MIME[image.format]
+
+                filename = '%s.pdf' % xmlid
+                response.headers['Content-Disposition'] = 'inline; filename="%s"' % filename
+
+                response.data = data
+
+                return response
+                
+                #~ res = request.make_response(base64.b64decode(view_vals['pdf_file']),
+                            #~ [('Content-Type', 'application/octet-stream'),
+                             #~ ('Content-Disposition', content_disposition('%s.pdf' % xmlid))])
+                #~ return res
+                #~ return StringIO(base64.b64decode(view_vals['pdf_file']))
+        return super(view, self).render(cr, uid, id_or_xml_id, values=values, engine=engine, context=context)
+        
+
