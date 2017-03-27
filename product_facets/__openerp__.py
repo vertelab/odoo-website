@@ -21,7 +21,7 @@
 
 {
     'name': 'Product Facets',
-    'version': '0.1',
+    'version': '0.2',
     'category': '',
     'summary': "Adds facets to products",
     'description': """

@@ -9,6 +9,7 @@
       <field name="model">product.facet</field>
       <field name="arch" type="xml">
         <tree string="Product Facets" editable="top">
+          <field name="sequence" widget="handle" />
           <field name="name"/>
         </tree>
       </field>

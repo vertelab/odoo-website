@@ -33,7 +33,10 @@ class product_facet(models.Model):
         ('name_uniq', 'unique (name)', 'This facet already exists !')
     ]
     
+    _order = "sequence, name"
+    
     name = fields.Char(string='Name', translate=True, required = True)
+    sequence = field.Integer()
     value_ids = fields.One2many(comodel_name='product.facet.value', string='Facet Values', inverse_name='facet_id')
     
 class product_facet_value(models.Model):
