@@ -28,27 +28,30 @@ _logger = logging.getLogger(__name__)
 class product_facet(models.Model):
     _name = 'product.facet'
     _description = "Product Facet"
-    
+
     _sql_constraints = [
         ('name_uniq', 'unique (name)', 'This facet already exists !')
     ]
-    
+
+    _order = "sequence, name"
+
     name = fields.Char(string='Name', translate=True, required = True)
+    sequence = fields.Integer()
     value_ids = fields.One2many(comodel_name='product.facet.value', string='Facet Values', inverse_name='facet_id')
-    
+
 class product_facet_value(models.Model):
     _name = 'product.facet.value'
     _description = "Product Facet Value"
     _order = 'sequence'
-    
+
     _sql_constraints = [
         ('value_company_uniq', 'unique (name,facet_id)', 'This facet value already exists !')
     ]
-    
+
     name = fields.Char(string='Name', translate = True, required = True)
     facet_id = fields.Many2one(comodel_name='product.facet', string='Product Facet', required = True)
     sequence = fields.Integer(string='Sequence')
-    
+
     @api.multi
     def name_get(self):
         if not self._context.get('show_facet', True):
@@ -57,11 +60,11 @@ class product_facet_value(models.Model):
         for value in self:
             res.append([value.id, "%s: %s" % (value.facet_id.name, value.name)])
         return res
-    
+
 class product_facet_line(models.Model):
     _name = 'product.facet.line'
     _description = "Product Facet Lines"
-    
+
     @api.multi
     def _check_valid_facet(self):
         return self.value_ids <= self.facet_id.value_ids
@@ -69,12 +72,12 @@ class product_facet_line(models.Model):
     _constraints = [
         (_check_valid_facet, 'Error ! You cannot use this facet with the following value.', ['facet_id'])
     ]
-    
+
     product_tmpl_id = fields.Many2one(comodel_name='product.template', string='Product Templates', required = True)
     facet_id = fields.Many2one(comodel_name='product.facet', string='Product Facet', required = True)
     value_ids = fields.Many2many(comodel_name='product.facet.value', string='Facet Values', required = True)
 
 class product_template(models.Model):
     _inherit = 'product.template'
-    
+
     facet_line_ids = fields.One2many(comodel_name='product.facet.line', string='Facet Lines', inverse_name='product_tmpl_id')
