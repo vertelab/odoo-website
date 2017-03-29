@@ -3,11 +3,11 @@
     <data>
         
         <template id="products_attributes" inherit_id="website_sale.products" active="False" customize_show="True" name="Product Attribute's Search">
-            <xpath expr="//div[@id='products_grid_before']" position="inside">
-                <div>
+            <xpath expr="//div[@class='products_pager']" position="inside">
+                <div class="row" style="width: 100%">
                     <form class="js_attributes" method="get">
                         <input type="hidden" name="search" t-att-value="search"/>
-                        <select class="oe_select2_search js-states form-control select2-hidden-accessible" multiple="multiple" name="attrib">
+                        <select class="oe_select9_search js-states form-control" multiple="multiple" name="attrib" style="width: 100%">
                             <t t-foreach="attributes" t-as="a">
                                 <t t-if="a.value_ids and a.type != 'hidden'">
                                     <optgroup t-att-label="a.name">

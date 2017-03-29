@@ -28,6 +28,9 @@ from openerp.addons.web.controllers.main import serialize_exception, content_dis
 import base64
 import werkzeug
 
+import sys
+import traceback
+
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -46,26 +49,33 @@ class view(models.Model):
             model, view_id = self.pool["ir.model.data"].get_object_reference(cr, uid, module, xmlid)
             view_vals = self.pool[model].read(cr, uid, view_id, ['pdf_file'], context)
             if view_vals['pdf_file']:
-                response = werkzeug.wrappers.Response()
-                data = view_vals['pdf_file']
-                #response.set_etag(hashlib.sha1(data).hexdigest())
-                response.make_conditional(request.httprequest)
+                #~ try:
+                    #~ balupas.foo()
+                #~ except:
+                    #~ e = sys.exc_info()
+                    #~ _logger.warn(''.join(traceback.format_exception(e[0], e[1], e[2])))
+                #~ response = werkzeug.wrappers.Response()
+                #~ data = view_vals['pdf_file']
+                #~ #response.set_etag(hashlib.sha1(data).hexdigest())
+                #~ response.make_conditional(request.httprequest)
 
-                data = data.decode('base64')
-                data = StringIO(data)
-                #~ response.mimetype = Image.MIME[image.format]
+                #~ data = data.decode('base64')
+                #~ data = StringIO(data)
+                #response.mimetype = Image.MIME[image.format]
 
                 filename = '%s.pdf' % xmlid
-                response.headers['Content-Disposition'] = 'inline; filename="%s"' % filename
+                #~ response.headers['Content-Disposition'] = 'inline; filename="%s"' % filename
 
-                response.data = data
+                #~ response.data = data
 
-                return response
-                
-                #~ res = request.make_response(base64.b64decode(view_vals['pdf_file']),
-                            #~ [('Content-Type', 'application/octet-stream'),
-                             #~ ('Content-Disposition', content_disposition('%s.pdf' % xmlid))])
-                #~ return res
+                #~ return response
+                data = base64.b64decode(view_vals['pdf_file'])
+                #data = StringIO(data).read()
+                _logger.warn(type(data))
+                res = request.make_response(StringIO(data),
+                            [('Content-Type', 'application/pdf'),
+                            ('Content-Disposition', 'inline; filename="%s"' % filename)])
+                return res
                 #~ return StringIO(base64.b64decode(view_vals['pdf_file']))
         return super(view, self).render(cr, uid, id_or_xml_id, values=values, engine=engine, context=context)
         

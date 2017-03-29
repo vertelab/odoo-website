@@ -23,9 +23,9 @@
     'name': 'Select2 Search Field',
     'version': '0.1',
     'category': '',
-    'summary': "",
-    'description': """
-
+    'summary': "Adds a select2 search field.",
+    'description': """Due to a naming conflict all instances of select2 have been rebranded as select9.
+Manual can be found at https://select2.github.io/
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
