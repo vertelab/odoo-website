@@ -2,7 +2,7 @@
 <openerp>
   <data>
     <!-- fts -->
-    <record id="fts_search_view" model="ir.ui.view">
+    <record id="fts_fts_search_view" model="ir.ui.view">
       <field name="name">fts.fts.search</field>
       <field name="model">fts.fts</field>
       <field name="inherit_id" ref="website_fts.fts_search_view" />
@@ -16,7 +16,7 @@
         </filter>
       </field>
     </record>
-    <record id="fts_tree_view" model="ir.ui.view">
+    <record id="fts_fts_tree_view" model="ir.ui.view">
       <field name="name">fts.fts.tree</field>
       <field name="model">fts.fts</field>
       <field name="inherit_id" ref="website_fts.fts_tree_view" />
@@ -24,7 +24,6 @@
         <field name="rank" position="after">
           <field name="nbr_searches" />
           <field name="last_search" />
-          s
         </field>
       </field>
     </record>
@@ -32,7 +31,6 @@
     <record id="fts_search_view" model="ir.ui.view">
       <field name="name">fts.popular.search</field>
       <field name="model">fts.popular</field>
-      <field name="res_model">fts.popular</field>
       <field name="arch" type="xml">
         <search string="Term">
           <field name="name" filter_domain="[('name','ilike',self)]" />
@@ -77,7 +75,6 @@
         </form>
       </field>
     </record>
-<!--
     <record id="fts_popular_action" model="ir.actions.act_window">
       <field name="name">Popular Text Search Terms</field>
       <field name="type">ir.actions.act_window</field>
@@ -87,6 +84,5 @@
     </record>
 
     <menuitem name="Popular Terms" id="menu_fts_popular_terms" parent="website_fts.menu_fts_configuration" action="fts_popular_action" sequence="1" />
--->
   </data>
 </openerp>
