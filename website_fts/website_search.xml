@@ -2,7 +2,29 @@
 <openerp>
 <data>
 
-
+        <!-- modal search form -->
+        <template id="main_search_layout" inherit_id="website.layout">
+            <xpath expr="//div[@id='wrapwrap']" position="before">
+                <div id="search_modal" class="modal fade" role="dialog">
+                    <div class="modal-dialog" style="margin: 0px;">
+                        <div class="modal-content">
+                            <div class="modal-header hidden">
+                            </div>
+                            <div class="modal-body" style="padding: 0px;">
+                                <form/>
+                                <div id="searchbox" class="open">
+                                    <ul class="dropdown-menu" style="width: 100%; margin: 0px; padding: 0px 15px;">
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="modal-footer hidden">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
 
 <!-- helper -->
 <template id="link_button">
@@ -110,8 +132,8 @@
                 <h1>Terms</h1>
 
                 <div t-esc="set(terms.mapped('name'))"/>
-                
-                
+
+
                 <hr/>
                                 <h1>Facets</h1>
 

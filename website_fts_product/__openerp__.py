@@ -20,25 +20,22 @@
 ##############################################################################
 
 {
-    'name': 'Website Full Text Search Popular searches',
+    'name': 'Website Full Text Search Product',
     'version': '0.1',
     'category': 'website',
-    'summary': "Lists popular searches",
+    'summary': "Search in products",
     'description': """
-Popular searches from statistics
-
 Financed by Dermanord AB
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website_fts'],
+    'depends': ['website_fts','website_sale'],
     'data': [
-        'website_fts_view.xml',
-        'website_fts_data.xml',
         'website_search.xml',
     ],
     'application': False,
     'installable': True,
+    #~ 'autoinstall': True,
 }
 
 # vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:
