@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <!-- fts -->
+    <record id="fts_search_view" model="ir.ui.view">
+      <field name="name">fts.fts.search</field>
+      <field name="model">fts.fts</field>
+      <field name="inherit_id" ref="website_fts.fts_search_view" />
+      <field name="arch" type="xml">
+        <filter string="Count>1" position="after">
+          <filter string="Last Week" icon="terp-accessories-archiver" domain="[('last_week','=',True)]" />
+          <filter string="Last Month" icon="terp-accessories-archiver" domain="[('last_month','=',True)]" />
+          <filter string="Last Quarter" icon="terp-accessories-archiver" domain="[('last_quarter','=',True)]" />
+          <filter string="Last Half Year" icon="terp-accessories-archiver" domain="[('last_halfyear','=',True)]" />
+          <filter string="Last Year" icon="terp-accessories-archiver" domain="[('last_year','=',True)]" />
+        </filter>
+      </field>
+    </record>
+    <record id="fts_tree_view" model="ir.ui.view">
+      <field name="name">fts.fts.tree</field>
+      <field name="model">fts.fts</field>
+      <field name="inherit_id" ref="website_fts.fts_tree_view" />
+      <field name="arch" type="xml">
+        <field name="rank" position="after">
+          <field name="nbr_searches" />
+          <field name="last_search" />
+          s
+        </field>
+      </field>
+    </record>
+    <!-- fts popular -->
+    <record id="fts_search_view" model="ir.ui.view">
+      <field name="name">fts.popular.search</field>
+      <field name="model">fts.popular</field>
+      <field name="res_model">fts.popular</field>
+      <field name="arch" type="xml">
+        <search string="Term">
+          <field name="name" filter_domain="[('name','ilike',self)]" />
+          <field name="fts_id" />
+          <field name="nbr_searches" />
+          <field name="last_search" />
+          <field name="count" />
+          <field name="rank" />
+          <separator />
+        </search>
+      </field>
+    </record>
+    <record id="fts_tree_view" model="ir.ui.view">
+      <field name="name">fts.popular.tree</field>
+      <field name="model">fts.popular</field>
+      <field name="arch" type="xml">
+        <tree string="Popular Terms">
+          <field name="sequence" widget="handle" />
+          <field name="name" />
+          <field name="fts_id" hidden="1" />
+          <field name="nbr_searches" />
+          <field name="last_search" />
+          <field name="count" />
+          <field name="rank" />
+        </tree>
+      </field>
+    </record>
+    <record id="fts_form_view" model="ir.ui.view">
+      <field name="name">fts.popular.form</field>
+      <field name="model">fts.popular</field>
+      <field name="arch" type="xml">
+        <form string="Popular Terms">
+          <group>
+            <field name="sequence" widget="handle" />
+            <field name="name" />
+            <field name="fts_id" hidden="1" />
+            <field name="nbr_searches" />
+            <field name="last_search" />
+            <field name="count" />
+            <field name="rank" />
+          </group>
+        </form>
+      </field>
+    </record>
+<!--
+    <record id="fts_popular_action" model="ir.actions.act_window">
+      <field name="name">Popular Text Search Terms</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">fts.popular</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_type">form</field>
+    </record>
+
+    <menuitem name="Popular Terms" id="menu_fts_popular_terms" parent="website_fts.menu_fts_configuration" action="fts_popular_action" sequence="1" />
+-->
+  </data>
+</openerp>
