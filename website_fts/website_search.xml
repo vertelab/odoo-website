@@ -11,9 +11,27 @@
                             <div class="modal-header hidden">
                             </div>
                             <div class="modal-body" style="padding: 0px;">
-                                <form/>
+                                <form action="/" method="get">
+                                    <div class="input-group add-on">
+                                        <input class="form-control" name="search" placeholder="Search..." type="text"/>
+                                        <input type="submit" value="Submit" class="hidden"/>
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-default" data-dismiss="modal"><i class="glyphicon glyphicon-remove"/>
+                                            </button>
+                                        </div>
+                                        <script>
+                                            document.getElementById('search').addEventListener('keypress', function(event) {
+                                                if (event.keyCode == 13) {
+                                                    event.preventDefault();
+                                                }
+                                            });
+                                        </script>
+                                    </div>
+                                </form>
                                 <div id="searchbox" class="open">
                                     <ul class="dropdown-menu" style="width: 100%; margin: 0px; padding: 0px 15px;">
+                                        <h4 class="title_suggestion">Search suggestion</h4>
+                                        <div class="result_suggestion"/>
                                     </ul>
                                 </div>
                             </div>
@@ -237,6 +255,12 @@
 <template id="customer_detail" name="Customer description">
     <div t-field="partner.website_description"/>
 </template>
+
+        <template id="assets_frontend" inherit_id="website.assets_frontend" name="Website assets - Global Search">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/website_fts/static/src/js/main.js"></script>
+            </xpath>
+        </template>
 
 
 </data>
