@@ -198,10 +198,17 @@ class WebsiteFullTextSearch(http.Controller):
     @http.route(['/search_results'], type='http', auth="public", website=True)
     def search_result(self,search='', **post):
         vals = request.env['fts.fts'].term_search(search.split(' '))
-        _logger.warn(vals)
         return request.website.render("website_fts.search_result", vals)
 
-    @http.route(['/search_term'], type='json', auth="public", website=True)
-    def search_term(self,search='', **kw):
+    @http.route(['/search_response'], type='json', auth="public", website=True)
+    def search_response(self,search='', **kw):
         result = request.env['fts.fts'].term_search(search.split(' '))
-        return None
+        result_list = result['terms']
+        rl = []
+        for r in result_list:
+            rl.append({
+                'res_id': r.res_id,
+                'model_record': r.model_record._name,
+                'name': r.model_record.name,
+            })
+        return rl
