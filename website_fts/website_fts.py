@@ -98,6 +98,11 @@ class fts_fts(models.Model):
             #for object in words.mapped(lambda )
             words = words.filtered(lambda word: w in word.name)
             _logger.warn(words)
+        wl = request.env['fts.fts'].browse([])
+        for w in words:
+            if not wl.filtered(lambda o: o.res_id == w.res_id and o.model_record == w.model_record):
+                wl |= w
+        words = wl
         facets = []
         for f in set(words.mapped('facet')):
             w,c = Counter(words.filtered(lambda w: w.facet == f)).items()[0]
@@ -106,7 +111,7 @@ class fts_fts(models.Model):
         for m in set(words.mapped('res_model')):
             w,c = Counter(words.filtered(lambda w: w.res_model == m)).items()[0]
             models.append((w.res_model,c))
-        return {'terms': words,'facets': facets,'models': models, 'docs': words.filtered(lambda w: w.model_record != False).mapped('model_record')}
+        return {'terms': words,'facets': facets,'models': models, 'docs': words.filtered(lambda w: w.model_record != False and w._name == 'product.template').mapped('model_record')}
 
     @api.one
     def get_object(self,words):
@@ -192,10 +197,11 @@ class WebsiteFullTextSearch(http.Controller):
 
     @http.route(['/search_results'], type='http', auth="public", website=True)
     def search_result(self,search='', **post):
-        return request.website.render("website_fts.search_result", request.env['fts.fts'].term_search(search.split(' ')))
+        vals = request.env['fts.fts'].term_search(search.split(' '))
+        _logger.warn(vals)
+        return request.website.render("website_fts.search_result", vals)
 
     @http.route(['/search_term'], type='json', auth="public", website=True)
     def search_term(self,search='', **kw):
         result = request.env['fts.fts'].term_search(search.split(' '))
-        _logger.warn(result)
         return None

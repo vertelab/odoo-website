@@ -132,10 +132,6 @@
                 </form>
 </template>
 
-
-
-
-
 <!-- Individual Search Result -->
 <template id="search_result">
     <t t-call="website.layout">
@@ -143,11 +139,17 @@
         <div class="container">
             <div t-attf-class="box">
                 <h1>Results</h1>
-                <t t-foreach="docs" t-as="doc">
-                    <div t-esc="docs"/>
-                    <div t-esc="terms"/>
-                    <div t-esc="facets"/>
-                    <div t-esc="models"/>
+                <t t-if="len(terms) &gt; 0">
+                    <t t-foreach="terms" t-as="term">
+<!--
+                        <div t-esc="docs"/>
+-->
+                        <div t-esc="term"/>
+<!--
+                        <div t-esc="facets"/>
+                        <div t-esc="models"/>
+-->
+                    </t>
                 </t>
 <!--
                 <div t-esc="docs"/>

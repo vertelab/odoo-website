@@ -33,7 +33,8 @@ class fts_fts(models.Model):
     def get_object(self, words):
         if self.res_model == 'product.template':
             product = self.env['product.template'].browse(self.res_id)
-            return {'name': product.name, 'body': self.get_text([product.name, product.description_sale], words)}
+            if product:
+                return {'name': product.name, 'body': self.get_text([product.name, product.description_sale], words)}
         #~ elif self.res_model == 'product.product':
             #~ product = self.env['product.product'].browse(self.res_id)
             #~ return {'name': product.name, 'body': self.get_text([product.name, product.description_sale], words)}
@@ -46,7 +47,7 @@ class product_template(models.Model):
     @api.one
     @api.depends('website_published','name','description_sale')
     def _full_text_search_update(self):
-        if self.website_published:
+        if self.website_published and self.active:
             self.env['fts.fts'].update_text(self._name,self.id,text=self.name+' '+self.description_sale,rank=0)
             #~ self.env['fts.fts'].update_text(self._name,self.id,text=self.author_id.name,facet='author',rank=int(self.ranking))
         self.full_text_search_update = ''
