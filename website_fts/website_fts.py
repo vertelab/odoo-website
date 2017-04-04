@@ -97,6 +97,7 @@ class fts_fts(models.Model):
         for w in word_list[1:]:  # TODO  same object
             #for object in words.mapped(lambda )
             words = words.filtered(lambda word: w in word.name)
+            _logger.warn(words)
         facets = []
         for f in set(words.mapped('facet')):
             w,c = Counter(words.filtered(lambda w: w.facet == f)).items()[0]
@@ -105,7 +106,7 @@ class fts_fts(models.Model):
         for m in set(words.mapped('res_model')):
             w,c = Counter(words.filtered(lambda w: w.res_model == m)).items()[0]
             models.append((w.res_model,c))
-        return {'terms': words,'facets': facets,'models': models, 'docs': words.mapped('model_record')}
+        return {'terms': words,'facets': facets,'models': models, 'docs': words.filtered(lambda w: w.model_record != False).mapped('model_record')}
 
     @api.one
     def get_object(self,words):
@@ -140,7 +141,7 @@ class view(models.Model):
             else:
                 website = self.env['fts.website'].create({'name': self.name, 'xml_id': self.xml_id, 'body': self.env['fts.fts'].get_text([self.arch],[]), 'res_id': self.id, 'group_ids': self.groups_id })
             self.env['fts.fts'].update_html('fts.website',website.id,html=website.body,groups=website.group_ids)
-        self.full_text_search_update = ''
+        self.full_text_search_update = '' #just for depends to work
     full_text_search_update = fields.Char(compute="_full_text_search_update", store=True)
 
 
@@ -186,11 +187,15 @@ class WebsiteFullTextSearch(http.Controller):
                   'sorting': False,
                   'search': search
                   }
-
+        _logger.warn(values)
         return request.website.render("website_fts.search_page", values)
 
     @http.route(['/search_results'], type='http', auth="public", website=True)
     def search_result(self,search='', **post):
-
         return request.website.render("website_fts.search_result", request.env['fts.fts'].term_search(search.split(' ')))
 
+    @http.route(['/search_term'], type='json', auth="public", website=True)
+    def search_term(self,search='', **kw):
+        result = request.env['fts.fts'].term_search(search.split(' '))
+        _logger.warn(result)
+        return None

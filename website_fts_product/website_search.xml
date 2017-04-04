@@ -1,26 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <template id="search_layout" inherit_id="website_fts.main_search_layout">
-            <xpath expr="//form" position="replace">
-                <form action="/shop" method="get">
-                    <div class="input-group add-on">
-                        <input class="form-control" name="search" placeholder="Search..." type="text"/>
-                        <input type="submit" value="Submit" class="hidden"/>
-                        <div class="input-group-btn">
-                            <button class="btn btn-default" data-dismiss="modal"><i class="glyphicon glyphicon-remove"/>
-                            </button>
-                        </div>
-                        <script>
-                            document.getElementById('search').addEventListener('keypress', function(event) {
-                                if (event.keyCode == 13) {
-                                    event.preventDefault();
-                                }
-                            });
-                        </script>
-                    </div>
-                </form>
-            </xpath>
-        </template>
+
     </data>
 </openerp>

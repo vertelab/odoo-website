@@ -1,11 +1,9 @@
 $(document).ready(function(){
-    $("input[name='search']").keyup(function() {
-        console.log($(this).val());
+    $("input[name=search]").keyup(function(){
+        openerp.jsonRpc("/search_term", "call", {
+            'search': $(this).val(),
+        }).done(function(data){
+            console.log(data);
+        });
     });
-    //~ $("input[name=search]").change(function(){
-        //~ openerp.jsonRpc("/get_suggestion_terms", "call", {
-
-        //~ }).done(function(data){
-        //~ });
-    //~ });
 });

@@ -32,7 +32,7 @@ Financed by Dermanord AB
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
     'depends': ['website'],
-    'data': ['website_fts_data.xml','website_fts_view.xml','website_search.xml'
+    'data': ['website_fts_data.xml','website_fts_view.xml','website_search.xml','security/ir.model.access.csv',
     ],
     'application': False,
     'installable': True,

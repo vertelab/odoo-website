@@ -35,24 +35,24 @@ class fts_fts(models.Model):
     @api.one
     @api.depends('last_search','nbr_searches')
     def _last_week(self):
-        self.last_week = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)) < 7 if self.last_search else None
-        self.last_month = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)) < 31 if self.last_search else None
-        self.last_quarter = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)) < 92 if self.last_search else None
-        self.last_halfyear = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)) < 182 if self.last_search else None
-        self.last_year = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)) < 365 if self.last_search else None
+        self.last_week = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)).days < 7 if self.last_search else None
+        self.last_month = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)).days < 31 if self.last_search else None
+        self.last_quarter = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)).days < 92 if self.last_search else None
+        self.last_halfyear = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)).days < 182 if self.last_search else None
+        self.last_year = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)).days < 365 if self.last_search else None
     last_week = fields.Boolean(string="Last week",compute="_last_week",store=True)
     last_month = fields.Boolean(string="Last month",compute="_last_week",store=True)
     last_quarter = fields.Boolean(string="Last quarter",compute="_last_week",store=True)
     last_halfyear = fields.Boolean(string="Last half year",compute="_last_week",store=True)
     last_year = fields.Boolean(string="Last year",compute="_last_week",store=True)
-    
+
     @api.model
     def term_search(self,word_list=[],facet=None,res_model=None):
         res = super(fts_fts,self).term_search(word_list,facet,res_model)
         for term in res['terms']:
             term.write({'nbr_searches': term.nbr_searches + 1, 'last_search': fields.Datetime.now()})
         return res
-        
+
 class fts_popular(models.Model):
     _name = 'fts.popular'
     _order = "sequence,name"
