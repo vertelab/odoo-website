@@ -30,6 +30,10 @@
                                 </form>
                                 <div id="searchbox" class="open">
                                     <ul class="dropdown-menu" style="width: 100%; margin: 0px; padding: 0px 15px;">
+                                        <h4 class="title_history">Your ealier search</h4>
+                                            <div t-foreach="website.sale_get_previous_products()" t-as="p">
+                                                <li><a t-att-href="'/shop/product/%s' %p.id"><t t-esc="p.name"/></a></li>
+                                            </div>
                                         <h4 class="title_suggestion">Search suggestion</h4>
                                         <div class="result_suggestion"/>
                                     </ul>
@@ -266,6 +270,7 @@
 
         <template id="assets_frontend" inherit_id="website.assets_frontend" name="Website assets - Global Search">
             <xpath expr="." position="inside">
+                <link href="/website_fts/static/src/css/main.css" rel="stylesheet" />
                 <script type="text/javascript" src="/website_fts/static/src/js/main.js"></script>
             </xpath>
         </template>
