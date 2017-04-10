@@ -1,3 +1,7 @@
+#searchbox li {
+    list-style-type: none;
+}
+
 #searchbox a {
     color: #333;
     padding: 3px 20px;

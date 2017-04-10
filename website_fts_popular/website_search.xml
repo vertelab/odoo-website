@@ -7,7 +7,7 @@
                 <t t-if="len(popular_terms) &gt; 0">
                     <h4 class="title_popular">Popular search</h4>
                     <t t-foreach="popular_terms" t-as="pt" >
-                        <li style="list-style-type: none;"><a t-att-href="'/shop?search=%s' %pt.name"><t t-esc="pt.name"/></a></li>
+                        <li><a t-att-href="'/shop?search=%s' %pt.name"><t t-esc="pt.name"/></a></li>
                     </t>
                 </t>
             </xpath>

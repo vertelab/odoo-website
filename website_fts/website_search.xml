@@ -145,8 +145,8 @@
     <t t-call="website.layout">
     <div class="question row">
         <div class="container">
-            <div t-attf-class="box">
-                <h1>Results</h1>
+            <h1>Results</h1>
+            <div class="fts_result">
                 <t t-if="len(terms) &gt; 0">
                     <t t-foreach="terms" t-as="term">
                         <div t-esc="term"/>

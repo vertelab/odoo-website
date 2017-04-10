@@ -198,6 +198,7 @@ class WebsiteFullTextSearch(http.Controller):
     @http.route(['/search_results'], type='http', auth="public", website=True)
     def search_result(self,search='', **post):
         vals = request.env['fts.fts'].term_search(search.split(' '))
+        vals['kw'] = search
         return request.website.render("website_fts.search_result", vals)
 
     @http.route(['/search_suggestion'], type='json', auth="public", website=True)
@@ -206,11 +207,35 @@ class WebsiteFullTextSearch(http.Controller):
         _logger.warn(result)
         result_list = result['terms']
         rl = []
-        for r in result_list[:5]:
-            rl.append({
-                'res_id': r.res_id,
-                'model_record': r.model_record._name,
-                'name': r.model_record.name,
-                'blog_id': r.model_record.blog_id if r.model_record._name == 'blog.post' else '',
-            })
+        i = 0
+        while i < len(result_list) and len(rl) < 5:
+            r = result_list[i]
+            if r.model_record._name in ['product.template', 'product.public.category']:
+                rl.append({
+                    'res_id': r.res_id,
+                    'model_record': r.model_record._name,
+                    'name': r.model_record.name,
+                })
+            elif r.model_record._name == 'product.product':
+                rl.append({
+                    'res_id': r.res_id,
+                    'model_record': r.model_record._name,
+                    'name': r.model_record.name,
+                    'product_tmpl_id': r.model_record.product_tmpl_id.id,
+                })
+            elif r.model_record._name == 'blog.post':
+                rl.append({
+                    'res_id': r.res_id,
+                    'model_record': r.model_record._name,
+                    'name': r.model_record.name,
+                    'blog_id': r.model_record.blog_id.id,
+                })
+            elif r.model_record._name == 'product.facet.line':
+                rl.append({
+                    'res_id': r.res_id,
+                    'model_record': r.model_record._name,
+                    'product_tmpl_id': r.model_record.product_tmpl_id.id,
+                    'product_name': r.model_record.product_tmpl_id.name,
+                })
+            i += 1
         return rl
