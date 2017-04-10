@@ -111,7 +111,7 @@ class fts_fts(models.Model):
         for m in set(words.mapped('res_model')):
             w,c = Counter(words.filtered(lambda w: w.res_model == m)).items()[0]
             models.append((w.res_model,c))
-        return {'terms': words,'facets': facets,'models': models, 'docs': words.filtered(lambda w: w.model_record != False and w._name == 'product.template').mapped('model_record')}
+        return {'terms': words,'facets': facets,'models': models, 'docs': words.filtered(lambda w: w.model_record != False).mapped('model_record')}
 
     @api.one
     def get_object(self,words):
@@ -200,15 +200,17 @@ class WebsiteFullTextSearch(http.Controller):
         vals = request.env['fts.fts'].term_search(search.split(' '))
         return request.website.render("website_fts.search_result", vals)
 
-    @http.route(['/search_response'], type='json', auth="public", website=True)
-    def search_response(self,search='', **kw):
+    @http.route(['/search_suggestion'], type='json', auth="public", website=True)
+    def search_suggestion(self,search='', **kw):
         result = request.env['fts.fts'].term_search(search.split(' '))
+        _logger.warn(result)
         result_list = result['terms']
         rl = []
-        for r in result_list:
+        for r in result_list[:5]:
             rl.append({
                 'res_id': r.res_id,
                 'model_record': r.model_record._name,
                 'name': r.model_record.name,
+                'blog_id': r.model_record.blog_id if r.model_record._name == 'blog.post' else '',
             })
         return rl

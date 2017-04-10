@@ -30,10 +30,14 @@
                                 </form>
                                 <div id="searchbox" class="open">
                                     <ul class="dropdown-menu" style="width: 100%; margin: 0px; padding: 0px 15px;">
-                                        <h4 class="title_history">Your ealier search</h4>
+                                        <t t-if="len(website.sale_get_previous_products()) &gt; 0">
+                                            <h4 class="title_history">Your ealier search</h4>
                                             <div t-foreach="website.sale_get_previous_products()" t-as="p">
-                                                <li><a t-att-href="'/shop/product/%s' %p.id"><t t-esc="p.name"/></a></li>
+                                                <li>
+                                                    <a t-att-href="'/shop/product/%s' %p.id"><t t-esc="p.name"/></a>
+                                                </li>
                                             </div>
+                                        </t>
                                         <h4 class="title_suggestion">Search suggestion</h4>
                                         <div class="result_suggestion"/>
                                     </ul>
@@ -145,15 +149,16 @@
                 <h1>Results</h1>
                 <t t-if="len(terms) &gt; 0">
                     <t t-foreach="terms" t-as="term">
-<!--
-                        <div t-esc="docs"/>
--->
                         <div t-esc="term"/>
 <!--
+                        <div t-esc="docs"/>
                         <div t-esc="facets"/>
                         <div t-esc="models"/>
 -->
                     </t>
+                </t>
+                <t t-if="len(terms) == 0">
+                    <h1 class="text-center text-muted">No results found</h1>
                 </t>
 <!--
                 <div t-esc="docs"/>

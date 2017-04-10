@@ -27,7 +27,7 @@ _logger = logging.getLogger(__name__)
 class fts_fts(models.Model):
     _inherit = 'fts.fts'
 
-    facet = fields.Selection(selection_add=[('product_template','Product Template')])
+    facet = fields.Selection(selection_add=[('product_template','Product Template'), ('product_product','Product Product'), ('product_public_category','Product Public Category')])
 
     @api.one
     def get_object(self, words):
@@ -35,9 +35,14 @@ class fts_fts(models.Model):
             product = self.env['product.template'].browse(self.res_id)
             if product:
                 return {'name': product.name, 'body': self.get_text([product.name, product.description_sale], words)}
-        #~ elif self.res_model == 'product.product':
-            #~ product = self.env['product.product'].browse(self.res_id)
-            #~ return {'name': product.name, 'body': self.get_text([product.name, product.description_sale], words)}
+        elif self.res_model == 'product.product':
+            product = self.env['product.product'].browse(self.res_id)
+            if product:
+                return {'name': product.name, 'body': self.get_text([product.name, product.description_sale], words)}
+        elif self.res_model == 'product.public.category':
+            category = self.env['product.public.category'].browse(self.res_id)
+            if category:
+                return {'name': category.name, 'body': self.get_text([category.name], words)}
         return super(fts_fts, self).get_object()
 
 
@@ -55,16 +60,26 @@ class product_template(models.Model):
     full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
 
 
-#~ class product_product(models.Model):
-    #~ _inherit = 'product.product'
+class product_product(models.Model):
+    _inherit = 'product.product'
 
-    #~ @api.one
-    #~ @api.depends('website_published','name','description_sale','product_templ_id')
-    #~ def _full_text_search_update(self):
-        #~ if self.website_published:
-            #~ self.env['fts.fts'].update_html(self._name,self.id,html=self.content+' '+self.name+' '+self.subtitle,rank=int(self.ranking))
-            #~ self.env['fts.fts'].update_text(self._name,self.id,text=self.author_id.name,facet='author',rank=int(self.ranking))
-            #~ self.env['fts.fts'].update_text(self._name,self.id,text=self.blog_id.name,facet='blog',rank=int(self.ranking))
-        #~ self.full_text_search_update = ''
+    @api.one
+    @api.depends('website_published','name','description_sale','product_tmpl_id')
+    def _full_text_search_update(self):
+        if self.website_published and self.active:
+            self.env['fts.fts'].update_text(self._name,self.id,text=self.name+' '+self.description_sale,rank=0)
+        self.full_text_search_update = ''
+
+    full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
+
+
+class product_public_category(models.Model):
+    _inherit = 'product.public.category'
+
+    @api.one
+    @api.depends('name')
+    def _full_text_search_update(self):
+        self.env['fts.fts'].update_text(self._name,self.id,text=self.name,rank=0)
+        self.full_text_search_update = ''
 
     full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
