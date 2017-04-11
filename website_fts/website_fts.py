@@ -100,7 +100,15 @@ class fts_fts(models.Model):
         return r3
 
     @api.model
-    def term_search(self,word_list=[],facet=None,res_model=None):
+    def term_search(self,search,facet=None,res_model=None):
+        word_list = []
+        if '"' in search:
+            for w in search.split('"'):
+                if w.strip() != '':
+                    word_list.append(w)
+
+        else:
+            word_list = search.split(' ')
         words = request.env['fts.fts'].search([('name','ilike', word_list[0])], order='rank,count')
         for w in word_list[1:]:
             wr = words.mapped(lambda r: '%s,%s' %(r.res_model, r.res_id))
@@ -204,13 +212,13 @@ class WebsiteFullTextSearch(http.Controller):
 
     @http.route(['/search_results'], type='http', auth="public", website=True)
     def search_result(self, search='', times=0, **post):
-        vals = request.env['fts.fts'].term_search(search.split(' '))
+        vals = request.env['fts.fts'].term_search(search)
         vals['kw'] = search
         return request.website.render("website_fts.search_result", vals)
 
     @http.route(['/search_suggestion'], type='json', auth="public", website=True)
     def search_suggestion(self, search='', **kw):
-        result = request.env['fts.fts'].term_search(search.split(' '))
+        result = request.env['fts.fts'].term_search(search)
         _logger.warn(result)
         result_list = result['terms']
         rl = []
