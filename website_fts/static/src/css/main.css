@@ -8,3 +8,9 @@
     clear: both;
     font-weight: normal;
 }
+
+.question img {
+    margin-top: 25px;
+    border-radius: 50%;
+    overflow: hidden;
+}
