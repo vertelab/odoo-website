@@ -20,7 +20,7 @@
                                             </button>
                                         </div>
                                         <script>
-                                            document.getElementById('search').addEventListener('keypress', function(event) {
+                                            document.getElementsByName('search').addEventListener('keypress', function(event) {
                                                 if (event.keyCode == 13) {
                                                     event.preventDefault();
                                                 }
@@ -32,10 +32,12 @@
                                     <ul class="dropdown-menu" style="width: 100%; margin: 0px; padding: 0px 15px;">
                                         <t t-if="len(website.sale_get_previous_products()) &gt; 0">
                                             <h4 class="title_history">Your ealier search</h4>
-                                            <div t-foreach="website.sale_get_previous_products()" t-as="p">
-                                                <li>
-                                                    <a t-att-href="'/shop/product/%s' %p.id"><t t-esc="p.name"/></a>
-                                                </li>
+                                            <div class="result_history">
+                                                <t t-foreach="website.sale_get_previous_products()" t-as="p">
+                                                    <li>
+                                                        <a t-att-href="'/shop/product/%s' %p.id"><t t-esc="p.name"/></a>
+                                                    </li>
+                                                </t>
                                             </div>
                                         </t>
                                         <h4 class="title_suggestion">Search suggestion</h4>

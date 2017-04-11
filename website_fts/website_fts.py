@@ -196,13 +196,13 @@ class WebsiteFullTextSearch(http.Controller):
         return request.website.render("website_fts.search_page", values)
 
     @http.route(['/search_results'], type='http', auth="public", website=True)
-    def search_result(self,search='', **post):
+    def search_result(self, search='', times=0, **post):
         vals = request.env['fts.fts'].term_search(search.split(' '))
         vals['kw'] = search
         return request.website.render("website_fts.search_result", vals)
 
     @http.route(['/search_suggestion'], type='json', auth="public", website=True)
-    def search_suggestion(self,search='', **kw):
+    def search_suggestion(self, search='', **kw):
         result = request.env['fts.fts'].term_search(search.split(' '))
         _logger.warn(result)
         result_list = result['terms']
