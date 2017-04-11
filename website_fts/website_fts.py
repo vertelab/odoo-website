@@ -91,13 +91,20 @@ class fts_fts(models.Model):
         for word,count in Counter(texts).items():
             self.create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
 
+    def word_union(self, r1, r2):
+        r3 = self.env['fts.fts'].browse([])
+        for r11 in r1:
+            for r21 in r2:
+                if r21.model_record == r11.model_record:
+                    r3 |= r11
+        return r3
+
     @api.model
     def term_search(self,word_list=[],facet=None,res_model=None):
         words = request.env['fts.fts'].search([('name','ilike', word_list[0])], order='rank,count')
-        for w in word_list[1:]:  # TODO  same object
-            #for object in words.mapped(lambda )
-            words = words.filtered(lambda word: w in word.name)
-            _logger.warn(words)
+        for w in word_list[1:]:
+            wr = words.mapped(lambda r: '%s,%s' %(r.res_model, r.res_id))
+            words = self.word_union(words, request.env['fts.fts'].search([('name','ilike',w),('model_record','in',wr)], order='rank,count'))
         wl = request.env['fts.fts'].browse([])
         for w in words:
             if not wl.filtered(lambda o: o.res_id == w.res_id and o.model_record == w.model_record):
