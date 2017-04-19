@@ -92,6 +92,7 @@
     </xpath>
 </template>
 
+<!--
 <template id="top_menu_search_dropdown" inherit_id="website.layout" active="True" customize_show="True" name="Search field dropdown">
     <xpath expr="//ul[@id='top_menu']" position="inside">
           <li class="dropdown">
@@ -111,6 +112,7 @@
           </li>
     </xpath>
 </template>
+-->
 
 <!-- Search form -->
 <template id="search_form" name="Search Form">
