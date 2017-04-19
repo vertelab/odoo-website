@@ -32,6 +32,7 @@ Adds facets, which act as product attributes, but without creating new product v
     'depends': ['product'],
     'data': [
         'product_facet_view.xml',
+        'security/ir.model.access.csv',
     ],
     'application': False,
     'installable': True,
