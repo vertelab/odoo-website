@@ -41,9 +41,9 @@
           </table>
         </div>
       </t>
-
-      <!-- Product listing on shop page -->
     </template>
+
+<!--
     <template id="product" inherit_id="website_sale.product" customize_show="True" name="Product Range">
       <xpath expr="//div[@id='product_full_description']" position="after">
         <div class="container mt32">
@@ -54,6 +54,8 @@
         </div>
       </xpath>
     </template>
+-->
+
     <!-- product listing (snippet) -->
     <!--
          <template id="product_lisring" name="Category Page">
@@ -70,7 +72,7 @@
          </table>
          </div>
          </template>
-         
+
     -->
     <template id="category_products_snippet_editor" name="website_product_pcategory assets" inherit_id="website.assets_editor" groups="base.group_website_publisher">
       <xpath expr="." position="inside">
