@@ -11,7 +11,7 @@
          <t t-set="useless_var_6446547657" t-value="website.sale_add_previous_product(product.id)"/>
          </xpath>
          </template>
-    -->
+
     <template id="product" inherit_id="website_sale.product" customize_show="True" name="Previously Viewed Products">
       <xpath expr="//div[@id='product_full_description']" position="after">
         <t t-set="useless_var_6446547657" t-value="website.sale_add_previous_product(product.id)"/>
@@ -23,5 +23,6 @@
         </div>
       </xpath>
     </template>
+    -->
   </data>
 </openerp>
