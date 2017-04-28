@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data noupdate=1>
+    
+    <record id="param_portal" model="ir.config_parameter">
+      <field name="key">portal_remove_mail_footer.portal</field>
+      <field name="value">0</field>
+    </record>
+    
+    <record id="param_mail" model="ir.config_parameter">
+      <field name="key">portal_remove_mail_footer.mail</field>
+      <field name="value">1</field>
+    </record>
+    
+  </data>
+</openerp>
