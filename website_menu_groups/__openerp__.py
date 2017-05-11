@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2004-2016 Vertel AB (<http://vertel.se>).
+#    Copyright (C) 2004-2017 Vertel AB (<http://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,23 +20,18 @@
 ##############################################################################
 
 {
-    'name': 'Website Full Text Search',
+    'name': 'Website Menu Groups',
     'version': '0.1',
-    'category': 'website',
-    'summary': "Search in blogs and static web pages",
-    'description': """
-Search in blogs and static web pages
-
-Financed by Dermanord AB
-""",
+    'category': '',
+    'description': """""",
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
     'depends': ['website'],
-    'external_dependencies': {'python': ['bs4',]},
-    'data': ['website_fts_data.xml','website_fts_view.xml','website_search.xml','security/ir.model.access.csv',
-    ],
+    'data': [
+        'website_view.xml',
+        'security/website_security.xml',
+        ],
     'application': False,
     'installable': True,
 }
-
 # vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:

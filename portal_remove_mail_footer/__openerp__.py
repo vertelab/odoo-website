@@ -20,20 +20,17 @@
 ##############################################################################
 
 {
-    'name': 'Website Full Text Search',
-    'version': '0.1',
-    'category': 'website',
-    'summary': "Search in blogs and static web pages",
+    'name': 'Portal Remove Mail Footer',
+    'version': '0.2',
+    'category': '',
+    'summary': "",
     'description': """
-Search in blogs and static web pages
-
-Financed by Dermanord AB
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website'],
-    'external_dependencies': {'python': ['bs4',]},
-    'data': ['website_fts_data.xml','website_fts_view.xml','website_search.xml','security/ir.model.access.csv',
+    'depends': ['portal'],
+    'data': [
+        'data.xml',
     ],
     'application': False,
     'installable': True,

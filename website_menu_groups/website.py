@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2004-2016 Vertel AB (<http://vertel.se>).
+#    Copyright (C) 2004-2017 Vertel AB (<http://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -18,25 +18,13 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from openerp import models, fields, api, _
 
-{
-    'name': 'Website Full Text Search',
-    'version': '0.1',
-    'category': 'website',
-    'summary': "Search in blogs and static web pages",
-    'description': """
-Search in blogs and static web pages
+import logging
+_logger = logging.getLogger(__name__)
 
-Financed by Dermanord AB
-""",
-    'author': 'Vertel AB',
-    'website': 'http://www.vertel.se',
-    'depends': ['website'],
-    'external_dependencies': {'python': ['bs4',]},
-    'data': ['website_fts_data.xml','website_fts_view.xml','website_search.xml','security/ir.model.access.csv',
-    ],
-    'application': False,
-    'installable': True,
-}
-
-# vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:
+class Partner(models.Model):
+    _inherit = 'website.menu'
+    
+    group_ids = fields.Many2many(comodel_name='res.groups', string='Groups')
+    
