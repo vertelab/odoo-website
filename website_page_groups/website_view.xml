@@ -3,14 +3,11 @@
     <data>
         <template id="website.default_page">
             <t t-call="website.layout">
-            <t t-esc="request.website.get_template(path)"/>
-            <t t-esc="path"/>
-            <t t-esc="','.join(request.website.get_template(path).mapped('groups_id.external_id'))"/>
-            <t t-call="website_page_groups.publish_management"/>
-            <t t-if="request.website.get_template(path).can_view">
-                <div id="wrap" class="oe_structure oe_empty"/>
+                <t t-call="website_page_groups.publish_management"/>
+                <t t-if="request.website.get_template(path).can_view">
+                    <div id="wrap" class="oe_structure oe_empty"/>
+                </t>
             </t>
-        </t>
         </template>
 
         <template id="js_extend" inherit_id="website.layout">
