@@ -19,11 +19,41 @@
 #
 ##############################################################################
 from openerp import models, fields, api, _
-
+import json
+from openerp.addons.web import http
+from openerp.http import request
 import logging
 _logger = logging.getLogger(__name__)
 
 class ir_ui_view(models.Model):
     _inherit = 'ir.ui.view'
-    
+
     website_published = fields.Boolean()
+    @api.one
+    def _can_view(self):
+        page = self.env['ir.ui.view'].sudo().browse(self.id)
+        if self._uid in self.sudo().env.ref('base.group_website_publisher').mapped('users.id'):
+            self.can_view = True
+        else:
+            self.can_view = (self._uid in page.groups_id.mapped('users.id') or page.groups_id.mapped('users.id') == []) and self.website_published
+    can_view = fields.Boolean(compute='_can_view')
+
+class res_groups(models.Model):
+    _inherit = 'res.groups'
+
+    @api.one
+    def _external_id(self):
+        self.external_id = self.env['ir.model.data'].search([('model', '=', self._name), ('res_id', '=', self.id)]).mapped('complete_name')[0]
+    external_id = fields.Char(compute='_external_id')
+
+class website_page_groups(http.Controller):
+
+    @http.route(['/website_page_groups/set_groups'], type='json', auth="public", website=True)
+    def set_groups(self, groups, page_id, **kwarg):
+        page = request.env['ir.ui.view'].browse(int(page_id))
+        groups_list = []
+        if groups != '':
+            for gid in groups.split(','):
+                groups_list.append(request.env.ref(str(gid)).id)
+        page.groups_id = [(6, 0, groups_list)]
+        return groups

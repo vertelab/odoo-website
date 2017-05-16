@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-  <data>
-    <template id="website.default_page">
-    <t t-call="website.layout">
-        <t t-call="website_page_group.publish_management" />
-      <div id="wrap" class="oe_structure oe_empty"/>
-    </t>
-    </template>
-    <template id="publish_management">
-      <t t-call="website.publish_management">
-        <t t-set="object" t-value="request.env['product.product'].browse(5711)" />
-        <t t-set="publish_edit" t-value="True" />
-        <li>
-          <form class="duplicate hidden" action="/p1/duplicate">
-            <input name="product_product_id" t-att-value="5711" />
-          </form>
-          <a href="#" class="duplicate" onclick="$(this).prev('form').submit()">Duplicate</a>
-        </li>
-        <li>
-          <form class="Aduplicate" action="/p2/duplicate">
-            <input name="product_product_id" t-att-value="5711" />
-          </form>
-          <a href="#" class="Aduplicate" onclick="$(this).prev('form').submit()">Antsällda</a>
-        </li>
-      </t>
-    </template>
-  </data>
+    <data>
+        <template id="website.default_page">
+            <t t-call="website.layout">
+            <t t-esc="request.website.get_template(path)"/>
+            <t t-esc="path"/>
+            <t t-esc="','.join(request.website.get_template(path).mapped('groups_id.external_id'))"/>
+            <t t-call="website_page_groups.publish_management"/>
+            <t t-if="request.website.get_template(path).can_view">
+                <div id="wrap" class="oe_structure oe_empty"/>
+            </t>
+        </t>
+        </template>
+
+        <template id="js_extend" inherit_id="website.layout">
+            <xpath expr="//body" position="inside">
+                <script src="/website_page_groups/static/src/js/main.js"/>
+            </xpath>
+        </template>
+
+        <template id="publish_management">
+            <t t-call="website.publish_management" >
+                <t t-set="object" t-value="request.website.get_template(path)"/>
+                <li>
+                    <a id="set_groups" href="#" class="" data-groups="base.group_user,base.group_website_designer,base.group_website_publisher">Set Employees</a>
+                </li>
+                <li>
+                    <a id="remove_groups" href="#" class="" data-groups="">Remove Groups</a>
+                </li>
+            </t>
+        </template>
+
+
+    </data>
 </openerp>
