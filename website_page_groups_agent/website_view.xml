@@ -9,9 +9,11 @@
         </template>
 
         <template id="publish_management" inherit_id="website_page_groups.publish_management">
-            <xpath expr="//a[@id='remove_groups']/.." position="before">
+            <xpath expr="//span[@id='remove_groups']/../.." position="before">
                 <li>
-                    <a id="set_agents" href="#" class="" data-groups="sale_agent.group_agent">Set Agents</a>
+                    <a href="#" class="js_publish_btn">
+                        <span id="set_agents" class="" data-groups="sale_agent.group_agent">Set Agents</span>
+                    </a>
                 </li>
             </xpath>
         </template>

@@ -20,10 +20,14 @@
             <t t-call="website.publish_management" >
                 <t t-set="object" t-value="request.website.get_template(path)"/>
                 <li>
-                    <a id="set_groups" href="#" class="" data-groups="base.group_user">Set Employees</a>
+                    <a href="#" class="js_publish_btn">
+                        <span id="set_groups" class="" data-groups="base.group_user">Set Employees</span>
+                    </a>
                 </li>
                 <li>
-                    <a id="remove_groups" href="#" class="" data-groups="">Remove Groups</a>
+                    <a href="#" class="js_publish_btn">
+                        <span id="remove_groups" class="" data-groups="">Remove Groups</span>
+                    </a>
                 </li>
             </t>
         </template>
