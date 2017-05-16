@@ -55,5 +55,9 @@ class website_page_groups(http.Controller):
         if groups != '':
             for gid in groups.split(','):
                 groups_list.append(request.env.ref(str(gid)).id)
-        page.groups_id = [(6, 0, groups_list)]
+        if groups_list == []:
+            page.groups_id = [(5, 0, 0)]
+        else:
+            for group in groups_list:
+                page.groups_id = [(4, group, 0)]
         return groups

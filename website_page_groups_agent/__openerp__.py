@@ -20,13 +20,13 @@
 ##############################################################################
 
 {
-    'name': 'Website Page Groups',
+    'name': 'Website Page Groups Agent',
     'version': '0.1',
     'category': '',
     'description': """Publish a page, set groups on page""",
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website',],
+    'depends': ['website_page_groups', 'sale_agent'],
     'data': [
         'website_view.xml',
         ],

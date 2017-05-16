@@ -20,7 +20,7 @@
             <t t-call="website.publish_management" >
                 <t t-set="object" t-value="request.website.get_template(path)"/>
                 <li>
-                    <a id="set_groups" href="#" class="" data-groups="base.group_user,base.group_website_designer,base.group_website_publisher">Set Employees</a>
+                    <a id="set_groups" href="#" class="" data-groups="base.group_user">Set Employees</a>
                 </li>
                 <li>
                     <a id="remove_groups" href="#" class="" data-groups="">Remove Groups</a>

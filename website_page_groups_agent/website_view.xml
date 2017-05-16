@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <template id="js_extend" inherit_id="website.layout">
+            <xpath expr="//body" position="inside">
+                <script src="/website_page_groups_agent/static/src/js/main.js"/>
+            </xpath>
+        </template>
+
+        <template id="publish_management" inherit_id="website_page_groups.publish_management">
+            <xpath expr="//a[@id='remove_groups']/.." position="before">
+                <li>
+                    <a id="set_agents" href="#" class="" data-groups="sale_agent.group_agent">Set Agents</a>
+                </li>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>
