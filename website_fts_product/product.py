@@ -38,7 +38,7 @@ class fts_fts(models.Model):
         elif self.res_model == 'product.product':
             product = self.env['product.product'].browse(self.res_id)
             if product:
-                return {'name': product.name, 'body': self.get_text([product.name, product.description_sale], words)}
+                return {'name': product.name, 'body': self.get_text([product.name, product.description_sale, product.default_code], words)}
         elif self.res_model == 'product.public.category':
             category = self.env['product.public.category'].browse(self.res_id)
             if category:
@@ -64,10 +64,11 @@ class product_product(models.Model):
     _inherit = 'product.product'
 
     @api.one
-    @api.depends('website_published','name','description_sale','product_tmpl_id','attribute_value_ids')
+    @api.depends('website_published','name','description_sale','default_code','product_tmpl_id','attribute_value_ids')
     def _full_text_search_update(self):
         if self.website_published and self.active:
             self.env['fts.fts'].update_text(self._name,self.id,text=self.name+' '+(self.description_sale or '')+' '+ ' '.join([att.name for att in self.attribute_value_ids]),rank=0)
+            self.env['fts.fts'].update_text(self._name,self.id,text=self.default_code,rank=0)
         self.full_text_search_update = ''
 
     full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)

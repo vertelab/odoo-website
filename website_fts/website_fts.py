@@ -74,7 +74,6 @@ class fts_fts(models.Model):
         text = ''
         for t in texts:
             text += ' '.join(BeautifulSoup(t, 'html.parser').findAll(text=True))
-        #~ _logger.warn(text)
         return text
 
     @api.model
@@ -212,7 +211,7 @@ class WebsiteFullTextSearch(http.Controller):
                   'sorting': False,
                   'search': search
                   }
-        _logger.warn(values)
+        #~ _logger.warn(values)
         return request.website.render("website_fts.search_page", values)
 
     @http.route(['/search_results'], type='http', auth="public", website=True)
@@ -224,7 +223,7 @@ class WebsiteFullTextSearch(http.Controller):
     @http.route(['/search_suggestion'], type='json', auth="public", website=True)
     def search_suggestion(self, search='', **kw):
         result = request.env['fts.fts'].term_search(search)
-        _logger.warn(result)
+        #~ _logger.warn(result)
         result_list = result['terms']
         rl = []
         i = 0
