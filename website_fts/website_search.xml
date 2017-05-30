@@ -30,7 +30,7 @@
                                 </form>
                                 <div id="searchbox" class="open">
                                     <ul class="dropdown-menu" style="width: 100%; margin: 0px; padding: 0px 15px;">
-                                        <t t-if="len(website.sale_get_previous_products()) &gt; 0">
+                                        <t t-if="website and len(website.sale_get_previous_products()) &gt; 0">
                                             <h4 class="title_history">Your ealier search</h4>
                                             <div class="result_history">
                                                 <t t-foreach="website.sale_get_previous_products()" t-as="p">
@@ -115,6 +115,7 @@
 -->
 
 <!-- Search form -->
+<!--
 <template id="search_form" name="Search Form">
                 <form class="navbar-form col-md-offset-1" id="search_form" role="search" t-attf-action="/search_results" method="get">
                         <div class="form-group col-md-8">
@@ -129,8 +130,26 @@
 
                 </form>
 </template>
+-->
+<!--
+<template id="search_form" name="Search Form">
+                <form class="navbar-form col-md-offset-1" id="search_form" role="search" t-attf-action="/search_results" method="get">
+                        <div class="form-group col-md-8">
+                            <input type="search" class="form-control"
+                                name="search" placeholder="Search word..."
+                                t-att-value="search or ''"/>
+                            <button t-attf-href="/search_results?{{keep_query('sorting', 'search_on_pages', 'search_on_blogposts', 'search_on_comments', 'search_on_customers', 'search_on_jobs', 'search_on_products', 'case_sensitive', search=search, search_advanced='0')}}" class="btn btn-default">Buscar</button>
+                            <a class="col-md-offset-1" t-attf-href="/search_advanced">Advanced search</a>
+                        </div>
+                        <div class="form-group col-md-8">
+                        </div>
+
+                </form>
+</template>
+-->
 
 <!-- Search form -->
+<!--
 <template id="search_form_advanced" name="Search Form advanced">
                 <form class="navbar-form " id="search_form" role="search" t-attf-action="/search_results" method="get">
                         <div class="form-group col-md-4" >
@@ -143,6 +162,7 @@
                         <div class="form-group"/>
                 </form>
 </template>
+-->
 
 <!-- Individual Search Result -->
 <template id="search_result">
