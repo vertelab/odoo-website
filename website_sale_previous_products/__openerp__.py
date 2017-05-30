@@ -28,7 +28,7 @@
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website_sale', 'website_product_templates'],
+    'depends': ['website_sale', 'website_product_templates', 'website_fts'],
     'data': [
         'product_templates.xml',
     ],
