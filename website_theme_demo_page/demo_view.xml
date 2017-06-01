@@ -2,6 +2,13 @@
 <openerp>
     <data>
 
+        <!-- remove Odoo advertisement -->
+        <template id="layout_footer_copyright" inherit_id="website.layout">
+            <xpath expr="//footer/div[@class='container mt16 mb8']" position="attributes">
+                <attribute name="class">container mt16 mb8 hidden</attribute>
+            </xpath>
+        </template>
+
         <template id="website_theme_demo_page" inherit_id="website.layout" name="Website THeme Demo Page">
             <xpath expr="//ul[@class='dropdown-menu js_usermenu']/li[last()]" position="before">
                 <li><a href="/page/demo">Demo Page</a></li>
