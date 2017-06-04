@@ -16,11 +16,13 @@ body {
     background-color: rgba(0,0,0, 0.9);
     overflow-y: hidden;
     transition: 0.5s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .overlay-content {
     position: relative;
-    top: 25%;
     width: 100%;
     text-align: center;
     margin-top: 30px;
@@ -29,7 +31,7 @@ body {
 .overlay a {
     padding: 8px;
     text-decoration: none;
-    font-size: 20px;
+    font-size: 20px !important;
     color: #999;
     display: block;
     transition: 0.4s;
@@ -43,7 +45,7 @@ body {
     position: absolute;
     top: 20px;
     right: 20px;
-    font-size: 30px;
+    font-size: 30px !important;
 }
 
 .overlay-content .dropdown-menu {
@@ -65,7 +67,7 @@ body {
 
 @media screen and (max-height: 450px) {
   .overlay {overflow-y: auto;}
-  .overlay a {font-size: 30px}
+  .overlay a {font-size: 20px;}
   .overlay .closebtn {
     font-size: 30px;
     top: 15px;
