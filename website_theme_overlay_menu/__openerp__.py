@@ -20,19 +20,19 @@
 ##############################################################################
 
 {
-    'name': 'Website Theme Demo Page',
+    'name': 'Website Theme Overlay Menu',
     'version': '1.0',
     'category': 'Theme',
-    'summary': 'Demo Page',
+    'summary': 'Overlay Menu',
     'description': """
-Demo page for show all snippets, fonts, device info.
-====================================================
+Overlay menu in mobile mode
+===========================
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
     'depends': ['website'],
     'data': [
-        'demo_view.xml',
+        'website_view.xml',
 ],
     'application': False,
 }
