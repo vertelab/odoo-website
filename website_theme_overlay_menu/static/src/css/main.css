@@ -16,13 +16,16 @@ body {
     background-color: rgba(0,0,0, 0.9);
     overflow-y: hidden;
     transition: 0.5s;
+/*
     display: flex;
     justify-content: center;
     align-items: center;
+*/
 }
 
 .overlay-content {
     position: relative;
+    top: 15%;
     width: 100%;
     text-align: center;
     margin-top: 30px;
