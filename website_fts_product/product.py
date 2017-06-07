@@ -84,19 +84,3 @@ class product_public_category(models.Model):
         self.full_text_search_update = ''
 
     full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
-
-
-class product_facet_line(models.Model):
-    _inherit = 'product.facet.line'
-
-    @api.one
-    @api.depends('facet_id','value_ids','product_tmpl_id')
-    def _full_text_search_update(self):
-        facets_values = ''
-        if len(self.value_ids) > 0:
-            for value in self.value_ids:
-                    facets_values += ' %s' %value.name
-        self.env['fts.fts'].update_text(self._name,self.id,text=self.facet_id.name+facets_values,rank=0)
-        self.full_text_search_update = ''
-
-    full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
