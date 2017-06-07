@@ -155,8 +155,8 @@
 <!-- Individual Search Result -->
 <template id="search_result">
     <t t-call="website.layout">
-    <div class="question row">
-        <div class="container">
+    <div class="container" style="padding: 0px;">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="width: 100%; padding: 0px;">
             <div class="fts_result">
                 <t t-if="len(terms) &gt; 0">
                     <t t-foreach="terms" t-as="term">
