@@ -32,9 +32,9 @@ class fts_fts(models.Model):
     @api.one
     def get_object(self, words):
         if self.res_model == 'product.facet.line':
-            facet = self.env['product.facet.line'].browse(self.res_id)
-            if facet:
-                return {'name': face.product_tmpl_id.name, 'body': self.get_text([face.product_tmpl_id.name, face.product_tmpl_id.description_sale], words)}
+            facets = self.env['product.facet.line'].browse(self.res_id)
+            if facets:
+                return {'name': facets.product_tmpl_id.name, 'body': self.get_text([facets.product_tmpl_id.name, facets.product_tmpl_id.description_sale], words)}
         return super(fts_fts, self).get_object()
 
 
