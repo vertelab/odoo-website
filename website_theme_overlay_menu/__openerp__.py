@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2004-2016 Vertel AB (<http://vertel.se>).
+#    Copyright (C) 2017- Vertel AB (<http://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,20 +20,20 @@
 ##############################################################################
 
 {
-    'name': 'Webshop Previous Products',
-    'version': '0.1',
-    'category': '',
-    'summary': "Shows previously viewed products in the webshop.",
+    'name': 'Website Theme Overlay Menu',
+    'version': '1.0',
+    'category': 'Theme',
+    'summary': 'Overlay Menu',
     'description': """
+Overlay menu in mobile mode
+===========================
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website_sale', 'website_product_templates', 'website_fts'],
+    'depends': ['website'],
     'data': [
-        'product_templates.xml',
-    ],
+        'website_view.xml',
+],
     'application': False,
-    'installable': True,
 }
 
-# vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:

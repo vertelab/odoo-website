@@ -23,7 +23,7 @@
     'name': 'Website Theme Demo Page',
     'version': '1.0',
     'category': 'Theme',
-    'summary': 'Business to Consumer theme',
+    'summary': 'Demo Page',
     'description': """
 Demo page for show all snippets, fonts, device info.
 ====================================================

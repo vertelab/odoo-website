@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-
+        <template id="main_search_layout" inherit_id="website_fts.main_search_layout">
+            <xpath expr="//div[@id='searchbox']/ul" position="inside">
+                <h4 class="title_suggestion">Search suggestion</h4>
+                <div class="result_suggestion"/>
+            </xpath>
+        </template>
     </data>
 </openerp>

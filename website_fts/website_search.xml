@@ -6,7 +6,7 @@
         <template id="main_search_layout" inherit_id="website.layout">
             <xpath expr="//div[@id='wrapwrap']" position="before">
                 <div id="search_modal" class="modal fade" role="dialog">
-                    <div class="modal-dialog" style="margin: 0px;">
+                    <div class="modal-dialog" style="margin: 0px; width: 100%;">
                         <div class="modal-content">
                             <div class="modal-header hidden">
                             </div>
@@ -30,18 +30,6 @@
                                 </form>
                                 <div id="searchbox" class="open">
                                     <ul class="dropdown-menu" style="width: 100%; margin: 0px; padding: 0px 15px;">
-                                        <t t-if="website and len(website.sale_get_previous_products()) &gt; 0">
-                                            <h4 class="title_history">Your ealier search</h4>
-                                            <div class="result_history">
-                                                <t t-foreach="website.sale_get_previous_products()" t-as="p">
-                                                    <li>
-                                                        <a t-att-href="'/shop/product/%s' %p.id"><t t-esc="p.name"/></a>
-                                                    </li>
-                                                </t>
-                                            </div>
-                                        </t>
-                                        <h4 class="title_suggestion">Search suggestion</h4>
-                                        <div class="result_suggestion"/>
                                     </ul>
                                 </div>
                             </div>
@@ -64,16 +52,15 @@
 
 
 <!-- Top Menu Add search option -->
-<template id="top_menu_search_button" inherit_id="website.layout" active="False"  customize_show="True" name="Search button on menu">
-    <xpath expr="//ul[@id='top_menu']" position="inside">
-        <li class="dropdown">
-                <a t-attf-href="/search" title="Search page">
-                <span class="fa fa-search"/>
-            </a>
+<template id="top_menu_search_button" inherit_id="website.layout" active="False" customize_show="True" name="Search button on menu">
+    <xpath expr="//t[@t-foreach='website.menu_id.child_id']" position="after">
+        <li class="hidden-xs" style="vertical-align: middle;">
+            <a href="#" id="search-btn-modal" data-toggle="modal" data-target="#search_modal" style="color: #000;"><i class="fa fa-search fa-2x"/></a>
         </li>
     </xpath>
 </template>
 
+<!--
 <template id="top_menu_search_field" inherit_id="website.layout" active="False" customize_show="True" name="Search field on menu">
     <xpath expr="//ul[@id='top_menu']" position="after">
         <form class="navbar-form navbar-right" t-attf-action="/search_results" method="get" >
@@ -91,6 +78,7 @@
 
     </xpath>
 </template>
+-->
 
 <!--
 <template id="top_menu_search_dropdown" inherit_id="website.layout" active="True" customize_show="True" name="Search field dropdown">

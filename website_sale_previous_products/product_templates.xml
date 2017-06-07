@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
   <data>
+        <template id="main_search_layout" inherit_id="website_fts.main_search_layout">
+            <xpath expr="//div[@id='searchbox']/ul" position="inside">
+                <t t-if="website and len(website.sale_get_previous_products()) &gt; 0">
+                    <h4 class="title_history">Your ealier search</h4>
+                    <div class="result_history">
+                        <t t-foreach="website.sale_get_previous_products()" t-as="p">
+                            <li>
+                                <a t-att-href="'/shop/product/%s' %p.id"><t t-esc="p.name"/></a>
+                            </li>
+                        </t>
+                    </div>
+                </t>
+            </xpath>
+        </template>
     <!--
          <template id="product" inherit_id="website_sale.product" customize_show="True" name="Previous Products">
          <xpath expr="//div[@id='product_full_description']" position="after">
