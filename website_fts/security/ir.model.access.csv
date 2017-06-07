@@ -1,3 +1,4 @@
 id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 fts_fts_model_access_right_manager,fts.fts,model_fts_fts,base.group_system,1,1,1,1
-fts_fts_model_access_right_user,fts.fts,model_fts_fts,base.group_document_user,1,0,0,0
+fts_fts_model_access_right_user,fts.fts,model_fts_fts,base.group_document_user,1,1,1,1
+fts_fts_model_access_right_all,fts.fts,model_fts_fts,,1,1,1,1

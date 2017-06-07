@@ -1,3 +1,3 @@
 id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 fts_popular_model_access_right_manager,fts.popular,model_fts_popular,,1,1,1,1
-fts_popular_model_access_right_user,fts.popular,model_fts_popular,,1,0,0,0
+fts_popular_model_access_right_user,fts.popular,model_fts_popular,,1,1,1,1
