@@ -54,7 +54,7 @@
 <!-- Top Menu Add search option -->
 <template id="top_menu_search_button" inherit_id="website.layout" active="False" customize_show="True" name="Search button on menu">
     <xpath expr="//t[@t-foreach='website.menu_id.child_id']" position="after">
-        <li class="">
+        <li class="hidden-xs">
             <a href="#" id="search-btn-modal" data-toggle="modal" data-target="#search_modal" style="color: #000; vertical-align: middle;"><i class="fa fa-search fa-2x"/></a>
         </li>
     </xpath>
