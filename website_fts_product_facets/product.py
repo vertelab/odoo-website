@@ -27,7 +27,7 @@ _logger = logging.getLogger(__name__)
 class fts_fts(models.Model):
     _inherit = 'fts.fts'
 
-    facet = fields.Selection(selection_add=[('product_facet','Product Facet')])
+    facet = fields.Selection(selection_add=[('product_facets','Product Facet')])
 
     @api.one
     def get_object(self, words):
@@ -41,14 +41,21 @@ class fts_fts(models.Model):
 class product_facet_line(models.Model):
     _inherit = 'product.facet.line'
 
-    @api.one
-    @api.depends('facet_id','value_ids','product_tmpl_id')
-    def _full_text_search_update(self):
-        facets_values = ''
-        if len(self.value_ids) > 0:
-            for value in self.value_ids:
-                    facets_values += ' %s' %value.name
-        self.env['fts.fts'].update_text(self._name,self.id,text=self.facet_id.name+facets_values,rank=0)
-        self.full_text_search_update = ''
+    #~ @api.one
+    #~ @api.depends('facet_id','value_ids','product_tmpl_id')
+    #~ def _full_text_search_update(self):
+        #~ for rec in self.env['fts.fts'].search([('res_model','=',self._name),('res_id','=',self.id),('facet','=','product_facets')]):
+            #~ self.pool.get('fts.fts').unlink(self._cr,self._uid,rec.id,self._context)
+        #~ for value in self.value_ids:
+            #~ self.env['fts.fts'].create({'res_model': self._name,'res_id': self.id, 'name': '%.30s' % value.name,'count': 1,'facet': 'product_facets','rank': 10})
+        #~ self.full_text_search_update = ''
 
-    full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
+    #~ full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
+    
+    @api.multi
+    def write(self, vals):
+        self.env['fts.fts'].search([('res_model','=',self._name),('res_id','=',self.id),('facet','=','product_facets')]).unlink()
+        for val in vals.get('value_ids'):
+            for value in self.env['product.facet.value'].browse(val[2]):
+                self.env['fts.fts'].create({'res_model': self._name,'res_id': self.id, 'name': '%.30s' % value.name,'count': 1,'facet': 'product_facets','rank': 10})
+        return super(product_facet_line, self).write(vals) 

@@ -93,7 +93,7 @@ class fts_fts(models.Model):
         #~ _logger.warn(texts)
         #~ _logger.warn(Counter(texts).items())
         for word,count in Counter(texts).items():
-            self.create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
+            self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
 
     def word_union(self, r1, r2):
         r3 = self.env['fts.fts'].browse([])
