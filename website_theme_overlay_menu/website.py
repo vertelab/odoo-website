@@ -26,9 +26,3 @@ from datetime import datetime
 from lxml import html
 import werkzeug
 
-
-class Demo(http.Controller):
-
-    @http.route(['/page/demo'], type='http', auth="user", website=True)
-    def demo_pageo(self):
-        return request.website.render('website_theme_demo_page.demo_page', {})

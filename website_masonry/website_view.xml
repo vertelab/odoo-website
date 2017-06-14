@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <template id="website_masonry_demo_page" inherit_id="website.layout" name="Website Masonry Demo Page">
+        <template id="website_masonry_demo_page" inherit_id="website.layout" name="Website Masonry Demo Page" customize_show="True" active="False" priority="100">
             <xpath expr="//ul[@class='dropdown-menu js_usermenu']/li[last()]" position="before">
                 <li><a href="/page/demo_masonry">Masonry Demo Page</a></li>
             </xpath>
