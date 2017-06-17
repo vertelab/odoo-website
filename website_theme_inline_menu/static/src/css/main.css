@@ -1,6 +1,14 @@
 ﻿/*=============================================================
                     Website Theme Inline Menu
  ============================================================ */
+#top_menu {
+    width: 100%;
+}
+
+#top_menu > li > a {
+    white-space: nowrap;
+}
+
 #top_menu > li{
     display: inline;
 }
