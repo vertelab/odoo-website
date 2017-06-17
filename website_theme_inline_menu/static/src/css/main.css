@@ -1,0 +1,14 @@
+﻿/*=============================================================
+                    Website Theme Inline Menu
+ ============================================================ */
+#top_menu > li{
+    display: inline;
+}
+
+#more_dropdown li.dropdown ul.dropdown-menu {
+    top: 0px;
+}
+
+#more_dropdown li.dropdown:hover .dropdown-menu {
+    display: block;
+}
