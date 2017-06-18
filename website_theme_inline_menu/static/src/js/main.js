@@ -22,29 +22,35 @@ else if(menu_items.length != 0) {
 }
 
 $(document).ready(function() {
-    var li_width = li_width_init;
-    $.each(menu_items, function(index) {
-        li_width += $(this).width();
-        if (li_width > $("#top_menu").width()) {
-            $(this).css({"display": "none"});
-        }
-        else {
-            more_menu_items[index].css({"display": "none"});
-        }
-    });
+    if($(window).width() > 758) {
+        var max_li_width = $("#top_menu").width() - li_width_init;
+        var li_width = 0;
+        $.each(menu_items, function(index) {
+            li_width += $(this).width();
+            if (li_width > max_li_width) {
+                $(this).css({"display": "none"});
+            }
+            else {
+                more_menu_items[index].css({"display": "none"});
+            }
+        });
+    }
 });
 
 $(window).resize(function() {
-    var li_width = li_width_init;
-    $.each(menu_items, function(index) {
-        li_width += $(this).width();
-        if (li_width > $("#top_menu").width()) {
-            $(this).css({"display": "none"});
-            more_menu_items[index].css({"display": "inline"});
-        }
-        else {
-            $(this).css({"display": "inline"});
-            more_menu_items[index].css({"display": "none"});
-        }
-    });
+    if($(window).width() > 758) {
+        var max_li_width = $("#top_menu").width() - li_width_init;
+        var li_width = 0;
+        $.each(menu_items, function(index) {
+            li_width += $(this).width();
+            if (li_width > max_li_width) {
+                $(this).css({"display": "none"});
+                more_menu_items[index].css({"display": "inline"});
+            }
+            else {
+                $(this).css({"display": "inline"});
+                more_menu_items[index].css({"display": "none"});
+            }
+        });
+    }
 });
