@@ -1,6 +1,6 @@
-var divider = $(".divider").closest("li");
-var my_account = $(".dropdown-menu.js_usermenu").closest("li");
-var more_menu = $("li#more_dropdown");
+var divider = $("#top_menu").find(".divider").closest("li");
+var my_account = $("#top_menu").find(".dropdown-menu.js_usermenu").closest("li");
+var more_menu = $("#top_menu").find("li#more_dropdown");
 var menu_items = [];
 var more_menu_items = [];
 $("#top_menu").children().each(function() {
@@ -9,7 +9,7 @@ $("#top_menu").children().each(function() {
     else
         menu_items.push($(this));
 });
-$("#more_dropdown").find("ul").children().each(function() {
+$("#top_menu").find("#more_dropdown").find("ul").children().each(function() {
     more_menu_items.push($(this));
 });
 
