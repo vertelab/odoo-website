@@ -10,11 +10,13 @@ body {
     width: 100%;
     position: fixed;
     z-index: 2000;
-    top: 0;
-    left: 0;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0, 0.9);
-    overflow-y: hidden;
+    overflow-y: scroll;
     transition: 0.5s;
 /*
     display: flex;
@@ -51,7 +53,7 @@ body {
 }
 
 .overlay-content .dropdown-menu {
-    background: #000;
+    background-color: transparent;
     width: 100%;
     text-align: center;
 }
