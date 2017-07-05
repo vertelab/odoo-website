@@ -4,7 +4,7 @@
 
         <template id="website_theme_overlay_menu" inherit_id="website.layout" name="Website Theme Overlay Menu" customize_show="True" active="False" priority="99">
             <xpath expr="//button[@data-target='.navbar-top-collapse']" position="replace">
-                <span class="pull-right hidden-lg hidden-md hidden-sm" style="font-size:35px; cursor:pointer; padding-right: 15px;" onclick="openNav()">&#9776;</span>
+                <span class="pull-right hidden-lg hidden-md hidden-sm" style="font-size:35px; cursor:pointer;" onclick="openNav()">&#9776;</span>
             </xpath>
             <xpath expr="//div[@class='collapse navbar-collapse navbar-top-collapse']" position="attributes">
                 <attribute name="class">collapse navbar-collapse navbar-top-collapse hidden-xs</attribute>
