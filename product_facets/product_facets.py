@@ -25,7 +25,7 @@ from openerp.exceptions import except_orm, Warning, RedirectWarning
 import logging
 _logger = logging.getLogger(__name__)
 
-class product_facet(models.Model):
+class ProductFacet(models.Model):
     _name = 'product.facet'
     _description = "Product Facet"
 
@@ -39,7 +39,7 @@ class product_facet(models.Model):
     sequence = fields.Integer()
     value_ids = fields.One2many(comodel_name='product.facet.value', string='Facet Values', inverse_name='facet_id')
 
-class product_facet_value(models.Model):
+class ProductFacetValue(models.Model):
     _name = 'product.facet.value'
     _description = "Product Facet Value"
     _order = 'sequence'
@@ -55,14 +55,31 @@ class product_facet_value(models.Model):
     @api.multi
     def name_get(self):
         if not self._context.get('show_facet', True):
-            return super(product_facet_value, self).name_get()
+            return super(ProductFacetValue, self).name_get()
         res = []
         for value in self:
             res.append([value.id, "%s: %s" % (value.facet_id.name, value.name)])
         return res
 
-class product_facet_line(models.Model):
+class ProductFacetLine(models.Model):
     _name = 'product.facet.line'
+    _description = "Product Facet Lines"
+
+    @api.multi
+    def _check_valid_facet(self):
+        _logger.warn('product.facet.line check_valid_facet')
+        return self.value_ids <= self.facet_id.value_ids
+
+    _constraints = [
+        (_check_valid_facet, 'Error ! You cannot use this facet with the following value.', ['facet_id'])
+    ]
+
+    product_tmpl_id = fields.Many2one(comodel_name='product.template', string='Product Template', required = True)
+    facet_id = fields.Many2one(comodel_name='product.facet', string='Product Facet', required = True)
+    value_ids = fields.Many2many(comodel_name='product.facet.value', string='Facet Values', required = True)
+
+class ProductProductFacetLine(models.Model):
+    _name = 'product.product.facet.line'
     _description = "Product Facet Lines"
 
     @api.multi
@@ -73,11 +90,33 @@ class product_facet_line(models.Model):
         (_check_valid_facet, 'Error ! You cannot use this facet with the following value.', ['facet_id'])
     ]
 
-    product_tmpl_id = fields.Many2one(comodel_name='product.template', string='Product Templates', required = True)
+    product_id = fields.Many2one(comodel_name='product.product', string='Product', required = True)
     facet_id = fields.Many2one(comodel_name='product.facet', string='Product Facet', required = True)
-    value_ids = fields.Many2many(comodel_name='product.facet.value', string='Facet Values', required = True)
+    value_ids = fields.Many2many(comodel_name='product.facet.value', relation='product_product_facet_line_rel', string='Facet Values', required = True)
 
-class product_template(models.Model):
+class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     facet_line_ids = fields.One2many(comodel_name='product.facet.line', string='Facet Lines', inverse_name='product_tmpl_id')
+
+    @api.one
+    def _recompute_facet_line_ids(self):
+        facets = self.product_variant_ids.mapped('facet_line_ids').mapped('facet_id')
+        values = self.product_variant_ids.mapped('facet_line_ids').mapped('value_ids')
+        for line in self.facet_line_ids:
+            if line.facet_id not in facets:
+                line.unlink()
+            else:
+                line.value_ids = line.facet_id.value_ids & values
+        for facet in facets:
+            if facet not in self.facet_line_ids.mapped('facet_id'):
+                self.facet_line_ids |= self.env['product.facet.line'].create({
+                    'product_tmpl_id': self.id,
+                    'facet_id': facet.id,
+                    'value_ids': [(6, 0, [v.id for v in values & facet.value_ids])],
+                })
+
+class Product(models.Model):
+    _inherit = 'product.product'
+
+    facet_line_ids = fields.One2many(comodel_name='product.product.facet.line', string='Facet Lines', inverse_name='product_id')

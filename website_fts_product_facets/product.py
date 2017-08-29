@@ -31,15 +31,14 @@ class fts_fts(models.Model):
 
     @api.one
     def get_object(self, words):
-        if self.res_model == 'product.facet.line':
-            facets = self.env['product.facet.line'].browse(self.res_id)
+        if self.res_model == 'product.facet.value':
+            facets = self.env['product.facet.value'].browse(self.res_id)
             if facets:
                 return {'name': facets.product_tmpl_id.name, 'body': self.get_text([facets.product_tmpl_id.name, facets.product_tmpl_id.description_sale], words)}
         return super(fts_fts, self).get_object()
 
-
-class product_facet_line(models.Model):
-    _inherit = 'product.facet.line'
+class product_facet_value(models.Model):
+    _inherit = 'product.facet.value'
 
     #~ @api.one
     #~ @api.depends('facet_id','value_ids','product_tmpl_id')
@@ -51,11 +50,11 @@ class product_facet_line(models.Model):
         #~ self.full_text_search_update = ''
 
     #~ full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
-    
+
     @api.multi
     def write(self, vals):
         self.env['fts.fts'].search([('res_model','=',self._name),('res_id','=',self.id),('facet','=','product_facets')]).unlink()
         for val in vals.get('value_ids'):
             for value in self.env['product.facet.value'].browse(val[2]):
                 self.env['fts.fts'].create({'res_model': self._name,'res_id': self.id, 'name': '%.30s' % value.name,'count': 1,'facet': 'product_facets','rank': 10})
-        return super(product_facet_line, self).write(vals) 
+        return super(product_facet_line, self).write(vals)
