@@ -87,6 +87,7 @@ class fts_fts(models.Model):
 
     @api.model
     def update_text(self,res_model,res_id,text='',groups=None,facet='term',rank=10):
+        text = text or ''
         self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id),('facet','=',facet)]).unlink()
         text = text.strip().lower().split(' ')
         texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in text if not w in STOP_WORDS + [' ','\n']]).split(' ')]
