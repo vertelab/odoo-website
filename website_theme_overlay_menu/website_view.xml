@@ -9,7 +9,7 @@
             <xpath expr="//div[@class='collapse navbar-collapse navbar-top-collapse']" position="attributes">
                 <attribute name="class">collapse navbar-collapse navbar-top-collapse hidden-xs</attribute>
             </xpath>
-            <xpath expr="//header/div/div[@class='container']/div[@class='navbar-header']" position="inside">
+            <xpath expr="//body" position="inside">
                 <div id="overlay_nav" class="overlay">
                     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
                     <div class="overlay-content">
