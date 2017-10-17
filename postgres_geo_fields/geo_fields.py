@@ -80,7 +80,7 @@ class GeoFields(models.AbstractModel):
                     geo_vals[field['name']] = getattr(self, field['compute'])(dict([(d, vals[d]) for d in field['depends']]))
         if geo_vals:
             query = 'UPDATE "%s" SET %s WHERE id IN %%s' % (self._table, ','.join([('"%s"=%%s' % f) for f in geo_vals]))
-            params = [geo_vals[f] for f in geo_vals] + [tuple(res.ids)]
+            params = [str(geo_vals[f]) for f in geo_vals] + [tuple(res.ids)]
             self.env.cr.execute(query, params)
         return res
 
