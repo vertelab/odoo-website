@@ -114,25 +114,27 @@ class fts_fts(models.Model):
         else:
             word_list = search.split(' ')
         word_list = [w for w in word_list if w]
-        query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s" % (
-            " OR ".join(["name ILIKE %s" for w in word_list]),
-            (" AND %s" % " OR ".join(["model_record LIKE %s" for m in res_model])) if res_model else '',
-            " LIMIT %s" if limit else '',
-            " OFFSET %s" if offset else '')
-        params = ['%%%s%%' % w for w in word_list]
-        for model in res_model or []:
-            params.append('%s,%%' % model)
-        if limit:
-            params.append(limit)
-        if offset:
-            params.append(offset)
-        _logger.debug(query)
-        _logger.debug(params)
-        self.env.cr.execute(query, params)
-        res = self.env.cr.dictfetchall()
-        _logger.debug(res)
-        words = request.env['fts.fts'].browse([row['id'] for row in res])
-
+        if word_list:
+            query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s" % (
+                " OR ".join(["name ILIKE %s" for w in word_list]),
+                (" AND (%s)" % " OR ".join(["model_record LIKE %s" for m in res_model])) if res_model else '',
+                " LIMIT %s" if limit else '',
+                " OFFSET %s" if offset else '')
+            params = ['%%%s%%' % w for w in word_list]
+            for model in res_model or []:
+                params.append('%s,%%' % model)
+            if limit:
+                params.append(limit)
+            if offset:
+                params.append(offset)
+            _logger.debug(query)
+            _logger.debug(params)
+            self.env.cr.execute(query, params)
+            res = self.env.cr.dictfetchall()
+            _logger.debug(res)
+            words = request.env['fts.fts'].browse([row['id'] for row in res])
+        else:
+            words = request.env['fts.fts'].browse([])
         facets = []
         
         for f in set(words.mapped('facet')):
