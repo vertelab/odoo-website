@@ -105,7 +105,7 @@ class fts_fts(models.Model):
         return r3
 
     @api.model
-    def term_search(self,search,facet=None,res_model=None,limit=5):
+    def term_search(self, search, facet=None, res_model=None, limit=5, offset=0):
         word_list = []
         if '"' in search:
             for w in search.split('"'):
@@ -113,16 +113,28 @@ class fts_fts(models.Model):
                     word_list.append(w)
         else:
             word_list = search.split(' ')
-        words = request.env['fts.fts'].search([('name','ilike', word_list[0])], order='rank,count')
-        for w in word_list[1:]:
-            wr = words.mapped(lambda r: '%s,%s' %(r.res_model, r.res_id))
-            words = self.word_union(words, request.env['fts.fts'].search([('name','ilike',w),('model_record','in',wr)], order='rank,count'))
-        wl = request.env['fts.fts'].browse([])
-        for w in words:
-            if not wl.filtered(lambda o: o.res_id == w.res_id and o.model_record == w.model_record):
-                wl |= w
-        words = wl
+        word_list = [w for w in word_list if w]
+        query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s" % (
+            " OR ".join(["name ILIKE %s" for w in word_list]),
+            (" AND %s" % " OR ".join(["model_record LIKE %s" for m in res_model])) if res_model else '',
+            " LIMIT %s" if limit else '',
+            " OFFSET %s" if offset else '')
+        params = ['%%%s%%' % w for w in word_list]
+        for model in res_model or []:
+            params.append('%s,%%' % model)
+        if limit:
+            params.append(limit)
+        if offset:
+            params.append(offset)
+        _logger.debug(query)
+        _logger.debug(params)
+        self.env.cr.execute(query, params)
+        res = self.env.cr.dictfetchall()
+        _logger.debug(res)
+        words = request.env['fts.fts'].browse([row['id'] for row in res])
+
         facets = []
+        
         for f in set(words.mapped('facet')):
             w,c = Counter(words.filtered(lambda w: w.facet == f)).items()[0]
             facets.append((w.facet,c))
@@ -221,8 +233,8 @@ class WebsiteFullTextSearch(http.Controller):
         return request.website.render("website_fts.search_result", vals)
 
     @http.route(['/search_suggestion'], type='json', auth="public", website=True)
-    def search_suggestion(self, search='', **kw):
-        result = request.env['fts.fts'].term_search(search)
+    def search_suggestion(self, search='', facet=None, res_model=None, limit=0, offset=0, **kw):
+        result = request.env['fts.fts'].term_search(search, facet, res_model, limit, offset)
         #~ _logger.warn(result)
         result_list = result['terms']
         rl = []
