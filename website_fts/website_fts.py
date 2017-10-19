@@ -105,13 +105,12 @@ class fts_fts(models.Model):
         return r3
 
     @api.model
-    def term_search(self,search,facet=None,res_model=None):
+    def term_search(self,search,facet=None,res_model=None,limit=5):
         word_list = []
         if '"' in search:
             for w in search.split('"'):
                 if w.strip() != '':
                     word_list.append(w)
-
         else:
             word_list = search.split(' ')
         words = request.env['fts.fts'].search([('name','ilike', word_list[0])], order='rank,count')
@@ -131,7 +130,7 @@ class fts_fts(models.Model):
         for m in set(words.mapped('res_model')):
             w,c = Counter(words.filtered(lambda w: w.res_model == m)).items()[0]
             models.append((w.res_model,c))
-        return {'terms': words,'facets': facets,'models': models, 'docs': words.filtered(lambda w: w.model_record != False).mapped('model_record')}
+        return {'terms': words,'facets': facets,'models': models, 'docs': words.filtered(lambda w: w.model_record != False).mapped('model_record')[:limit]}
 
     @api.one
     def get_object(self,words):
