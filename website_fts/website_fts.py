@@ -83,7 +83,7 @@ class fts_fts(models.Model):
         texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in soup.findAll(text=True) if not w in STOP_WORDS + [';','=',':','(',')',' ','\n']]).split(' ')]
         #~ raise Warning(Counter(texts).items())
         for word,count in Counter(texts).items():
-            self.create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
+            self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'groups_ids': groups})
 
     @api.model
     def update_text(self,res_model,res_id,text='',groups=None,facet='term',rank=10):
@@ -94,7 +94,7 @@ class fts_fts(models.Model):
         #~ _logger.warn(texts)
         #~ _logger.warn(Counter(texts).items())
         for word,count in Counter(texts).items():
-            self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank}) # 'groups_ids': groups})
+            self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'groups_ids': groups})
 
     def word_union(self, r1, r2):
         r3 = self.env['fts.fts'].browse([])
@@ -136,7 +136,7 @@ class fts_fts(models.Model):
         else:
             words = request.env['fts.fts'].browse([])
         facets = []
-        
+
         for f in set(words.mapped('facet')):
             w,c = Counter(words.filtered(lambda w: w.facet == f)).items()[0]
             facets.append((w.facet,c))
