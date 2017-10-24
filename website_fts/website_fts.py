@@ -83,7 +83,7 @@ class fts_fts(models.Model):
         texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in soup.findAll(text=True) if not w in STOP_WORDS + [';','=',':','(',')',' ','\n']]).split(' ')]
         #~ raise Warning(Counter(texts).items())
         for word,count in Counter(texts).items():
-            self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'groups_ids': groups})
+            self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups])]})
 
     @api.model
     def update_text(self,res_model,res_id,text='',groups=None,facet='term',rank=10):
@@ -94,7 +94,7 @@ class fts_fts(models.Model):
         #~ _logger.warn(texts)
         #~ _logger.warn(Counter(texts).items())
         for word,count in Counter(texts).items():
-            self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'groups_ids': groups})
+            self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups])]})
 
     def word_union(self, r1, r2):
         r3 = self.env['fts.fts'].browse([])
@@ -115,12 +115,13 @@ class fts_fts(models.Model):
             word_list = search.split(' ')
         word_list = [w for w in word_list if w]
         if word_list:
-            query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s" % (
+            query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s%s" % (
                 " OR ".join(["name ILIKE %s" for w in word_list]),
+                " AND (id IN (SELECT DISTINCT ON (fts_fts_id) fts_fts_id FROM fts_fts_res_groups_rel WHERE res_groups_id IN %s) OR id NOT IN (SELECT DISTINCT fts_fts_id FROM fts_fts_res_groups_rel))",
                 (" AND (%s)" % " OR ".join(["model_record LIKE %s" for m in res_model])) if res_model else '',
                 " LIMIT %s" if limit else '',
                 " OFFSET %s" if offset else '')
-            params = ['%%%s%%' % w for w in word_list]
+            params = ['%%%s%%' % w for w in word_list] + [self.env.user.groups_id._ids]
             for model in res_model or []:
                 params.append('%s,%%' % model)
             if limit:

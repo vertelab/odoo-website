@@ -174,4 +174,5 @@ class ResPartner(models.Model):
     
     @api.model
     def compute_position(self, vals):
+        _logger.warn('Computing position. vals: %s' % vals)
         return (vals['position_y'], vals['position_x'])
