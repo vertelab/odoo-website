@@ -21,7 +21,7 @@
                                         </div>
                                         <script>
                                             document.getElementsByName('search').addEventListener('keypress', function(event) {
-                                                if (event.keyCode == 13) {
+                                                if (event.keyCode == 13 &amp;&amp; $('.add-on').find('[name=search]').hasFocus()) {
                                                     event.preventDefault();
                                                 }
                                             });
