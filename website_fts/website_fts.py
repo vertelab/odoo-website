@@ -113,6 +113,11 @@ class fts_fts(models.Model):
                     word_list.append(w)
         else:
             word_list = search.split(' ')
+
+# 1) get list of models for first search
+# 2) search each word within the ever reduced list of models
+# the model-list has to be complete, limit can only be applied at end
+
         word_list = [w for w in word_list if w]
         if word_list:
             query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s%s" % (
@@ -146,6 +151,7 @@ class fts_fts(models.Model):
             w,c = Counter(words.filtered(lambda w: w.res_model == m)).items()[0]
             models.append((w.res_model,c))
         return {'terms': words,'facets': facets,'models': models, 'docs': words.filtered(lambda w: w.model_record != False).mapped('model_record')[:limit]}
+
 
     @api.one
     def get_object(self,words):
