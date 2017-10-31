@@ -39,6 +39,8 @@ class fts_fts(models.Model):
 
 class document_file(models.Model):
     _inherit = 'ir.attachment'
+    
+    group_ids = fields.Many2many(string='Groups', comodel_name='res.groups')
 
     @api.one
     @api.depends('index_content','name','description')
