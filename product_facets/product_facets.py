@@ -38,6 +38,7 @@ class ProductFacet(models.Model):
     name = fields.Char(string='Name', translate=True, required = True)
     sequence = fields.Integer()
     value_ids = fields.One2many(comodel_name='product.facet.value', string='Facet Values', inverse_name='facet_id')
+    category_ids = fields.Many2many(comodel_name='product.public.category', string='Product Category')
 
 class ProductFacetValue(models.Model):
     _name = 'product.facet.value'
