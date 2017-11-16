@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="assets_common" inherit_id="web.assets_common">
+            <xpath expr="//link[@href='/web/static/lib/fontawesome/css/font-awesome.css']" position="replace">
+                <link rel="stylesheet" href="/web_font_awesome/static/lib/fontawesome/css/font-awesome.css"/>
+            </xpath>
+        </template>
+    </data>
+</openerp>
