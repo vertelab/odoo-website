@@ -42,9 +42,9 @@ class website_config_settings(models.TransientModel):
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    @api.multi
-    def google_map_img(self, zoom=8, width=298, height=298, marker=None):
-        partner = self
+    def google_map_img(self, cr, uid, ids, zoom=8, width=298, height=298, marker=None, context=None):
+        env = api.Environment(cr, uid, context)
+        partner = env['res.partner'].browse(ids[0])
         params = {
             'center': '%s, %s %s, %s' % (partner.street or '', partner.city or '', partner.zip or '', partner.country_id and partner.country_id.name_get()[0][1] or ''),
             'size': "%sx%s" % (height, width),
@@ -58,3 +58,11 @@ class ResPartner(models.Model):
                 mark += '%s:%s|' % (key, marker[key])
             params['markers'] = '%s%s' % (mark, params['center'])
         return urlplus('//maps.googleapis.com/maps/api/staticmap', params)
+
+class ResCompany(models.Model):
+    _inherit = 'res.company'
+    
+    def google_map_img(self, cr, uid, ids, zoom=8, width=298, height=298, marker=None, context=None):
+        env = api.Environment(cr, uid, context)
+        partner = env['res.company'].sudo().browse(ids[0]).partner_id
+        return partner and partner.google_map_img(zoom, width, height, marker) or None
