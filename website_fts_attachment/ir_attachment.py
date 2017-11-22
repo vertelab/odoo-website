@@ -45,6 +45,8 @@ class document_file(models.Model):
     @api.one
     @api.depends('index_content','name','description')
     def _full_text_search_update(self):
+        if self.url and (self.url.startswith('/web/js/') or self.url.startswith('/web/css/')):
+            return
         self.env['fts.fts'].update_html(self._name,self.id,html=' '.join([h for h in [self.index_content,self.name,self.description] if h]),groups=self.group_ids)
         self.full_text_search_update = ''
         if self.file_type and 'document' in self.file_type:
