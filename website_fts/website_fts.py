@@ -120,7 +120,7 @@ class fts_fts(models.Model):
 
         word_list = [w for w in word_list if w]
         if word_list:
-            query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s%s" % (
+            query = "SELECT * FROM (SELECT DISTINCT ON (model_record) id, rank, model_record FROM fts_fts WHERE %s%s%s%s%s) t ORDER BY rank ASC" % (
                 " OR ".join(["name ILIKE %s" for w in word_list]),
                 " AND (id IN (SELECT DISTINCT ON (fts_fts_id) fts_fts_id FROM fts_fts_res_groups_rel WHERE res_groups_id IN %s) OR id NOT IN (SELECT DISTINCT fts_fts_id FROM fts_fts_res_groups_rel))",
                 (" AND (%s)" % " OR ".join(["model_record LIKE %s" for m in res_model])) if res_model else '',
