@@ -71,7 +71,8 @@ class product_product(models.Model):
         if self.website_published and self.active:
             self.env['fts.fts'].update_text(self._name, self.id, text=self.name, rank=0)
             self.env['fts.fts'].update_text(self._name, self.id, text=(self.description_sale or '')+' '+ ' '.join([att.name for att in self.attribute_value_ids]), rank=5)
-            self.env['fts.fts'].update_text(self._name,self.id,text=self.default_code, rank=0)
+            self.env['fts.fts'].update_text(self._name,self.id, text=self.default_code, rank=0)
+            self.env['fts.fts'].update_text(self._name,self.id, text=self.ean13, rank=0)
         self.full_text_search_update = ''
 
     full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
