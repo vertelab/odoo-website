@@ -40,15 +40,19 @@ class fts_fts(models.Model):
 class document_file(models.Model):
     _inherit = 'ir.attachment'
 
+    group_ids = fields.Many2many(string='Groups', comodel_name='res.groups')
+
     @api.one
     @api.depends('index_content','name','description')
     def _full_text_search_update(self):
-        self.env['fts.fts'].update_html(self._name,self.id,html=' '.join([h for h in [self.index_content,self.name,self.description] if h]),groups=self.group_ids)
+        if self.url and (self.url.startswith('/web/js/') or self.url.startswith('/web/css/')):
+            return
+        self.env['fts.fts'].update_html(self._name,self.id,html=' '.join([h for h in [self.index_content,self.name,self.description] if h]),groups=self.group_ids, rank=10)
         self.full_text_search_update = ''
         if self.file_type and 'document' in self.file_type:
-            self.env['fts.fts'].update_text(self._name,self.id,text=self.name,facet='document',groups=self.group_ids)
+            self.env['fts.fts'].update_text(self._name,self.id,text=self.name,facet='document',groups=self.group_ids, rank=0)
         if self.file_type and 'image' in self.file_type:
-            self.env['fts.fts'].update_text(self._name,self.id,text=self.name,facet='image',groups=self.group_ids)
+            self.env['fts.fts'].update_text(self._name,self.id,text=self.name,facet='image',groups=self.group_ids, rank=0)
         # Exif metadata ????
 
     full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)

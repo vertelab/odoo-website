@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
   <data>
-    
+
     <!-- Facets -->
-    
+
     <record id="facet_tree_view" model="ir.ui.view">
       <field name="name">product.facet.tree</field>
       <field name="model">product.facet</field>
@@ -11,10 +11,11 @@
         <tree string="Product Facets" editable="top">
           <field name="sequence" widget="handle" />
           <field name="name"/>
+          <field name="category_ids" widget="many2many_tags"/>
         </tree>
       </field>
     </record>
-    
+
     <record id="facet_action" model="ir.actions.act_window">
       <field name="name">Facets</field>
       <field name="type">ir.actions.act_window</field>
@@ -26,9 +27,9 @@
     <menuitem action="facet_action"
         id="menu_facet_action"
         parent="product.prod_config_main" sequence="11" />
-    
+
     <!-- Facet Values -->
-    
+
     <record id="facet_value_tree_view" model="ir.ui.view">
       <field name="name">product.facet.value.tree</field>
       <field name="model">product.facet.value</field>
@@ -40,7 +41,7 @@
           </tree>
       </field>
     </record>
-        
+
     <record id="facet_values_action" model="ir.actions.act_window">
       <field name="name">Facet Values</field>
       <field name="type">ir.actions.act_window</field>
@@ -52,7 +53,7 @@
     <menuitem action="facet_values_action"
         id="menu_facet_values_action"
         parent="product.prod_config_main" sequence="12" />
-    
+
     <record id="product_template_form_view_facets" model="ir.ui.view">
       <field name="name">product.template.facet.form</field>
       <field name="model">product.template</field>
@@ -70,6 +71,6 @@
         </xpath>
       </field>
     </record>
-    
+
   </data>
 </openerp>
