@@ -38,10 +38,12 @@ class fts_fts(models.Model):
         return super(fts_fts, self).get_object()
 
 class Blog(models.Model):
-    _inherit = 'blog.post'
+    _name = 'blog.post'
+    _inherit = ['blog.post', 'fts.model']
+
+    _fts_fields = ['content','website_published','name','subtitle','blog_id','author_id']
 
     @api.one
-    @api.depends('content','website_published','name','subtitle','blog_id','author_id')
     def _full_text_search_update(self):
         if self.website_published:
             self.env['fts.fts'].update_html(self._name,self.id,html=self.content+' '+self.name+' '+self.subtitle,rank=int(self.ranking))
@@ -50,8 +52,6 @@ class Blog(models.Model):
             #self.env['fts.fts'].update_text(self._name,self.id,text=' '.join([self.])self.blog_id.name,facet='blog_tag',rank=int(self.ranking))
             # SEO metadata ????
         self.full_text_search_update = ''
-
-    full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
 
 
 

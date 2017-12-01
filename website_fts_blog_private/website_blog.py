@@ -29,7 +29,6 @@ class Blog(models.Model):
     _inherit = 'blog.post'
 
     @api.one
-    @api.depends('content', 'website_published', 'name', 'subtitle', 'blog_id', 'author_id', 'group_ids', 'blog_id.group_ids')
     def _full_text_search_update(self):
         if self.website_published:
             self.env['fts.fts'].update_html(self._name,self.id,html=self.content+' '+self.name+' '+self.subtitle,rank=int(self.ranking),groups=self.group_ids if self.group_ids else self.blog_id.group_ids or None)
@@ -39,7 +38,6 @@ class Blog(models.Model):
             # SEO metadata ????
         self.full_text_search_update = ''
 
-    full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
 
 
 

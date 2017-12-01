@@ -38,23 +38,16 @@ class fts_fts(models.Model):
         return super(fts_fts, self).get_object()
 
 class product_facet_value(models.Model):
-    _inherit = 'product.facet.value'
+    _name = 'product.facet.value'
+    _inherit = ['product.facet.value', 'fts.model']
 
-    #~ @api.one
-    #~ @api.depends('facet_id','value_ids','product_tmpl_id')
-    #~ def _full_text_search_update(self):
-        #~ for rec in self.env['fts.fts'].search([('res_model','=',self._name),('res_id','=',self.id),('facet','=','product_facets')]):
-            #~ self.pool.get('fts.fts').unlink(self._cr,self._uid,rec.id,self._context)
-        #~ for value in self.value_ids:
-            #~ self.env['fts.fts'].create({'res_model': self._name,'res_id': self.id, 'name': '%.30s' % value.name,'count': 1,'facet': 'product_facets','rank': 10})
-        #~ self.full_text_search_update = ''
+    _fts_fields = ['facet_id','value_ids','product_tmpl_id']
 
-    #~ full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
 
     @api.multi
-    def write(self, vals):
-        self.env['fts.fts'].search([('res_model','=',self._name),('res_id','=',self.id),('facet','=','product_facets')]).unlink()
-        for val in vals.get('value_ids'):
-            for value in self.env['product.facet.value'].browse(val[2]):
-                self.env['fts.fts'].create({'res_model': self._name,'res_id': self.id, 'name': '%.30s' % value.name,'count': 1,'facet': 'product_facets','rank': 10})
-        return super(product_facet_line, self).write(vals)
+    def _full_text_search_update(self):
+        super(product_facet_line, self)._full_text_search_update()
+        # TODO: Fix this code
+        #~ for val in vals.get('value_ids'):
+            #~ for value in self.env['product.facet.value'].browse(val[2]):
+                #~ self.env['fts.fts'].create({'res_model': self._name,'res_id': self.id, 'name': '%.30s' % value.name,'count': 1,'facet': 'product_facets','rank': 10})

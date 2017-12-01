@@ -54,6 +54,10 @@ class fts_fts(models.Model):
     group_ids = fields.Many2many(comodel_name="res.groups")
     facet = fields.Selection([('term','Term'),('author','Author')], string='Facet')
 
+    @api.multi
+    def get_fts_models(self):
+        return []
+
     @api.one
     @api.depends('res_model','res_id')
     def _model_record(self):
@@ -62,6 +66,7 @@ class fts_fts(models.Model):
             #~ self.model_record = (self.res_model,self.res_id)
         else:
             self.model_record = None
+
     @api.model
     def _reference_models(self):
         models = self.env['ir.model'].search([('state', '!=', 'manual')])
@@ -77,7 +82,7 @@ class fts_fts(models.Model):
         return text
 
     @api.model
-    def update_html(self,res_model,res_id,html='',groups=None,facet='term',rank=10):
+    def update_html(self, res_model, res_id, html='', groups=None,facet='term', rank=10):
         self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id),('facet','=',facet)]).unlink()
         soup = BeautifulSoup(html.strip().lower(), 'html.parser') #decode('utf-8').encode('utf-8')
         texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in soup.findAll(text=True) if not w in STOP_WORDS + [';','=',':','(',')',' ','\n']]).split(' ')]
@@ -161,6 +166,43 @@ class fts_fts(models.Model):
             return {'name': page.name, 'body': self.get_text([page.arch],words)}
         return {'name': '<none>', 'body': '<empty>'}
 
+class fts_model(models.AbstractModel):
+    _name = 'fts.model'
+    _description = 'FTS Model'
+
+    _fts_fields = []
+    
+    fts_dirty = fields.Boolean('Dirty', help='FTS terms for this record need to be updated', default=True)
+    
+    @api.multi
+    def _full_text_search_delete(self):
+        terms = self.env['fts.fts'].search(['|' for i in range(len(self._ids) - 1)] + [('model_record', '=', '%s,%s' % (self._name, id)) for id in self._ids])
+        if terms:
+            terms.unlink()
+
+    @api.multi
+    def _full_text_search_update(self):
+        self._full_text_search_delete()
+
+    #~ @api.model
+    #~ @api.returns('self', lambda value: value.id)
+    #~ def create(self, vals):
+        #~ res = super(fts_model, self).create(vals)
+        #~ res._full_text_search_update()
+        #~ return res
+
+    @api.multi
+    def write(self, vals):
+        for f in self._fts_fields:
+            if f in vals:
+                vals['fts_dirty'] = True
+            break
+        return super(fts_model, self).write(vals)
+
+    @api.multi
+    def unlink(self):
+        self._full_text_search_delete()
+        return super(fts_model, self).unlink()
 
 class fts_website(models.Model):
     _name = 'fts.website'
@@ -279,3 +321,4 @@ class WebsiteFullTextSearch(http.Controller):
                 })
             i += 1
         return rl
+

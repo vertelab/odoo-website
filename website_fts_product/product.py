@@ -47,40 +47,42 @@ class fts_fts(models.Model):
 
 
 class product_template(models.Model):
-    _inherit = 'product.template'
+    _name = 'product.template'
+    _inherit = ['product.template', 'fts.model']
+
+    _fts_fields = ['website_published','name','description_sale']
 
     @api.one
-    @api.depends('website_published','name','description_sale')
+    @api.depends()
     def _full_text_search_update(self):
         if self.website_published and self.active:
             self.env['fts.fts'].update_text(self._name,self.id,text=self.name + ' ' + (self.description_sale or ''), rank=0)
             #~ self.env['fts.fts'].update_text(self._name,self.id,text=self.author_id.name,facet='author',rank=int(self.ranking))
         self.full_text_search_update = ''
 
-    full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
 
 
 class product_product(models.Model):
-    _inherit = 'product.product'
+    _name = 'product.product'
+    _inherit = ['product.product', 'fts.model']
+
+    _fts_fields = ['website_published','name','description_sale','default_code','product_tmpl_id','attribute_value_ids']
 
     @api.one
-    @api.depends('website_published','name','description_sale','default_code','product_tmpl_id','attribute_value_ids')
     def _full_text_search_update(self):
         if self.website_published and self.active:
             self.env['fts.fts'].update_text(self._name,self.id,text=self.name+' '+(self.description_sale or '')+' '+ ' '.join([att.name for att in self.attribute_value_ids]),rank=0)
             self.env['fts.fts'].update_text(self._name,self.id,text=self.default_code,rank=0)
         self.full_text_search_update = ''
 
-    full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
-
-
 class product_public_category(models.Model):
-    _inherit = 'product.public.category'
+    _name = 'product.public.category'
+    _inherit = ['product.public.category', 'fts.model']
+
+    _fts_fields = ['name']
+
 
     @api.one
-    @api.depends('name')
     def _full_text_search_update(self):
         self.env['fts.fts'].update_text(self._name,self.id,text=self.name,rank=0)
         self.full_text_search_update = ''
-
-    full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
