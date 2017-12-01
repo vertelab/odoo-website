@@ -148,15 +148,28 @@ class fts_fts(models.Model):
 # TODO: save number of words found for each model_record to have an impact for rank
 
         word_rank = {}  
-        words = {model['model_record']:model['rank'] for  model in self.env['fts.fts'].search_read([('name','ilike','%%%s%%' % word_list[0]),('res_groups_id','in',self.env.user.groups_id._ids)],['model_record','rank'])} # Base-line
-        if len(word_list) > 1:
-            for w in word_list:
-                w2 = {model['model_record']:model['rank'] for  model in self.env['fts.fts'].search_read([('name','ilike','%%%s%%' % w),('model_record','in',words.keys()),('res_groups_id','in',self.env.user.groups_id._ids)],['model_record','rank'])}
+        words = {}
+        #~ words = {
+            #~ model['model_record']: model['rank'] for  model in self.env['fts.fts'].search_read(
+                #~ [('name','ilike','%%%s%%' % word_list[0]),('res_groups_id','in',self.env.user.groups_id._ids)],
+                #~ ['model_record','rank'])
+        #~ } # Base-line
+        for w in word_list:
+            w2 = {
+                model['model_record']: model['rank'] for  model in self.env['fts.fts'].search_read(
+                    [('name', 'ilike', '%%%s%%' % w), ('model_record', 'in', words.keys()), ('group_ids', 'in', self.env.user.groups_id._ids)],
+                    ['model_record','rank'])
+            }
+            _logger.warn(w2)
+            if words:
                 w3 = {}
                 # intersection: list(set(word.keys()) & set(w2.keys()))
                 for model_record in [val for val in word.keys() if val in w2.keys()]: # Intersection
-                    w3[model_record] = min(word[model_record],w2[model_record])
-                words = w3  # w3 is intersection of current words and w2; all other model_record is dropped 
+                    w3[model_record] = min(word[model_record], w2[model_record])
+                words = w3  # w3 is intersection of current words and w2; all other model_record is dropped
+            else:
+                words = w2
+            _logger.warn(words)
         model_record = sorted([word[model_record] for model_record in words.keys],key=operator.itemgetter(1))[:limit]  # sorted by rank, item(1) == rank
         words = request.env['fts.fts'].search([('model_record','in',model_record)])
         
