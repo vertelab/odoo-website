@@ -29,22 +29,23 @@ class product_template(models.Model):
     _inherit = 'product.template'
 
     @api.one
-    @api.depends('website_published','name','description_sale')
     def _full_text_search_update(self):
+        self._full_text_search_delete()
+        self.fts_dirty = False
         if self.website_published and self.active:
-            self.env['fts.fts'].update_text(self._name,self.id,text=self.name + ' ' + (self.description_sale or ''), rank=0, groups=self.access_group_ids)
-        self.full_text_search_update = ''
-
-    full_text_search_update = fields.Char(compute="_full_text_search_update",store=True)
-
+            self.env['fts.fts'].update_text(self._name, self.id, text=self.name, rank=0, groups=self.access_group_ids)
+            if self.description_sale:
+                self.env['fts.fts'].update_text(self._name, self.id, text=self.description_sale, rank=5, groups=self.access_group_ids)
 
 class product_product(models.Model):
     _inherit = 'product.product'
 
     @api.one
     def _full_text_search_update(self):
+        self._full_text_search_delete()
+        self.fts_dirty = False
         if self.website_published and self.active:
-            self.env['fts.fts'].update_text(self._name,self.id,text=self.name+' '+(self.description_sale or '')+' '+ ' '.join([att.name for att in self.attribute_value_ids]),rank=0, groups=self.access_group_ids)
+            self.env['fts.fts'].update_text(self._name,self.id,text=self.name,rank=0, groups=self.access_group_ids)
+            self.env['fts.fts'].update_text(self._name,self.id,text=(self.description_sale or '')+' '+ ' '.join([att.name for att in self.attribute_value_ids]),rank=5, groups=self.access_group_ids)
             self.env['fts.fts'].update_text(self._name,self.id,text=self.default_code,rank=0, groups=self.access_group_ids)
-        self.full_text_search_update = ''
-
+            self.env['fts.fts'].update_text(self._name,self.id,text=self.ean13,rank=0, groups=self.access_group_ids)

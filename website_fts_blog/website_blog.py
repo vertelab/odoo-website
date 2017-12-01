@@ -29,6 +29,10 @@ class fts_fts(models.Model):
     _inherit = 'fts.fts'
 
     facet = fields.Selection(selection_add=[('blog_tag','Blog Tag'),('blog','Blog'),('author','Author')])
+    
+    @api.model
+    def get_fts_models(self):
+        return super(fts_fts, self).get_fts_models() + ['blog.post']
 
     @api.one
     def get_object(self,words):
@@ -45,13 +49,13 @@ class Blog(models.Model):
 
     @api.one
     def _full_text_search_update(self):
+        super(Blog, self)._full_text_search_update()
         if self.website_published:
-            self.env['fts.fts'].update_html(self._name,self.id,html=self.content+' '+self.name+' '+self.subtitle,rank=int(self.ranking))
-            self.env['fts.fts'].update_text(self._name,self.id,text=self.author_id.name,facet='author',rank=int(self.ranking))
-            self.env['fts.fts'].update_text(self._name,self.id,text=self.blog_id.name,facet='blog',rank=int(self.ranking))
+            self.env['fts.fts'].update_html(self._name,self.id, html=self.content+' '+self.name+' '+self.subtitle, rank=int(self.ranking))
+            self.env['fts.fts'].update_text(self._name,self.id, text=self.author_id.name,facet='author', rank=int(self.ranking))
+            self.env['fts.fts'].update_text(self._name,self.id, text=self.blog_id.name,facet='blog', rank=int(self.ranking))
             #self.env['fts.fts'].update_text(self._name,self.id,text=' '.join([self.])self.blog_id.name,facet='blog_tag',rank=int(self.ranking))
             # SEO metadata ????
-        self.full_text_search_update = ''
 
 
 

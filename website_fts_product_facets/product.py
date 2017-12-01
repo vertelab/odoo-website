@@ -29,6 +29,10 @@ class fts_fts(models.Model):
 
     facet = fields.Selection(selection_add=[('product_facets','Product Facet')])
 
+    @api.model
+    def get_fts_models(self):
+        return super(fts_fts, self).get_fts_models() + ['product.facet.value']
+
     @api.one
     def get_object(self, words):
         if self.res_model == 'product.facet.value':

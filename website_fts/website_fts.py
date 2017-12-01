@@ -23,6 +23,8 @@ from openerp import models, fields, api, _
 from openerp import http
 from openerp.http import request
 from openerp.exceptions import Warning
+from datetime import datetime, timedelta
+import operator
 
 #from openerp.addons.website_fts.html2text import html2text
 import re
@@ -48,15 +50,31 @@ class fts_fts(models.Model):
     name = fields.Char(string="Term",index=True)
     #~ res_model = fields.Many2one(comodel_name='ir.model')
     res_model = fields.Char()
-    res_id    = fields.Integer()
+    res_id = fields.Integer()
     count = fields.Integer(default=1)
     rank = fields.Integer(default=10)
     group_ids = fields.Many2many(comodel_name="res.groups")
     facet = fields.Selection([('term','Term'),('author','Author')], string='Facet')
 
-    @api.multi
+    @api.model
     def get_fts_models(self):
         return []
+
+    @api.model
+    def update_fts_search_terms(self):
+        """Update all search terms for objects marked as dirty, up to the maximum time limit. Default setting is for a cron job with a 5 minute interval."""
+        _logger.info('Starting FTS update')
+        start = datetime.now()
+        limit = timedelta(minutes=float(self.env['ir.config_parameter'].get_param('website_fts.time_limit', '4.5')))
+        for model in self.get_fts_models():
+            records = self.env[model].search([('fts_dirty', '=', True)], order='create_date asc')
+            _logger.info('Updating FTS terms for %s' % records)
+            for record in records:
+                record._full_text_search_update()
+                if datetime.now() - start > limit:
+                    _logger.info('Time limit reached. Last record to be processed was %s' % record)
+                    return
+        _logger.info('Finished FTS update for all records')
 
     @api.one
     @api.depends('res_model','res_id')
@@ -82,24 +100,27 @@ class fts_fts(models.Model):
         return text
 
     @api.model
-    def update_html(self, res_model, res_id, html='', groups=None,facet='term', rank=10):
-        self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id),('facet','=',facet)]).unlink()
+    def clean_punctuation(self, text):
+        return text.rstrip(',').rstrip('.').rstrip(':').rstrip(';').rstrip('!')
+
+    @api.model
+    def update_html(self, res_model, res_id, html='', groups=None, facet='term', rank=10):
+        self.env['fts.fts'].search([('res_model', '=', res_model), ('res_id', '=', res_id), ('facet', '=', facet)]).unlink()
         soup = BeautifulSoup(html.strip().lower(), 'html.parser') #decode('utf-8').encode('utf-8')
-        texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in soup.findAll(text=True) if not w in STOP_WORDS + [';','=',':','(',')',' ','\n']]).split(' ')]
-        #~ raise Warning(Counter(texts).items())
-        for word,count in Counter(texts).items():
-            self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
+        texts = [self.clean_punctuation(w) for w in ' '.join([w.rstrip(',') for w in soup.findAll(text=True) if not w in STOP_WORDS + [';','=',':','(',')',' ','\n']]).split(' ')]
+        for word, count in Counter(texts).items():
+            if word:
+                self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
 
     @api.model
     def update_text(self,res_model,res_id,text='',groups=None,facet='term',rank=10):
         text = text or ''
         self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id),('facet','=',facet)]).unlink()
         text = text.strip().lower().split(' ')
-        texts = [w.rstrip(',').rstrip('.').rstrip(':').rstrip(';') for w in ' '.join([w.rstrip(',') for w in text if not w in STOP_WORDS + [' ','\n']]).split(' ')]
-        #~ _logger.warn(texts)
-        #~ _logger.warn(Counter(texts).items())
-        for word,count in Counter(texts).items():
-            self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
+        texts = [self.clean_punctuation(w) for w in ' '.join([w.rstrip(',') for w in text if not w in STOP_WORDS + [' ','\n']]).split(' ')]
+        for word, count in Counter(texts).items():
+            if word:
+                self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
 
     def word_union(self, r1, r2):
         r3 = self.env['fts.fts'].browse([])
@@ -108,6 +129,8 @@ class fts_fts(models.Model):
                 if r21.model_record == r11.model_record:
                     r3 |= r11
         return r3
+
+    
 
     @api.model
     def term_search(self, search, facet=None, res_model=None, limit=5, offset=0):
@@ -122,30 +145,48 @@ class fts_fts(models.Model):
 # 1) get list of models for first search
 # 2) search each word within the ever reduced list of models
 # the model-list has to be complete, limit can only be applied at end
+# TODO: save number of words found for each model_record to have an impact for rank
 
-        word_list = [w for w in word_list if w]
-        if word_list:
-            query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s%s" % (
-                " OR ".join(["name ILIKE %s" for w in word_list]),
-                " AND (id IN (SELECT DISTINCT ON (fts_fts_id) fts_fts_id FROM fts_fts_res_groups_rel WHERE res_groups_id IN %s) OR id NOT IN (SELECT DISTINCT fts_fts_id FROM fts_fts_res_groups_rel))",
-                (" AND (%s)" % " OR ".join(["model_record LIKE %s" for m in res_model])) if res_model else '',
-                " LIMIT %s" if limit else '',
-                " OFFSET %s" if offset else '')
-            params = ['%%%s%%' % w for w in word_list] + [self.env.user.groups_id._ids]
-            for model in res_model or []:
-                params.append('%s,%%' % model)
-            if limit:
-                params.append(limit)
-            if offset:
-                params.append(offset)
-            _logger.debug(query)
-            _logger.debug(params)
-            self.env.cr.execute(query, params)
-            res = self.env.cr.dictfetchall()
-            _logger.debug(res)
-            words = request.env['fts.fts'].browse([row['id'] for row in res])
-        else:
-            words = request.env['fts.fts'].browse([])
+        word_rank = {}  
+        words = {model['model_record']:model['rank'] for  model in self.env['fts.fts'].search_read([('name','ilike','%%%s%%' % word_list[0]),('res_groups_id','in',self.env.user.groups_id._ids)],['model_record','rank'])} # Base-line
+        if len(word_list) > 1:
+            for w in word_list:
+                w2 = {model['model_record']:model['rank'] for  model in self.env['fts.fts'].search_read([('name','ilike','%%%s%%' % w),('model_record','in',words.keys()),('res_groups_id','in',self.env.user.groups_id._ids)],['model_record','rank'])}
+                w3 = {}
+                for model_record in [val for val in word.keys() if val in w2.keys()]: # Intersection
+                    w3[model_record] = min(word[model_record],w2[model_record])
+                words = w3  # w3 is intersection of current words and w2; all other model_record is dropped 
+        model_record = sorted([word[model_record] for model_record in words.keys],key=operator.itemgetter(1))[:limit]  # sorted by rank, item(1) == rank
+        words = request.env['fts.fts'].search([('model_record','in',model_record)])
+        
+        
+        
+        #~ word_list = [w for w in word_list if w]
+        #~ if word_list:
+            #~ query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s%s" % (
+                #~ " OR ".join(["name ILIKE %s" for w in word_list]),
+                #~ " AND (id IN (SELECT DISTINCT ON (fts_fts_id) fts_fts_id FROM fts_fts_res_groups_rel WHERE res_groups_id IN %s) OR id NOT IN (SELECT DISTINCT fts_fts_id FROM fts_fts_res_groups_rel))",
+                #~ (" AND (%s)" % " OR ".join(["model_record LIKE %s" for m in res_model])) if res_model else '',
+                #~ " LIMIT %s" if limit else '',
+                #~ " OFFSET %s" if offset else '')
+            #~ params = ['%%%s%%' % w for w in word_list] + [self.env.user.groups_id._ids]
+            #~ for model in res_model or []:
+                #~ params.append('%s,%%' % model)
+            #~ if limit:
+                #~ params.append(limit)
+            #~ if offset:
+                #~ params.append(offset)
+            #~ _logger.debug(query)
+            #~ _logger.debug(params)
+            #~ self.env.cr.execute(query, params)
+            #~ res = self.env.cr.dictfetchall()
+            #~ _logger.debug(res)
+            #~ words = request.env['fts.fts'].browse([row['id'] for row in res])
+        #~ else:
+            #~ words = request.env['fts.fts'].browse([])
+        
+            
+
         facets = []
 
         for f in set(words.mapped('facet')):
@@ -183,6 +224,7 @@ class fts_model(models.AbstractModel):
     @api.multi
     def _full_text_search_update(self):
         self._full_text_search_delete()
+        self.fts_dirty = False
 
     #~ @api.model
     #~ @api.returns('self', lambda value: value.id)

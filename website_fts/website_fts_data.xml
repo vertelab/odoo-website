@@ -19,6 +19,17 @@ for o in object.browse(context.get('active_ids', [])):
       <field name="key2">client_action_multi</field>
       <field name="value" eval="'ir.actions.server,%d' % update_webpage" />
     </record>
+    
+    <record model="ir.cron" id="cron_update_fts">
+      <field name="name">Update FTS Terms</field>
+      <field name="user_id" ref="base.user_root"/>
+      <field name="interval_number">5</field>
+      <field name="interval_type">minutes</field>
+      <field name="doall" eval="True"/>
+      <field name="numbercall">-1</field>
+      <field name="model">fts.fts</field>
+      <field name="function">update_fts_search_terms</field>
+    </record>
 
     </data>
 </openerp>
