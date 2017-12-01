@@ -129,6 +129,7 @@ class fts_fts(models.Model):
             for w in word_list:
                 w2 = {model['model_record']:model['rank'] for  model in self.env['fts.fts'].search_read([('name','ilike','%%%s%%' % w),('model_record','in',words.keys()),('res_groups_id','in',self.env.user.groups_id._ids)],['model_record','rank'])}
                 w3 = {}
+                # intersection: list(set(word.keys()) & set(w2.keys()))
                 for model_record in [val for val in word.keys() if val in w2.keys()]: # Intersection
                     w3[model_record] = min(word[model_record],w2[model_record])
                 words = w3  # w3 is intersection of current words and w2; all other model_record is dropped 
