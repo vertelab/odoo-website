@@ -24,6 +24,8 @@ from openerp import http
 from openerp.http import request
 from openerp.exceptions import Warning
 
+import operator
+
 #from openerp.addons.website_fts.html2text import html2text
 import re
 from collections import Counter
@@ -104,6 +106,8 @@ class fts_fts(models.Model):
                     r3 |= r11
         return r3
 
+    
+
     @api.model
     def term_search(self, search, facet=None, res_model=None, limit=5, offset=0):
         word_list = []
@@ -117,30 +121,47 @@ class fts_fts(models.Model):
 # 1) get list of models for first search
 # 2) search each word within the ever reduced list of models
 # the model-list has to be complete, limit can only be applied at end
+# TODO: save number of words found for each model_record to have an impact for rank
 
-        word_list = [w for w in word_list if w]
-        if word_list:
-            query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s%s" % (
-                " OR ".join(["name ILIKE %s" for w in word_list]),
-                " AND (id IN (SELECT DISTINCT ON (fts_fts_id) fts_fts_id FROM fts_fts_res_groups_rel WHERE res_groups_id IN %s) OR id NOT IN (SELECT DISTINCT fts_fts_id FROM fts_fts_res_groups_rel))",
-                (" AND (%s)" % " OR ".join(["model_record LIKE %s" for m in res_model])) if res_model else '',
-                " LIMIT %s" if limit else '',
-                " OFFSET %s" if offset else '')
-            params = ['%%%s%%' % w for w in word_list] + [self.env.user.groups_id._ids]
-            for model in res_model or []:
-                params.append('%s,%%' % model)
-            if limit:
-                params.append(limit)
-            if offset:
-                params.append(offset)
-            _logger.debug(query)
-            _logger.debug(params)
-            self.env.cr.execute(query, params)
-            res = self.env.cr.dictfetchall()
-            _logger.debug(res)
-            words = request.env['fts.fts'].browse([row['id'] for row in res])
-        else:
-            words = request.env['fts.fts'].browse([])
+        word_rank = {}  
+        words = {model['model_record']:model['rank'] for  model in self.env['fts.fts'].search_read([('name','ilike','%%%s%%' % word_list[0]),('res_groups_id','in',self.env.user.groups_id._ids)],['model_record','rank'])} # Base-line
+        if len(word_list) > 1:
+            for w in word_list:
+                w2 = {model['model_record']:model['rank'] for  model in self.env['fts.fts'].search_read([('name','ilike','%%%s%%' % w),('model_record','in',words.keys()),('res_groups_id','in',self.env.user.groups_id._ids)],['model_record','rank'])}
+                w3 = {}
+                for model_record in [val for val in word.keys() if val in w2.keys()]: # Intersection
+                    w3[model_record] = min(word[model_record],w2[model_record])
+                words = w3  # w3 is intersection of current words and w2; all other model_record is dropped 
+        model_record = sorted([word[model_record] for model_record in words.keys],key=operator.itemgetter(1))[:limit]  # sorted by rank, item(1) == rank
+        words = request.env['fts.fts'].search([('model_record','in',model_record)])
+        
+        
+        
+        #~ word_list = [w for w in word_list if w]
+        #~ if word_list:
+            #~ query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s%s" % (
+                #~ " OR ".join(["name ILIKE %s" for w in word_list]),
+                #~ " AND (id IN (SELECT DISTINCT ON (fts_fts_id) fts_fts_id FROM fts_fts_res_groups_rel WHERE res_groups_id IN %s) OR id NOT IN (SELECT DISTINCT fts_fts_id FROM fts_fts_res_groups_rel))",
+                #~ (" AND (%s)" % " OR ".join(["model_record LIKE %s" for m in res_model])) if res_model else '',
+                #~ " LIMIT %s" if limit else '',
+                #~ " OFFSET %s" if offset else '')
+            #~ params = ['%%%s%%' % w for w in word_list] + [self.env.user.groups_id._ids]
+            #~ for model in res_model or []:
+                #~ params.append('%s,%%' % model)
+            #~ if limit:
+                #~ params.append(limit)
+            #~ if offset:
+                #~ params.append(offset)
+            #~ _logger.debug(query)
+            #~ _logger.debug(params)
+            #~ self.env.cr.execute(query, params)
+            #~ res = self.env.cr.dictfetchall()
+            #~ _logger.debug(res)
+            #~ words = request.env['fts.fts'].browse([row['id'] for row in res])
+        #~ else:
+            #~ words = request.env['fts.fts'].browse([])
+        
+            
         facets = []
 
         for f in set(words.mapped('facet')):
