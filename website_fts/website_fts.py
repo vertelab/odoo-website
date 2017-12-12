@@ -25,6 +25,7 @@ from openerp.http import request
 from openerp.exceptions import Warning
 from datetime import datetime, timedelta
 import operator
+import sys, traceback
 
 #from openerp.addons.website_fts.html2text import html2text
 import re
@@ -43,6 +44,17 @@ except:
 STOP_WORDS = ['aderton','adertonde','adjö','aldrig','alla','allas','allt','alltid','alltså','än','andra','andras','annan','annat','ännu','artonde','artonn','åtminstone','att','åtta','åttio','åttionde','åttonde','av','även','båda','bådas','bakom','bara','bäst','bättre','behöva','behövas','behövde','behövt','beslut','beslutat','beslutit','bland','blev','bli','blir','blivit','bort','borta','bra','då','dag','dagar','dagarna','dagen','där','därför','de','del','delen','dem','den','deras','dess','det','detta','dig','din','dina','dit','ditt','dock','du','efter','eftersom','elfte','eller','elva','en','enkel','enkelt','enkla','enligt','er','era','ert','ett','ettusen','få','fanns','får','fått','fem','femte','femtio','femtionde','femton','femtonde','fick','fin','finnas','finns','fjärde','fjorton','fjortonde','fler','flera','flesta','följande','för','före','förlåt','förra','första','fram','framför','från','fyra','fyrtio','fyrtionde','gå','gälla','gäller','gällt','går','gärna','gått','genast','genom','gick','gjorde','gjort','god','goda','godare','godast','gör','göra','gott','ha','hade','haft','han','hans','har','här','heller','hellre','helst','helt','henne','hennes','hit','hög','höger','högre','högst','hon','honom','hundra','hundraen','hundraett','hur','i','ibland','idag','igår','igen','imorgon','in','inför','inga','ingen','ingenting','inget','innan','inne','inom','inte','inuti','ja','jag','jämfört','kan','kanske','knappast','kom','komma','kommer','kommit','kr','kunde','kunna','kunnat','kvar','länge','längre','långsam','långsammare','långsammast','långsamt','längst','långt','lätt','lättare','lättast','legat','ligga','ligger','lika','likställd','likställda','lilla','lite','liten','litet','man','många','måste','med','mellan','men','mer','mera','mest','mig','min','mina','mindre','minst','mitt','mittemot','möjlig','möjligen','möjligt','möjligtvis','mot','mycket','någon','någonting','något','några','när','nästa','ned','nederst','nedersta','nedre','nej','ner','ni','nio','nionde','nittio','nittionde','nitton','nittonde','nödvändig','nödvändiga','nödvändigt','nödvändigtvis','nog','noll','nr','nu','nummer','och','också','ofta','oftast','olika','olikt','om','oss','över','övermorgon','överst','övre','på','rakt','rätt','redan','så','sade','säga','säger','sagt','samma','sämre','sämst','sedan','senare','senast','sent','sex','sextio','sextionde','sexton','sextonde','sig','sin','sina','sist','sista','siste','sitt','sjätte','sju','sjunde','sjuttio','sjuttionde','sjutton','sjuttonde','ska','skall','skulle','slutligen','små','smått','snart','som','stor','stora','större','störst','stort','tack','tidig','tidigare','tidigast','tidigt','till','tills','tillsammans','tio','tionde','tjugo','tjugoen','tjugoett','tjugonde','tjugotre','tjugotvå','tjungo','tolfte','tolv','tre','tredje','trettio','trettionde','tretton','trettonde','två','tvåhundra','under','upp','ur','ursäkt','ut','utan','utanför','ute','vad','vänster','vänstra','var','vår','vara','våra','varför','varifrån','varit','varken','värre','varsågod','vart','vårt','vem','vems','verkligen','vi','vid','vidare','viktig','viktigare','viktigast','viktigt','vilka','vilken','vilket','vill']
 #STOP_WORDS2 = ['a','about','above','after','again','against','all','am','an','and','any','are','aren't','as','at','be','because','been','before','being','below','between','both','but','by','can't','cannot','could','couldn't','did','didn't','do','does','doesn't','doing','don't','down','during','each','e.g.','few','for','from','further','had','hadn't','has','hasn't','have','haven't','having','he','he'd','he'll','he's','her','here','here's','hers','herself','him','himself','his','how','how's','i','i'd','i'll','i'm','i've','if','in','into','is','isn't','it','it's','its','itself','let's','me','more','most','mustn't','my','myself','no','nor','not','of','off','on','once','only','or','other','ought','our','ours','ourselves','out','over','own','same','shan't','she','she'd','she'll','she's','should','shouldn't','so','some','such','than','that','that's','the','their','theirs','them','themselves','then','there','there's','these','they','they'd','they'll','they're','they've','this','those','through','to','too','under','until','up','very','was','wasn't','we','we'd','we'll','we're','we've','were','weren't','what','what's','when','when's','where','where's','which','while','who','who's','whom','why','why's','with','won't','would','wouldn't','you','you'd','you'll','you're','you've','your','yours','yourself','yourselves']
 #~ STOP_WORDS += [' ','\n']
+
+def cmp_len(x, y):
+    if len(x) < len(y):
+        return 1
+    elif len(y) < len(x):
+        return -1
+    return 0
+
+# TODO: Test how this method works over multiple databases
+_fts_models = set()
+
 class fts_fts(models.Model):
     _name = 'fts.fts'
     _order = "name, rank, count"
@@ -57,29 +69,41 @@ class fts_fts(models.Model):
     facet = fields.Selection([('term','Term'),('author','Author')], string='Facet')
 
     @api.model
+    def register_fts_model(self, model):
+        _fts_models.add(model)
+
+    @api.model
     def get_fts_models(self):
-        return []
+        return _fts_models
 
     @api.model
     def update_fts_search_terms(self):
         """Update all search terms for objects marked as dirty, up to the maximum time limit. Default setting is for a cron job with a 5 minute interval."""
         _logger.info('Starting FTS update')
+        count = 0
         start = datetime.now()
         limit = timedelta(minutes=float(self.env['ir.config_parameter'].get_param('website_fts.time_limit', '4.5')))
-        for model in self.get_fts_models():
+        for model in _fts_models:
             records = self.env[model].search([('fts_dirty', '=', True)], order='create_date asc')
-            _logger.info('Updating FTS terms for %s' % records)
+            _logger.info('Updating FTS terms for %s(%s%s)' % (records._name, ', '.join([str(id) for id in records._ids[:10]]), ('... [%s more]' % (len(records._ids) -10)) if len(records._ids) > 10 else ''))
             for record in records:
-                record._full_text_search_update()
+                try:
+                    record._full_text_search_update()
+                    count += 1
+                    # Commit to avoid locking rows for the full duration of this function.
+                    self.env.cr.commit()
+                except:
+                    _logger.warn("Could not update FTS terms for %s" % record)
+                    self.log_error('DEBUG')
                 if datetime.now() - start > limit:
-                    _logger.info('Time limit reached. Last record to be processed was %s' % record)
+                    _logger.info('Time limit reached. Processed %s records. Last record to be processed was %s' % (count, record))
                     return
         _logger.info('Finished FTS update for all records')
 
     @api.one
     @api.depends('res_model','res_id')
     def _model_record(self):
-        if self.res_model and self.res_id and self.env[self.res_model].browse(self.res_id) and not self.res_model.startswith('ir.'):
+        if self.res_model and self.res_id and self.env[self.res_model].browse(self.res_id):
             self.model_record = self.env[self.res_model].browse(self.res_id)
             #~ self.model_record = (self.res_model,self.res_id)
         else:
@@ -88,12 +112,11 @@ class fts_fts(models.Model):
     @api.model
     def _reference_models(self):
         models = self.env['ir.model'].search([('state', '!=', 'manual')])
-        return [(model.model, model.name) for model in models if not model.model.startswith('ir.')]
-    model_record = fields.Reference(string="Record",selection="_reference_models",compute="_model_record",store=True) # ,store=True,index=True)
+        return [(model.model, model.name) for model in models if (not model.model.startswith('ir.') or model.model in ['ir.attachment', 'ir.ui.view'])]
+    model_record = fields.Reference(string="Record", selection="_reference_models", compute="_model_record", store=True) # ,store=True,index=True)
 
     @api.model
-    def get_text(self,texts,words):
-        #~ _logger.warn(texts)
+    def get_text(self, texts, words):
         text = ''
         for t in texts:
             text += ' '.join(BeautifulSoup(t, 'html.parser').findAll(text=True))
@@ -113,9 +136,9 @@ class fts_fts(models.Model):
                 self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
 
     @api.model
-    def update_text(self,res_model,res_id,text='',groups=None,facet='term',rank=10):
+    def update_text(self, res_model, res_id, text='', groups=None, facet='term', rank=10):
         text = text or ''
-        self.env['fts.fts'].search([('res_model','=',res_model),('res_id','=',res_id),('facet','=',facet)]).unlink()
+        self.env['fts.fts'].search([('res_model', '=', res_model), ('res_id', '=', res_id), ('facet', '=', facet)]).unlink()
         text = text.strip().lower().split(' ')
         texts = [self.clean_punctuation(w) for w in ' '.join([w.rstrip(',') for w in text if not w in STOP_WORDS + [' ','\n']]).split(' ')]
         for word, count in Counter(texts).items():
@@ -134,6 +157,8 @@ class fts_fts(models.Model):
 
     @api.model
     def term_search(self, search, facet=None, res_model=None, limit=5, offset=0):
+        _logger.warn(_logger.getEffectiveLevel())
+        start = datetime.now()
         word_list = []
         if '"' in search:
             for w in search.split('"'):
@@ -141,6 +166,8 @@ class fts_fts(models.Model):
                     word_list.append(w)
         else:
             word_list = search.split(' ')
+        # Sort by longest (probably most significant) word first.
+        word_list.sort(cmp_len)
 
 # 1) get list of models for first search
 # 2) search each word within the ever reduced list of models
@@ -149,57 +176,41 @@ class fts_fts(models.Model):
 
         word_rank = {}  
         words = {}
-        #~ words = {
-            #~ model['model_record']: model['rank'] for  model in self.env['fts.fts'].search_read(
-                #~ [('name','ilike','%%%s%%' % word_list[0]),('res_groups_id','in',self.env.user.groups_id._ids)],
-                #~ ['model_record','rank'])
-        #~ } # Base-line
         for w in word_list:
-            w2 = {
-                model['model_record']: model['rank'] for  model in self.env['fts.fts'].search_read(
-                    [('name', 'ilike', '%%%s%%' % w), ('model_record', 'in', words.keys()), ('group_ids', 'in', self.env.user.groups_id._ids)],
-                    ['model_record','rank'])
-            }
-            _logger.warn(w2)
+            domain = [
+                ('name', 'ilike', '%%%s%%' % w),
+                ('model_record', '!=', False),
+                '|',
+                    ('group_ids', '=', False),
+                    ('group_ids', 'in', [g.id for g in self.env.user.groups_id])
+            ]
             if words:
-                w3 = {}
-                # intersection: list(set(word.keys()) & set(w2.keys()))
-                for model_record in [val for val in word.keys() if val in w2.keys()]: # Intersection
-                    w3[model_record] = min(word[model_record], w2[model_record])
-                words = w3  # w3 is intersection of current words and w2; all other model_record is dropped
-            else:
-                words = w2
-            _logger.warn(words)
-        model_record = sorted([word[model_record] for model_record in words.keys],key=operator.itemgetter(1))[:limit]  # sorted by rank, item(1) == rank
-        words = request.env['fts.fts'].search([('model_record','in',model_record)])
+                domain.append(('model_record', 'in', words.keys()))
+            _logger.debug(domain)
+            # Create updated list of matching terms
+            words2 = {}
+            for term in self.env['fts.fts'].search_read(domain, ['model_record', 'rank']):
+                if term['model_record'] in words:
+                    # A match to the same record is already in the list. Compare ranks and keep the lowest match.
+                    if term['rank'] < words[term['model_record']]['rank']:
+                        words2[term['model_record']] = {
+                            'id': term['id'],
+                            'rank': term['rank'],
+                        }
+                    else:
+                        words2[term['model_record']] = words[term['model_record']]
+                else:
+                    # No previous match in the list. Add this one.
+                    words2[term['model_record']] = {
+                        'id': term['id'],
+                        'rank': term['rank'],
+                    }
+            # Replace the previous words with the updated version
+            words = words2
+            _logger.debug(words)
+        words = request.env['fts.fts'].browse([words[w]['id'] for w in words])
         
-        
-        
-        #~ word_list = [w for w in word_list if w]
-        #~ if word_list:
-            #~ query = "SELECT DISTINCT ON (model_record) id, model_record FROM fts_fts WHERE %s%s%s%s%s" % (
-                #~ " OR ".join(["name ILIKE %s" for w in word_list]),
-                #~ " AND (id IN (SELECT DISTINCT ON (fts_fts_id) fts_fts_id FROM fts_fts_res_groups_rel WHERE res_groups_id IN %s) OR id NOT IN (SELECT DISTINCT fts_fts_id FROM fts_fts_res_groups_rel))",
-                #~ (" AND (%s)" % " OR ".join(["model_record LIKE %s" for m in res_model])) if res_model else '',
-                #~ " LIMIT %s" if limit else '',
-                #~ " OFFSET %s" if offset else '')
-            #~ params = ['%%%s%%' % w for w in word_list] + [self.env.user.groups_id._ids]
-            #~ for model in res_model or []:
-                #~ params.append('%s,%%' % model)
-            #~ if limit:
-                #~ params.append(limit)
-            #~ if offset:
-                #~ params.append(offset)
-            #~ _logger.debug(query)
-            #~ _logger.debug(params)
-            #~ self.env.cr.execute(query, params)
-            #~ res = self.env.cr.dictfetchall()
-            #~ _logger.debug(res)
-            #~ words = request.env['fts.fts'].browse([row['id'] for row in res])
-        #~ else:
-            #~ words = request.env['fts.fts'].browse([])
-        
-            
+        _logger.debug('words: %s' % words)
 
         facets = []
 
@@ -210,6 +221,8 @@ class fts_fts(models.Model):
         for m in set(words.mapped('res_model')):
             w,c = Counter(words.filtered(lambda w: w.res_model == m)).items()[0]
             models.append((w.res_model,c))
+        delta_t = datetime.now() - start
+        _logger.info('FTS search (%s) took %.2f s' % (search, (delta_t.seconds + (delta_t.microseconds / 1000000.0))))
         return {'terms': words,'facets': facets,'models': models, 'docs': words.filtered(lambda w: w.model_record != False).mapped('model_record')[:limit]}
 
 
@@ -221,13 +234,26 @@ class fts_fts(models.Model):
             return {'name': page.name, 'body': self.get_text([page.arch],words)}
         return {'name': '<none>', 'body': '<empty>'}
 
+    @api.model
+    def log_error(self, level='DEBUG'):
+        e = sys.exc_info()
+        _logger.log(getattr(_logger, level), ''.join(traceback.format_exception(e[0], e[1], e[2])))
+
 class fts_model(models.AbstractModel):
     _name = 'fts.model'
     _description = 'FTS Model'
 
     _fts_fields = []
     
-    fts_dirty = fields.Boolean('Dirty', help='FTS terms for this record need to be updated', default=True)
+    fts_dirty = fields.Boolean(string='Dirty', help='FTS terms for this record need to be updated', default=True)
+    
+    @api.model
+    def _setup_complete(self):
+        res = super(fts_model, self)._setup_complete()
+        _logger.warn('_setup_complete %s' % self._name)
+        if self._name != 'fts.model':
+            self.env['fts.fts'].register_fts_model(self._name)
+        return res
     
     @api.multi
     def _full_text_search_delete(self):
@@ -235,7 +261,7 @@ class fts_model(models.AbstractModel):
         if terms:
             terms.unlink()
 
-    @api.multi
+    @api.one
     def _full_text_search_update(self):
         self._full_text_search_delete()
         self.fts_dirty = False
@@ -271,12 +297,14 @@ class fts_website(models.Model):
 
 
 class view(models.Model):
-    _inherit = 'ir.ui.view'
+    _name = 'ir.ui.view'
+    _inherit = ['ir.ui.view', 'fts.model']
+
+    _fts_fields = ['arch', 'groups_id']
 
     @api.one
-    @api.depends('arch','groups_id')
     def _full_text_search_update(self):
-        #~ _logger.warn(self.name)
+        super(view, self)._full_text_search_update()
         if self.type == 'qweb' and 't-call="website.layout"' in self.arch:
             website = self.env['fts.website'].search([('res_id','=',self.id)])
             if website:
@@ -284,9 +312,6 @@ class view(models.Model):
             else:
                 website = self.env['fts.website'].create({'name': self.name, 'xml_id': self.xml_id, 'body': self.env['fts.fts'].get_text([self.arch],[]), 'res_id': self.id, 'group_ids': self.groups_id })
             self.env['fts.fts'].update_html('fts.website',website.id,html=website.body,groups=website.group_ids)
-        self.full_text_search_update = '' #just for depends to work
-    full_text_search_update = fields.Char(compute="_full_text_search_update", store=True)
-
 
 class WebsiteFullTextSearch(http.Controller):
 
@@ -377,4 +402,20 @@ class WebsiteFullTextSearch(http.Controller):
                 })
             i += 1
         return rl
+
+class fts_test(models.TransientModel):
+    _name = 'fts.test'
+    _description = 'FTS Test Wizard'
+
+    search = fields.Char(string='Search Term')
+    fts_ids = fields.Many2many(string='Search Results', comodel_name='fts.fts')
+
+    @api.one
+    @api.onchange('search')
+    def test_search(self):
+        _logger.warn('\n\n\n\n\n%s\n\n\n\n' % self.search)
+        self.fts_ids = None
+        if self.search:
+            self.fts_ids = self.env['fts.fts'].term_search(self.search)['terms']
+            _logger.warn('\n\nfoo\n\n')
 

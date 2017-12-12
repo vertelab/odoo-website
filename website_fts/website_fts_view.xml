@@ -37,6 +37,7 @@
         </tree>
       </field>
     </record>
+    
     <record id="fts_form_view" model="ir.ui.view">
       <field name="name">fts.fts.form</field>
       <field name="model">fts.fts</field>
@@ -55,6 +56,7 @@
         </form>
       </field>
     </record>
+    
     <record id="fts_action" model="ir.actions.act_window">
       <field name="name">Full Text Search Terms</field>
       <field name="type">ir.actions.act_window</field>
@@ -63,7 +65,42 @@
       <field name="view_type">form</field>
       <field name="view_id" ref="website_fts.fts_tree_view"/>
     </record>
+    
     <menuitem name="Full text search" id="menu_fts_configuration" parent="knowledge.menu_document_configuration" sequence="1" />
+    
     <menuitem name="Terms" id="menu_fts_terms" parent="menu_fts_configuration" action="fts_action" sequence="1" />
+    
+    <record id="fts_test_form_view" model="ir.ui.view">
+      <field name="name">fts.test.form</field>
+      <field name="model">fts.test</field>
+      <field name="arch" type="xml">
+        <form string="Test Search">
+          <label for="search"/>
+          <field name="search"/>
+          <label for="fts_ids"/>
+          <field name="fts_ids">
+            <tree>
+              <field name="rank"/>
+              <field name="name"/>
+              <field name="model_record"/>
+            </tree>
+          </field>
+        </form>
+      </field>
+    </record>
+    
+    <record id="fts_test_action" model="ir.actions.act_window">
+      <field name="name">Test FTS</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">fts.test</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="target">current</field>
+      <field name="context">{}</field>
+      <field name="domain"></field>
+    </record>
+    
+    <menuitem name="Test Search" id="menu_fts_test" parent="menu_fts_configuration" action="fts_test_action" sequence="10" />
+    
   </data>
 </openerp>

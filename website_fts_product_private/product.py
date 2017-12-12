@@ -31,7 +31,7 @@ class product_template(models.Model):
     @api.one
     def _full_text_search_update(self):
         self._full_text_search_delete()
-        self.fts_dirty = False
+        self.write({'fts_dirty': False})
         if self.website_published and self.active:
             self.env['fts.fts'].update_text(self._name, self.id, text=self.name, rank=0, groups=self.access_group_ids)
             if self.description_sale:
@@ -43,7 +43,7 @@ class product_product(models.Model):
     @api.one
     def _full_text_search_update(self):
         self._full_text_search_delete()
-        self.fts_dirty = False
+        self.write({'fts_dirty': False})
         if self.website_published and self.active:
             self.env['fts.fts'].update_text(self._name,self.id,text=self.name,rank=0, groups=self.access_group_ids)
             self.env['fts.fts'].update_text(self._name,self.id,text=(self.description_sale or '')+' '+ ' '.join([att.name for att in self.attribute_value_ids]),rank=5, groups=self.access_group_ids)

@@ -31,7 +31,7 @@ class Blog(models.Model):
     @api.one
     def _full_text_search_update(self):
         self._full_text_search_delete()
-        self.fts_dirty = False
+        self.write({'fts_dirty': False})
         if self.website_published:
             self.env['fts.fts'].update_html(self._name, self.id, html=self.content+' '+self.name+' '+self.subtitle,rank=int(self.ranking),groups=self.group_ids if self.group_ids else self.blog_id.group_ids or None)
             self.env['fts.fts'].update_text(self._name, self.id, text=self.author_id.name,facet='author',rank=int(self.ranking),groups=self.group_ids if self.group_ids else self.blog_id.group_ids or None)
