@@ -207,10 +207,12 @@ class fts_fts(models.Model):
                     }
             # Replace the previous words with the updated version
             words = words2
+            if not words:
+                break
             _logger.debug(words)
-        words = request.env['fts.fts'].browse([words[w]['id'] for w in words])
+        words = self.env['fts.fts'].browse([words[w]['id'] for w in words])
+        _logger.warn('words: %s' % words)
         
-        _logger.debug('words: %s' % words)
 
         facets = []
 
@@ -409,13 +411,32 @@ class fts_test(models.TransientModel):
 
     search = fields.Char(string='Search Term')
     fts_ids = fields.Many2many(string='Search Results', comodel_name='fts.fts')
+    log = fields.Html(string='Log', readonly=True, default="""<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Time</th>
+      <th>Search Term</th>
+      <th># Hits</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>""")
 
     @api.one
     @api.onchange('search')
     def test_search(self):
-        _logger.warn('\n\n\n\n\n%s\n\n\n\n' % self.search)
-        self.fts_ids = None
         if self.search:
-            self.fts_ids = self.env['fts.fts'].term_search(self.search)['terms']
-            _logger.warn('\n\nfoo\n\n')
-
+            start = datetime.now()
+            result = self.env['fts.fts'].term_search(self.search)
+            delta_t = datetime.now() - start
+            _logger.warn(result)
+            self.fts_ids = [(6, 0, [r.id for r in result['terms']])]
+            rows = self.log.split('\n')
+            self.log = '\n'.join(
+                rows[:-2] + [
+                    '<tr><td>%.2f s</td><td>%s</td><td>%s</td></tr>' % (
+                        (delta_t.seconds + (delta_t.microseconds / 1000000.0)),
+                        self.search,
+                        len(self.fts_ids)
+                )] + rows[-2:])
