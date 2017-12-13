@@ -157,7 +157,6 @@ class fts_fts(models.Model):
 
     @api.model
     def term_search(self, search, facet=None, res_model=None, limit=5, offset=0):
-        _logger.warn(_logger.getEffectiveLevel())
         start = datetime.now()
         word_list = []
         if '"' in search:
@@ -239,7 +238,7 @@ class fts_fts(models.Model):
     @api.model
     def log_error(self, level='DEBUG'):
         e = sys.exc_info()
-        _logger.log(getattr(_logger, level), ''.join(traceback.format_exception(e[0], e[1], e[2])))
+        _logger.log(getattr(logging, level), ''.join(traceback.format_exception(e[0], e[1], e[2])))
 
 class fts_model(models.AbstractModel):
     _name = 'fts.model'

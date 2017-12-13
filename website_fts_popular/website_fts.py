@@ -46,12 +46,13 @@ class fts_fts(models.Model):
     last_halfyear = fields.Boolean(string="Last half year",compute="_last_week",store=True)
     last_year = fields.Boolean(string="Last year",compute="_last_week",store=True)
 
-    @api.model
-    def term_search(self, word_list=[], facet=None, res_model=None, limit=5, offset=0):
-        res = super(fts_fts, self).term_search(word_list, facet, res_model, limit, offset)
-        for term in res['terms']:
-            term.write({'nbr_searches': term.nbr_searches + 1, 'last_search': fields.Datetime.now()})
-        return res
+    # TODO: Check why this method breaks te test search.
+    #~ @api.model
+    #~ def term_search(self, word_list=[], facet=None, res_model=None, limit=5, offset=0):
+        #~ res = super(fts_fts, self).term_search(word_list, facet, res_model, limit, offset)
+        #~ for term in res['terms']:
+            #~ term.write({'nbr_searches': term.nbr_searches + 1, 'last_search': fields.Datetime.now()})
+        #~ return res
 
 class fts_popular(models.Model):
     _name = 'fts.popular'
