@@ -133,7 +133,7 @@ class fts_fts(models.Model):
         texts = [self.clean_punctuation(w) for w in ' '.join([w.rstrip(',') for w in soup.findAll(text=True) if not w in STOP_WORDS + [';','=',':','(',')',' ','\n']]).split(' ')]
         for word, count in Counter(texts).items():
             if word:
-                self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
+                self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word.lower(),'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
 
     @api.model
     def update_text(self, res_model, res_id, text='', groups=None, facet='term', rank=10):
@@ -143,7 +143,7 @@ class fts_fts(models.Model):
         texts = [self.clean_punctuation(w) for w in ' '.join([w.rstrip(',') for w in text if not w in STOP_WORDS + [' ','\n']]).split(' ')]
         for word, count in Counter(texts).items():
             if word:
-                self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
+                self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word.lower(),'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
 
     def word_union(self, r1, r2):
         r3 = self.env['fts.fts'].browse([])
@@ -153,11 +153,11 @@ class fts_fts(models.Model):
                     r3 |= r11
         return r3
 
-    
+
 
     @api.model
-    def term_search(self, search, facet=None, res_model=None, limit=5, offset=0):
-        _logger.debug('\nterm_search: %s\nfacet: %s\nres_model: %s' % (search, facet, res_model))
+    def term_search(self, search, facet=None, res_models=['product.template', 'product.product', 'blog.post'], limit=5, offset=0):
+
         start = datetime.now()
         word_list = []
         if '"' in search:
@@ -174,20 +174,21 @@ class fts_fts(models.Model):
 # the model-list has to be complete, limit can only be applied at end
 # TODO: save number of words found for each model_record to have an impact for rank
 
-        word_rank = {}  
+        word_rank = {}
         words = {}
         for w in word_list:
             domain = [
-                ('name', 'ilike', '%%%s%%' % w),
+                ('name', 'like', '%%%s%%' % w),
                 ('model_record', '!=', False),
+                ('res_model', 'in', res_models),
                 '|',
                     ('group_ids', '=', False),
                     ('group_ids', 'in', [g.id for g in self.env.user.groups_id])
             ]
-            if res_model:
-                if isinstance(res_model, list):
-                    domain += ['|' for i in range(len(res_model) - 1)]
-                    for m in res_model:
+            if res_models:
+                if isinstance(res_models, list):
+                    domain += ['|' for i in range(len(res_models) - 1)]
+                    for m in res_models:
                         domain.append(('res_model', '=', m))
                 else:
                     domain.append(('res_model', '=', res_model))
@@ -217,9 +218,9 @@ class fts_fts(models.Model):
             if not words:
                 break
             _logger.debug(words)
-        words = self.env['fts.fts'].browse([words[w]['id'] for w in words])
+        words = self.env['fts.fts'].browse([words[w]['id'] for w in words]).sorted(key=lambda r: r.rank)
         _logger.debug('words: %s' % words)
-        
+
 
         facets = []
 
@@ -253,9 +254,9 @@ class fts_model(models.AbstractModel):
     _description = 'FTS Model'
 
     _fts_fields = []
-    
+
     fts_dirty = fields.Boolean(string='Dirty', help='FTS terms for this record need to be updated', default=True)
-    
+
     @api.model
     def _setup_complete(self):
         res = super(fts_model, self)._setup_complete()
@@ -263,7 +264,7 @@ class fts_model(models.AbstractModel):
         if self._name != 'fts.model':
             self.env['fts.fts'].register_fts_model(self._name)
         return res
-    
+
     @api.multi
     def _full_text_search_delete(self):
         terms = self.env['fts.fts'].search(['|' for i in range(len(self._ids) - 1)] + [('model_record', '=', '%s,%s' % (self._name, id)) for id in self._ids])
