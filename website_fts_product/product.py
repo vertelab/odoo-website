@@ -29,10 +29,6 @@ class fts_fts(models.Model):
 
     facet = fields.Selection(selection_add=[('product_template','Product Template'), ('product_product','Product Product'), ('product_public_category','Product Public Category')])
 
-    @api.model
-    def get_fts_models(self):
-        return super(fts_fts, self).get_fts_models() + ['product.template', 'product.product', 'product.public.category']
-
     @api.one
     def get_object(self, words):
         if self.res_model == 'product.template':
@@ -58,7 +54,9 @@ class product_template(models.Model):
 
     @api.one
     def _full_text_search_update(self):
-        super(product_template, self)._full_text_search_update()
+        # TODO: Remove the context as it doesn't belong in a general purpose module.
+        # This is starting to be a too comon problem. Probably should change the checks to only activate in certain views.
+        super(product_template, self).with_context(suppress_checks=True)._full_text_search_update()
         if self.website_published and self.active:
             self.env['fts.fts'].update_text(self._name, self.id, text=self.name, rank=0)
             if self.description_sale:
@@ -71,11 +69,12 @@ class product_product(models.Model):
     _name = 'product.product'
     _inherit = ['product.product', 'fts.model']
 
-    _fts_fields = ['website_published','name','description_sale','default_code','product_tmpl_id','attribute_value_ids']
+    _fts_fields = ['website_published','name','description_sale','default_code','ean13','product_tmpl_id','attribute_value_ids']
 
     @api.one
     def _full_text_search_update(self):
-        super(product_product, self)._full_text_search_update()
+        # TODO: Remove the context as it doesn't belong in a general purpose module.
+        super(product_product, self).with_context(suppress_checks=True)._full_text_search_update()
         if self.website_published and self.active:
             self.env['fts.fts'].update_text(self._name, self.id, text=self.name, rank=0)
             self.env['fts.fts'].update_text(self._name, self.id, text=(self.description_sale or '')+' '+ ' '.join([att.name for att in self.attribute_value_ids]), rank=5)

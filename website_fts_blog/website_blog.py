@@ -29,10 +29,6 @@ class fts_fts(models.Model):
     _inherit = 'fts.fts'
 
     facet = fields.Selection(selection_add=[('blog_tag','Blog Tag'),('blog','Blog'),('author','Author')])
-    
-    @api.model
-    def get_fts_models(self):
-        return super(fts_fts, self).get_fts_models() + ['blog.post']
 
     @api.one
     def get_object(self,words):

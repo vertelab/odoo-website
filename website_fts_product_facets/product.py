@@ -29,10 +29,6 @@ class fts_fts(models.Model):
 
     facet = fields.Selection(selection_add=[('product_facets','Product Facet')])
 
-    @api.model
-    def get_fts_models(self):
-        return super(fts_fts, self).get_fts_models() + ['product.facet.value']
-
     @api.one
     def get_object(self, words):
         if self.res_model == 'product.facet.value':
@@ -48,7 +44,7 @@ class product_facet_value(models.Model):
     _fts_fields = ['facet_id','value_ids','product_tmpl_id']
 
 
-    @api.multi
+    @api.one
     def _full_text_search_update(self):
         super(product_facet_line, self)._full_text_search_update()
         # TODO: Fix this code

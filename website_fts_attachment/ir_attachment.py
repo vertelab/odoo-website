@@ -30,10 +30,6 @@ class fts_fts(models.Model):
 
     facet = fields.Selection(selection_add=[('document','Document'),('image','Image')])
 
-    @api.model
-    def get_fts_models(self):
-        return super(fts_fts, self).get_fts_models() + ['ir.attachment']
-
     @api.one
     def get_object(self,words):
         if self.res_model == 'ir.attachment':
@@ -50,7 +46,7 @@ class document_file(models.Model):
 
     _fts_fields = ['index_content','name','description']
 
-    @api.multi
+    @api.one
     def _full_text_search_update(self):
         if self.url and (self.url.startswith('/web/js/') or self.url.startswith('/web/css/')):
             return

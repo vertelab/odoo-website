@@ -13,7 +13,7 @@
                             <div class="modal-body" style="padding: 0px;">
                                 <form action="/search_results" method="post">
                                     <div class="input-group add-on">
-                                        <input class="form-control" name="search" placeholder="Search..." type="text"/>
+                                        <input class="form-control" autocomplete="off" name="search" placeholder="Search..." type="text"/>
                                         <input type="submit" value="Submit" class="hidden"/>
                                         <div class="input-group-btn">
                                             <button class="btn btn-default" data-dismiss="modal"><i class="glyphicon glyphicon-remove"/>
@@ -285,7 +285,7 @@
 </template>
 
         <template id="assets_frontend" inherit_id="website.assets_frontend" name="Website assets - Global Search">
-            <xpath expr="/t" position="inside">
+            <xpath expr="." position="inside">
                 <link href="/website_fts/static/src/css/main.css" rel="stylesheet" />
                 <script type="text/javascript" src="/website_fts/static/src/js/main.js"></script>
             </xpath>
