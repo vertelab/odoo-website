@@ -133,7 +133,7 @@ class fts_fts(models.Model):
         texts = [self.clean_punctuation(w) for w in ' '.join([w.rstrip(',') for w in soup.findAll(text=True) if not w in STOP_WORDS + [';','=',':','(',')',' ','\n']]).split(' ')]
         for word, count in Counter(texts).items():
             if word:
-                self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
+                self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word.lower(),'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
 
     @api.model
     def update_text(self, res_model, res_id, text='', groups=None, facet='term', rank=10):
@@ -143,7 +143,7 @@ class fts_fts(models.Model):
         texts = [self.clean_punctuation(w) for w in ' '.join([w.rstrip(',') for w in text if not w in STOP_WORDS + [' ','\n']]).split(' ')]
         for word, count in Counter(texts).items():
             if word:
-                self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word,'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
+                self.env['fts.fts'].create({'res_model': res_model,'res_id': res_id, 'name': '%.30s' % word.lower(),'count': count,'facet': facet,'rank': rank, 'group_ids': [(6, 0, [g.id for g in groups or []])]})
 
     def word_union(self, r1, r2):
         r3 = self.env['fts.fts'].browse([])
@@ -177,7 +177,7 @@ class fts_fts(models.Model):
         words = {}
         for w in word_list:
             domain = [
-                ('name', 'ilike', '%%%s%%' % w),
+                ('name', 'like', '%%%s%%' % w),
                 ('model_record', '!=', False),
                 ('res_model', 'in', res_models),
                 '|',
