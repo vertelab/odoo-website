@@ -156,8 +156,9 @@ class fts_fts(models.Model):
 
 
     @api.model
-    def term_search(self, search, facet=None, res_models=['product.template', 'product.product', 'blog.post'], limit=5, offset=0):
-
+    def term_search(self, search, facet=None, res_models=None, limit=5, offset=0):
+        if res_models == None:
+            res_models = ['product.template', 'product.product', 'blog.post']
         start = datetime.now()
         word_list = []
         if '"' in search:
@@ -180,16 +181,14 @@ class fts_fts(models.Model):
             domain = [
                 ('name', 'like', '%%%s%%' % w),
                 ('model_record', '!=', False),
-                ('res_model', 'in', res_models),
                 '|',
                     ('group_ids', '=', False),
                     ('group_ids', 'in', [g.id for g in self.env.user.groups_id])
             ]
             if res_models:
                 if isinstance(res_models, list):
-                    domain += ['|' for i in range(len(res_models) - 1)]
                     for m in res_models:
-                        domain.append(('res_model', '=', m))
+                        domain.append(('res_model', 'in', res_models))
                 else:
                     domain.append(('res_model', '=', res_model))
             if words:
@@ -451,7 +450,7 @@ class fts_test(models.TransientModel):
     def test_search(self):
         if self.search:
             start = datetime.now()
-            result = self.env['fts.fts'].term_search(self.search, res_model=[m.name for m in self.fts_model_ids])
+            result = self.env['fts.fts'].term_search(self.search, res_models=[m.name for m in self.fts_model_ids])
             delta_t = datetime.now() - start
             _logger.warn(result)
             self.fts_ids = [(6, 0, [r.id for r in result['terms']])]
