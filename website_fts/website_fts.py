@@ -157,6 +157,7 @@ class fts_fts(models.Model):
 
     @api.model
     def term_search(self, search, facet=None, res_model=None, limit=5, offset=0):
+        _logger.debug('\nterm_search: %s\nfacet: %s\nres_model: %s' % (search, facet, res_model))
         start = datetime.now()
         word_list = []
         if '"' in search:
@@ -183,6 +184,13 @@ class fts_fts(models.Model):
                     ('group_ids', '=', False),
                     ('group_ids', 'in', [g.id for g in self.env.user.groups_id])
             ]
+            if res_model:
+                if isinstance(res_model, list):
+                    domain += ['|' for i in range(len(res_model) - 1)]
+                    for m in res_model:
+                        domain.append(('res_model', '=', m))
+                else:
+                    domain.append(('res_model', '=', res_model))
             if words:
                 domain.append(('model_record', 'in', words.keys()))
             _logger.debug(domain)
@@ -210,7 +218,7 @@ class fts_fts(models.Model):
                 break
             _logger.debug(words)
         words = self.env['fts.fts'].browse([words[w]['id'] for w in words])
-        _logger.warn('words: %s' % words)
+        _logger.debug('words: %s' % words)
         
 
         facets = []
@@ -404,17 +412,32 @@ class WebsiteFullTextSearch(http.Controller):
             i += 1
         return rl
 
+class fts_test_model(models.Model):
+    _name = 'fts.test.model'
+    _description = 'FTS Test Wizard Models'
+
+    name = fields.Char(string='Name')
+
 class fts_test(models.TransientModel):
     _name = 'fts.test'
     _description = 'FTS Test Wizard'
 
+    @api.model
+    def _default_fts_model_ids(self):
+        for model in _fts_models:
+            obj = self.env['fts.test.model'].search([('name', '=', model)])
+            if not obj:
+                self.env['fts.test.model'].create({'name': model})
+
     search = fields.Char(string='Search Term')
     fts_ids = fields.Many2many(string='Search Results', comodel_name='fts.fts')
+    fts_model_ids = fields.Many2many(comodel_name='fts.test.model', string='Models', default=_default_fts_model_ids)
     log = fields.Html(string='Log', readonly=True, default="""<table class="table table-striped">
   <thead>
     <tr>
       <th>Time</th>
       <th>Search Term</th>
+      <th>Models</th>
       <th># Hits</th>
     </tr>
   </thead>
@@ -427,15 +450,16 @@ class fts_test(models.TransientModel):
     def test_search(self):
         if self.search:
             start = datetime.now()
-            result = self.env['fts.fts'].term_search(self.search)
+            result = self.env['fts.fts'].term_search(self.search, res_model=[m.name for m in self.fts_model_ids])
             delta_t = datetime.now() - start
             _logger.warn(result)
             self.fts_ids = [(6, 0, [r.id for r in result['terms']])]
             rows = self.log.split('\n')
             self.log = '\n'.join(
                 rows[:-2] + [
-                    '<tr><td>%.2f s</td><td>%s</td><td>%s</td></tr>' % (
+                    '<tr><td>%.2f s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
                         (delta_t.seconds + (delta_t.microseconds / 1000000.0)),
                         self.search,
+                        ', '.join([m.name for m in self.fts_model_ids]),
                         len(self.fts_ids)
                 )] + rows[-2:])

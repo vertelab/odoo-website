@@ -77,6 +77,8 @@
         <form string="Test Search">
           <label for="search"/>
           <field name="search"/>
+          <label for="fts_model_ids"/>
+          <field name="fts_model_ids" widget="many2many_checkboxes"/>
           <label for="log"/>
           <field name="log"/>
           <label for="fts_ids"/>
