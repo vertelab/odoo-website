@@ -30,6 +30,14 @@ import functools
 import logging
 _logger = logging.getLogger(__name__)
 
+
+#TODO: save ETag, max-age, private, raw key with rendered page, view on cache_viewkey
+#TODO save render time on page
+#TODO blacklist pages / context / sessions that not to be cached, parameter on decorator
+#TODO website_memcached_[blog,crm,sale,event]
+#TODO Add database on key or uniqe memcache per database?
+#TODO Config of memcache database
+
 try:
     import cPickle as pickle
 except ImportError:
@@ -148,7 +156,6 @@ def route(route=None, **kw):
             page = MEMCACHED_CLIENT.get(key)
             
             if not page:
-                raise Warning(args,kw)
                 response = f(*args, **kw)
                 page = response.render()
                 MEMCACHED_CLIENT.set(key,page,max_age)
