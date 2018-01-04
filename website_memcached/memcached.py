@@ -37,6 +37,7 @@ _logger = logging.getLogger(__name__)
 #TODO website_memcached_[blog,crm,sale,event]
 #TODO Add database on key or uniqe memcache per database?
 #TODO Config of memcache database
+#TODO Test: To invalidate cache on local client / cache-server; recreate cache with a new ETag
 
 try:
     import cPickle as pickle
