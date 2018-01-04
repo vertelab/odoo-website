@@ -30,7 +30,7 @@ Add mechanisms to cache rendered pages and sql-queries
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website'],
+    'depends': ['website','website_blog'],
     'external_dependencies': {'python': ['pymemcache',]},
     'data': [
         'website_view.xml',
