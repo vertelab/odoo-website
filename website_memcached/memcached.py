@@ -25,17 +25,15 @@ from openerp.http import request
 import werkzeug.utils
 
 import functools
-
+from timeit import default_timer as timer
 
 import logging
 _logger = logging.getLogger(__name__)
 
 
-#TODO: save ETag, max-age, private, raw key with rendered page, view on cache_viewkey
-#TODO save render time on page
 #TODO blacklist pages / context / sessions that not to be cached, parameter on decorator
 #TODO website_memcached_[blog,crm,sale,event]
-#TODO Add database on key or uniqe memcache per database?
+#TODO parameter add_key; adds key to path makes it easier for external cache services
 #TODO Config of memcache database
 #TODO Test: To invalidate cache on local client / cache-server; recreate cache with a new ETag
 
@@ -57,7 +55,7 @@ def deserialize_pickle(key, value, flags):
     raise Exception('Unknown flags for value: {1}'.format(flags))  
     
 try:
-    from pymemcache.client.base import Client
+    from pymemcache.client.base import Client,MemcacheServerError
     MEMCACHED_CLIENT = Client(('localhost', 11211), serializer=serialize_pickle, deserializer=deserialize_pickle)
     from pymemcache.client.murmur3 import murmur3_32 as MEMCACHED_HASH
 except Exception as e:
@@ -114,9 +112,10 @@ def route(route=None, **kw):
 
 ---- Cache specific params
 
-    :param max-age: Number of seconds that the cache will live, default one day
+    :param max_age: Number of seconds that the page is permitted in clients cache , default 10 minutes 
+    :param cache_age: Number of seconds that the cache will live in memcached, default one day. ETag will be checked every 10 minutes.
     :param private: True if must not be stored by a shared cache
-    :param key:  function that returns a string that is used as a raw key. The key can use some formats {context} {uid} {logged_in}
+    :param key:  function that returns a string that is used as a raw key. The key can use some formats {db} {context} {uid} {logged_in}
     : 
     """
     routing = kw.copy()
@@ -135,38 +134,75 @@ def route(route=None, **kw):
                 key_raw = routing['key']().format(  path=request.httprequest.path,
                                                     session={k:v for k,v in request.session.items() if len(k)<40},
                                                     context={k:v for k,v in request.env.context.items() if not k == 'uid'},
+                                                    context_uid={k:v for k,v in request.env.context.items()},
                                                     uid=request.env.context.get('uid'),
                                                     logged_in='1' if request.env.context.get('uid') > 0 else '0',
                                                     )
                 key = str(MEMCACHED_HASH(key_raw))
             else:
-                key = str(MEMCACHED_HASH('%s,%s' %(request.httprequest.path,request.env.context)))
+                key_raw = '%s,%s,%s' % (request.env.cr.dbname,request.httprequest.path,request.env.context)
+                key = str(MEMCACHED_HASH(key_raw))
 
-            if routing.get('max-age'):
-                max_age = routing['max-age']
+            if routing.get('max_age'):
+                max_age = routing['max_age']
             else:
-                max_age = 24 * 60 * 60  # One day
-
+                max_age = 600  # 10 minutes
+            if routing.get('cache_age'):
+                cache_age = routing['cache_age']
+            else:
+                cache_age = 24 * 60 * 60  # One day
+                
             if 'cache_invalidate' in kw.keys():
                 MEMCACHED_CLIENT.delete(key)
-            if 'cache_viewkey' in kw.keys():
-                return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s' % 
-                    (key,key,'<table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (key,value) for key,value in MEMCACHED_CLIENT.stats().items()])) +
-                    '%s' % MEMCACHED_CLIENT.stats('items'))
 
-            page = MEMCACHED_CLIENT.get(key)
+            page_dict = None
+            error = None
+            try:
+                page_dict = MEMCACHED_CLIENT.get(key)
+            except MemcacheServerError as e:
+                error = "Memcashed Server not responding %s " % e
+                _logger.warn(error)
+            except Exception as e:
+                error = "Memcashed Error %s " % e
+                _logger.warn(error)
             
-            if not page:
+
+            if 'cache_viewkey' in kw.keys():
+                if page_dict:
+                    view_meta = '<h2>Metadata</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in page_dict.items() if not k == 'page'])
+                    view_stat = '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT.stats().items()])
+                    view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT.stats('items').items()])
+                    return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s%s%s' % (key,key,view_meta,view_stat,view_items))
+                else:
+                    if error:
+                        error = '<h1>Error</h1><h2>%s</h2>' % error
+                    return http.Response('%s<h1>Key is missing %s</h1>' % (error if error else '',key))
+            
+            if not page_dict:
+                controller_start = timer()
                 response = f(*args, **kw)
+                render_start = timer()
                 page = response.render()
-                MEMCACHED_CLIENT.set(key,page,max_age)
+                MEMCACHED_CLIENT.set(key,{
+                    'ETag':     MEMCACHED_HASH(page), 
+                    'max-age':  max_age, 
+                    'cache-age':cache_age, 
+                    'private':  routing.get('private',False),
+                    'key_raw':  key_raw,
+                    'render_time': timer()-render_start, 
+                    'controller_time': render_start-controller_start, 
+                    'path':     request.httprequest.path, 
+                    'db':       request.env.cr.dbname,
+                    'page':     page,
+                    },cache_age)
+                page_dict['page'] = page
             else:
-                response = http.Response(page)
+                response = http.Response(page_dict.get('page'))
                 
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
             # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
             response.headers['Cache-Control'] ='max-age=%s, %s' % (max_age,'private' if routing.get('private') else 'public') # private: must not be stored by a shared cache.
-            response.headers['ETag'] = MEMCACHED_HASH(page)
+            response.headers['ETag'] = MEMCACHED_HASH(page_dict.get('page'))
             return response
 
         response_wrap.routing = routing

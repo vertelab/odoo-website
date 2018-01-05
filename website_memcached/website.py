@@ -36,9 +36,9 @@ class MemCachedController(http.Controller):
     ], type='http', auth="public", website=True)
     def memcached_page(self, key='',**post):
         
-        rendered_page = memcached.MEMCACHED_CLIENT.get(key)
-        if rendered_page:
-            return rendered_page
+        page_dict = memcached.MEMCACHED_CLIENT.get(key)
+        if page_dict:
+            return page_dict.get('page')
         return request.registry['ir.http']._handle_exception(None, 404)
 
 class CachedBlog(WebsiteBlog):
@@ -49,7 +49,7 @@ class CachedBlog(WebsiteBlog):
         #~ '/blog/<model("blog.blog"):blog>/tag/<model("blog.tag"):tag>',
         #~ '/blog/<model("blog.blog"):blog>/tag/<model("blog.tag"):tag>/page/<int:page>',
     #~ ], type='http', auth="public", website=True)
-    @memcached.route()
+    @memcached.route(max_age=600)
     def blog(self, blog=None, tag=None, page=1, **opt):
         return super(CachedBlog, self).blog(blog,tag,page,**opt)
     
