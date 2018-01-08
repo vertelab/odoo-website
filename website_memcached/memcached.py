@@ -34,11 +34,8 @@ _logger = logging.getLogger(__name__)
 
 
 #TODO blacklist pages / context / sessions that not to be cached, parameter on decorator
-#TODO website_memcached_[blog,crm,sale,event]
-#TODO parameter add_key; adds key to path makes it easier for external cache services
-#TODO Config of memcache database
-#TODO Test: To invalidate cache on local client / cache-server; recreate cache with a new ETag
-#TODO: Request headers check: if-None-Match with ETag, return 304 if not changed
+#TODO website_memcached_[crm,sale,event]
+
 
 try:
     import cPickle as pickle
@@ -160,27 +157,12 @@ def route(route=None, **kw):
                 key_raw = '%s,%s,%s' % (request.env.cr.dbname,request.httprequest.path,request.env.context)
                 key = str(MEMCACHED_HASH(key_raw))
 
-<<<<<<< HEAD
 
 ############### Key is ready
 
             if 'cache_invalidate' in kw.keys():
-                MEMCACHED_CLIENT.delete(key)
-            
-=======
-            if routing.get('max_age'):
-                max_age = routing['max_age']
-            else:
-                max_age = 600  # 10 minutes
-            if routing.get('cache_age'):
-                cache_age = routing['cache_age']
-            else:
-                cache_age = 24 * 60 * 60  # One day
-
-            if 'cache_invalidate' in kw.keys():
                 MEMCACHED_CLIENT().delete(key)
-
->>>>>>> cc6025acfcf20fd4f0fea80b930af686f4bfd29e
+            
             page_dict = None
             error = None
             try:
@@ -204,7 +186,6 @@ def route(route=None, **kw):
                         error = '<h1>Error</h1><h2>%s</h2>' % error
                     return http.Response('%s<h1>Key is missing %s</h1>' % (error if error else '',key))
 
-<<<<<<< HEAD
             if routing.get('add_key') and not 'cache_key' in kw.keys():
                 #~ raise Warning(args,kw,request.httprequest.args.copy())
                 args = request.httprequest.args.copy()
@@ -221,8 +202,6 @@ def route(route=None, **kw):
                 cache_age = 24 * 60 * 60  # One day
    
             
-=======
->>>>>>> cc6025acfcf20fd4f0fea80b930af686f4bfd29e
             if not page_dict:
                 page_dict = {}
                 controller_start = timer()
@@ -255,7 +234,9 @@ def route(route=None, **kw):
             response.headers['Cache-Control'] ='max-age=%s, %s' % (max_age,'private' if routing.get('private') else 'public') # private: must not be stored by a shared cache.
             response.headers['ETag'] = MEMCACHED_HASH(page_dict.get('page'))
             response.headers['Date'] = page_dict.get('date',http_date())
-            
+            raise Warning(response.headers['Server'])
+            response.headers['Server'] = page_dict.get('date',http_date())
+          
             return response
 
         response_wrap.routing = routing
