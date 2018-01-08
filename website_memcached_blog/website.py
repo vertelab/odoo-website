@@ -31,7 +31,7 @@ _logger = logging.getLogger(__name__)
 
 class CachedBlog(WebsiteBlog):
     
-    @memcached.route(max_age=600)
+    @memcached.route(max_age=600,add_key=True)
     def blog(self, blog=None, tag=None, page=1, **opt):
         return super(CachedBlog, self).blog(blog,tag,page,**opt)
     

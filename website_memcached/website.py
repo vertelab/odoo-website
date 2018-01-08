@@ -21,10 +21,9 @@
 
 
 from openerp import http
+from openerp.addons.web.http import request
 from openerp.addons.website_memcached import memcached
 
-from openerp.addons.website_blog.controllers.main import QueryURL, WebsiteBlog
-from openerp.addons.web.http import request
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -40,20 +39,3 @@ class MemCachedController(http.Controller):
         if page_dict:
             return page_dict.get('page')
         return request.registry['ir.http']._handle_exception(None, 404)
-
-class CachedBlog(WebsiteBlog):
-    
-    #~ @memcached.route([
-        #~ '/blog/<model("blog.blog"):blog>',
-        #~ '/blog/<model("blog.blog"):blog>/page/<int:page>',
-        #~ '/blog/<model("blog.blog"):blog>/tag/<model("blog.tag"):tag>',
-        #~ '/blog/<model("blog.blog"):blog>/tag/<model("blog.tag"):tag>/page/<int:page>',
-    #~ ], type='http', auth="public", website=True)
-    @memcached.route(max_age=600)
-    def blog(self, blog=None, tag=None, page=1, **opt):
-        return super(CachedBlog, self).blog(blog,tag,page,**opt)
-    
-    #~ @memcached.route(key=lambda k: '{path},%s' % request.website.id)
-    @memcached.route(key=lambda : '{path},{logged_in}')
-    def blog_post(self, blog, blog_post, tag_id=None, page=1, enable_editor=None, **post):
-        return super(CachedBlog, self).blog_post(blog,blog_post,tag_id,page,enable_editor,**post)
