@@ -23,6 +23,7 @@
 from openerp import http
 from openerp.addons.web.http import request
 from openerp.addons.website_memcached import memcached
+import werkzeug
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -35,7 +36,25 @@ class MemCachedController(http.Controller):
     ], type='http', auth="public", website=True)
     def memcached_page(self, key='',**post):
         
-        page_dict = memcached.MEMCACHED_CLIENT.get(key)
+        page_dict = memcached.MEMCACHED_CLIENT().get(key)
         if page_dict:
             return page_dict.get('page')
         return request.registry['ir.http']._handle_exception(None, 404)
+
+
+    @http.route([
+        '/mcpage/<string:key>/delete',
+    ], type='http', auth="user", website=True)
+    def memcached_page_delete(self, key='',**post):
+        page_dict = memcached.MEMCACHED_CLIENT().delete(key)
+        if post.get('url'):
+            return werkzeug.utils.redirect(post.get('url'), 302)
+        return http.Response('<h1>Key is deleted %s</h1>' % (key))
+
+
+    @http.route([
+        '/mcflush/<string:flush_type>',
+    ], type='http', auth="public", website=True)
+    def memcached_flush(self, flush_type='',**post):
+        return http.Response(memcached.get_flush_page(memcached.get_keys(),'My Page','/mcflush/%s' % flush_type))
+             

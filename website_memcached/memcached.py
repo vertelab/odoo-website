@@ -22,9 +22,13 @@
 from openerp import models, fields, api, _
 from openerp import http
 from openerp.http import request
+from openerp.service import common
+import openerp
+
 import werkzeug.utils
 from werkzeug.http import http_date
 from werkzeug import url_encode
+import werkzeug
 
 import functools
 from timeit import default_timer as timer
@@ -66,7 +70,7 @@ def MEMCACHED_CLIENT():
     global MEMCACHED__CLIENT__
     if not MEMCACHED__CLIENT__:
         try:
-            MEMCACHED__CLIENT__ = Client(eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db')), serializer=serialize_pickle, deserializer=deserialize_pickle)
+            MEMCACHED__CLIENT__ = Client(eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or "('127.0.0.1',11211)"), serializer=serialize_pickle, deserializer=deserialize_pickle)
         except Exception as e:
             _logger.info('Cannot instantiate MEMCACHED CLIENT %s.' % e)
             raise MemcacheServerError(e)
@@ -94,6 +98,33 @@ class website(models.Model):
         if not rendered_page:
             pass
         return rendered_page
+
+
+
+def get_keys(flush_type=None,module=None,path=None):
+    items = MEMCACHED_CLIENT().stats('items')
+    slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
+    key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
+    keys =  [key for sublist in key_lists for key in sublist]
+
+    if flush_type:
+       keys = [key for key in keys if flush_type == MEMCACHED_CLIENT().get(key).get('flush_type')]
+    if module:
+       keys = [key for key in keys if module == MEMCACHED_CLIENT().get(key).get('module')]
+    if path:
+       keys = [key for key in keys if path in MEMCACHED_CLIENT().get(key).get('path')]
+       
+    return keys
+
+def get_flush_page(keys,title,url=''):
+    html = '<H1>%s</H1><table><tr><th>Key</th><th>Path</th><th>Module</th><th>Flush_type</th><th>Key Raw</th><th>Cmd</th></tr>' % (title)
+    for key in keys:
+        p = MEMCACHED_CLIENT().get(key)
+        html += '<tr><td><a href="/mcpage/%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="/mcpage/%s/delete?url=%s">delete</a></td></tr>' % (key,key,p.get('path'),p.get('module'),p.get('flush_type'),p.get('key_raw'),key,url)
+    return html + '</table>'
+    
+    #~ return '<H1>%s</H1><table>%s</table>' % (title,
+        #~ ''.join(['<tr><td><a href="/mcpage/%s/delete">%s (delete)</a></td><td></td><td></td></tr>' % (k,k,p.get('path'),p.get('module'),p.get('flush_type')) for key in keys for p,k in [memcached.MEMCACHED_CLIENT().get(key),key]])
 
 
 def route(route=None, **kw):
@@ -192,20 +223,19 @@ def route(route=None, **kw):
                 args['cache_key'] = key
                 return werkzeug.utils.redirect('{}?{}'.format(request.httprequest.path, url_encode(args)), 302)
    
-            if routing.get('max_age'):
-                max_age = routing['max_age']
-            else:
-                max_age = 600  # 10 minutes
-            if routing.get('cache_age'):
-                cache_age = routing['cache_age']
-            else:
-                cache_age = 24 * 60 * 60  # One day
-   
+            max_age = routing.get('max_age',600)              # 10 minutes
+            cache_age = routing.get('cache_age',24 * 60 * 60) # One day   
             
+            request_dict = {h[0]: h[1] for h in request.httprequest.headers}
+            if page_dict and request_dict.get('If-None-Match') and request_dict.get('If-None-Match') == page_dict.get('Etag'):
+                _logger.warn(request_dict.get('If-None-Match'))
+                _logger.warn('returns 304')
+                return werkzeug.wrappers.Response(status=304)
+                    
             if not page_dict:
                 page_dict = {}
                 controller_start = timer()
-                response = f(*args, **kw) #calls original controller
+                response = f(*args, **kw) # calls original controller
                 render_start = timer()
                 page = response.render()
                 MEMCACHED_CLIENT().set(key,{
@@ -220,22 +250,26 @@ def route(route=None, **kw):
                     'db':       request.env.cr.dbname,
                     'page':     page,
                     'date':     http_date(),
+                    'module':   f.__module__,
+                    'flush_type': routing.get('flush_type'),
                     },cache_age)
+                #~ raise Warning(f.__module__,f.__name__,route())
                 page_dict = {'page': page}
             else:
                 request_dict = {h[0]: h[1] for h in request.httprequest.headers}    
                 if request_dict.get('If-None-Match') and request_dict.get('If-None-Match') == page_dict.get('Etag'):
                     _logger.warn(request_dict.get('If-None-Match'))
+                    _logger.warn('returns 304')
                     return werkzeug.wrappers.Response(status=304)
                 response = http.Response(page_dict.get('page'))
 
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
             # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
-            response.headers['Cache-Control'] ='max-age=%s, %s' % (max_age,'private' if routing.get('private') else 'public') # private: must not be stored by a shared cache.
+            # https://jakearchibald.com/2016/caching-best-practices/
+            response.headers['Cache-Control'] ='max-age=%s, %s, must-revalidate' % (max_age,'private' if routing.get('private') else 'public') # private: must not be stored by a shared cache.
             response.headers['ETag'] = MEMCACHED_HASH(page_dict.get('page'))
             response.headers['Date'] = page_dict.get('date',http_date())
-            raise Warning(response.headers['Server'])
-            response.headers['Server'] = page_dict.get('date',http_date())
+            response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_CLIENT().version())
           
             return response
 

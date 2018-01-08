@@ -31,43 +31,45 @@ _logger = logging.getLogger(__name__)
 
 class CachedBlog(WebsiteBlog):
 
-
-    # '/blog'
-    @memcached.route()
+    #~ @http.route([
+        #~ '/blog',
+        #~ '/blog/page/<int:page>',
+    #~ ], type='http', auth="public", website=True)
+    @memcached.route(flush_type='blog')
     def blogs(self, page=1, **post):
         return super(CachedBlog, self).blogs(page, **post)
 
-    # '/blog/<model("blog.blog"):blog>'
-    @memcached.route()
+    #~ @http.route([
+        #~ '/blog/<model("blog.blog"):blog>',
+        #~ '/blog/<model("blog.blog"):blog>/page/<int:page>',
+        #~ '/blog/<model("blog.blog"):blog>/tag/<model("blog.tag"):tag>',
+        #~ '/blog/<model("blog.blog"):blog>/tag/<model("blog.tag"):tag>/page/<int:page>',
+    #~ ], type='http', auth="public", website=True)
+    @memcached.route(flush_type='blog')
     def blog(self, blog=None, tag=None, page=1, **opt):
         return super(CachedBlog, self).blog(blog, tag, page, **opt)
 
-    # '/blog/<model("blog.blog"):blog>/post/<model("blog.post", "[('blog_id','=',blog[0])]"):blog_post>'
-    @memcached.route()
+
+    #~ @http.route([
+            #~ '''/blog/<model("blog.blog"):blog>/post/<model("blog.post", "[('blog_id','=',blog[0])]"):blog_post>''',
+    #~ ], type='http', auth="public", website=True)
+    @memcached.route(flush_type='blog')
     def blog_post(self, blog, blog_post, tag_id=None, page=1, enable_editor=None, **post):
         return super(CachedBlog, self).blog_post(blog, blog_post, tag_id, page, enable_editor, **post)
 
-    # '/blogpost/comment'
-    @memcached.route()
-    def blog_post_comment(self, blog_post_id=0, **post):
-        return super(CachedBlog, self).blog_post_comment(blog_post_id, **post)
+    #~ @http.route(['/blogpost/comment'], type='http', auth="public", website=True)
+    #~ @memcached.route()
+    #~ def blog_post_comment(self, blog_post_id=0, **post):
+        #~ return super(CachedBlog, self).blog_post_comment(blog_post_id, **post)
 
-    # '/blogpost/get_discussion/'
-    @memcached.route()
-    def discussion(self, post_id=0, path=None, count=False, **post):
-        return super(CachedBlog, self).discussion(post_id, path, count, **post)
-
-    # '/blogpost/get_discussions/'
-    @memcached.route()
-    def discussions(self, post_id=0, paths=None, count=False, **post):
-        return super(CachedBlog, self).discussions(post_id, paths, count, **post)
-
-    # '/blog/get_user/'
-    @memcached.route()
-    def get_user(self, **post):
-        return super(CachedBlog, self).get_user(**post)
-
-    # '/blogpost/post_discussion'
-    @memcached.route()
-    def post_discussion(self, blog_post_id, **post):
-        return super(CachedBlog, self).post_discussion(blog_post_id, **post)
+    @http.route([
+        '/mcflush/blog',
+    ], type='http', auth="user", website=True)
+    def memcached_flush_blog(self,**post):
+        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='blog'),'Flush Blog','/mcflush/blog'))
+     
+    @http.route([
+        '/mcflush/blog/all',
+    ], type='http', auth="user", website=True)
+    def memcached_flush_blog_all(self,**post):
+        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='blog'),'Flush Blog','/mcflush/blog'))
