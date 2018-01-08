@@ -57,10 +57,24 @@ def deserialize_pickle(key, value, flags):
 
 try:
     from pymemcache.client.base import Client,MemcacheServerError
-    MEMCACHED_CLIENT = Client(('localhost', 11211), serializer=serialize_pickle, deserializer=deserialize_pickle)
+    MEMCACHED__CLIENT__ = False
+    #~ MEMCACHED_CLIENT = Client(('localhost', 11211), serializer=serialize_pickle, deserializer=deserialize_pickle)
     from pymemcache.client.murmur3 import murmur3_32 as MEMCACHED_HASH
 except Exception as e:
     _logger.info('website_memcached requires pymemcache (pip install pymemcache) %s.' % e)
+
+def MEMCACHED_CLIENT():
+    global MEMCACHED__CLIENT__
+    if not MEMCACHED__CLIENT__:
+        try:
+            MEMCACHED__CLIENT__ = Client(eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db')), serializer=serialize_pickle, deserializer=deserialize_pickle)
+        except Exception as e:
+            _logger.info('Cannot instantiate MEMCACHED CLIENT %s.' % e)
+            raise MemcacheServerError(e)
+        except TypeError as e:
+            _logger.info('Type error MEMCACHED CLIENT %s.' % e)
+            raise MemcacheServerError(e)
+    return MEMCACHED__CLIENT__
 
 # https://lzone.de/cheat-sheet/memcached
 
@@ -69,15 +83,15 @@ class website(models.Model):
 
     @api.model
     def memcache_get(self,key):
-        return MEMCACHED_CLIENT.get(MEMCACHED_HASH(key))
+        return MEMCACHED_CLIENT().get(MEMCACHED_HASH(key))
 
     @api.model
     def memcache_set(self,key,value):
-        return MEMCACHED_CLIENT.set(MEMCACHED_HASH(key),value)
+        return MEMCACHED_CLIENT().set(MEMCACHED_HASH(key),value)
 
     @api.model
     def memcache_page(self,key):
-        rendered_page = MEMCACHED_CLIENT.get(key)
+        rendered_page = MEMCACHED_CLIENT().get(key)
         if not rendered_page:
             pass
         return rendered_page
@@ -154,12 +168,12 @@ def route(route=None, **kw):
                 cache_age = 24 * 60 * 60  # One day
 
             if 'cache_invalidate' in kw.keys():
-                MEMCACHED_CLIENT.delete(key)
+                MEMCACHED_CLIENT().delete(key)
 
             page_dict = None
             error = None
             try:
-                page_dict = MEMCACHED_CLIENT.get(key)
+                page_dict = MEMCACHED_CLIENT().get(key)
             except MemcacheServerError as e:
                 error = "Memcashed Server not responding %s " % e
                 _logger.warn(error)
@@ -171,8 +185,8 @@ def route(route=None, **kw):
             if 'cache_viewkey' in kw.keys():
                 if page_dict:
                     view_meta = '<h2>Metadata</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in page_dict.items() if not k == 'page'])
-                    view_stat = '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT.stats().items()])
-                    view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT.stats('items').items()])
+                    view_stat = '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats().items()])
+                    view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats('items').items()])
                     return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s%s%s' % (key,key,view_meta,view_stat,view_items))
                 else:
                     if error:
@@ -185,7 +199,7 @@ def route(route=None, **kw):
                 response = f(*args, **kw) #calls original controller
                 render_start = timer()
                 page = response.render()
-                MEMCACHED_CLIENT.set(key,{
+                MEMCACHED_CLIENT().set(key,{
                     'ETag':     MEMCACHED_HASH(page),
                     'max-age':  max_age,
                     'cache-age':cache_age,

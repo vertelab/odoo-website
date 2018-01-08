@@ -95,6 +95,7 @@ To install:
     'depends': ['website','website_blog'],
     'external_dependencies': {'python': ['pymemcache',]},
     'data': [
+        'res_config_view.xml',
         'website_view.xml',
 ],
     'application': False,
