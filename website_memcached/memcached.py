@@ -36,12 +36,13 @@ _logger = logging.getLogger(__name__)
 #TODO parameter add_key; adds key to path makes it easier for external cache services
 #TODO Config of memcache database
 #TODO Test: To invalidate cache on local client / cache-server; recreate cache with a new ETag
+#TODO: Request headers check: if-None-Match with ETag, return 304 if not changed
 
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
-    
+
 def serialize_pickle(key, value):
     if isinstance(value, str):
         return value, 1
@@ -52,8 +53,8 @@ def deserialize_pickle(key, value, flags):
         return value
     if flags == 2:
         return pickle.loads(value)
-    raise Exception('Unknown flags for value: {1}'.format(flags))  
-    
+    raise Exception('Unknown flags for value: {1}'.format(flags))
+
 try:
     from pymemcache.client.base import Client,MemcacheServerError
     MEMCACHED_CLIENT = Client(('localhost', 11211), serializer=serialize_pickle, deserializer=deserialize_pickle)
@@ -112,11 +113,11 @@ def route(route=None, **kw):
 
 ---- Cache specific params
 
-    :param max_age: Number of seconds that the page is permitted in clients cache , default 10 minutes 
+    :param max_age: Number of seconds that the page is permitted in clients cache , default 10 minutes
     :param cache_age: Number of seconds that the cache will live in memcached, default one day. ETag will be checked every 10 minutes.
     :param private: True if must not be stored by a shared cache
     :param key:  function that returns a string that is used as a raw key. The key can use some formats {db} {context} {uid} {logged_in}
-    : 
+    :
     """
     routing = kw.copy()
     assert not 'type' in routing or routing['type'] in ("http", "json")
@@ -151,7 +152,7 @@ def route(route=None, **kw):
                 cache_age = routing['cache_age']
             else:
                 cache_age = 24 * 60 * 60  # One day
-                
+
             if 'cache_invalidate' in kw.keys():
                 MEMCACHED_CLIENT.delete(key)
 
@@ -165,7 +166,7 @@ def route(route=None, **kw):
             except Exception as e:
                 error = "Memcashed Error %s " % e
                 _logger.warn(error)
-            
+
 
             if 'cache_viewkey' in kw.keys():
                 if page_dict:
@@ -177,28 +178,29 @@ def route(route=None, **kw):
                     if error:
                         error = '<h1>Error</h1><h2>%s</h2>' % error
                     return http.Response('%s<h1>Key is missing %s</h1>' % (error if error else '',key))
-            
+
             if not page_dict:
+                page_dict = {}
                 controller_start = timer()
-                response = f(*args, **kw)
+                response = f(*args, **kw) #calls original controller
                 render_start = timer()
                 page = response.render()
                 MEMCACHED_CLIENT.set(key,{
-                    'ETag':     MEMCACHED_HASH(page), 
-                    'max-age':  max_age, 
-                    'cache-age':cache_age, 
+                    'ETag':     MEMCACHED_HASH(page),
+                    'max-age':  max_age,
+                    'cache-age':cache_age,
                     'private':  routing.get('private',False),
                     'key_raw':  key_raw,
-                    'render_time': timer()-render_start, 
-                    'controller_time': render_start-controller_start, 
-                    'path':     request.httprequest.path, 
+                    'render_time': timer()-render_start,
+                    'controller_time': render_start-controller_start,
+                    'path':     request.httprequest.path,
                     'db':       request.env.cr.dbname,
                     'page':     page,
                     },cache_age)
                 page_dict['page'] = page
             else:
                 response = http.Response(page_dict.get('page'))
-                
+
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
             # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
             response.headers['Cache-Control'] ='max-age=%s, %s' % (max_age,'private' if routing.get('private') else 'public') # private: must not be stored by a shared cache.

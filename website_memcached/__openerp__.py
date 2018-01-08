@@ -29,10 +29,10 @@ Add mechanisms to cache rendered pages
 
 * Retains existing paths
 * Pages with heavy database searches will be extremely fast
-* Adds good cach-control for clients and external cach-servers 
+* Adds good cach-control for clients and external cach-servers
 * Implemented as a easy to use decorator
 
-Each page are given a uniq numeric key hashed from a special raw key. 
+Each page are given a uniq numeric key hashed from a special raw key.
 Default are Database + Path + Context eg {db},{path},{context}
 
 __Url variabels__
@@ -46,11 +46,11 @@ __Decorator for controller__
 
 Use @memcache.route as drop in replacement for @http.route
 
-    max_age: Number of seconds that the page is permitted in clients cache , default 10 minutes 
+    max_age: Number of seconds that the page is permitted in clients cache , default 10 minutes
     cache_age: Number of seconds that the cache will live in memcached, default one day. ETag will be checked every 10 minutes.
     private: True if must not be stored by a shared cache
     key:  function that returns a string that is used as a raw key. The key can use some formats
-    
+
     Key.format:
         {path}      Url
         {session}   session dict except for session-id
@@ -59,7 +59,7 @@ Use @memcache.route as drop in replacement for @http.route
         {uid}       uid
         {logged_in}     user logged in
         {db}        database
-        
+
     example: key=lambda '{db}{path}%s' % request.website.my_function()
 
 __Example 1 usage for new Controllers:__
@@ -81,12 +81,14 @@ from openerp.addons.web.http import request
 from openerp.addons.website_blog.controllers.main import QueryURL, WebsiteBlog
 
 class CachedBlog(WebsiteBlog):
-    
+
     @memcached.route(cache_age=3600,key=lambda '{db},{path},{logged_in},%s' % request.website.my_special_function() )
     def blog(self, blog=None, tag=None, page=1, **opt):
         return super(CachedBlog, self).blog(blog,tag,page,**opt)
 
-
+To install:
+    sudo pip install pymemcache
+    sudo apt install memcached
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
