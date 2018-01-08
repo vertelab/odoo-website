@@ -1,9 +1,8 @@
-#!/bin/python
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-# OpenERP, Open Source Management Solution, third party addon
-# Copyright (C) 2017- Vertel AB (<http://vertel.se>).
+# Odoo, Open Source Management Solution, third party addon
+# Copyright (C) 2018- Vertel AB (<http://vertel.se>).
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -21,9 +20,21 @@
 ##############################################################################
 
 
-from pymemcache.client.base import Client
+from openerp import http
+from openerp.addons.web.http import request
+from openerp.addons.website_memcached import memcached
 
+from openerp.addons.website_blog.controllers.main import QueryURL, WebsiteBlog
 
-client = Client(('localhost', 11211))
-client.set('some_key', 'some_value')
-result = client.get('some_key')
+import logging
+_logger = logging.getLogger(__name__)
+
+class CachedBlog(WebsiteBlog):
+    
+    @memcached.route(max_age=600)
+    def blog(self, blog=None, tag=None, page=1, **opt):
+        return super(CachedBlog, self).blog(blog,tag,page,**opt)
+    
+    @memcached.route(key=lambda : '{path},{logged_in}')
+    def blog_post(self, blog, blog_post, tag_id=None, page=1, enable_editor=None, **post):
+        return super(CachedBlog, self).blog_post(blog,blog_post,tag_id,page,enable_editor,**post)

@@ -69,7 +69,7 @@ from openerp.addons.web.http import request
 
 class MyController(http.Controller):
 
-    @memcached.route(['/my_path/<string:key>',], type='http', auth="public", website=True, max-age=6000)
+    @memcached.route(['/my_path/<string:key>',], type='http', auth="public", website=True, max_age=6000)
     def my_controller(self, key='',**post):
         ...
         return request.website.render("my_template",values) {
@@ -82,7 +82,7 @@ from openerp.addons.website_blog.controllers.main import QueryURL, WebsiteBlog
 
 class CachedBlog(WebsiteBlog):
     
-    @memcached.route(cache-age=3600,key=lambda '{db},{path},{logged_in},%s' % request.website.my_special_function() )
+    @memcached.route(cache_age=3600,key=lambda '{db},{path},{logged_in},%s' % request.website.my_special_function() )
     def blog(self, blog=None, tag=None, page=1, **opt):
         return super(CachedBlog, self).blog(blog,tag,page,**opt)
 
