@@ -31,6 +31,7 @@ _logger = logging.getLogger(__name__)
 
 class CachedBlog(WebsiteBlog):
 
+
     # '/blog'
     @memcached.route()
     def blogs(self, page=1, **post):

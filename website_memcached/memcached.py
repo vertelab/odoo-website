@@ -23,6 +23,8 @@ from openerp import models, fields, api, _
 from openerp import http
 from openerp.http import request
 import werkzeug.utils
+from werkzeug.http import http_date
+from werkzeug import url_encode
 
 import functools
 from timeit import default_timer as timer
@@ -32,11 +34,8 @@ _logger = logging.getLogger(__name__)
 
 
 #TODO blacklist pages / context / sessions that not to be cached, parameter on decorator
-#TODO website_memcached_[blog,crm,sale,event]
-#TODO parameter add_key; adds key to path makes it easier for external cache services
-#TODO Config of memcache database
-#TODO Test: To invalidate cache on local client / cache-server; recreate cache with a new ETag
-#TODO: Request headers check: if-None-Match with ETag, return 304 if not changed
+#TODO website_memcached_[crm,sale,event]
+
 
 try:
     import cPickle as pickle
@@ -158,18 +157,12 @@ def route(route=None, **kw):
                 key_raw = '%s,%s,%s' % (request.env.cr.dbname,request.httprequest.path,request.env.context)
                 key = str(MEMCACHED_HASH(key_raw))
 
-            if routing.get('max_age'):
-                max_age = routing['max_age']
-            else:
-                max_age = 600  # 10 minutes
-            if routing.get('cache_age'):
-                cache_age = routing['cache_age']
-            else:
-                cache_age = 24 * 60 * 60  # One day
+
+############### Key is ready
 
             if 'cache_invalidate' in kw.keys():
                 MEMCACHED_CLIENT().delete(key)
-
+            
             page_dict = None
             error = None
             try:
@@ -193,6 +186,22 @@ def route(route=None, **kw):
                         error = '<h1>Error</h1><h2>%s</h2>' % error
                     return http.Response('%s<h1>Key is missing %s</h1>' % (error if error else '',key))
 
+            if routing.get('add_key') and not 'cache_key' in kw.keys():
+                #~ raise Warning(args,kw,request.httprequest.args.copy())
+                args = request.httprequest.args.copy()
+                args['cache_key'] = key
+                return werkzeug.utils.redirect('{}?{}'.format(request.httprequest.path, url_encode(args)), 302)
+   
+            if routing.get('max_age'):
+                max_age = routing['max_age']
+            else:
+                max_age = 600  # 10 minutes
+            if routing.get('cache_age'):
+                cache_age = routing['cache_age']
+            else:
+                cache_age = 24 * 60 * 60  # One day
+   
+            
             if not page_dict:
                 page_dict = {}
                 controller_start = timer()
@@ -210,15 +219,24 @@ def route(route=None, **kw):
                     'path':     request.httprequest.path,
                     'db':       request.env.cr.dbname,
                     'page':     page,
+                    'date':     http_date(),
                     },cache_age)
-                page_dict['page'] = page
+                page_dict = {'page': page}
             else:
+                request_dict = {h[0]: h[1] for h in request.httprequest.headers}    
+                if request_dict.get('If-None-Match') and request_dict.get('If-None-Match') == page_dict.get('Etag'):
+                    _logger.warn(request_dict.get('If-None-Match'))
+                    return werkzeug.wrappers.Response(status=304)
                 response = http.Response(page_dict.get('page'))
 
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
             # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
             response.headers['Cache-Control'] ='max-age=%s, %s' % (max_age,'private' if routing.get('private') else 'public') # private: must not be stored by a shared cache.
             response.headers['ETag'] = MEMCACHED_HASH(page_dict.get('page'))
+            response.headers['Date'] = page_dict.get('date',http_date())
+            raise Warning(response.headers['Server'])
+            response.headers['Server'] = page_dict.get('date',http_date())
+          
             return response
 
         response_wrap.routing = routing

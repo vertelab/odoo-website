@@ -92,7 +92,7 @@ To install:
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website','website_blog'],
+    'depends': ['website'],
     'external_dependencies': {'python': ['pymemcache',]},
     'data': [
         'res_config_view.xml',
