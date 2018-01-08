@@ -32,41 +32,41 @@ _logger = logging.getLogger(__name__)
 class CachedBlog(WebsiteBlog):
 
     # '/blog'
-    @memcached.route(max_age=600)
+    @memcached.route()
     def blogs(self, page=1, **post):
         return super(CachedBlog, self).blogs(page, **post)
 
     # '/blog/<model("blog.blog"):blog>'
-    @memcached.route(max_age=600)
+    @memcached.route()
     def blog(self, blog=None, tag=None, page=1, **opt):
         return super(CachedBlog, self).blog(blog, tag, page, **opt)
 
     # '/blog/<model("blog.blog"):blog>/post/<model("blog.post", "[('blog_id','=',blog[0])]"):blog_post>'
-    @memcached.route(key=lambda : '{path},{logged_in}')
+    @memcached.route()
     def blog_post(self, blog, blog_post, tag_id=None, page=1, enable_editor=None, **post):
         return super(CachedBlog, self).blog_post(blog, blog_post, tag_id, page, enable_editor, **post)
 
     # '/blogpost/comment'
-    @memcached.route(key=lambda : '{path},{logged_in}')
+    @memcached.route()
     def blog_post_comment(self, blog_post_id=0, **post):
         return super(CachedBlog, self).blog_post_comment(blog_post_id, **post)
 
     # '/blogpost/get_discussion/'
-    @memcached.route(key=lambda : '{path},{logged_in}')
+    @memcached.route()
     def discussion(self, post_id=0, path=None, count=False, **post):
         return super(CachedBlog, self).discussion(post_id, path, count, **post)
 
     # '/blogpost/get_discussions/'
-    @memcached.route(key=lambda : '{path},{logged_in}')
+    @memcached.route()
     def discussions(self, post_id=0, paths=None, count=False, **post):
         return super(CachedBlog, self).discussions(post_id, paths, count, **post)
 
     # '/blog/get_user/'
-    @memcached.route(key=lambda : '{path},{logged_in}')
+    @memcached.route()
     def get_user(self, **post):
         return super(CachedBlog, self).get_user(**post)
 
     # '/blogpost/post_discussion'
-    @memcached.route(key=lambda : '{path},{logged_in}')
+    @memcached.route()
     def post_discussion(self, blog_post_id, **post):
         return super(CachedBlog, self).post_discussion(blog_post_id, **post)
