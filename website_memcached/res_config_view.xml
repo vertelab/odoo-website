@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_website_config_settings" model="ir.ui.view">
+            <field name="name">Website settings.inherited.website_memcached</field>
+            <field name="model">website.config.settings</field>
+            <field name="inherit_id" ref="website.view_website_config_settings"/>
+            <field name="arch" type="xml">
+                <group string="Domain" position="after">
+                    <group string="Memcached">
+                        <label for="memcached_db"/>
+                        <div name="memcached_db">
+                            <div class="oe_inline">
+                                <field name="memcached_db"/>
+                            </div>
+                        </div>
+                    </group>
+                </group>
+            </field>
+        </record>
+
+    </data>
+</openerp>
