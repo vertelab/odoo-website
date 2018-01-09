@@ -57,6 +57,8 @@ class product_template(models.Model):
         # TODO: Remove the context as it doesn't belong in a general purpose module.
         # This is starting to be a too comon problem. Probably should change the checks to only activate in certain views.
         super(product_template, self).with_context(suppress_checks=True)._full_text_search_update()
+        self._full_text_search_delete()
+        self.write({'fts_dirty': False})
         if self.website_published and self.active:
             self.env['fts.fts'].update_text(self._name, self.id, text=self.name, rank=0)
             if self.description_sale:
@@ -75,11 +77,12 @@ class product_product(models.Model):
     def _full_text_search_update(self):
         # TODO: Remove the context as it doesn't belong in a general purpose module.
         super(product_product, self).with_context(suppress_checks=True)._full_text_search_update()
+        self._full_text_search_delete()
+        self.write({'fts_dirty': False})
         if self.website_published and self.active:
-            self.env['fts.fts'].update_text(self._name, self.id, text=self.name, rank=0)
+            self.env['fts.fts'].update_text(self._name, self.id, text=' '.join([self.name, self.default_code, self.ean13]), rank=0)
             self.env['fts.fts'].update_text(self._name, self.id, text=(self.description_sale or '')+' '+ ' '.join([att.name for att in self.attribute_value_ids]), rank=5)
-            self.env['fts.fts'].update_text(self._name,self.id, text=self.default_code, rank=0)
-            self.env['fts.fts'].update_text(self._name,self.id, text=self.ean13, rank=0)
+
 
 class product_public_category(models.Model):
     _name = 'product.public.category'
