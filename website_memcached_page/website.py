@@ -76,7 +76,7 @@ class CachedWebsite(Website):
     # Flush
     #------------------------------------------------------  
     
-   @http.route([
+    @http.route([
         '/mcflush/page',
     ], type='http', auth="user", website=True)
     def memcached_flush_blog(self,**post):

@@ -20,19 +20,18 @@
 ##############################################################################
 
 {
-    'name': 'Website MemCached Blog',
+    'name': 'Website MemCached Page',
     'version': '1.0',
     'category': 'other',
-    'summary': 'website acceleration for blog using memcached',
+    'summary': 'website acceleration for pages using memcached',
     'description': """
-Add mechanisms to cache rendered blog pages
+Add mechanisms to cache rendered pages
 This module depends on website_memcached
 
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website_memcached','website_blog'],
-    'external_dependencies': {'python': ['pymemcache',]},
+    'depends': ['website_memcached'],
     'data': [
         'website_view.xml',
 ],
