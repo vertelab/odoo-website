@@ -72,4 +72,5 @@ class CachedBlog(WebsiteBlog):
         '/mcflush/blog/all',
     ], type='http', auth="user", website=True)
     def memcached_flush_blog_all(self,**post):
+        memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='blog'))
         return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='blog'),'Flush Blog','/mcflush/blog'))

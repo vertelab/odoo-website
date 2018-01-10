@@ -38,7 +38,6 @@ _logger = logging.getLogger(__name__)
 
 
 #TODO blacklist pages / context / sessions that not to be cached, parameter on decorator
-#TODO website_memcached_[crm,sale,event]
 
 
 try:
@@ -60,6 +59,7 @@ def deserialize_pickle(key, value, flags):
 
 try:
     from pymemcache.client.base import Client,MemcacheServerError
+    #~ from pymemcache.client.hash import HashClient
     MEMCACHED__CLIENT__ = False
     #~ MEMCACHED_CLIENT = Client(('localhost', 11211), serializer=serialize_pickle, deserializer=deserialize_pickle)
     from pymemcache.client.murmur3 import murmur3_32 as MEMCACHED_HASH
@@ -69,8 +69,12 @@ except Exception as e:
 def MEMCACHED_CLIENT():
     global MEMCACHED__CLIENT__
     if not MEMCACHED__CLIENT__:
+        servers = eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost",11211)')
         try:
-            MEMCACHED__CLIENT__ = Client(eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or "('127.0.0.1',11211)"), serializer=serialize_pickle, deserializer=deserialize_pickle)
+            #~ if type(servers) == list:
+                #~ MEMCACHED__CLIENT__ = HashClient(servers, serializer=serialize_pickle, deserializer=deserialize_pickle)
+            #~ else:
+            MEMCACHED__CLIENT__ = Client(servers, serializer=serialize_pickle, deserializer=deserialize_pickle)
         except Exception as e:
             _logger.info('Cannot instantiate MEMCACHED CLIENT %s.' % e)
             raise MemcacheServerError(e)
@@ -113,7 +117,9 @@ def get_keys(flush_type=None,module=None,path=None):
        keys = [key for key in keys if module == MEMCACHED_CLIENT().get(key).get('module')]
     if path:
        keys = [key for key in keys if path in MEMCACHED_CLIENT().get(key).get('path')]
-       
+    # Remove other databases
+    keys = [key for key in keys if request.env.cr.dbname in MEMCACHED_CLIENT().get(key).get('db')]
+
     return keys
 
 def get_flush_page(keys,title,url=''):
@@ -174,18 +180,23 @@ def route(route=None, **kw):
             routing['routes'] = routes
         @functools.wraps(f)
         def response_wrap(*args, **kw):
+            _logger.error('route: %s arg %s kw %s session %s context %s' % (request.httprequest.path,args,kw,request.session.items(),request.env.context))
+            
+            
             if routing.get('key'): # Function that returns a raw string for key making
                 # Format {path}{session}{etc}
                 key_raw = routing['key']().format(  path=request.httprequest.path,
-                                                    session={k:v for k,v in request.session.items() if len(k)<40},
-                                                    context={k:v for k,v in request.env.context.items() if not k == 'uid'},
-                                                    context_uid={k:v for k,v in request.env.context.items()},
+                                                    session='%s' % {k:v for k,v in request.session.items() if len(k)<40},
+                                                    context='%s' % {k:v for k,v in request.env.context.items() if not k == 'uid'},
+                                                    context_uid='%s' % {k:v for k,v in request.env.context.items()},
                                                     uid=request.env.context.get('uid'),
                                                     logged_in='1' if request.env.context.get('uid') > 0 else '0',
+                                                    db=request.env.cr.dbname,
+                                                    post='%s' % kw,
                                                     )
                 key = str(MEMCACHED_HASH(key_raw))
             else:
-                key_raw = '%s,%s,%s' % (request.env.cr.dbname,request.httprequest.path,request.env.context)
+                key_raw = '%s,%s,%s' % (request.env.cr.dbname,request.httprequest.path,request.env.context) # Default key
                 key = str(MEMCACHED_HASH(key_raw))
 
 
@@ -204,7 +215,10 @@ def route(route=None, **kw):
             except Exception as e:
                 error = "Memcashed Error %s " % e
                 _logger.warn(error)
-
+    
+            if page_dict and not page_dict.get('db') == request.env.cr.dbname:
+                _logger.warn('Database violation key=%s stored for=%s  env db=%s ' % (key,page_dict.get('db'),request.env.cr.dbname))
+                page_dict = None
 
             if 'cache_viewkey' in kw.keys():
                 if page_dict:

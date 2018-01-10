@@ -23,11 +23,11 @@ from openerp import models, fields, api, _
 class website_config_settings(models.TransientModel):
     _inherit = 'website.config.settings'
 
-    memcached_db = fields.Char(string='Memcached Databases', default='("localhost", 11211)', help='A list of memcached databases')
+    memcached_db = fields.Char(string='Memcached Databases', default='[("localhost", 11211)]', help="A list of memcached databases  [('server',<port>),...]")
 
     @api.model
     def get_default_memcached_db(self, fields):
-        return {'memcached_db': self.env['ir.config_parameter'].get_param('website_memcached.memcached_db')}
+        return {'memcached_db': self.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '[("localhost", 11211)]'}
 
     @api.one
     def set_memcached_db(self):

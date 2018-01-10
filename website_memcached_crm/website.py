@@ -27,14 +27,15 @@ from openerp.addons.website_crm.controllers.main import contactus
 import logging
 _logger = logging.getLogger(__name__)
 
-#~ class contactus(contactus):
+class contactus(contactus):
 
-    # '/page/contactus'
-    #~ @memcached.route()
-    #~ def contact(self, **kwargs):
-        #~ return super(contactus, self).contact(**kwargs)
+    #@http.route(['/page/website.contactus', '/page/contactus'], type='http', auth="public", website=True)
+    @memcached.route()
+    def contact(self, **kwargs):
+        return super(contactus, self).contact(**kwargs)
 
-    # '/crm/contactus'
-    #~ @memcached.route()
-    #~ def contactus(self, **kwargs):
-        #~ return super(contactus, self).contactus(**kwargs)
+
+    #@http.route(['/crm/contactus'], type='http', auth="public", website=True)
+    @memcached.route()
+    def contactus(self, **kwargs):
+        return super(contactus, self).contactus(**kwargs)

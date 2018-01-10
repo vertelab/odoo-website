@@ -30,26 +30,27 @@ Add mechanisms to cache rendered pages
 * Retains existing paths
 * Pages with heavy database searches will be extremely fast
 * Adds good cach-control for clients and external cach-servers
-* Implemented as a easy to use decorator
+* Implemented as an easy to use decorator and an easy method for enhance existing controllers
 
 Each page are given a uniq numeric key hashed from a special raw key.
 Default are Database + Path + Context eg {db},{path},{context}
 
-__Url variabels__
+##Url variabels##
 
-path?cache_viewkey      Reports key for a cached path and other meta data and memcached stats
-path?cache_invalidate   Removes page from memcached, do not forget to remove it from client cash when you test this.
-/mcpage/<key>           View certain page from cache
+  path?cache_viewkey      Reports key for a cached path and other meta data and memcached stats
+  path?cache_invalidate   Removes page from memcached, do not forget to remove it from client cash when you test this.
+  /mcpage/<key>           View certain page from cache
+  /mcflush/<fluch_key>    Views a list of pages from the cache, flush_key == all: all keys for current database
 
 
-__Decorator for controller__
+##Decorator for controller##
 
-Use @memcache.route as drop in replacement for @http.route
+ Use @memcache.route as drop in replacement for @http.route
 
-    max_age: Number of seconds that the page is permitted in clients cache , default 10 minutes
+    max_age:   Number of seconds that the page is permitted in clients cache , default 10 minutes
     cache_age: Number of seconds that the cache will live in memcached, default one day. ETag will be checked every 10 minutes.
-    private: True if must not be stored by a shared cache
-    key:  function that returns a string that is used as a raw key. The key can use some formats
+    private:   True if must not be stored by a shared cache
+    key:       Function that returns a string that is used as a raw key. The key can use some formats
 
     Key.format:
         {path}      Url
@@ -57,38 +58,42 @@ Use @memcache.route as drop in replacement for @http.route
         {context}   context dict except for uid
         {context_uid} context dict with uid
         {uid}       uid
-        {logged_in}     user logged in
-        {db}        database
+        {logged_in} user logged in
+        {db}        database, this is important! Pages with database violations won't be used
 
     example: key=lambda '{db}{path}%s' % request.website.my_function()
 
-__Example 1 usage for new Controllers:__
-from openerp import http
-from openerp.addons.website_memcached import memcached
-from openerp.addons.web.http import request
+##Example 1 usage for new Controllers:
+ from openerp import http
+ from openerp.addons.website_memcached import memcached
+ from openerp.addons.web.http import request
 
-class MyController(http.Controller):
+ class MyController(http.Controller):
 
     @memcached.route(['/my_path/<string:key>',], type='http', auth="public", website=True, max_age=6000)
     def my_controller(self, key='',**post):
         ...
         return request.website.render("my_template",values) {
 
-__Example 2 usage for adding cache to existing controllers:__
-from openerp import http
-from openerp.addons.website_memcached import memcached
-from openerp.addons.web.http import request
-from openerp.addons.website_blog.controllers.main import QueryURL, WebsiteBlog
+#Example 2 usage for adding cache to existing controllers:__
+ from openerp import http
+ from openerp.addons.website_memcached import memcached
+ from openerp.addons.web.http import request
+ from openerp.addons.website_blog.controllers.main import QueryURL, WebsiteBlog
 
-class CachedBlog(WebsiteBlog):
+ class CachedBlog(WebsiteBlog):
 
     @memcached.route(cache_age=3600,key=lambda '{db},{path},{logged_in},%s' % request.website.my_special_function() )
     def blog(self, blog=None, tag=None, page=1, **opt):
         return super(CachedBlog, self).blog(blog,tag,page,**opt)
 
-To install:
+#To install:
     sudo pip install pymemcache
     sudo apt install memcached
+    
+    check /etc/memcached.conf
+    Update Memcached config in Website Settings with one or more server tupples; [('server1',<port>),('server2',<port>)]
+    
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
@@ -100,4 +105,3 @@ To install:
 ],
     'application': False,
 }
-

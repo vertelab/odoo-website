@@ -12,7 +12,7 @@
                         <label for="memcached_db"/>
                         <div name="memcached_db">
                             <div class="oe_inline">
-                                <field name="memcached_db"/>
+                                <field name="memcached_db" placeholder="[('localhost',11211)]"/>
                             </div>
                         </div>
                     </group>

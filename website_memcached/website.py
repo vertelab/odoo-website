@@ -56,5 +56,6 @@ class MemCachedController(http.Controller):
         '/mcflush/<string:flush_type>',
     ], type='http', auth="public", website=True)
     def memcached_flush(self, flush_type='',**post):
-        return http.Response(memcached.get_flush_page(memcached.get_keys(),'My Page','/mcflush/%s' % flush_type))
+        if flush_type == 'all':
+            return http.Response(memcached.get_flush_page(memcached.get_keys(),'All Cached Pages','/mcflush/%s' % flush_type))
              
