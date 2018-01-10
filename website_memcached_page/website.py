@@ -24,7 +24,7 @@ from openerp import http
 from openerp.addons.web.http import request
 from openerp.addons.website_memcached import memcached
 
-from openerp.addons.website_blog.controllers.main import Website
+from openerp.addons.website.controllers.main import Website
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -89,7 +89,7 @@ class CachedWebsite(Website):
         memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page'))
         return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page'),'Flush Page','/mcflush/page'))
         
-   @http.route([
+    @http.route([
         '/mcflush/page_meta',
     ], type='http', auth="user", website=True)
     def memcached_flush_blog(self,**post):
@@ -102,7 +102,7 @@ class CachedWebsite(Website):
         memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page_meta'))
         return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_meta'),'Flush Page Meta','/mcflush/page_meta'))
         
-   @http.route([
+    @http.route([
         '/mcflush/page_image',
     ], type='http', auth="user", website=True)
     def memcached_flush_blog(self,**post):
