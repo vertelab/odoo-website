@@ -170,7 +170,8 @@ def route(route=None, **kw):
     :param max_age: Number of seconds that the page is permitted in clients cache , default 10 minutes
     :param cache_age: Number of seconds that the cache will live in memcached, default one day. ETag will be checked every 10 minutes.
     :param private: True if must not be stored by a shared cache
-    :param key:  function that returns a string that is used as a raw key. The key can use some formats {db} {context} {uid} {logged_in}
+    :param key:     function that returns a string that is used as a raw key. The key can use some formats {db} {context} {uid} {logged_in}
+    :param binary:  do not render page
     :
     """
     routing = kw.copy()
@@ -265,7 +266,12 @@ def route(route=None, **kw):
                 controller_start = timer()
                 response = f(*args, **kw) # calls original controller
                 render_start = timer()
-                page = response.render()
+
+                if not routing.get('binary'):
+                    page = response.render()
+                else:
+                    #~ raise Warning(response.response)
+                    page = ''.join(response.response)
                 page_dict = {
                     'ETag':     MEMCACHED_HASH(page),
                     'max-age':  max_age,
