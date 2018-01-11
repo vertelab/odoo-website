@@ -30,7 +30,7 @@ _logger = logging.getLogger(__name__)
 class website_sale(website_sale):
 
     # '/shop'
-    @memcached.route(key=lambda :'{db}{path}{context_uid}{post}')
+    @memcached.route()
     def shop(self, page=0, category=None, search='', **post):
         return super(website_sale, self).shop(page, category, search, **post)
 
@@ -44,43 +44,42 @@ class website_sale(website_sale):
     def product_comment(self, product_template_id, **post):
         return super(website_sale, self).product_comment(product_template_id, **post)
 
-    #~ # '/shop/pricelist'
-    #~ @memcached.route()
-    #~ def pricelist(self, promo, **post):
-        #~ return super(website_sale, self).pricelist(promo, **post)
+    # '/shop/pricelist'
+    @memcached.route()
+    def pricelist(self, promo, **post):
+        return super(website_sale, self).pricelist(promo, **post)
 
-    #~ # '/shop/cart'
-    #~ @memcached.route()
-    #~ def cart(self, **post):
-        #~ return super(website_sale, self).cart(**post)
+    # '/shop/cart'
+    @memcached.route()
+    def cart(self, **post):
+        return super(website_sale, self).cart(**post)
 
     # '/shop/cart/update'
-    #@http.route(['/shop/cart/update'], type='http', auth="public", methods=['POST'], website=True)
-    #~ @memcached.route()
-    #~ def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
-        #~ return super(website_sale, self).cart_update(product_id, add_qty, set_qty, **kw)
+    @memcached.route()
+    def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
+        return super(website_sale, self).cart_update(product_id, add_qty, set_qty, **post)
 
-    #~ # '/shop/checkout'
-    #~ @memcached.route()
-    #~ def checkout(self, **post):
-        #~ return super(website_sale, self).checkout(**post)
+    # '/shop/checkout'
+    @memcached.route()
+    def checkout(self, **post):
+        return super(website_sale, self).checkout(**post)
 
-    #~ # '/shop/confirm_order'
-    #~ @memcached.route()
-    #~ def confirm_order(self, **post):
-        #~ return super(website_sale, self).confirm_order(**post)
+    # '/shop/confirm_order'
+    @memcached.route()
+    def confirm_order(self, **post):
+        return super(website_sale, self).confirm_order(**post)
 
-    #~ # '/shop/payment'
-    #~ @memcached.route()
-    #~ def payment(self, **post):
-        #~ return super(website_sale, self).payment(**post)
+    # '/shop/payment'
+    @memcached.route()
+    def payment(self, **post):
+        return super(website_sale, self).payment(**post)
 
-    #~ # '/shop/payment/validate'
-    #~ @memcached.route()
-    #~ def payment_validate(self, transaction_id=None, sale_order_id=None, **post):
-        #~ return super(website_sale, self).payment_validate(transaction_id, sale_order_id, **post)
+    # '/shop/payment/validate'
+    @memcached.route()
+    def payment_validate(self, transaction_id=None, sale_order_id=None, **post):
+        return super(website_sale, self).payment_validate(transaction_id, sale_order_id, **post)
 
-    #~ # '/shop/confirmation'
-    #~ @memcached.route()
-    #~ def payment_confirmation(self, **post):
-        #~ return super(website_sale, self).payment_confirmation(**post)
+    # '/shop/confirmation'
+    @memcached.route()
+    def payment_confirmation(self, **post):
+        return super(website_sale, self).payment_confirmation(**post)
