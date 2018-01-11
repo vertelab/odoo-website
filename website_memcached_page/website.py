@@ -19,7 +19,7 @@
 #
 ##############################################################################
 
-
+import openerp
 from openerp import http
 from openerp.addons.web.http import request
 from openerp.addons.website_memcached import memcached
@@ -35,7 +35,7 @@ class CachedWebsite(Website):
     #~ @http.route('/page/<page:page>', type='http', auth="public", website=True)
     @memcached.route(flush_type='page')
     def page(self, page, **opt):
-        return super(CachedWebsite, self).page(page, opt)
+        return super(CachedWebsite, self).page(page, **opt)
 
     #~ @http.route(['/robots.txt'], type='http', auth="public")
     @memcached.route(flush_type='page_meta')
@@ -71,6 +71,7 @@ class CachedWebsite(Website):
     @memcached.route(flush_type='actions_server')
     def actions_server(self, path_or_xml_id_or_id, **post):
         return super(CachedWebsite, self).actions_server(path_or_xml_id_or_id, **post)
+    
     
     #------------------------------------------------------
     # Flush
@@ -115,3 +116,17 @@ class CachedWebsite(Website):
         memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page_image'))
         return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_image'),'Flush Page Image','/mcflush/page_image'))       
     
+
+    #------------------------------------------------------
+    # from web
+    #------------------------------------------------------
+class CachedBinary(openerp.addons.web.controllers.main.Binary):
+
+    #~ @http.route([
+        #~ '/web/binary/company_logo',
+        #~ '/logo',
+        #~ '/logo.png',
+    #~ ], type='http', auth="none", cors="*")
+    @memcached.route(flush_type='page_image',binary=True)
+    def company_logo(self, dbname=None, **kw):
+        return super(CachedBinary, self).company_logo(dbname, **kw)
