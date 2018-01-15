@@ -30,12 +30,14 @@ class website(models.Model):
     _inherit = 'website'
     
     qty_previous_products = fields.Integer(string='# Previous Products', default=10, help="The number of previous products to display in the webshop.")
-    
+
     @api.multi
     def sale_get_previous_products(self):
         self.ensure_one()
+        _logger.warn(request.session.get('previous_product_ids', []))
         #~ return self.env['product.template'].browse(list(reversed(request.session.get('previous_product_ids', []))))[:10]
-        return self.env['product.template'].browse(request.session.get('previous_product_ids', []))
+        return self.env['product.template'].search([('id', 'in', request.session.get('previous_product_ids', []))])
+
     
     @api.multi
     def sale_add_previous_product(self, product_id):
