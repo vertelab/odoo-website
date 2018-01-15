@@ -116,13 +116,13 @@ def get_keys(flush_type=None,module=None,path=None):
     keys =  [key for sublist in key_lists for key in sublist]
 
     if flush_type:
-       keys = [key for key in keys if flush_type == MEMCACHED_CLIENT().get(key).get('flush_type')]
+       keys = [key for key in keys if flush_type == MEMCACHED_CLIENT()[key].get('flush_type')]
     if module:
-       keys = [key for key in keys if module == MEMCACHED_CLIENT().get(key).get('module')]
+       keys = [key for key in keys if module == MEMCACHED_CLIENT()[key].get('module')]
     if path:
-       keys = [key for key in keys if path in MEMCACHED_CLIENT().get(key).get('path')]
+       keys = [key for key in keys if path in MEMCACHED_CLIENT()[key].get('path')]
     # Remove other databases
-    keys = [key for key in keys if request.env.cr.dbname in MEMCACHED_CLIENT().get(key).get('db')]
+    keys = [key for key in keys if request.env.cr.dbname in MEMCACHED_CLIENT()[key].get('db')]
 
     return keys
 
@@ -132,7 +132,7 @@ def get_flush_page(keys,title,url=''):
         p = MEMCACHED_CLIENT().get(key)
         html += '<tr><td><a href="/mcpage/%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="/mcpage/%s/delete?url=%s">delete</a></td></tr>' % (key,key,p.get('path'),p.get('module'),p.get('flush_type'),p.get('key_raw'),key,url)
     return html + '</table>'
-    
+
     #~ return '<H1>%s</H1><table>%s</table>' % (title,
         #~ ''.join(['<tr><td><a href="/mcpage/%s/delete">%s (delete)</a></td><td></td><td></td></tr>' % (k,k,p.get('path'),p.get('module'),p.get('flush_type')) for key in keys for p,k in [memcached.MEMCACHED_CLIENT().get(key),key]])
 
@@ -185,14 +185,9 @@ def route(route=None, **kw):
             routing['routes'] = routes
         @functools.wraps(f)
         def response_wrap(*args, **kw):
-            _logger.error('\n\nroute: %s\narg %s\nkw %s\nsession %s\ncontext %s\n\n' % (request.httprequest.path,args,kw,request.session.items(),request.env.context))
-            
-            
             if routing.get('key'): # Function that returns a raw string for key making
                 # Format {path}{session}{etc}
-                key_raw = routing['key'](kw)
-                _logger.warn(key_raw)
-                key_raw = key_raw.format(  path=request.httprequest.path,
+                key_raw = routing['key'](kw).format(  path=request.httprequest.path,
                                                     session='%s' % {k:v for k,v in request.session.items() if len(k)<40},
                                                     context='%s' % {k:v for k,v in request.env.context.items() if not k == 'uid'},
                                                     context_uid='%s' % {k:v for k,v in request.env.context.items()},
@@ -201,22 +196,17 @@ def route(route=None, **kw):
                                                     db=request.env.cr.dbname,
                                                     lang=request.env.context.get('lang'),
                                                     post='%s' % kw,
-                                                    )
-                _logger.warn('\n\nkey_raw: %s\n' % key_raw)
-                key_raw = key_raw.encode('latin-1')
+                                                    ).encode('latin-1')
                 key = str(MEMCACHED_HASH(key_raw))
             else:
-                _logger.warn('\n\nstandard key\n')
-                key_raw = '%s,%s,%s' % (request.env.cr.dbname,request.httprequest.path,request.env.context) # Default key
-                key_raw = key_raw.encode('latin-1')
+                key_raw = ('%s,%s,%s' % (request.env.cr.dbname,request.httprequest.path,request.env.context)).encode('latin-1') # Default key
                 key = str(MEMCACHED_HASH(key_raw))
-            _logger.warn('\n\nkey: %s\n' % key)
 
 ############### Key is ready
 
             if 'cache_invalidate' in kw.keys():
                 MEMCACHED_CLIENT().delete(key)
-            
+
             page_dict = None
             error = None
             try:
@@ -227,9 +217,7 @@ def route(route=None, **kw):
             except Exception as e:
                 error = "Memcashed Error %s " % e
                 _logger.warn(error)
-            
-            _logger.warn('\n\npage_dict: %s\n' % (page_dict and page_dict.get('db')))
-            
+
             if page_dict and not page_dict.get('db') == request.env.cr.dbname:
                 _logger.warn('Database violation key=%s stored for=%s  env db=%s ' % (key,page_dict.get('db'),request.env.cr.dbname))
                 page_dict = None
@@ -250,16 +238,11 @@ def route(route=None, **kw):
                 args = request.httprequest.args.copy()
                 args['cache_key'] = key
                 return werkzeug.utils.redirect('{}?{}'.format(request.httprequest.path, url_encode(args)), 302)
-   
+
             max_age = routing.get('max_age',600)              # 10 minutes
-            cache_age = routing.get('cache_age',24 * 60 * 60) # One day   
-            
-            request_dict = {h[0]: h[1] for h in request.httprequest.headers}
-            if page_dict and request_dict.get('If-None-Match') and request_dict.get('If-None-Match') == page_dict.get('Etag'):
-                _logger.warn(request_dict.get('If-None-Match'))
-                _logger.warn('returns 304')
-                return werkzeug.wrappers.Response(status=304)
-                    
+            cache_age = routing.get('cache_age',24 * 60 * 60) # One day
+            page = None
+
             if not page_dict:
                 _logger.warn('\n\nNo page_dict\n')
                 page_dict = {}
@@ -270,7 +253,6 @@ def route(route=None, **kw):
                 if not routing.get('binary'):
                     page = response.render()
                 else:
-                    #~ raise Warning(response.response)
                     page = ''.join(response.response)
                 page_dict = {
                     'ETag':     MEMCACHED_HASH(page),
@@ -290,12 +272,9 @@ def route(route=None, **kw):
                 MEMCACHED_CLIENT().set(key, page_dict,cache_age)
                 #~ raise Warning(f.__module__,f.__name__,route())
             else:
-                _logger.warn('\n\npage_dict exists\n')
                 request_dict = {h[0]: h[1] for h in request.httprequest.headers}
-                _logger.warn(request_dict.get('If-None-Match'))
-                _logger.warn(page_dict.get('Etag'))
-                if request_dict.get('If-None-Match') and request_dict.get('If-None-Match') == page_dict.get('Etag'):
-                    _logger.warn(request_dict.get('If-None-Match'))
+                _logger.warn('Page Exists If-None-Match %s Etag %s' %(request_dict.get('If-None-Match'), page_dict.get('ETag')))
+                if request_dict.get('If-None-Match') and (int(request_dict.get('If-None-Match')) == page_dict.get('ETag')):
                     _logger.warn('returns 304')
                     return werkzeug.wrappers.Response(status=304)
                 response = http.Response(page_dict.get('page'))
@@ -304,14 +283,13 @@ def route(route=None, **kw):
             # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
             # https://jakearchibald.com/2016/caching-best-practices/
             response.headers['Cache-Control'] ='max-age=%s, %s, must-revalidate' % (max_age,'private' if routing.get('private') else 'public') # private: must not be stored by a shared cache.
-            _logger.warn('\n\nheaders: %s\n' % response.headers)
-            _logger.warn('page: %s' % (page_dict and len(page_dict.get('page'))))
             response.headers['ETag'] = page_dict.get('ETag')
-            #~ _logger.warn('bla 1')
+            response.headers['X-CacheKey'] = key
+            response.headers['X-Cache'] = 'newly rendered' if page else 'from cache'
+            response.headers['X-CacheKeyRaw'] = key_raw
+            response.headers['X-CacheCacheAge'] = cache_age
             response.headers['Date'] = page_dict.get('date',http_date())
-            #~ _logger.warn('bla 2')
             response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_CLIENT().version())
-            _logger.warn('\n\nmemcached last line\n')
             return response
 
         response_wrap.routing = routing

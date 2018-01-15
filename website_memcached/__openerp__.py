@@ -90,15 +90,15 @@ Default are Database + Path + Context eg {db},{path},{context}
 #To install:
     sudo pip install pymemcache
     sudo apt install memcached
-    
+
     check /etc/memcached.conf
     Update Memcached config in Website Settings with one or more server tupples; [('server1',<port>),('server2',<port>)]
-    
+
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
     'depends': ['website'],
-    'external_dependencies': {'python': ['pymemcache',]},
+    'external_dependencies': {'python': ['pymemcache', 'pyhashxx']},
     'data': [
         'res_config_view.xml',
         'website_view.xml',
