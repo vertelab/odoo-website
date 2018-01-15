@@ -132,7 +132,7 @@ def get_flush_page(keys,title,url=''):
         p = MEMCACHED_CLIENT().get(key)
         html += '<tr><td><a href="/mcpage/%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="/mcpage/%s/delete?url=%s">delete</a></td></tr>' % (key,key,p.get('path'),p.get('module'),p.get('flush_type'),p.get('key_raw'),key,url)
     return html + '</table>'
-    
+
     #~ return '<H1>%s</H1><table>%s</table>' % (title,
         #~ ''.join(['<tr><td><a href="/mcpage/%s/delete">%s (delete)</a></td><td></td><td></td></tr>' % (k,k,p.get('path'),p.get('module'),p.get('flush_type')) for key in keys for p,k in [memcached.MEMCACHED_CLIENT().get(key),key]])
 
@@ -184,7 +184,7 @@ def route(route=None, **kw):
                 routes = [route]
             routing['routes'] = routes
         @functools.wraps(f)
-        def response_wrap(*args, **kw):            
+        def response_wrap(*args, **kw):
             if routing.get('key'): # Function that returns a raw string for key making
                 # Format {path}{session}{etc}
                 key_raw = routing['key'](kw).format(  path=request.httprequest.path,
@@ -206,7 +206,7 @@ def route(route=None, **kw):
 
             if 'cache_invalidate' in kw.keys():
                 MEMCACHED_CLIENT().delete(key)
-            
+
             page_dict = None
             error = None
             try:
@@ -217,7 +217,7 @@ def route(route=None, **kw):
             except Exception as e:
                 error = "Memcashed Error %s " % e
                 _logger.warn(error)
-                        
+
             if page_dict and not page_dict.get('db') == request.env.cr.dbname:
                 _logger.warn('Database violation key=%s stored for=%s  env db=%s ' % (key,page_dict.get('db'),request.env.cr.dbname))
                 page_dict = None
@@ -238,10 +238,11 @@ def route(route=None, **kw):
                 args = request.httprequest.args.copy()
                 args['cache_key'] = key
                 return werkzeug.utils.redirect('{}?{}'.format(request.httprequest.path, url_encode(args)), 302)
-   
+
             max_age = routing.get('max_age',600)              # 10 minutes
-            cache_age = routing.get('cache_age',24 * 60 * 60) # One day   
-                                
+            cache_age = routing.get('cache_age',24 * 60 * 60) # One day
+            page = None
+
             if not page_dict:
                 _logger.warn('\n\nNo page_dict\n')
                 page_dict = {}
@@ -252,7 +253,6 @@ def route(route=None, **kw):
                 if not routing.get('binary'):
                     page = response.render()
                 else:
-                    #~ raise Warning(response.response)
                     page = ''.join(response.response)
                 page_dict = {
                     'ETag':     MEMCACHED_HASH(page),
@@ -273,8 +273,8 @@ def route(route=None, **kw):
                 #~ raise Warning(f.__module__,f.__name__,route())
             else:
                 request_dict = {h[0]: h[1] for h in request.httprequest.headers}
-                _logger.warn('Page Exists If-None-Match %s Etag %s',(request_dict.get('If-None-Match'),page_dict.get('Etag')))
-                if request_dict.get('If-None-Match') and request_dict.get('If-None-Match') == page_dict.get('Etag'):
+                _logger.warn('Page Exists If-None-Match %s Etag %s' %(request_dict.get('If-None-Match'), page_dict.get('ETag')))
+                if request_dict.get('If-None-Match') and (int(request_dict.get('If-None-Match')) == page_dict.get('ETag')):
                     _logger.warn('returns 304')
                     return werkzeug.wrappers.Response(status=304)
                 response = http.Response(page_dict.get('page'))
@@ -284,6 +284,10 @@ def route(route=None, **kw):
             # https://jakearchibald.com/2016/caching-best-practices/
             response.headers['Cache-Control'] ='max-age=%s, %s, must-revalidate' % (max_age,'private' if routing.get('private') else 'public') # private: must not be stored by a shared cache.
             response.headers['ETag'] = page_dict.get('ETag')
+            response.headers['X-CacheKey'] = key
+            response.headers['X-Cache'] = 'newly rendered' if page else 'from cache'
+            response.headers['X-CacheKeyRaw'] = key_raw
+            response.headers['X-CacheCacheAge'] = cache_age
             response.headers['Date'] = page_dict.get('date',http_date())
             response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_CLIENT().version())
             return response
