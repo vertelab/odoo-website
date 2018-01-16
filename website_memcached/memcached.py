@@ -272,6 +272,7 @@ def route(route=None, **kw):
                     'date':     http_date(),
                     'module':   f.__module__,
                     'flush_type': routing.get('flush_type'),
+                    'headers': response.headers,
                     }
                 MEMCACHED_CLIENT().set(key, page_dict,cache_age)
                 #~ raise Warning(f.__module__,f.__name__,route())
@@ -286,6 +287,9 @@ def route(route=None, **kw):
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
             # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
             # https://jakearchibald.com/2016/caching-best-practices/
+            if page_dict.get('headers'):
+                for k,v in page_dict['headers'].items():
+                   response.headers[k] = v 
             response.headers['Cache-Control'] ='max-age=%s, %s, must-revalidate' % (max_age,'private' if routing.get('private') else 'public') # private: must not be stored by a shared cache.
             response.headers['ETag'] = page_dict.get('ETag')
             response.headers['X-CacheKey'] = key

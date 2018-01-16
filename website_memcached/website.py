@@ -25,6 +25,8 @@ from openerp.addons.web.http import request
 from openerp.addons.website_memcached import memcached
 import werkzeug
 
+import base64
+
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -38,7 +40,7 @@ class MemCachedController(http.Controller):
         
         page_dict = memcached.MEMCACHED_CLIENT().get(key)
         if page_dict:
-            return page_dict.get('page')
+            return page_dict.get('page').decode('base64')
         return request.registry['ir.http']._handle_exception(None, 404)
 
 
@@ -58,4 +60,7 @@ class MemCachedController(http.Controller):
     def memcached_flush(self, flush_type='',**post):
         if flush_type == 'all':
             return http.Response(memcached.get_flush_page(memcached.get_keys(),'All Cached Pages','/mcflush/%s' % flush_type))
+        else:
+            return http.Response(memcached.get_flush_page(memcached.get_keys(),'All Cached Pages','/mcflush/%s' % flush_type))
+
              
