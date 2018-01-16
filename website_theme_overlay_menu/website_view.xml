@@ -45,11 +45,6 @@
         <template id="website_theme_overlay_assets_frontend" inherit_id="website.assets_frontend" name="Website Theme Overlay Menu Assets Frontend">
             <xpath expr="." position="inside">
                 <link href="/website_theme_overlay_menu/static/src/css/main.css" rel="stylesheet" type="text/css" />
-            </xpath>
-        </template>
-
-        <template id="website_theme_overlay_js" inherit_id="website.layout">
-            <xpath expr="//body" position="inside">
                 <script type="text/javascript" src="/website_theme_overlay_menu/static/src/js/main.js" />
             </xpath>
         </template>

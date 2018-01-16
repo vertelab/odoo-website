@@ -24,6 +24,7 @@ from openerp import http
 from openerp.http import request
 from openerp.service import common
 import openerp
+import base64
 
 import werkzeug.utils
 from werkzeug.http import http_date
@@ -61,6 +62,7 @@ try:
     from pymemcache.client.base import Client,MemcacheServerError
     #~ from pymemcache.client.hash import HashClient
     MEMCACHED__CLIENT__ = False
+    MEMCACHED_VERSION = ''
     #~ MEMCACHED_CLIENT = Client(('localhost', 11211), serializer=serialize_pickle, deserializer=deserialize_pickle)
     #~ from pymemcache.client.murmur3 import murmur3_32 as MEMCACHED_HASH
 except Exception as e:
@@ -72,6 +74,7 @@ except Exception as e:
     _logger.info('missing pyhashxx %s' % e)
 def MEMCACHED_CLIENT():
     global MEMCACHED__CLIENT__
+    global MEMCACHED_VERSION
     if not MEMCACHED__CLIENT__:
         servers = eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost",11211)')
         try:
@@ -85,6 +88,7 @@ def MEMCACHED_CLIENT():
         except TypeError as e:
             _logger.info('Type error MEMCACHED CLIENT %s.' % e)
             raise MemcacheServerError(e)
+        MEMCACHED_VERSION = MEMCACHED__CLIENT__.version()
     return MEMCACHED__CLIENT__
 
 # https://lzone.de/cheat-sheet/memcached
@@ -264,7 +268,7 @@ def route(route=None, **kw):
                     'controller_time': render_start-controller_start,
                     'path':     request.httprequest.path,
                     'db':       request.env.cr.dbname,
-                    'page':     page,
+                    'page':     base64.b64encode(page),
                     'date':     http_date(),
                     'module':   f.__module__,
                     'flush_type': routing.get('flush_type'),
@@ -277,7 +281,7 @@ def route(route=None, **kw):
                 if request_dict.get('If-None-Match') and (int(request_dict.get('If-None-Match')) == page_dict.get('ETag')):
                     _logger.warn('returns 304')
                     return werkzeug.wrappers.Response(status=304)
-                response = http.Response(page_dict.get('page'))
+                response = http.Response(base64.b64decode(page_dict.get('page')))
 
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
             # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
@@ -289,7 +293,7 @@ def route(route=None, **kw):
             response.headers['X-CacheKeyRaw'] = key_raw
             response.headers['X-CacheCacheAge'] = cache_age
             response.headers['Date'] = page_dict.get('date',http_date())
-            response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_CLIENT().version())
+            response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)
             return response
 
         response_wrap.routing = routing

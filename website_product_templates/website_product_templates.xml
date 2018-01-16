@@ -42,8 +42,8 @@
         </div>
       </div>
     </template>
-    <template id="layout" inherit_id="website.layout" name="Product Templates">
-      <xpath expr="//t[@t-call-assets='website.assets_frontend']" position="after">
+    <template id="layout" inherit_id="website.assets_frontend" name="Product Templates">
+      <xpath expr="." position="inside">
         <link href="/website_product_templates/static/src/css/website_product_templates.css" rel="stylesheet" />
       </xpath>
     </template>

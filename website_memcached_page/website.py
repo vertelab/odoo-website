@@ -62,7 +62,7 @@ class CachedWebsite(Website):
         #~ ], auth="public", website=True, multilang=False)
     @memcached.route(flush_type='page_image',binary=True, key=lambda k: '{db}{path}')
     def website_image(self, model, id, field, max_width=None, max_height=None):
-        raise Warning(model,id,field)
+        #~ raise Warning(model,id,field)
         return super(CachedWebsite, self).website_image(model, id, field, max_width, max_height)
 
     #------------------------------------------------------
