@@ -273,7 +273,7 @@ def route(route=None, **kw):
                 #~ raise Warning(f.__module__,f.__name__,route())
             else:
                 request_dict = {h[0]: h[1] for h in request.httprequest.headers}
-                _logger.warn('Page Exists If-None-Match %s Etag %s',(request_dict.get('If-None-Match'),page_dict.get('Etag')))
+                _logger.warn('\nPage Exists If-None-Match %s Etag %s\n\n',(request_dict.get('If-None-Match'),page_dict.get('Etag')))
                 if request_dict.get('If-None-Match') and request_dict.get('If-None-Match') == page_dict.get('Etag'):
                     _logger.warn('returns 304')
                     return werkzeug.wrappers.Response(status=304)
