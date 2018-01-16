@@ -2,6 +2,11 @@
 <openerp>
     <data>
 
+        <template id="layout" inherit_id="website.layout">
+            <xpath expr="//span[@t-esc='user_id.name']" position="replace">
+                <span>My Account</span>
+            </xpath>
+        </template>
 
     </data>
 </openerp>
