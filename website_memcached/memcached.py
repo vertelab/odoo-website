@@ -176,6 +176,7 @@ def route(route=None, **kw):
     :param private: True if must not be stored by a shared cache
     :param key:     function that returns a string that is used as a raw key. The key can use some formats {db} {context} {uid} {logged_in}
     :param binary:  do not render page
+    :param no-store:  do not store in cache
     :
     """
     routing = kw.copy()
@@ -281,7 +282,16 @@ def route(route=None, **kw):
                 #~ _logger.warn('Page Exists If-None-Match %s Etag %s' %(request_dict.get('If-None-Match'), page_dict.get('ETag')))
                 if request_dict.get('If-None-Match') and (int(request_dict.get('If-None-Match')) == page_dict.get('ETag')):
                     _logger.warn('returns 304')
-                    return werkzeug.wrappers.Response(status=304)
+                    return werkzeug.wrappers.Response(status=304,headers=[
+                        ('X-CacheETag', page_dict.get('ETag')),
+                        ('X-CacheKey',key),
+                        ('X-Cache','newly rendered' if page else 'from cache'),
+                        ('X-CacheKeyRaw',key_raw),
+                        ('X-CacheController',page_dict.get('controller_time')),
+                        ('X-CacheRender',page_dict.get('render_time')),
+                        ('X-CacheCacheAge',cache_age),
+                        ('Server','Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)),
+                        ])
                 response = http.Response(base64.b64decode(page_dict.get('page')))
 
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
@@ -289,12 +299,14 @@ def route(route=None, **kw):
             # https://jakearchibald.com/2016/caching-best-practices/
             if page_dict.get('headers'):
                 for k,v in page_dict['headers'].items():
-                   response.headers[k] = v 
-            response.headers['Cache-Control'] ='max-age=%s, %s, must-revalidate' % (max_age,'private' if routing.get('private') else 'public') # private: must not be stored by a shared cache.
+                   response.headers[k] = v
+            response.headers['Cache-Control'] ='max-age=%s, %s' % (max_age,','.join([routing.get('private','public'),routing.get('no-store',''),'no-cache','must-revalidate'])) # private: must not be stored by a shared cache.
             response.headers['ETag'] = page_dict.get('ETag')
             response.headers['X-CacheKey'] = key
             response.headers['X-Cache'] = 'newly rendered' if page else 'from cache'
             response.headers['X-CacheKeyRaw'] = key_raw
+            response.headers['X-CacheController'] = page_dict.get('controller_time')
+            response.headers['X-CacheRender'] = page_dict.get('render_time')
             response.headers['X-CacheCacheAge'] = cache_age
             response.headers['Date'] = page_dict.get('date',http_date())
             response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)
