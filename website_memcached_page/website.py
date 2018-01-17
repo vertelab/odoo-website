@@ -62,7 +62,7 @@ class CachedWebsite(Website):
         #~ ], auth="public", website=True, multilang=False)
     @memcached.route(flush_type='page_image',binary=True, key=lambda k: '{db}{path}')
     def website_image(self, model, id, field, max_width=None, max_height=None):
-        raise Warning(model,id,field)
+        #~ raise Warning(model,id,field)
         return super(CachedWebsite, self).website_image(model, id, field, max_width, max_height)
 
     #------------------------------------------------------
@@ -76,50 +76,50 @@ class CachedWebsite(Website):
     def actions_server(self, path_or_xml_id_or_id, **post):
         return super(CachedWebsite, self).actions_server(path_or_xml_id_or_id, **post)
 
-class mcflush(http.Controller):
+#~ class mcflush(http.Controller):
 
-    #------------------------------------------------------
-    # Flush
-    #------------------------------------------------------
+    #~ #------------------------------------------------------
+    #~ # Flush
+    #~ #------------------------------------------------------
 
-    @http.route([
-        '/mcflush/page',
-    ], type='http', auth="user", website=True)
-    def memcached_flush_blog(self,**post):
-        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page'),'Flush Page','/mcflush/page'))
+    #~ @http.route([
+        #~ '/mcflush/page',
+    #~ ], type='http', auth="user", website=True)
+    #~ def memcached_flush_blog(self,**post):
+        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page'),'Flush Page','/mcflush/page'))
 
-    @http.route([
-        '/mcflush/page/all',
-    ], type='http', auth="user", website=True)
-    def memcached_flush_blog_all(self,**post):
-        memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page'))
-        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page'),'Flush Page','/mcflush/page'))
+    #~ @http.route([
+        #~ '/mcflush/page/all',
+    #~ ], type='http', auth="user", website=True)
+    #~ def memcached_flush_blog_all(self,**post):
+        #~ memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page'))
+        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page'),'Flush Page','/mcflush/page'))
 
-    @http.route([
-        '/mcflush/page_meta',
-    ], type='http', auth="user", website=True)
-    def memcached_flush_blog(self,**post):
-        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_meta'),'Flush Page Meta','/mcflush/page_meta'))
+    #~ @http.route([
+        #~ '/mcflush/page_meta',
+    #~ ], type='http', auth="user", website=True)
+    #~ def memcached_flush_blog(self,**post):
+        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_meta'),'Flush Page Meta','/mcflush/page_meta'))
 
-    @http.route([
-        '/mcflush/page_meta/all',
-    ], type='http', auth="user", website=True)
-    def memcached_flush_blog_all(self,**post):
-        memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page_meta'))
-        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_meta'),'Flush Page Meta','/mcflush/page_meta'))
+    #~ @http.route([
+        #~ '/mcflush/page_meta/all',
+    #~ ], type='http', auth="user", website=True)
+    #~ def memcached_flush_blog_all(self,**post):
+        #~ memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page_meta'))
+        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_meta'),'Flush Page Meta','/mcflush/page_meta'))
 
-    @http.route([
-        '/mcflush/page_image',
-    ], type='http', auth="user", website=True)
-    def memcached_flush_blog(self,**post):
-        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_image'),'Flush Page Image','/mcflush/page_image'))
+    #~ @http.route([
+        #~ '/mcflush/page_image',
+    #~ ], type='http', auth="user", website=True)
+    #~ def memcached_flush_blog(self,**post):
+        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_image'),'Flush Page Image','/mcflush/page_image'))
 
-    @http.route([
-        '/mcflush/page_image/all',
-    ], type='http', auth="user", website=True)
-    def memcached_flush_blog_all(self,**post):
-        memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page_image'))
-        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_image'),'Flush Page Image','/mcflush/page_image'))
+    #~ @http.route([
+        #~ '/mcflush/page_image/all',
+    #~ ], type='http', auth="user", website=True)
+    #~ def memcached_flush_blog_all(self,**post):
+        #~ memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page_image'))
+        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_image'),'Flush Page Image','/mcflush/page_image'))
 
 
     #------------------------------------------------------
@@ -135,6 +135,31 @@ class CachedBinary(openerp.addons.web.controllers.main.Binary):
     @memcached.route(flush_type='page_image',binary=True)
     def company_logo(self, dbname=None, **kw):
         return super(CachedBinary, self).company_logo(dbname, **kw)
+
+
+class CachedHome(openerp.addons.web.controllers.main.Home):
+
+
+    pass
+
+    #~ @http.route([
+        #~ '/web/js/<xmlid>',
+        #~ '/web/js/<xmlid>/<version>',
+    #~ ], type='http', auth='public')
+    #~ @memcached.route(flush_type='js_bundle',cache_age=60*60*24*30,max_age=604800)
+    #~ def js_bundle(self, xmlid, version=None, **kw):
+        #~ return super(CachedHome, self).js_bundle(xmlid, version, **kw)
+
+    #~ @http.route([
+        #~ '/web/css/<xmlid>',
+        #~ '/web/css/<xmlid>/<version>',
+        #~ '/web/css.<int:page>/<xmlid>/<version>',
+    #~ ], type='http', auth='public')
+    #~ @memcached.route(flush_type='css_bundle',cache_age=60*60*24*30,max_age=604800,Binary=True)
+    #~ def css_bundle(self, xmlid, version=None, page=None, **kw):
+        #~ return super(CachedHome, self).css_bundle(xmlid, version, page, **kw)
+
+
 
 #~ class Website(models.Model):
     #~ _inherit = 'website'
