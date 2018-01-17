@@ -87,8 +87,10 @@ class website_sale(website_sale):
     @http.route(['/website_sale_update_cart'], type='json', auth="public", website=True)
     def website_sale_update_cart(self):
         order = request.website.sale_get_order()
-        res = {}
+        res = {'amount_total': '0.00', 'cart_quantity': '0'}
         if order:
-            res['amount_total'] = order.amount_total
+            res['amount_total'] = "%.2f" %order.amount_total
             res['cart_quantity'] = order.cart_quantity
+        if request.env.lang == 'sv_SE':
+            res['amount_total'] = res['amount_total'].replace('.', ',')
         return res
