@@ -176,7 +176,14 @@ def route(route=None, **kw):
     :param private: True if must not be stored by a shared cache
     :param key:     function that returns a string that is used as a raw key. The key can use some formats {db} {context} {uid} {logged_in}
     :param binary:  do not render page
-    :param no-store:  do not store in cache
+    :param no_store:  do not store in cache
+    :param immutable:  Indicates that the response body will not change over time. The resource, if unexpired, is unchanged on the server and therefore the client should not send a conditional revalidation.  immutable is only honored on https:// transactions
+    :param no_transform: No transformations or conversions should be made to the resource (for example do not transform png to jpeg)
+    :param s_maxage:  Overrides max-age, but it only applies to shared caches / proxies and is ignored by a private cache
+    
+    
+
+    
     :
     """
     routing = kw.copy()
@@ -210,6 +217,7 @@ def route(route=None, **kw):
 ############### Key is ready
 
             if 'cache_invalidate' in kw.keys():
+                kw.pop('cache_invalidate',None)
                 MEMCACHED_CLIENT().delete(key)
 
             page_dict = None
@@ -246,6 +254,7 @@ def route(route=None, **kw):
 
             max_age = routing.get('max_age',600)              # 10 minutes
             cache_age = routing.get('cache_age',24 * 60 * 60) # One day
+            s_maxage =  routing.get('s_maxage',max_age)
             page = None
 
             if not page_dict:
@@ -300,7 +309,7 @@ def route(route=None, **kw):
             if page_dict.get('headers'):
                 for k,v in page_dict['headers'].items():
                    response.headers[k] = v
-            response.headers['Cache-Control'] ='max-age=%s, %s' % (max_age,','.join([routing.get('private','public'),routing.get('no-store',''),'no-cache','must-revalidate'])) # private: must not be stored by a shared cache.
+            response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s, %s' % (max_age,s_maxage,','.join([keyword for keyword in [routing.get('private','public'),routing.get('no-store'),routing.get('immutable'),routing.get('no-transform'),'no-cache','must-revalidate','proxy-revalidate'] if keyword] )) # private: must not be stored by a shared cache.
             response.headers['ETag'] = page_dict.get('ETag')
             response.headers['X-CacheKey'] = key
             response.headers['X-Cache'] = 'newly rendered' if page else 'from cache'
