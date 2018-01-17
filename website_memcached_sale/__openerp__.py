@@ -34,6 +34,7 @@ This module depends on website_memcached
     'depends': ['website_memcached','website_sale'],
     'external_dependencies': {'python': ['pymemcache',]},
     'data': [
+        'website_view.xml',
 ],
     'application': False,
 }
