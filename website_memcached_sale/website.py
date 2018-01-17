@@ -56,7 +56,7 @@ class website_sale(website_sale):
 
     # '/shop/cart/update'
     @memcached.route()
-    def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
+    def cart_update(self, product_id, add_qty=1, set_qty=0, **post):
         return super(website_sale, self).cart_update(product_id, add_qty, set_qty, **post)
 
     # '/shop/checkout'
