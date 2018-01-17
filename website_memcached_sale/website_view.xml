@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <template id="website_memcached_sale_assets_frontend" inherit_id="website.assets_frontend" name="Website Memcached Sale Assets Frontend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/website_memcached_sale/static/src/js/main.js" />
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

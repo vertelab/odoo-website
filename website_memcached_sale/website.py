@@ -83,3 +83,12 @@ class website_sale(website_sale):
     @memcached.route()
     def payment_confirmation(self, **post):
         return super(website_sale, self).payment_confirmation(**post)
+
+    @http.route(['/website_sale_update_cart'], type='json', auth="public", website=True)
+    def website_sale_update_cart(self):
+        order = request.website.sale_get_order()
+        res = {}
+        if order:
+            res['amount_total'] = order.amount_total
+            res['cart_quantity'] = order.cart_quantity
+        return res
