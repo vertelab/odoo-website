@@ -120,11 +120,11 @@ def get_keys(flush_type=None,module=None,path=None):
     keys =  [key for sublist in key_lists for key in sublist]
 
     if flush_type:
-       keys = [key for key in keys if flush_type == MEMCACHED_CLIENT()[key].get('flush_type')]
+       keys = [key for key in keys if flush_type == 'all' or flush_type == MEMCACHED_CLIENT()[key].get('flush_type')]
     if module:
-       keys = [key for key in keys if module == MEMCACHED_CLIENT()[key].get('module')]
+       keys = [key for key in keys if module == 'all' or module == MEMCACHED_CLIENT()[key].get('module')]
     if path:
-       keys = [key for key in keys if path in MEMCACHED_CLIENT()[key].get('path')]
+       keys = [key for key in keys if path == 'all' or path == MEMCACHED_CLIENT()[key].get('path')]
     # Remove other databases
     keys = [key for key in keys if request.env.cr.dbname in MEMCACHED_CLIENT()[key].get('db')]
 
@@ -197,6 +197,7 @@ def route(route=None, **kw):
             routing['routes'] = routes
         @functools.wraps(f)
         def response_wrap(*args, **kw):
+            _logger.warn('\n\npath: %s\n' % request.httprequest.path)
             if routing.get('key'): # Function that returns a raw string for key making
                 # Format {path}{session}{etc}
                 key_raw = routing['key'](kw).format(  path=request.httprequest.path,
@@ -210,6 +211,8 @@ def route(route=None, **kw):
                                                     post='%s' % kw,
                                                     xmlid='%s' % kw.get('xmlid'),
                                                     version='%s' % kw.get('version'),
+                                                    publisher='1' if request.env.ref('base.group_website_publisher') in request.env.user.groups_id else '0',
+                                                    designer='1' if request.env.ref('base.group_website_designer') in request.env.user.groups_id else '0',
                                                     ).encode('latin-1')
                 #~ raise Warning(request.env['res.users'].browse(request.uid).group_ids)
                 key = str(MEMCACHED_HASH(key_raw))
