@@ -208,7 +208,10 @@ def route(route=None, **kw):
                                                     db=request.env.cr.dbname,
                                                     lang=request.env.context.get('lang'),
                                                     post='%s' % kw,
+                                                    xmlid='%s' % kw.get('xmlid'),
+                                                    version='%s' % kw.get('version'),
                                                     ).encode('latin-1')
+                #~ raise Warning(request.env['res.users'].browse(request.uid).group_ids)
                 key = str(MEMCACHED_HASH(key_raw))
             else:
                 key_raw = ('%s,%s,%s' % (request.env.cr.dbname,request.httprequest.path,request.env.context)).encode('latin-1') # Default key

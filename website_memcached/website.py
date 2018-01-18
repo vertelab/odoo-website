@@ -73,6 +73,7 @@ class MemCachedController(http.Controller):
         '/mcmodel/<string:model>',
     ], type='http', auth="public", website=True)
     def memcached_flush(self, model='all',**post):
+        raise Warning('Hello')
         return http.Response(memcached.get_flush_page(memcached.get_keys(model=model),'Cached Pages Model %s' % model,'/mcmodel/%s' % model))
 
     @http.route([

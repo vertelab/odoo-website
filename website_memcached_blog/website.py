@@ -62,15 +62,15 @@ class CachedBlog(WebsiteBlog):
     #~ def blog_post_comment(self, blog_post_id=0, **post):
         #~ return super(CachedBlog, self).blog_post_comment(blog_post_id, **post)
 
-    @http.route([
-        '/mcflush/blog',
-    ], type='http', auth="user", website=True)
-    def memcached_flush_blog(self,**post):
-        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='blog'),'Flush Blog','/mcflush/blog'))
+    #~ @http.route([
+        #~ '/mcflush/blog',
+    #~ ], type='http', auth="user", website=True)
+    #~ def memcached_flush_blog(self,**post):
+        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='blog'),'Flush Blog','/mcflush/blog'))
      
-    @http.route([
-        '/mcflush/blog/all',
-    ], type='http', auth="user", website=True)
-    def memcached_flush_blog_all(self,**post):
-        memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='blog'))
-        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='blog'),'Flush Blog','/mcflush/blog'))
+    #~ @http.route([
+        #~ '/mcflush/blog/all',
+    #~ ], type='http', auth="user", website=True)
+    #~ def memcached_flush_blog_all(self,**post):
+        #~ memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='blog'))
+        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='blog'),'Flush Blog','/mcflush/blog'))

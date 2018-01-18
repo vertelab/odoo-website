@@ -139,25 +139,22 @@ class CachedBinary(openerp.addons.web.controllers.main.Binary):
 
 class CachedHome(openerp.addons.web.controllers.main.Home):
 
-
-    pass
-
     #~ @http.route([
         #~ '/web/js/<xmlid>',
         #~ '/web/js/<xmlid>/<version>',
     #~ ], type='http', auth='public')
-    #~ @memcached.route(flush_type='js_bundle',cache_age=60*60*24*30,max_age=604800)
-    #~ def js_bundle(self, xmlid, version=None, **kw):
-        #~ return super(CachedHome, self).js_bundle(xmlid, version, **kw)
+    @memcached.route(flush_type='js_bundle',binary=True,cache_age=60*60*24*30,max_age=604800)
+    def js_bundle(self, xmlid, version=None, **kw):
+        return super(CachedHome, self).js_bundle(xmlid, version, **kw)
 
     #~ @http.route([
         #~ '/web/css/<xmlid>',
         #~ '/web/css/<xmlid>/<version>',
         #~ '/web/css.<int:page>/<xmlid>/<version>',
     #~ ], type='http', auth='public')
-    #~ @memcached.route(flush_type='css_bundle',cache_age=60*60*24*30,max_age=604800,Binary=True)
-    #~ def css_bundle(self, xmlid, version=None, page=None, **kw):
-        #~ return super(CachedHome, self).css_bundle(xmlid, version, page, **kw)
+    @memcached.route(flush_type='css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,key=lambda k: '{db}{xmlid}')
+    def css_bundle(self, xmlid, version=None, page=None, **kw):
+        return super(CachedHome, self).css_bundle(xmlid, version, page, **kw)
 
 
 
