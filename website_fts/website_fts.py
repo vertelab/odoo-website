@@ -375,7 +375,7 @@ class WebsiteFullTextSearch(http.Controller):
 
     @http.route(['/search_suggestion'], type='json', auth="public", website=True)
     def search_suggestion(self, search='', facet=None, res_model=None, limit=0, offset=0, **kw):
-        result = request.env['fts.fts'].term_search(search, facet, res_model, limit, offset)
+        result = request.env['fts.fts'].term_search(search.lower(), facet, res_model, limit, offset)
         #~ _logger.warn(result)
         result_list = result['terms']
         rl = []
@@ -450,7 +450,7 @@ class fts_test(models.TransientModel):
     def test_search(self):
         if self.search:
             start = datetime.now()
-            result = self.env['fts.fts'].term_search(self.search, res_models=[m.name for m in self.fts_model_ids])
+            result = self.env['fts.fts'].term_search(self.search.lower(), res_models=[m.name for m in self.fts_model_ids])
             delta_t = datetime.now() - start
             _logger.warn(result)
             self.fts_ids = [(6, 0, [r.id for r in result['terms']])]
