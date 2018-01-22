@@ -38,6 +38,8 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+import werkzeug.routing
+
 #TODO blacklist pages / context / sessions that not to be cached, parameter on decorator
 
 
@@ -93,6 +95,11 @@ def MEMCACHED_CLIENT():
 
 # https://lzone.de/cheat-sheet/memcached
 
+flush_types = set()
+
+def add_flush_type(name):
+    flush_types.add(name)
+
 class website(models.Model):
     _inherit = 'website'
 
@@ -111,7 +118,9 @@ class website(models.Model):
             pass
         return rendered_page
 
-
+    @api.model
+    def memcache_flush_types(self):
+        return list(flush_types)
 
 def get_keys(flush_type=None,module=None,path=None):
     items = MEMCACHED_CLIENT().stats('items')
@@ -130,8 +139,8 @@ def get_keys(flush_type=None,module=None,path=None):
 
     return keys
 
-def get_flush_page(keys,title,url=''):
-    html = '<H1>%s</H1><table><tr><th>Key</th><th>Path</th><th>Module</th><th>Flush_type</th><th>Key Raw</th><th>Cmd</th></tr>' % (title)
+def get_flush_page(keys, title, url='', delete_url=''):
+    html = '%s<H1>%s</H1><table style="width: 100%%;"><tr><th>Key</th><th>Path</th><th>Module</th><th>Flush_type</th><th>Key Raw</th><th>Cmd</th></tr>' % (('<a href="%s" style="float: right;">delete all</a>' % delete_url) if delete_url else '', title)
     for key in keys:
         p = MEMCACHED_CLIENT().get(key)
         html += '<tr><td><a href="/mcpage/%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="/mcpage/%s/delete?url=%s">delete</a></td></tr>' % (key,key,p.get('path'),p.get('module'),p.get('flush_type'),p.get('key_raw'),key,url)
@@ -139,7 +148,6 @@ def get_flush_page(keys,title,url=''):
 
     #~ return '<H1>%s</H1><table>%s</table>' % (title,
         #~ ''.join(['<tr><td><a href="/mcpage/%s/delete">%s (delete)</a></td><td></td><td></td></tr>' % (k,k,p.get('path'),p.get('module'),p.get('flush_type')) for key in keys for p,k in [memcached.MEMCACHED_CLIENT().get(key),key]])
-
 
 def route(route=None, **kw):
     """
@@ -189,6 +197,8 @@ def route(route=None, **kw):
     routing = kw.copy()
     assert not 'type' in routing or routing['type'] in ("http", "json")
     def decorator(f):
+        if kw.get('flush_type'):
+            openerp.addons.website_memcached.memcached.add_flush_type(kw.get('flush_type'))
         if route:
             if isinstance(route, list):
                 routes = route

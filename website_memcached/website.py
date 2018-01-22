@@ -52,10 +52,11 @@ class MemCachedController(http.Controller):
         return http.Response('<h1>Key is deleted %s</h1>' % (key))
 
     @http.route([
+        '/mcflush',
         '/mcflush/<string:flush_type>',
     ], type='http', auth="user", website=True)
     def memcached_flush(self, flush_type='all',**post):
-        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type),'Cached Pages %s' % flush_type,'/mcflush/%s' % flush_type))
+        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type))
 
     @http.route([
         '/mcflush/<string:flush_type>/delete',
@@ -63,26 +64,29 @@ class MemCachedController(http.Controller):
     def memcached_flush_delete(self, flush_type='all',**post):
         for key in memcached.get_keys(flush_type=flush_type):
             memcached.MEMCACHED_CLIENT().delete(key)
-        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type),'Cached Pages %s' % flush_type,'/mcflush/%s' % flush_type))
+        return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type))
 
     @http.route([
-        '/mcmodel/<string:model>',
+        '/mcmodule',
+        '/mcmodule/<string:module>',
     ], type='http', auth="user", website=True)
-    def memcached_model(self, model='all',**post):
-        return http.Response(memcached.get_flush_page(memcached.get_keys(model=model),'Cached Pages Model %s' % model,'/mcmodel/%s' % model))
+    def memcached_module(self, module='all',**post):
+        return http.Response(memcached.get_flush_page(memcached.get_keys(module=module), 'Cached Pages Model %s' % module, '/mcmodule/%s' % module, '/mcmodule/%s/delete' % module))
 
     @http.route([
-        '/mcmodel/<string:model>/delete',
+        '/mcmodule/<string:module>/delete',
     ], type='http', auth="user", website=True)
-    def memcached_model_delete(self, model='all',**post):
-        return http.Response(memcached.get_flush_page(memcached.get_keys(model=model),'Cached Pages Model %s ' % model,'/mcmodel/%s' % model))
+    def memcached_module_delete(self, module='all',**post):
+        for key in memcached.get_keys(module=module):
+            memcached.MEMCACHED_CLIENT().delete(key)
+        return http.Response(memcached.get_flush_page(memcached.get_keys(module=module), 'Cached Pages Model %s ' % module, '/mcmodule/%s' % module, '/mcmodule/%s/delete' % module))
 
     @http.route([
         '/mcpath',
     ], type='http', auth="user", website=True)
     # Example: /mcpath?path=/foo/bar
     def memcached_path(self, path='all',**post):
-        return http.Response(memcached.get_flush_page(memcached.get_keys(path=path),'Cached Pages Path %s' % path,'/mcpath/%s' % path))
+        return http.Response(memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s' % path, '/mcpath?path=%s' % path, '/mcpath/delete?path=%s' % path))
 
     @http.route([
         '/mcpath/delete',
@@ -91,4 +95,4 @@ class MemCachedController(http.Controller):
     def memcached_path_delete(self, path='all',**post):
         for key in memcached.get_keys(path=path):
             memcached.MEMCACHED_CLIENT().delete(key)
-        return http.Response(memcached.get_flush_page(memcached.get_keys(path=path),'Cached Pages Path %s ' % path,'/mcpath/%s' % path))
+        return http.Response(memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s ' % path, '/mcpath/%s' % path, '/mcpath/delete?path=%s' % path))
