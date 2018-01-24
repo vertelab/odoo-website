@@ -51,6 +51,7 @@ class product_template(models.Model):
     _inherit = ['product.template', 'fts.model']
 
     _fts_fields = ['website_published', 'name', 'description_sale']
+    _fts_fields_d = [{'name': 'name'}, {'name': 'description_sale'}]
 
     @api.one
     def _full_text_search_update(self):
@@ -72,6 +73,7 @@ class product_product(models.Model):
     _inherit = ['product.product', 'fts.model']
 
     _fts_fields = ['website_published','name','description_sale','default_code','ean13','product_tmpl_id','attribute_value_ids']
+    _fts_fields_d = [{'name': 'description_sale'}, {'name': 'default_code'}, {'name': 'ean13'}]
 
     @api.one
     def _full_text_search_update(self):

@@ -51,16 +51,11 @@ class GeoFields(models.AbstractModel):
           _auto_end).
 
         """
-        _logger.warn('\n\n_auto_init\n\n')
         res = super(GeoFields, self)._auto_init(cr, context)
-        _logger.warn('\n\n_auto_init after super\n\n')
-        #~ _logger.warn('\n\n_auto_init %s\n\n' % self._select_column_data(cr))
         columns = self._select_column_data(cr)
         for field in self._geo_fields:
-            _logger.warn('\n\n_auto_init %s\n\n' % field)
             if field['name'] not in columns:
                 cr.execute('ALTER TABLE "%s" ADD COLUMN "%s" %s' % (self._table, field['name'], field['type']))
-        _logger.warn('\n\n_auto_init before return\n\n')
     
     @api.model
     @api.returns('self', lambda value: value.id)

@@ -26,6 +26,7 @@ from openerp.exceptions import Warning
 from datetime import datetime, timedelta
 import operator
 import sys, traceback
+import string
 
 #from openerp.addons.website_fts.html2text import html2text
 import re
@@ -39,6 +40,7 @@ try:
 except:
     _logger.info('website_fts requires bs4.')
 
+# https://www.compose.com/articles/indexing-for-full-text-search-in-postgresql/
 
 # https://github.com/ekorn/Keywords/blob/master/stopwords/swedish-stopwords.txt
 STOP_WORDS = ['aderton','adertonde','adjö','aldrig','alla','allas','allt','alltid','alltså','än','andra','andras','annan','annat','ännu','artonde','artonn','åtminstone','att','åtta','åttio','åttionde','åttonde','av','även','båda','bådas','bakom','bara','bäst','bättre','behöva','behövas','behövde','behövt','beslut','beslutat','beslutit','bland','blev','bli','blir','blivit','bort','borta','bra','då','dag','dagar','dagarna','dagen','där','därför','de','del','delen','dem','den','deras','dess','det','detta','dig','din','dina','dit','ditt','dock','du','efter','eftersom','elfte','eller','elva','en','enkel','enkelt','enkla','enligt','er','era','ert','ett','ettusen','få','fanns','får','fått','fem','femte','femtio','femtionde','femton','femtonde','fick','fin','finnas','finns','fjärde','fjorton','fjortonde','fler','flera','flesta','följande','för','före','förlåt','förra','första','fram','framför','från','fyra','fyrtio','fyrtionde','gå','gälla','gäller','gällt','går','gärna','gått','genast','genom','gick','gjorde','gjort','god','goda','godare','godast','gör','göra','gott','ha','hade','haft','han','hans','har','här','heller','hellre','helst','helt','henne','hennes','hit','hög','höger','högre','högst','hon','honom','hundra','hundraen','hundraett','hur','i','ibland','idag','igår','igen','imorgon','in','inför','inga','ingen','ingenting','inget','innan','inne','inom','inte','inuti','ja','jag','jämfört','kan','kanske','knappast','kom','komma','kommer','kommit','kr','kunde','kunna','kunnat','kvar','länge','längre','långsam','långsammare','långsammast','långsamt','längst','långt','lätt','lättare','lättast','legat','ligga','ligger','lika','likställd','likställda','lilla','lite','liten','litet','man','många','måste','med','mellan','men','mer','mera','mest','mig','min','mina','mindre','minst','mitt','mittemot','möjlig','möjligen','möjligt','möjligtvis','mot','mycket','någon','någonting','något','några','när','nästa','ned','nederst','nedersta','nedre','nej','ner','ni','nio','nionde','nittio','nittionde','nitton','nittonde','nödvändig','nödvändiga','nödvändigt','nödvändigtvis','nog','noll','nr','nu','nummer','och','också','ofta','oftast','olika','olikt','om','oss','över','övermorgon','överst','övre','på','rakt','rätt','redan','så','sade','säga','säger','sagt','samma','sämre','sämst','sedan','senare','senast','sent','sex','sextio','sextionde','sexton','sextonde','sig','sin','sina','sist','sista','siste','sitt','sjätte','sju','sjunde','sjuttio','sjuttionde','sjutton','sjuttonde','ska','skall','skulle','slutligen','små','smått','snart','som','stor','stora','större','störst','stort','tack','tidig','tidigare','tidigast','tidigt','till','tills','tillsammans','tio','tionde','tjugo','tjugoen','tjugoett','tjugonde','tjugotre','tjugotvå','tjungo','tolfte','tolv','tre','tredje','trettio','trettionde','tretton','trettonde','två','tvåhundra','under','upp','ur','ursäkt','ut','utan','utanför','ute','vad','vänster','vänstra','var','vår','vara','våra','varför','varifrån','varit','varken','värre','varsågod','vart','vårt','vem','vems','verkligen','vi','vid','vidare','viktig','viktigare','viktigast','viktigt','vilka','vilken','vilket','vill']
@@ -253,8 +255,140 @@ class fts_model(models.AbstractModel):
     _description = 'FTS Model'
 
     _fts_fields = []
+    _fts_fields_d = []
+    # {
+    #     'name': field_name,
+    #     ['weight': 'A' / 'B' / 'C' / 'D',]
+    #     ['trigger_only': True / False,]
+    # }
+    
+    # name: the name of the field to be used in fts.
+    # weight: A label for weighting search results. A > B > C > D.
+    # trigger_only: Only use this field to trigger recompute. Field should not be used to build the searchable document.
 
     fts_dirty = fields.Boolean(string='Dirty', help='FTS terms for this record need to be updated', default=True)
+
+    @api.model
+    def _get_fts_vector_expr(self):
+        fields = []
+        for field in self._fts_fields_d:
+            if not field.get('trigger_only'):
+                fields.append("\n        setweight(to_tsvector('english', COALESCE(%s,'')), '%s')" % (field['name'], field.get('weight', 'D')))
+        return ' ||\n'.join(fields)
+
+    def _auto_init(self, cr, context=None):
+        """
+
+        Call _field_create and, unless _auto is False:
+
+        - create the corresponding table in database for the model,
+        - possibly add the parent columns in database,
+        - possibly add the columns 'create_uid', 'create_date', 'write_uid',
+          'write_date' in database if _log_access is True (the default),
+        - report on database columns no more existing in _columns,
+        - remove no more existing not null constraints,
+        - alter existing database columns to match _columns,
+        - create database tables to match _columns,
+        - add database indices to match _columns,
+        - save in self._foreign_keys a list a foreign keys to create (see
+          _auto_end).
+
+        """
+        res = super(fts_model, self)._auto_init(cr, context)
+        if self._auto and self._fts_fields_d:
+            columns = self._select_column_data(cr)
+            update_index = False
+            if '_fts_vector' not in columns:
+                # Add _fts_vector column to the table
+                cr.execute('ALTER TABLE "%s" ADD COLUMN "_fts_vector" tsvector' % self._table)
+                update_index = True
+
+            # Create function that updates the new _fts_vector column.
+            # TODO: Check if we need to redefine function / trigger
+            # SELECT prosrc FROM pg_proc WHERE name = 'foo_bar_fts_vector_trigger';
+            # SELECT * FROM pg_trigger WHERE tgname='upd_fts_vector';
+            func_name = '%s_fts_vector_trigger' % self._table
+            cr.execute("DROP TRIGGER IF EXISTS upd_fts_vector ON %s;" % self._table)
+            cr.execute("DROP FUNCTION IF EXISTS %s();" % func_name)
+            fields = []
+            for field in self._fts_fields_d:
+                if not field.get('trigger_only'):
+                    fields.append("\n        setweight(to_tsvector('english', COALESCE(new.%s,'')), '%s')" % (field['name'], field.get('weight', 'D')))
+            fields = ' ||\n'.join(fields) + ';'
+            expr = "CREATE FUNCTION %s() RETURNS trigger AS $$\n" \
+            "begin\n" \
+            "    new._fts_vector :=%s\n" \
+            "    return new;\n" \
+            "end\n" \
+            "$$ LANGUAGE plpgsql;" % (func_name, fields)
+            _logger.debug(expr)
+            cr.execute(expr)
+            # Bind the update function to a trigger.
+            fields = []
+            for field in self._fts_fields_d:
+                fields.append(field['name'])
+            fields = ', '.join(fields)
+            expr = "CREATE TRIGGER upd_fts_vector BEFORE INSERT OR UPDATE OF %s ON %s " \
+            "FOR EACH ROW EXECUTE PROCEDURE %s();" % (fields, self._table, func_name)
+            _logger.debug(expr)
+            cr.execute(expr)
+            if update_index:
+                # Create index on the _fts_vector column.
+                cr.execute("CREATE INDEX %s_fts_vector_idx ON %s USING GIST (_fts_vector);" % (self._table, self._table))
+        return res
+
+    @api.model
+    def _fts_reindex(self):
+        expr = "REINDEX INDEX %s_fts_vector_idx;" % self._table
+        _logger.debug(expr)
+        self.env.cr.execute(expr)
+
+    @api.model
+    def _fts_update_vector(self):
+        #~ fields = []
+        #~ for field in self._fts_fields_d:
+            #~ fields.append("        setweight(to_tsvector('english', COALESCE(%s, '')), '%s')" % (field['name'], field.get('weight', 'D')))
+        #~ fields = ' ||\n'.join(fields)
+        expr = "UPDATE %s SET\n" \
+        "    _fts_vector = x.tsv\n" \
+        "FROM (\n" \
+        "    SELECT id,%s\n" \
+        "        AS tsv\n" \
+        "    FROM %s\n" \
+        ") AS x\n" \
+        "WHERE x.id = %s.id;" % (self._table, self._get_fts_vector_expr(), self._table, self._table)
+        _logger.debug(expr)
+        self.env.cr.execute(expr)
+
+    @api.model
+    def _fts_get_lexemes(self, query):
+        # TODO: Find all excluded chars
+        exclude = string.punctuation
+        query = ''.join([c for c in query if c not in exclude]) # Why the fuck doesn't this work? query.translate(None, exclude)
+        query = [('%s:*' % x.strip()) for x in query.split(' ') if x.strip()]
+        return query
+
+    @api.model
+    def fts_search(self, query):
+        # TODO: Clean query from problematic characters.
+        query = self._fts_get_lexemes(query)
+        query = ' & '.join(query)
+        vector = self._get_fts_vector_expr()
+        expr = "SELECT id, ts_rank(%s, to_tsquery('english', %%s)) FROM %s WHERE %s @@ to_tsquery('english', %%s);" % (vector, self._table, vector)
+        _logger.debug(expr)
+        _logger.debug(query)
+        self.env.cr.execute(expr, [query, query])
+        res = {}
+        results = self.env.cr.dictfetchall()
+        _logger.debug(results)
+        for d in results:
+            res[d['id']] = d['ts_rank']
+        return res
+    
+    @api.model
+    def fts_search_browse(self, query):
+        res = self.fts_search(query)
+        return self.browse(res.keys()).sorted(lambda r: res[r.id])
 
     @api.model
     def _setup_complete(self):
@@ -310,6 +444,7 @@ class view(models.Model):
     _inherit = ['ir.ui.view', 'fts.model']
 
     _fts_fields = ['arch', 'groups_id']
+    _fts_fields_d = [{'name': 'arch'}]
 
     @api.one
     def _full_text_search_update(self):
@@ -430,15 +565,30 @@ class fts_test(models.TransientModel):
                 self.env['fts.test.model'].create({'name': model})
 
     search = fields.Char(string='Search Term')
+    type = fields.Selection([('old', 'Old'), ('new', 'New')], default='old')
     fts_ids = fields.Many2many(string='Search Results', comodel_name='fts.fts')
     fts_model_ids = fields.Many2many(comodel_name='fts.test.model', string='Models', default=_default_fts_model_ids)
     log = fields.Html(string='Log', readonly=True, default="""<table class="table table-striped">
   <thead>
     <tr>
+      <th>Type</th>
       <th>Time</th>
       <th>Search Term</th>
       <th>Models</th>
       <th># Hits</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>""")
+    results = fields.Html(string='Search Results', readonly=True, default="""<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Search Term</th>
+      <th>Name</th>
+      <th>Model</th>
+      <th>Id</th>
     </tr>
   </thead>
   <tbody>
@@ -450,16 +600,38 @@ class fts_test(models.TransientModel):
     def test_search(self):
         if self.search:
             start = datetime.now()
-            result = self.env['fts.fts'].term_search(self.search.lower(), res_models=[m.name for m in self.fts_model_ids])
-            delta_t = datetime.now() - start
-            _logger.warn(result)
-            self.fts_ids = [(6, 0, [r.id for r in result['terms']])]
-            rows = self.log.split('\n')
-            self.log = '\n'.join(
-                rows[:-2] + [
-                    '<tr><td>%.2f s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
-                        (delta_t.seconds + (delta_t.microseconds / 1000000.0)),
-                        self.search,
-                        ', '.join([m.name for m in self.fts_model_ids]),
-                        len(self.fts_ids)
-                )] + rows[-2:])
+            if self.type == 'old':
+                result = self.env['fts.fts'].term_search(self.search.lower(), res_models=[m.name for m in self.fts_model_ids])
+                delta_t = datetime.now() - start
+                self.fts_ids = [(6, 0, [r.id for r in result['terms']])]
+                rows = self.log.split('\n')
+                self.log = '\n'.join(
+                    rows[:-2] + [
+                        '    <tr><td>Old</td><td>%.2f s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
+                            (delta_t.seconds + (delta_t.microseconds / 1000000.0)),
+                            self.search,
+                            ', '.join([m.name for m in self.fts_model_ids]),
+                            len(self.fts_ids)
+                    )] + rows[-2:])
+            elif self.type == 'new':
+                count = 0
+                for model in self.fts_model_ids:
+                    result = self.env[model.name].fts_search_browse(self.search)
+                    count += len(result)
+                    rows = self.results.split('\n')
+                    self.results = '\n'.join(
+                        rows[:11] + [
+                            ('    <tr><td>N/A</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
+                                self.search, r.name, r._model, r.id
+                        )) for r in result] + rows[-2:])
+                        
+                delta_t = datetime.now() - start
+                rows = self.log.split('\n')
+                self.log = '\n'.join(
+                    rows[:-2] + [
+                        '    <tr><td>New</td><td>%.2f s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
+                            (delta_t.seconds + (delta_t.microseconds / 1000000.0)),
+                            self.search,
+                            ', '.join([m.name for m in self.fts_model_ids]),
+                            count
+                    )] + rows[-2:])
