@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="assets_editor" inherit_id="website.assets_editor" name="Website Document Metadata JS">
+            <xpath expr="//script[@src='/website/static/src/js/website.editor.js']" position="replace">
+                <script type="text/javascript" src="/website_document_metadata/static/src/js/main.js"></script>
+            </xpath>
+        </template>
+    </data>
+</openerp>
