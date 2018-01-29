@@ -127,6 +127,7 @@ def get_keys(flush_type=None,module=None,path=None):
     slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
     key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
     keys =  [key for sublist in key_lists for key in sublist]
+    _logger.warn('KEYS: %s' %keys)
 
     if flush_type:
        keys = [key for key in keys if flush_type == 'all' or flush_type == MEMCACHED_CLIENT()[key].get('flush_type')]
@@ -188,10 +189,10 @@ def route(route=None, **kw):
     :param immutable:  Indicates that the response body will not change over time. The resource, if unexpired, is unchanged on the server and therefore the client should not send a conditional revalidation.  immutable is only honored on https:// transactions
     :param no_transform: No transformations or conversions should be made to the resource (for example do not transform png to jpeg)
     :param s_maxage:  Overrides max-age, but it only applies to shared caches / proxies and is ignored by a private cache
-    
-    
 
-    
+
+
+
     :
     """
     routing = kw.copy()

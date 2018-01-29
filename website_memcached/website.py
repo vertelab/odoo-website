@@ -96,3 +96,12 @@ class MemCachedController(http.Controller):
         for key in memcached.get_keys(path=path):
             memcached.MEMCACHED_CLIENT().delete(key)
         return http.Response(memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s ' % path, '/mcpath/%s' % path, '/mcpath/delete?path=%s' % path))
+
+    @http.route([
+        '/mcstats',
+    ], type='http', auth="user", website=True)
+    def memcached_stats(self, **post):
+        return http.Response('<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats().items()]))
+
+        #~ view_stat = '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats().items()])
+                    #~ view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats('items').items()])
