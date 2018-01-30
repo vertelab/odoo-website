@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vim:fdl=1:
+-->
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="website.editor.dialog.image.existing.content">
+        <t t-jquery=".fa-times" t-operation="replace">
+            <i class="fa fa-pencil-square-o existing-attachment-remove" t-att-data-id="attachment.id"/>
+        </t>
+    </t>
+
+</templates>
