@@ -212,6 +212,7 @@ def route(route=None, **kw):
                 # Format {path}{session}{etc}
                 key_raw = routing['key'](kw).format(  path=request.httprequest.path,
                                                     session='%s' % {k:v for k,v in request.session.items() if len(k)<40},
+                                                    device_type='%s' % request.session.get('device_type','md'),  # xs sm md lg
                                                     context='%s' % {k:v for k,v in request.env.context.items() if not k == 'uid'},
                                                     context_uid='%s' % {k:v for k,v in request.env.context.items()},
                                                     uid=request.env.context.get('uid'),
