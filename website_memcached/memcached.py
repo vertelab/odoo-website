@@ -126,7 +126,9 @@ def get_keys(flush_type=None,module=None,path=None):
     items = MEMCACHED_CLIENT().stats('items')
     slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
     key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
-    keys =  [key for sublist in key_lists for key in sublist]
+    keys =  [key for sublist in key_lists for key in sublist.keys()]
+    _logger.warn('KEYS: %s' %keys)
+    _logger.warn('LEN: %s' %len(keys))
 
     if flush_type:
        keys = [key for key in keys if flush_type == 'all' or flush_type == MEMCACHED_CLIENT()[key].get('flush_type')]
@@ -188,10 +190,10 @@ def route(route=None, **kw):
     :param immutable:  Indicates that the response body will not change over time. The resource, if unexpired, is unchanged on the server and therefore the client should not send a conditional revalidation.  immutable is only honored on https:// transactions
     :param no_transform: No transformations or conversions should be made to the resource (for example do not transform png to jpeg)
     :param s_maxage:  Overrides max-age, but it only applies to shared caches / proxies and is ignored by a private cache
-    
-    
 
-    
+
+
+
     :
     """
     routing = kw.copy()
@@ -212,6 +214,7 @@ def route(route=None, **kw):
                 # Format {path}{session}{etc}
                 key_raw = routing['key'](kw).format(  path=request.httprequest.path,
                                                     session='%s' % {k:v for k,v in request.session.items() if len(k)<40},
+                                                    device_type='%s' % request.session.get('device_type','md'),  # xs sm md lg
                                                     context='%s' % {k:v for k,v in request.env.context.items() if not k == 'uid'},
                                                     context_uid='%s' % {k:v for k,v in request.env.context.items()},
                                                     uid=request.env.context.get('uid'),
@@ -254,9 +257,9 @@ def route(route=None, **kw):
             if 'cache_viewkey' in kw.keys():
                 if page_dict:
                     view_meta = '<h2>Metadata</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in page_dict.items() if not k == 'page'])
-                    view_stat = '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats().items()])
-                    view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats('items').items()])
-                    return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s%s%s' % (key,key,view_meta,view_stat,view_items))
+                    #~ view_stat = '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats().items()])
+                    #~ view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats('items').items()])
+                    return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s' % (key,key,view_meta))
                 else:
                     if error:
                         error = '<h1>Error</h1><h2>%s</h2>' % error
