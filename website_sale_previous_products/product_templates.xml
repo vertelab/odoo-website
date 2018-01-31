@@ -3,16 +3,18 @@
   <data>
         <template id="main_search_layout" inherit_id="website_fts.main_search_layout">
             <xpath expr="//div[@id='searchbox']/ul" position="inside">
-                <t t-set="previous_products" t-value="website.sale_get_previous_products()"/>
-                <t t-if="website and previous_products">
-                    <div class="result_history">
-                        <h4 class="title_history">Your earlier search</h4>
-                        <t t-foreach="previous_products" t-as="p">
-                            <li>
-                                <a t-att-href="'/shop/product/%s' %p.id"><t t-esc="p.name"/></a>
-                            </li>
-                        </t>
-                    </div>
+                <t t-if="website">
+                    <t t-set="previous_products" t-value="website.sale_get_previous_products()"/>
+                    <t t-if="website and previous_products">
+                        <div class="result_history">
+                            <h4 class="title_history">Your earlier search</h4>
+                            <t t-foreach="previous_products" t-as="p">
+                                <li>
+                                    <a t-att-href="'/shop/product/%s' %p.id"><t t-esc="p.name"/></a>
+                                </li>
+                            </t>
+                        </div>
+                    </t>
                 </t>
             </xpath>
         </template>
