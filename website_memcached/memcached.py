@@ -126,8 +126,9 @@ def get_keys(flush_type=None,module=None,path=None):
     items = MEMCACHED_CLIENT().stats('items')
     slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
     key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
-    keys =  [key for sublist in key_lists for key in sublist]
+    keys =  [key for sublist in key_lists for key in sublist.keys()]
     _logger.warn('KEYS: %s' %keys)
+    _logger.warn('LEN: %s' %len(keys))
 
     if flush_type:
        keys = [key for key in keys if flush_type == 'all' or flush_type == MEMCACHED_CLIENT()[key].get('flush_type')]

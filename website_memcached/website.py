@@ -101,7 +101,14 @@ class MemCachedController(http.Controller):
         '/mcstats',
     ], type='http', auth="user", website=True)
     def memcached_stats(self, **post):
-        return http.Response('<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats().items()]))
+        slab_limit = {k.split(':')[1]:v for k,v in memcached.MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
+        key_lists = [memcached.MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
+        return http.Response(
+        '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in memcached.MEMCACHED_CLIENT().stats().items()]) +
+        '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in memcached.MEMCACHED_CLIENT().stats('items').items()]) +
+        '<h2>Slab Limit</h2>%s' % slab_limit +
+        '<h2>Key Lists</h2>%s' % key_lists +
+        '<h2>Keys</h2>%s' % [key for sublist in key_lists for key in sublist.keys()])
 
         #~ view_stat = '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats().items()])
-                    #~ view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats('items').items()])
+        #~ view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats('items').items()])
