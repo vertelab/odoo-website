@@ -5,3 +5,4 @@ fts_fts_model_access_right_all,fts.fts,model_fts_fts,,1,1,1,1
 fts_website_model_access_right_manager,fts.website,model_fts_website,base.group_system,1,1,1,1
 fts_website_model_access_right_user,fts.website,model_fts_website,base.group_document_user,1,1,1,1
 fts_website_model_access_right_all,fts.website,model_fts_website,,1,1,1,1
+fts_website_test_model_access_right_all,fts.test.model,model_fts_test_model,,1,1,1,1

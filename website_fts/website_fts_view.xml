@@ -79,6 +79,8 @@
           <field name="search"/>
           <label for="type"/>
           <field name="type"/>
+          <label for="user_id"/>
+          <field name="user_id"/>
           <label for="fts_model_ids"/>
           <field name="fts_model_ids" widget="many2many_checkboxes"/>
           <label for="log"/>
