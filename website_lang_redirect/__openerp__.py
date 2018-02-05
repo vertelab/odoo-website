@@ -32,6 +32,7 @@ Redirect to website as current user's language
     'depends': ['website',],
     'data': [
         'website_data.xml',
+        'website_view.xml',
     ],
     'application': False,
     'installable': True,

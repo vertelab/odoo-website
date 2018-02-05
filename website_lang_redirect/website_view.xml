@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="show_sign_in" inherit_id="website.show_sign_in" name="Override sign in">
+            <xpath expr="//a[@t-attf-href='/web/login']" position="attributes">
+                <attribute name="t-attf-href">/web/login?redirect=/website_lang_redirect</attribute>
+            </xpath>
+        </template>
+    </data>
+</openerp>
