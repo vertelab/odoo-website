@@ -37,12 +37,7 @@ class website_event(website_event):
     # '/event/<model("event.event"):event>/page/<path:page>'
     @memcached.route()
     def event_page(self, event, page, **post):
-        return super(website_event, self).event_page(event, page, **post)
-
-    # '/event/<model("event.event"):event>'
-    @memcached.route()
-    def event(self, event, **post):
-        return super(website_event, self).event(event, **post)
+        return super(website_event, self).event_page(event, page, **post)y
 
     # '/event/<model("event.event"):event>/register'
     @memcached.route()
