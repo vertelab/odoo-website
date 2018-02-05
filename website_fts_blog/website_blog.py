@@ -43,12 +43,11 @@ class Blog(models.Model):
 
     _fts_fields = ['content','website_published','name','subtitle','blog_id','author_id']
     _fts_fields_d = [
-        {'name': 'content'},
-        {'name': 'website_published'},
-        {'name': 'name'},
-        {'name': 'subtitle'},
-        {'name': 'blog_id', 'related': 'blog_id.name', 'related_table': 'blog_blog'},
-        {'name': 'author_id', 'related': 'author_id.name', 'related_table': 'res_partner'}
+        {'name': 'name', 'weight': 'A'},
+        {'name': 'subtitle', 'weight': 'A'},
+        {'name': 'blog_id', 'weight': 'A', 'related': 'blog_id.name', 'related_table': 'blog_blog'},
+        {'name': 'author_id', 'weight': 'A', 'related': 'author_id.name', 'related_table': 'res_partner'},
+        {'name': 'content', 'weight': 'C'},
     ]
 
     @api.depends('content','website_published','name','subtitle','blog_id.name','author_id.name')
@@ -75,5 +74,14 @@ class Blog(models.Model):
             #self.env['fts.fts'].update_text(self._name,self.id,text=' '.join([self.])self.blog_id.name,facet='blog_tag',rank=int(self.ranking))
             # SEO metadata ????
 
-
-
+    @api.multi
+    def fts_search_suggestion(self):
+        """
+        Return a search result for search_suggestion.
+        """
+        return {
+            'res_id': self.id,
+            'model_record': self._name,
+            'name': self.name_get(),
+            'blog_id': self.blog_id.id,
+        }

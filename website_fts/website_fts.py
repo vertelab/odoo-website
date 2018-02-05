@@ -79,19 +79,34 @@ class fts_fts(models.Model):
         return _fts_models
 
     @api.model
-    def fts_search(self, query, domain=[], models=None, limit=None, offset=0):
+    def fts_search(self, query, domain=None, models=None, limit=0, offset=0, domains=None):
+        """
+        Perform an FTS search on the given models.
+        
+        :param query: The search string.
+        :param domain: An Odoo domain to be added to the search.
+        :param models: A list of the models to search on.
+        :param limit: The limit of the search.
+        :param offset: The offset of the search.
+        :param domains: A dict with extra domains to be added on a per model basis ({model: domain}).
+        
+        :return: A list of dicts containing the search results, sorted by ts_rank ({'model': model name, 'id': record id, 'ts_rank': search result weight}).
+        """
+        domain = domain or []
+        domains = domains or {}
         models = models or self.get_fts_models()
         results = []
         for model in models:
-            res = self.env[model].fts_search(query, domain=domain)
+            res = self.env[model].fts_search(query, domain=domain + domains.get(model, []))
             for d in res:
                 d['model'] = model
             results += res
-        results.sort(lambda x, y: (x['ts_rank'] > y['ts_rank'] and 1) or (x['ts_rank'] < y['ts_rank'] and -1) or 0)
+        results.sort(lambda x, y: (x['ts_rank'] > y['ts_rank'] and 1) or (x['ts_rank'] < y['ts_rank'] and -1) or 0, reverse=True)
         if offset:
             results = results[offset:]
         if limit:
             results = results[:limit]
+        _logger.debug('fts_search results: %s' % results)
         return results
         
     @api.model
@@ -252,7 +267,6 @@ class fts_fts(models.Model):
         _logger.info('FTS search (%s) took %.2f s' % (search, (delta_t.seconds + (delta_t.microseconds / 1000000.0))))
         return {'terms': words,'facets': facets,'models': models, 'docs': words.filtered(lambda w: w.model_record != False).mapped('model_record')[:limit]}
 
-
     @api.one
     def get_object(self,words):
         #~ _logger.warn('get_object')
@@ -359,13 +373,12 @@ class fts_model(models.AbstractModel):
         """
         res = super(fts_model, self)._auto_init(cr, context)
         columns = self._select_column_data(cr)
+        update_index = False
+        if self._auto and '_fts_vector' not in columns:
+            # Add _fts_vector column to the table
+            cr.execute('ALTER TABLE "%s" ADD COLUMN "_fts_vector" tsvector' % self._table)
+            update_index = True
         if self._auto and self._fts_fields_d and '_fts_trigger' in columns:
-            update_index = False
-            if '_fts_vector' not in columns:
-                # Add _fts_vector column to the table
-                cr.execute('ALTER TABLE "%s" ADD COLUMN "_fts_vector" tsvector' % self._table)
-                update_index = True
-
             #~ # Create data to handle triggers on all related tables.
             #~ triggers = {}
             #~ for field in self._fts_fields_d:
@@ -477,7 +490,7 @@ class fts_model(models.AbstractModel):
         # \ = escape char. escape all weird chars?
         escape = string.punctuation
         for c in escape:
-            query = query.replace(c, '\\%s' % c)
+            query = query.replace(c, ' ')
         query = [('%s:*' % x.strip()) for x in query.split(' ') if x.strip()]
         return query
 
@@ -529,6 +542,17 @@ class fts_model(models.AbstractModel):
         res = self.fts_search(query, domain)
         return self.browse([d['id'] for d in res])
 
+    @api.multi
+    def fts_search_suggestion(self):
+        """
+        Return a search result for search_suggestion.
+        """
+        return {
+            'res_id': self.id,
+            'model_record': self._name,
+            'name': self.name_get(),
+        }
+
     @api.model
     def _setup_complete(self):
         """
@@ -571,6 +595,13 @@ class fts_model(models.AbstractModel):
     def unlink(self):
         self._full_text_search_delete()
         return super(fts_model, self).unlink()
+
+    @api.model
+    def fts_get_default_suggestion_domain(self):
+        """
+        Return the default domain for search suggestions.
+        """
+        return []
 
 class fts_website(models.Model):
     _name = 'fts.website'
@@ -666,8 +697,12 @@ class WebsiteFullTextSearch(http.Controller):
         return request.website.render("website_fts.search_result", vals)
 
     @http.route(['/search_suggestion'], type='json', auth="public", website=True)
-    def search_suggestion(self, search='', facet=None, res_model=None, limit=0, offset=0, **kw):
-        result = request.env['fts.fts'].fts_search(search, [], res_model, limit, offset)
+    def search_suggestion(self, search='', facet=None, res_model=None, limit=5, offset=0, **kw):
+        # Get model specific search domains.
+        domains = {}
+        for model in res_model:
+            domains[model] = request.env[model].fts_get_default_suggestion_domain()
+        result = request.env['fts.fts'].fts_search(search, [], res_model, limit, offset, domains)
         result_models = {}
         for model in request.env['fts.fts'].get_fts_models():
             ids = []
@@ -678,77 +713,15 @@ class WebsiteFullTextSearch(http.Controller):
                 result_models[model] = request.env[model].browse(ids)
         result_list = []
         for record in result:
-            result_list.append(res_models[record['model']].filtered(lambda r: r.id == record['id']))
+            result_list.append(result_models[record['model']].filtered(lambda r: r.id == record['id']))
         rl = []
         i = 0
-        while i < len(result_list) and len(rl) < 5:
-            r = result_list[i]
-            if r._name in ['product.template', 'product.public.category']:
-                rl.append({
-                    'res_id': r.id,
-                    'model_record': r._name,
-                    'name': r.name,
-                })
-            elif r._name == 'product.product':
-                rl.append({
-                    'res_id': r.id,
-                    'model_record': r._name,
-                    'name': r.model_record.name,
-                    'product_tmpl_id': r.product_tmpl_id.id,
-                })
-            elif r._name == 'blog.post':
-                rl.append({
-                    'res_id': r.id,
-                    'model_record': r._name,
-                    'name': r.model_record.name,
-                    'blog_id': r.blog_id.id,
-                })
-            elif r._name == 'product.facet.line':
-                rl.append({
-                    'res_id': r.id,
-                    'model_record': r._name,
-                    'product_tmpl_id': r.product_tmpl_id.id,
-                    'product_name': r.product_tmpl_id.name,
-                })
+        while i < len(result_list) and len(rl) < limit: 
+            res = result_list[i].fts_search_suggestion()
+            if res:
+                rl.append(res)
             i += 1
         return rl
-        
-        #~ result = request.env['fts.fts'].term_search(search.lower(), facet, res_model, limit, offset)
-        #~ #_logger.warn(result)
-        #~ result_list = result['terms']
-        #~ rl = []
-        #~ i = 0
-        #~ while i < len(result_list) and len(rl) < 5:
-            #~ r = result_list[i]
-            #~ if r.model_record._name in ['product.template', 'product.public.category']:
-                #~ rl.append({
-                    #~ 'res_id': r.res_id,
-                    #~ 'model_record': r.model_record._name,
-                    #~ 'name': r.model_record.name,
-                #~ })
-            #~ elif r.model_record._name == 'product.product':
-                #~ rl.append({
-                    #~ 'res_id': r.res_id,
-                    #~ 'model_record': r.model_record._name,
-                    #~ 'name': r.model_record.name,
-                    #~ 'product_tmpl_id': r.model_record.product_tmpl_id.id,
-                #~ })
-            #~ elif r.model_record._name == 'blog.post':
-                #~ rl.append({
-                    #~ 'res_id': r.res_id,
-                    #~ 'model_record': r.model_record._name,
-                    #~ 'name': r.model_record.name,
-                    #~ 'blog_id': r.model_record.blog_id.id,
-                #~ })
-            #~ elif r.model_record._name == 'product.facet.line':
-                #~ rl.append({
-                    #~ 'res_id': r.res_id,
-                    #~ 'model_record': r.model_record._name,
-                    #~ 'product_tmpl_id': r.model_record.product_tmpl_id.id,
-                    #~ 'product_name': r.model_record.product_tmpl_id.name,
-                #~ })
-            #~ i += 1
-        #~ return rl
 
 class fts_test_model(models.Model):
     _name = 'fts.test.model'

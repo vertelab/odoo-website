@@ -51,18 +51,14 @@ class product_template(models.Model):
     _inherit = ['product.template', 'fts.model']
 
     _fts_fields = ['website_published', 'name', 'description_sale']
-    _fts_fields_d = [{'name': 'name'}, {'name': 'description_sale'}]
+    _fts_fields_d = [
+        {'name': 'name', 'weight': 'A'},
+        {'name': 'description_sale', 'weight': 'B'}]
 
     @api.depends('name', 'description_sale')
     @api.one
     def _compute_fts_trigger(self):
-        """
-        Dummy field to trigger the updates on SQL level. Tracking
-        changes is much easier on Odoo level than on SQL level. Make
-        this field dependant on the relevant fields.
-        """
         # TODO: Trigger this update when relevant translations change.
-        _logger.warn('\n\n_compute_fts_trigger product.template')
         if self._fts_trigger:
             self._fts_trigger = True
         else:
@@ -81,24 +77,29 @@ class product_template(models.Model):
                 self.env['fts.fts'].update_text(self._name, self.id, text=self.description_sale, rank=5)
             #~ self.env['fts.fts'].update_text(self._name,self.id,text=self.author_id.name,facet='author',rank=int(self.ranking))
 
+    @api.model
+    def fts_get_default_suggestion_domain(self):
+        """
+        Return the default domain for search suggestions.
+        """
+        return [('sale_ok', '=', True)]
+
 class product_product(models.Model):
     _name = 'product.product'
     _inherit = ['product.product', 'fts.model']
 
     _fts_fields = ['website_published','name','description_sale','default_code','ean13','product_tmpl_id','attribute_value_ids']
-    _fts_fields_d = [{'name': 'name', 'related': 'product_tmpl_id.name', 'related_table': 'product_template'}, {'name': 'description_sale'}, {'name': 'default_code'}, {'name': 'ean13'}]
+    _fts_fields_d = [
+        {'name': 'name', 'weight': 'A', 'related': 'product_tmpl_id.name', 'related_table': 'product_template'},
+        {'name': 'description_sale', 'weight': 'B'},
+        {'name': 'default_code', 'weight': 'A'},
+        {'name': 'ean13', 'weight': 'A'}]
 
     _fts_trigger = fields.Boolean(string='Trigger FTS Update', help='Change this field to update FTS.', compute='_compute_fts_trigger', store=True)
 
     @api.depends('product_tmpl_id.name', 'description_sale', 'default_code', 'ean13')
     @api.one
     def _compute_fts_trigger(self):
-        """
-        Dummy field to trigger the updates on SQL level. Tracking
-        changes is much easier on Odoo level than on SQL level. Make
-        this field dependant on the relevant fields.
-        """
-        _logger.warn('\n\n_compute_fts_trigger product.product')
         # TODO: Trigger this update when relevant translations change.
         if self._fts_trigger:
             self._fts_trigger = True
@@ -115,12 +116,31 @@ class product_product(models.Model):
             self.env['fts.fts'].update_text(self._name, self.id, text=' '.join([self.name, self.default_code, self.ean13]), rank=0)
             self.env['fts.fts'].update_text(self._name, self.id, text=(self.description_sale or '')+' '+ ' '.join([att.name for att in self.attribute_value_ids]), rank=5)
 
+    @api.model
+    def fts_get_default_suggestion_domain(self):
+        """
+        Return the default domain for search suggestions.
+        """
+        return [('sale_ok', '=', True)]
+
+    @api.multi
+    def fts_search_suggestion(self):
+        """
+        Return a search result for search_suggestion.
+        """
+        return {
+            'res_id': self.id,
+            'model_record': self._name,
+            'name': self.name_get(),
+            'product_tmpl_id': self.product_tmpl_id.id
+        }
 
 class product_public_category(models.Model):
     _name = 'product.public.category'
     _inherit = ['product.public.category', 'fts.model']
 
     _fts_fields = ['name']
+    _fts_fields_d = [{'name': 'name', 'weight': 'A'}]
 
     @api.one
     def _full_text_search_update(self):
