@@ -30,8 +30,8 @@ PARTNER_FIELDS = ['name', 'street', 'street2', 'zip', 'city', 'phone', 'email']
 
 class reseller_register(http.Controller):
 
-    @http.route(['/reseller_register/new', '/reseller_register/<model("project.issue"):issue>'], type='http', auth='public', website=True)
-    def reseller_register_new(self, issue=None, **post):
+    @http.route(['/reseller_register/new', '/reseller_register/<int:issue>'], type='http', auth='public', website=True)
+    def reseller_register_new(self, issue=0, **post):
         validation = {}
         help = {}
         if not issue:
@@ -46,6 +46,7 @@ class reseller_register(http.Controller):
                 'project_id': request.env.ref('website_reseller_register.project_reseller_register').id
             })
         elif request.httprequest.method == 'POST':
+            issue = request.env['project.issue'].sudo().browse(int(issue))
             partner = issue.partner_id
             partner.name = post.get('company_name')
             delivery_dict = {k.split('_')[1]:v for k,v in post.items() if k.split('_')[0] == 'delivery'}
@@ -68,7 +69,7 @@ class reseller_register(http.Controller):
                 invoice_dict['type'] = 'invoice'
                 invoice_dict['use_parent_address'] = False
                 invoice = issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice')
-                if not delivery:
+                if not invoice:
                     invoice = request.env['res.partner'].sudo().create(invoice_dict)
                 else:
                     invoice.write(invoice_dict)
@@ -80,14 +81,14 @@ class reseller_register(http.Controller):
                 contact_dict['type'] = 'contact'
                 contact_dict['use_parent_address'] = False
                 contact = issue.partner_id.child_ids.filtered(lambda c: c.type == 'contact')
-                if not delivery:
+                if not contact:
                     contact = request.env['res.partner'].sudo().create(contact_dict)
                 else:
                     contact.write(contact_dict)
                 for field in PARTNER_FIELDS:
                     validation['contact_%s' %field] = 'has-success'
-            _logger.warn('%s\n%s\n%s' %(delivery_dict, invoice_dict, contact_dict))
         else:
+            issue = request.env['project.issue'].sudo().browse(int(issue))
             delivery = issue.partner_id.child_ids.filtered(lambda c: c.type == 'delivery')
             invoice = issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice')
             contact = issue.partner_id.child_ids.filtered(lambda c: c.type == 'contact')
@@ -119,3 +120,16 @@ class reseller_register(http.Controller):
             'validation': validation
         })
 
+    @http.route(['/website_reseller_register_message_send'], type='json', auth="public", website=True)
+    def website_reseller_register_message_send(self, issue_id, msg_body, **kw):
+        if msg_body != '':
+            message = request.env['mail.message'].sudo().create({
+                'model': 'project.issue',
+                'res_id': int(issue_id),
+                'type': 'comment',
+                'body': msg_body,
+                'author_id': request.env.user.partner_id.id
+            })
+            if message:
+                return True
+        return False

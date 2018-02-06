@@ -55,14 +55,14 @@
                                             <input type="text" class="form-control" name="delivery_street2" t-att-value="delivery.street2 if delivery else ''" placeholder="" />
                                             <small t-esc="help.get('help_delivery_street')" />
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('delivery_city')">
-                                            <label for="delivery_city">City</label>
-                                            <input type="text" class="form-control" name="delivery_city" t-att-value="delivery.city if delivery else ''" placeholder="" />
-                                            <small t-esc="help.get('help_delivery_street')" />
-                                        </div>
                                         <div t-att-class="'form-group %s' %validation.get('delivery_zip')">
                                             <label for="delivery_zip">Zip</label>
                                             <input type="text" class="form-control" name="delivery_zip" t-att-value="delivery.zip if delivery else ''" placeholder="" />
+                                            <small t-esc="help.get('help_delivery_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_city')">
+                                            <label for="delivery_city">City</label>
+                                            <input type="text" class="form-control" name="delivery_city" t-att-value="delivery.city if delivery else ''" placeholder="" />
                                             <small t-esc="help.get('help_delivery_street')" />
                                         </div>
                                         <div t-att-class="'form-group %s' %validation.get('delivery_phone')">
@@ -90,14 +90,14 @@
                                             <input type="text" class="form-control" name="invoice_street2" t-att-value="invoice.street2 if invoice else ''" placeholder="" />
                                             <small t-esc="help.get('help_invoice_street')" />
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('invoice_city')">
-                                            <label for="invoice_city">City</label>
-                                            <input type="text" class="form-control" name="invoice_city" t-att-value="invoice.city if invoice else ''" placeholder="" />
-                                            <small t-esc="help.get('help_invoice_street')" />
-                                        </div>
                                         <div t-att-class="'form-group %s' %validation.get('invoice_zip')">
                                             <label for="invoice_zip">Zip</label>
                                             <input type="text" class="form-control" name="invoice_zip" t-att-value="invoice.zip if invoice else ''" placeholder="" />
+                                            <small t-esc="help.get('help_invoice_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_city')">
+                                            <label for="invoice_city">City</label>
+                                            <input type="text" class="form-control" name="invoice_city" t-att-value="invoice.city if invoice else ''" placeholder="" />
                                             <small t-esc="help.get('help_invoice_street')" />
                                         </div>
                                         <div t-att-class="'form-group %s' %validation.get('invoice_phone')">
@@ -131,14 +131,14 @@
                                                 <input type="text" class="form-control" name="contact_street2" t-att-value="contact.street2 if contact else ''" placeholder="" />
                                                 <small t-esc="help.get('help_contact_street')" />
                                             </div>
-                                            <div t-att-class="'form-group %s' %validation.get('contact_city')">
-                                                <label for="contact_city">City</label>
-                                                <input type="text" class="form-control" name="contact_city" t-att-value="contact.city if contact else ''" placeholder="" />
-                                                <small t-esc="help.get('help_contact_street')" />
-                                            </div>
                                             <div t-att-class="'form-group %s' %validation.get('contact_zip')">
                                                 <label for="contact_zip">Zip</label>
                                                 <input type="text" class="form-control" name="contact_zip" t-att-value="contact.zip if contact else ''" placeholder="" />
+                                                <small t-esc="help.get('help_contact_street')" />
+                                            </div>
+                                            <div t-att-class="'form-group %s' %validation.get('contact_city')">
+                                                <label for="contact_city">City</label>
+                                                <input type="text" class="form-control" name="contact_city" t-att-value="contact.city if contact else ''" placeholder="" />
                                                 <small t-esc="help.get('help_contact_street')" />
                                             </div>
                                             <div t-att-class="'form-group %s' %validation.get('contact_phone')">
@@ -154,12 +154,39 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <div class="col-md-12 mt16 mb16">
+                                    <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                                </div>
+                                <div class="message_box">
+                                    <p><u id="open_msgbox">Send a message</u></p>
+                                    <p><u id="close_msgbox" class="hidden">Close message box</u></p>
+                                    <textarea id="msgbox" class="form-control hidden" rows="3" placeholder="Write your message here..."></textarea>
+                                    <button id="send_msgbox" type="button" class="btn btn-primary mt4 mb4 hidden" t-att-data-value="issue.id">Send</button>
+                                </div>
+                                <div id="messages" t-foreach="issue.message_ids" t-as="message">
+                                    <div class="container mt4 mb4 oe_dark">
+                                        <div class="col-md-2 col-sm-2 col-xs-2">
+                                            <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="'data:image/png;base64,%s' %message.author_avatar"/>
+                                        </div>
+                                        <div class="col-md-10 col-sm-10 col-xs-10">
+                                            <h4 t-esc="message.subject"/>
+                                            <div t-raw="message.body"/>
+                                        </div>
+                                        <div class="col-md-10 col-sm-10 col-xs-10 col-md-offset-2 col-sm-offset-2 col-xs-offset-2">
+                                            <small><b t-esc="message.author_id.name"/></small><span> • </span><small t-esc="message.write_date"/>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </t>
+        </template>
+        <template id="assets_frontend" inherit_id="website.assets_frontend" name="Website Reseller Register Assets Frontend">
+            <xpath expr="." position="inside">
+                <script src="/website_reseller_register/static/src/js/main.js" type="text/javascript" />
+            </xpath>
         </template>
     </data>
 </openerp>
