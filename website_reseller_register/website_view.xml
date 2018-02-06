@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="new" name="Website Reseller Register New">
+            <t t-call="website.layout">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12 mt32 mb32">
+                            <form t-att-action="'/reseller_register/%s' %issue.id" method="post">
+                                <h4>
+                                    <strong>Company Infomation</strong>
+                                </h4>
+                                <div class="form-group">
+                                    <label for="company_name">Company Name</label>
+                                    <input type="text" class="form-control" name="company_name" t-att-value="issue.partner_id.name" placeholder="" />
+                                </div>
+                                <!--
+                                     <div class="form-group">
+                                     <label for="org_num">Organization Number</label>
+                                     <input type="number" class="form-control" name="company_org_num" t-att-value="" placeholder="" />
+                                     </div>
+                                -->
+                                <ul class="nav nav-tabs">
+                                    <li class="active">
+                                        <a data-toggle="tab" href="#delivery" class="hidden-xs">Delivery</a>
+                                        <a data-toggle="tab" href="#delivery" class="hidden-lg hidden-md hidden-sm">
+                                            <i class="fa fa-truck" />
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a data-toggle="tab" href="#invoice" class="hidden-xs">Invoice</a>
+                                        <a data-toggle="tab" href="#invoice" class="hidden-lg hidden-md hidden-sm">
+                                            <i class="fa fa-file-o" />
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a data-toggle="tab" href="#contact" class="hidden-xs">Contact</a>
+                                        <a data-toggle="tab" href="#contact" class="hidden-lg hidden-md hidden-sm">
+                                            <i class="fa fa-users" />
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="delivery" class="tab-pane fade in active">
+                                        <h4>
+                                            <strong>Delivery</strong>
+                                        </h4>
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_street')">
+                                            <label for="delivery_street">Street</label>
+                                            <input type="text" class="form-control" name="delivery_street" t-att-value="delivery.street if delivery else ''" placeholder="" />
+                                            <small t-esc="help.get('help_delivery_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_street2')">
+                                            <label for="delivery_street2">Street 2</label>
+                                            <input type="text" class="form-control" name="delivery_street2" t-att-value="delivery.street2 if delivery else ''" placeholder="" />
+                                            <small t-esc="help.get('help_delivery_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_city')">
+                                            <label for="delivery_city">City</label>
+                                            <input type="text" class="form-control" name="delivery_city" t-att-value="delivery.city if delivery else ''" placeholder="" />
+                                            <small t-esc="help.get('help_delivery_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_zip')">
+                                            <label for="delivery_zip">Zip</label>
+                                            <input type="text" class="form-control" name="delivery_zip" t-att-value="delivery.zip if delivery else ''" placeholder="" />
+                                            <small t-esc="help.get('help_delivery_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_phone')">
+                                            <label for="delivery_phone">Phone</label>
+                                            <input type="text" class="form-control" name="delivery_phone" t-att-value="delivery.phone if delivery else ''" placeholder="" />
+                                            <small t-esc="help.get('help_delivery_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_email')">
+                                            <label for="delivery_email">Email</label>
+                                            <input type="email" class="form-control" name="delivery_email" t-att-value="delivery.email if delivery else ''" placeholder="" />
+                                            <small t-esc="help.get('help_delivery_street')" />
+                                        </div>
+                                    </div>
+                                    <div id="invoice" class="tab-pane fade">
+                                        <h4>
+                                            <strong>Invoice</strong>
+                                        </h4>
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_street')">
+                                            <label for="invoice_street">Street</label>
+                                            <input type="text" class="form-control" name="invoice_street" t-att-value="invoice.street if invoice else ''" placeholder="" />
+                                            <small t-esc="help.get('help_invoice_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_street2')">
+                                            <label for="invoice_street2">Street 2</label>
+                                            <input type="text" class="form-control" name="invoice_street2" t-att-value="invoice.street2 if invoice else ''" placeholder="" />
+                                            <small t-esc="help.get('help_invoice_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_city')">
+                                            <label for="invoice_city">City</label>
+                                            <input type="text" class="form-control" name="invoice_city" t-att-value="invoice.city if invoice else ''" placeholder="" />
+                                            <small t-esc="help.get('help_invoice_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_zip')">
+                                            <label for="invoice_zip">Zip</label>
+                                            <input type="text" class="form-control" name="invoice_zip" t-att-value="invoice.zip if invoice else ''" placeholder="" />
+                                            <small t-esc="help.get('help_invoice_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_phone')">
+                                            <label for="invoice_phone">Phone</label>
+                                            <input type="text" class="form-control" name="invoice_phone" t-att-value="invoice.phone if invoice else ''" placeholder="" />
+                                            <small t-esc="help.get('help_invoice_street')" />
+                                        </div>
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_email')">
+                                            <label for="invoice_email">Email</label>
+                                            <input type="email" class="form-control" name="invoice_email" t-att-value="invoice.email if invoice else ''" placeholder="" />
+                                            <small t-esc="help.get('help_invoice_street')" />
+                                        </div>
+                                    </div>
+                                    <div id="contact" class="tab-pane fade">
+                                        <h4>
+                                            <strong>Contact</strong>
+                                        </h4>
+                                        <div class="contact_person">
+                                            <div t-att-class="'form-group %s' %validation.get('contact_name')">
+                                                <label for="contact_name">Name</label>
+                                                <input type="text" class="form-control" name="contact_name" t-att-value="contact.name if contact else ''" placeholder="" />
+                                                <small t-esc="help.get('help_contact_name')" />
+                                            </div>
+                                            <div t-att-class="'form-group %s' %validation.get('contact_street')">
+                                                <label for="contact_street">Street</label>
+                                                <input type="text" class="form-control" name="contact_street" t-att-value="contact.street if contact else ''" placeholder="" />
+                                                <small t-esc="help.get('help_contact_street')" />
+                                            </div>
+                                            <div t-att-class="'form-group %s' %validation.get('contact_street2')">
+                                                <label for="contact_street2">Street 2</label>
+                                                <input type="text" class="form-control" name="contact_street2" t-att-value="contact.street2 if contact else ''" placeholder="" />
+                                                <small t-esc="help.get('help_contact_street')" />
+                                            </div>
+                                            <div t-att-class="'form-group %s' %validation.get('contact_city')">
+                                                <label for="contact_city">City</label>
+                                                <input type="text" class="form-control" name="contact_city" t-att-value="contact.city if contact else ''" placeholder="" />
+                                                <small t-esc="help.get('help_contact_street')" />
+                                            </div>
+                                            <div t-att-class="'form-group %s' %validation.get('contact_zip')">
+                                                <label for="contact_zip">Zip</label>
+                                                <input type="text" class="form-control" name="contact_zip" t-att-value="contact.zip if contact else ''" placeholder="" />
+                                                <small t-esc="help.get('help_contact_street')" />
+                                            </div>
+                                            <div t-att-class="'form-group %s' %validation.get('contact_phone')">
+                                                <label for="contact_phone">Phone</label>
+                                                <input type="text" class="form-control" name="contact_phone" t-att-value="contact.phone if contact else ''" placeholder="" />
+                                                <small t-esc="help.get('help_contact_street')" />
+                                            </div>
+                                            <div t-att-class="'form-group %s' %validation.get('contact_email')">
+                                                <label for="contact_email">Email</label>
+                                                <input type="email" class="form-control" name="contact_email" t-att-value="contact.email if contact else ''" placeholder="" />
+                                                <small t-esc="help.get('help_contact_street')" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</openerp>

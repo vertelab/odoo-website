@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="project_reseller_register" model="project.project">
+            <field name="name">Reseller Register</field>
+            <field name="use_reseller" eval="True"/>
+            <field name="alias_model">project.issue</field>
+            <field name="alias_contact">followers</field>
+            <field name="privacy_visibility">followers</field>
+        </record>
+    </data>
+</openerp>
