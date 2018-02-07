@@ -82,6 +82,6 @@ class Blog(models.Model):
         return {
             'res_id': self.id,
             'model_record': self._name,
-            'name': self.name_get(),
+            'name': self.name_get()[0][1],
             'blog_id': self.blog_id.id,
         }

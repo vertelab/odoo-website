@@ -131,7 +131,7 @@ class product_product(models.Model):
         return {
             'res_id': self.id,
             'model_record': self._name,
-            'name': self.name_get(),
+            'name': self.name_get()[0][1],
             'product_tmpl_id': self.product_tmpl_id.id
         }
 
