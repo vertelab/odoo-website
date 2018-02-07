@@ -253,6 +253,10 @@ def route(route=None, **kw):
             if page_dict and not page_dict.get('db') == request.env.cr.dbname:
                 _logger.warn('Database violation key=%s stored for=%s  env db=%s ' % (key,page_dict.get('db'),request.env.cr.dbname))
                 page_dict = None
+            
+            # Blacklist
+            if page_dict and any([p if p in request.httprequest.path else '' for p in kw.get('blacklist','').split(',')]):
+                page_dict = None
 
             if 'cache_viewkey' in kw.keys():
                 if page_dict:
@@ -336,6 +340,7 @@ def route(route=None, **kw):
             response.headers['X-CacheController'] = page_dict.get('controller_time')
             response.headers['X-CacheRender'] = page_dict.get('render_time')
             response.headers['X-CacheCacheAge'] = cache_age
+            response.headers['X-CacheBlacklist'] = kw.get('blacklist','')
             response.headers['Date'] = page_dict.get('date',http_date())
             response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)
             return response

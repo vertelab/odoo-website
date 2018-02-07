@@ -72,59 +72,11 @@ class CachedWebsite(Website):
         #~ '/website/action/<path_or_xml_id_or_id>',
         #~ '/website/action/<path_or_xml_id_or_id>/<path:path>',
         #~ ], type='http', auth="public", website=True)
-    @memcached.route(flush_type='actions_server')
-    def actions_server(self, path_or_xml_id_or_id, **post):
-        return super(CachedWebsite, self).actions_server(path_or_xml_id_or_id, **post)
-
-#~ class mcflush(http.Controller):
-
-    #~ #------------------------------------------------------
-    #~ # Flush
-    #~ #------------------------------------------------------
-
-    #~ @http.route([
-        #~ '/mcflush/page',
-    #~ ], type='http', auth="user", website=True)
-    #~ def memcached_flush_blog(self,**post):
-        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page'),'Flush Page','/mcflush/page'))
-
-    #~ @http.route([
-        #~ '/mcflush/page/all',
-    #~ ], type='http', auth="user", website=True)
-    #~ def memcached_flush_blog_all(self,**post):
-        #~ memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page'))
-        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page'),'Flush Page','/mcflush/page'))
-
-    #~ @http.route([
-        #~ '/mcflush/page_meta',
-    #~ ], type='http', auth="user", website=True)
-    #~ def memcached_flush_blog(self,**post):
-        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_meta'),'Flush Page Meta','/mcflush/page_meta'))
-
-    #~ @http.route([
-        #~ '/mcflush/page_meta/all',
-    #~ ], type='http', auth="user", website=True)
-    #~ def memcached_flush_blog_all(self,**post):
-        #~ memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page_meta'))
-        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_meta'),'Flush Page Meta','/mcflush/page_meta'))
-
-    #~ @http.route([
-        #~ '/mcflush/page_image',
-    #~ ], type='http', auth="user", website=True)
-    #~ def memcached_flush_blog(self,**post):
-        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_image'),'Flush Page Image','/mcflush/page_image'))
-
-    #~ @http.route([
-        #~ '/mcflush/page_image/all',
-    #~ ], type='http', auth="user", website=True)
-    #~ def memcached_flush_blog_all(self,**post):
-        #~ memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='page_image'))
-        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='page_image'),'Flush Page Image','/mcflush/page_image'))
+    #~ @memcached.route(flush_type='actions_server')
+    #~ def actions_server(self, path_or_xml_id_or_id, **post):
+        #~ return super(CachedWebsite, self).actions_server(path_or_xml_id_or_id, **post)
 
 
-    #------------------------------------------------------
-    # from web
-    #------------------------------------------------------
 class CachedBinary(openerp.addons.web.controllers.main.Binary):
 
     #~ @http.route([
@@ -143,9 +95,9 @@ class CachedHome(openerp.addons.web.controllers.main.Home):
         #~ '/web/js/<xmlid>',
         #~ '/web/js/<xmlid>/<version>',
     #~ ], type='http', auth='public')
-    @memcached.route(flush_type='js_bundle',binary=True,cache_age=60*60*24*30,max_age=604800)
-    def js_bundle(self, xmlid, version=None, **kw):
-        return super(CachedHome, self).js_bundle(xmlid, version, **kw)
+    #~ @memcached.route(flush_type='js_bundle',binary=True,cache_age=60*60*24*30,max_age=604800)
+    #~ def js_bundle(self, xmlid, version=None, **kw):
+        #~ return super(CachedHome, self).js_bundle(xmlid, version, **kw)
 
     #~ @http.route([
         #~ '/web/css/<xmlid>',
@@ -156,96 +108,3 @@ class CachedHome(openerp.addons.web.controllers.main.Home):
     def css_bundle(self, xmlid, version=None, page=None, **kw):
         return super(CachedHome, self).css_bundle(xmlid, version, page, **kw)
 
-
-
-#~ class Website(models.Model):
-    #~ _inherit = 'website'
-
-    #~ def _image(self, cr, uid, model, id, field, response, max_width=maxint, max_height=maxint, cache=None, context=None):
-        #~ """ Fetches the requested field and ensures it does not go above
-        #~ (max_width, max_height), resizing it if necessary.
-
-        #~ Resizing is bypassed if the object provides a $field_big, which will
-        #~ be interpreted as a pre-resized version of the base field.
-
-        #~ If the record is not found or does not have the requested field,
-        #~ returns a placeholder image via :meth:`~._image_placeholder`.
-
-        #~ Sets and checks conditional response parameters:
-        #~ * :mailheader:`ETag` is always set (and checked)
-        #~ * :mailheader:`Last-Modified is set iif the record has a concurrency
-          #~ field (``__last_update``)
-
-        #~ The requested field is assumed to be base64-encoded image data in
-        #~ all cases.
-        #~ """
-        #~ Model = self.pool[model]
-        #~ id = int(id)
-
-        #~ ids = None
-        #~ if Model.check_access_rights(cr, uid, 'read', raise_exception=False):
-            #~ ids = Model.search(cr, uid,
-                               #~ [('id', '=', id)], context=context)
-        #~ if not ids and 'website_published' in Model._fields:
-            #~ ids = Model.search(cr, openerp.SUPERUSER_ID,
-                               #~ [('id', '=', id), ('website_published', '=', True)], context=context)
-        #~ if not ids:
-            #~ return self._image_placeholder(response)
-
-        #~ concurrency = '__last_update'
-        #~ [record] = Model.read(cr, openerp.SUPERUSER_ID, [id],
-                              #~ [concurrency, field],
-                              #~ context=context)
-
-        #~ if concurrency in record:
-            #~ server_format = openerp.tools.misc.DEFAULT_SERVER_DATETIME_FORMAT
-            #~ try:
-                #~ response.last_modified = datetime.datetime.strptime(
-                    #~ record[concurrency], server_format + '.%f')
-            #~ except ValueError:
-                #~ # just in case we have a timestamp without microseconds
-                #~ response.last_modified = datetime.datetime.strptime(
-                    #~ record[concurrency], server_format)
-
-        #~ # Field does not exist on model or field set to False
-        #~ if not record.get(field):
-            #~ # FIXME: maybe a field which does not exist should be a 404?
-            #~ return self._image_placeholder(response)
-
-        #~ response.set_etag(hashlib.sha1(record[field]).hexdigest())
-        #~ response.make_conditional(request.httprequest)
-
-        #~ if cache:
-            #~ response.cache_control.max_age = cache
-            #~ response.expires = int(time.time() + cache)
-
-        #~ # conditional request match
-        #~ if response.status_code == 304:
-            #~ return response
-
-        #~ data = record[field].decode('base64')
-        #~ image = Image.open(cStringIO.StringIO(data))
-        #~ response.mimetype = Image.MIME[image.format]
-
-        #~ filename = '%s_%s.%s' % (model.replace('.', '_'), id, str(image.format).lower())
-        #~ response.headers['Content-Disposition'] = 'inline; filename="%s"' % filename
-
-        #~ if (not max_width) and (not max_height):
-            #~ response.data = data
-            #~ return response
-
-        #~ w, h = image.size
-        #~ max_w = int(max_width) if max_width else maxint
-        #~ max_h = int(max_height) if max_height else maxint
-
-        #~ if w < max_w and h < max_h:
-            #~ response.data = data
-        #~ else:
-            #~ size = (max_w, max_h)
-            #~ img = image_resize_and_sharpen(image, size, preserve_aspect_ratio=True)
-            #~ image_save_for_web(img, response.stream, format=image.format)
-            #~ # invalidate content-length computed by make_conditional as
-            #~ # writing to response.stream does not do it (as of werkzeug 0.9.3)
-            #~ del response.headers['Content-Length']
-
-        #~ return response
