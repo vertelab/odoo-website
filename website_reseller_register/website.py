@@ -30,6 +30,15 @@ PARTNER_FIELDS = ['name', 'street', 'street2', 'zip', 'city', 'phone', 'email']
 
 class reseller_register(http.Controller):
 
+    # can be overrided with more company field
+    def get_company_post(self, post):
+        value = {'name': post.get('company_name')}
+        return value
+
+    # can be overrided with more company field
+    def company_fileds(self):
+        return ['name']
+
     # can be overrided with more address type
     def get_children_post(self, issue, post):
         address_type = ['delivery', 'invoice', 'contact']
@@ -58,7 +67,7 @@ class reseller_register(http.Controller):
             child_dict['parent_id'] = issue.partner_id.id
             child_dict['type'] = address_type
             child_dict['use_parent_address'] = False
-            child = issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice')
+            child = issue.partner_id.child_ids.filtered(lambda c: c.type == address_type)
             if not child:
                 child = request.env['res.partner'].sudo().create(child_dict)
             else:
@@ -67,6 +76,7 @@ class reseller_register(http.Controller):
                 validation['%s_%s' %(address_type, field)] = 'has-success'
         return {'child': child, 'validation': validation}
 
+    # can be overrided with more help text
     def get_help(self):
         help = {}
         help['help_company_name'] = _('')
@@ -92,7 +102,7 @@ class reseller_register(http.Controller):
 
     @http.route(['/reseller_register/new', '/reseller_register/<int:issue>'], type='http', auth='public', website=True)
     def reseller_register_new(self, issue=0, **post):
-        validation = []
+        validation = {}
         children = {}
         help = {}
         if not issue:
@@ -108,24 +118,25 @@ class reseller_register(http.Controller):
             })
         elif request.httprequest.method == 'POST':
             issue = request.env['project.issue'].sudo().browse(int(issue))
-            partner = issue.partner_id
-            partner.name = post.get('company_name')
+            issue.partner_id.write(self.get_company_post(post))
             children_dict = self.get_children_post(issue, post)
             children = children_dict['children']
             validation = children_dict['validations']
+            for field in self.company_fileds():
+                validation['company_%s' %field] = 'has-success'
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
             children = self.get_children(issue)
         help = self.get_help()
-        res = {
+        value = {
             'issue': issue,
             'help': help,
             'validation': validation,
         }
         if any(children):
             for k,v in children.items():
-                res[k] = v
-        return request.website.render('website_reseller_register.new', res)
+                value[k] = v
+        return request.website.render('website_reseller_register.register_form', value)
 
     @http.route(['/website_reseller_register_message_send'], type='json', auth="public", website=True)
     def website_reseller_register_message_send(self, issue_id, msg_body, **kw):
