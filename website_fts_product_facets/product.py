@@ -51,3 +51,20 @@ class product_facet_value(models.Model):
         #~ for val in vals.get('value_ids'):
             #~ for value in self.env['product.facet.value'].browse(val[2]):
                 #~ self.env['fts.fts'].create({'res_model': self._name,'res_id': self.id, 'name': '%.30s' % value.name,'count': 1,'facet': 'product_facets','rank': 10})
+
+class product_facet_value(models.Model):
+    _name = 'product.facet.line'
+
+    @api.multi
+    def fts_search_suggestion(self):
+        """
+        Return a search result for search_suggestion.
+        """
+        return {
+            'res_id': self.id,
+            'model_record': self._name,
+            'name': self.name_get(),
+            'blog_id': self.blog_id.id,
+            'product_tmpl_id': self.product_tmpl_id.id,
+            'product_name': self.product_tmpl_id.name_get(),
+        }

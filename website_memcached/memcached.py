@@ -126,8 +126,9 @@ def get_keys(flush_type=None,module=None,path=None):
     items = MEMCACHED_CLIENT().stats('items')
     slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
     key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
-    keys =  [key for sublist in key_lists for key in sublist]
+    keys =  [key for sublist in key_lists for key in sublist.keys()]
     _logger.warn('KEYS: %s' %keys)
+    _logger.warn('LEN: %s' %len(keys))
 
     if flush_type:
        keys = [key for key in keys if flush_type == 'all' or flush_type == MEMCACHED_CLIENT()[key].get('flush_type')]
@@ -213,6 +214,7 @@ def route(route=None, **kw):
                 # Format {path}{session}{etc}
                 key_raw = routing['key'](kw).format(  path=request.httprequest.path,
                                                     session='%s' % {k:v for k,v in request.session.items() if len(k)<40},
+                                                    device_type='%s' % request.session.get('device_type','md'),  # xs sm md lg
                                                     context='%s' % {k:v for k,v in request.env.context.items() if not k == 'uid'},
                                                     context_uid='%s' % {k:v for k,v in request.env.context.items()},
                                                     uid=request.env.context.get('uid'),
@@ -250,6 +252,10 @@ def route(route=None, **kw):
 
             if page_dict and not page_dict.get('db') == request.env.cr.dbname:
                 _logger.warn('Database violation key=%s stored for=%s  env db=%s ' % (key,page_dict.get('db'),request.env.cr.dbname))
+                page_dict = None
+            
+            # Blacklist
+            if page_dict and any([p if p in request.httprequest.path else '' for p in kw.get('blacklist','').split(',')]):
                 page_dict = None
 
             if 'cache_viewkey' in kw.keys():
@@ -334,6 +340,7 @@ def route(route=None, **kw):
             response.headers['X-CacheController'] = page_dict.get('controller_time')
             response.headers['X-CacheRender'] = page_dict.get('render_time')
             response.headers['X-CacheCacheAge'] = cache_age
+            response.headers['X-CacheBlacklist'] = kw.get('blacklist','')
             response.headers['Date'] = page_dict.get('date',http_date())
             response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)
             return response

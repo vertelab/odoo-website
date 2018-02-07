@@ -20,18 +20,19 @@
 ##############################################################################
 
 {
-    'name': 'Website Language Redirect',
+    'name': 'Website Reseller Register',
     'version': '0.1',
     'category': 'website',
     'description': """
-Redirect to website as current user's language
-==============================================
+A web form for public user to registe as reseller
+=================================================
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website',],
+    'depends': ['website', 'project_issue'],
     'data': [
-        'website_data.xml',
+        'project_data.xml',
+        'project_view.xml',
         'website_view.xml',
     ],
     'application': False,

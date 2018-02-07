@@ -18,23 +18,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from openerp import models, fields, api, _
 
-{
-    'name': 'Website Language Redirect',
-    'version': '0.1',
-    'category': 'website',
-    'description': """
-Redirect to website as current user's language
-==============================================
-""",
-    'author': 'Vertel AB',
-    'website': 'http://www.vertel.se',
-    'depends': ['website',],
-    'data': [
-        'website_data.xml',
-        'website_view.xml',
-    ],
-    'application': False,
-    'installable': True,
-}
-# vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:
+import logging
+_logger = logging.getLogger(__name__)
+
+class project(models.Model):
+    _inherit = 'project.project'
+
+    use_reseller = fields.Boolean(string='Reseller', help='Check this field if this project manages reseller register issues')

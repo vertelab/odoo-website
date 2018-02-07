@@ -42,6 +42,27 @@ class Blog(models.Model):
     _inherit = ['blog.post', 'fts.model']
 
     _fts_fields = ['content','website_published','name','subtitle','blog_id','author_id']
+    _fts_fields_d = [
+        {'name': 'name', 'weight': 'A'},
+        {'name': 'subtitle', 'weight': 'A'},
+        {'name': 'blog_id', 'weight': 'A', 'related': 'blog_id.name', 'related_table': 'blog_blog'},
+        {'name': 'author_id', 'weight': 'A', 'related': 'author_id.name', 'related_table': 'res_partner'},
+        {'name': 'content', 'weight': 'C'},
+    ]
+
+    @api.depends('content','website_published','name','subtitle','blog_id.name','author_id.name')
+    @api.one
+    def _compute_fts_trigger(self):
+        """
+        Dummy field to trigger the updates on SQL level. Tracking
+        changes is much easier on Odoo level than on SQL level. Make
+        this field dependant on the relevant fields.
+        """
+        # TODO: Trigger this update when relevant translations change.
+        if self._fts_trigger:
+            self._fts_trigger = True
+        else:
+            self._fts_trigger = False
 
     @api.one
     def _full_text_search_update(self):
@@ -53,5 +74,14 @@ class Blog(models.Model):
             #self.env['fts.fts'].update_text(self._name,self.id,text=' '.join([self.])self.blog_id.name,facet='blog_tag',rank=int(self.ranking))
             # SEO metadata ????
 
-
-
+    @api.multi
+    def fts_search_suggestion(self):
+        """
+        Return a search result for search_suggestion.
+        """
+        return {
+            'res_id': self.id,
+            'model_record': self._name,
+            'name': self.name_get(),
+            'blog_id': self.blog_id.id,
+        }
