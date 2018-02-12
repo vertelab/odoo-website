@@ -137,7 +137,7 @@ def get_keys(flush_type=None,module=None,path=None):
     if path:
        keys = [key for key in keys if path == 'all' or path == MEMCACHED_CLIENT()[key].get('path')]
     # Remove other databases
-    keys = [key for key in keys if request.env.cr.dbname in MEMCACHED_CLIENT()[key].get('db')]
+    keys = [key for key in keys if request.env.cr.dbname == MEMCACHED_CLIENT().get(key, {}).get('db')]
 
     return keys
 
@@ -253,7 +253,7 @@ def route(route=None, **kw):
             if page_dict and not page_dict.get('db') == request.env.cr.dbname:
                 _logger.warn('Database violation key=%s stored for=%s  env db=%s ' % (key,page_dict.get('db'),request.env.cr.dbname))
                 page_dict = None
-            
+
             # Blacklist
             if page_dict and any([p if p in request.httprequest.path else '' for p in kw.get('blacklist','').split(',')]):
                 page_dict = None
