@@ -36,7 +36,7 @@ class MemCachedController(http.Controller):
     @http.route(['/mcpage/<string:key>',], type='http', auth="user", website=True)
     def memcached_page(self, key='',**post):
         _logger.warn('Herw I am')
-        page_dict = memcached.MEMCACHED_CLIENT().get(key)
+        page_dict = memcached.mc_load(key)
         if page_dict:
             return page_dict.get('page').decode('base64')
         return request.registry['ir.http']._handle_exception(None, 404)
@@ -44,9 +44,30 @@ class MemCachedController(http.Controller):
     @http.route(['/mcpage/<string:key>/delete',], type='http', auth="user", website=True)
     def memcached_page_delete(self, key='',**post):
         page_dict = memcached.MEMCACHED_CLIENT().delete(key)
+        i = 1
+        while True:
+            if not memcached.MEMCACHED_CLIENT().delete('%s-c%d' % (key,i)) or i > 10:
+                break
+            i += 1 
         if post.get('url'):
             return werkzeug.utils.redirect(post.get('url'), 302)
         return http.Response('<h1>Key is deleted %s</h1>' % (key))
+
+    @http.route(['/mcmeta/<string:key>',], type='http', auth="user", website=True)
+    def memcached_page_delete(self, key='',**post):
+        page_dict = memcached.mc_load(key)
+        view_meta = '<h2>Metadata</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in page_dict.items() if not k == 'page'])
+        view_meta += 'Page Len : %.2f Kb<br>'  % (len(page_dict.get('page','')) / 1024)
+        chunks = []
+        i = 1
+        while True:
+            chunk = memcached.MEMCACHED_CLIENT().get('%s-c%d' % (key,i))
+            if not chunk or i > 10:
+                break
+            chunks.append(chunk)
+            i += 1
+        view_meta += 'Chunks   : %s<br>' % ', '.join([len(c) for c in chunks])
+        return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s' % (key,key,view_meta))
 
     @http.route(['/mcflush','/mcflush/<string:flush_type>',], type='http', auth="user", website=True)
     def memcached_flush(self, flush_type='all',**post):
@@ -56,6 +77,14 @@ class MemCachedController(http.Controller):
     def memcached_flush_delete(self, flush_type='all',**post):
         for key in memcached.get_keys(flush_type=flush_type):
             memcached.MEMCACHED_CLIENT().delete(key)
+            i = 1
+            while True:
+                if not memcached.MEMCACHED_CLIENT().delete('%s-c%d' % (key,i)) or i > 10:
+                    break
+                i += 1  
+
+            
+            
         return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type))
 
     @http.route(['/mcmodule','/mcmodule/<string:module>',], type='http', auth="user", website=True)
