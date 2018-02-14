@@ -62,7 +62,7 @@ def deserialize_pickle(key, value, flags):
     raise Exception('Unknown flags for value: {1}'.format(flags))
 
 try:
-    from pymemcache.client.base import Client,MemcacheServerError
+    from pymemcache.client.base import Client,MemcacheClientError,MemcacheUnknownCommandError,MemcacheIllegalInputError,MemcacheServerError,MemcacheUnknownError,MemcacheUnexpectedCloseError
     #~ from pymemcache.client.hash import HashClient
     MEMCACHED__CLIENT__ = False
     MEMCACHED_VERSION = ''
@@ -84,7 +84,35 @@ def MEMCACHED_CLIENT():
             #~ if type(servers) == list:
                 #~ MEMCACHED__CLIENT__ = HashClient(servers, serializer=serialize_pickle, deserializer=deserialize_pickle)
             #~ else:
-            MEMCACHED__CLIENT__ = Client(servers, serializer=serialize_pickle, deserializer=deserialize_pickle)
+            MEMCACHED__CLIENT__ = Client(servers, serializer=serialize_pickle, deserializer=deserialize_pickle,no_delay=True,connect_timeout=10,timeout=0.01)
+            
+          #~ server: tuple(hostname, port)
+          #~ serializer: optional function, see notes in the class docs.
+          #~ deserializer: optional function, see notes in the class docs.
+          #~ connect_timeout: optional float, seconds to wait for a connection to
+            #~ the memcached server. Defaults to "forever" (uses the underlying
+            #~ default socket timeout, which can be very long).
+          #~ timeout: optional float, seconds to wait for send or recv calls on
+            #~ the socket connected to memcached. Defaults to "forever" (uses the
+            #~ underlying default socket timeout, which can be very long).
+          #~ no_delay: optional bool, set the TCP_NODELAY flag, which may help
+            #~ with performance in some cases. Defaults to False.
+          #~ ignore_exc: optional bool, True to cause the "get", "gets",
+            #~ "get_many" and "gets_many" calls to treat any errors as cache
+            #~ misses. Defaults to False.
+          #~ socket_module: socket module to use, e.g. gevent.socket. Defaults to
+            #~ the standard library's socket module.
+          #~ key_prefix: Prefix of key. You can use this as namespace. Defaults
+            #~ to b''.
+          #~ default_noreply: bool, the default value for 'noreply' as passed to
+            #~ store commands (except from cas, incr, and decr, which default to
+            #~ False).
+          #~ allow_unicode_keys: bool, support unicode (utf8) keys
+          
+          #http://pymemcache.readthedocs.io/en/latest/getting_started.html
+          
+            
+            
         except Exception as e:
             _logger.info('Cannot instantiate MEMCACHED CLIENT %s.' % e)
             raise MemcacheServerError(e)
@@ -146,7 +174,7 @@ def get_flush_page(keys, title, url='', delete_url=''):
     html = '%s<H1>%s</H1><table style="width: 100%%;"><tr><th>Key</th><th>Path</th><th>Module</th><th>Flush_type</th><th>Key Raw</th><th>Cmd</th></tr>' % (('<a href="%s" style="float: right;">delete all</a>' % delete_url) if delete_url else '', title)
     for key in keys:
         p = mc_load(key)
-        html += '<tr><td><a href="/mcpage/%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="/mcpage/%s/delete?url=%s">delete</a></td></tr>' % (key,key,p.get('path'),p.get('module'),p.get('flush_type'),p.get('key_raw'),key,url)
+        html += '<tr><td><a href="/mcmeta/%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="/mcpage/%s/delete?url=%s">delete</a></td></tr>' % (key,key,p.get('path'),p.get('module'),p.get('flush_type'),p.get('key_raw'),key,url)
     return html + '</table>'
 
     #~ return '<H1>%s</H1><table>%s</table>' % (title,
@@ -162,7 +190,11 @@ def mc_save(key, page_dict,cache_age):
             #~ MEMCACHED_CLIENT().set('%s-c%d' % (key,i),chunk,cache_age)
 
 def mc_load(key):
-    page_dict = MEMCACHED_CLIENT().get(key)
+    c = Client(('localhost',11211), serializer=serialize_pickle, deserializer=deserialize_pickle,no_delay=True,connect_timeout=10,timeout=0.01)
+    page_dict = c.get(key)
+    c.quit()
+    
+    
     #~ if type(page_dict) != type({}):
         #~ return {}
     #~ i = 1
@@ -184,8 +216,8 @@ def mc_delete(key):
     
     
 def mc_meta(key):
-    page_dict = memcached.mc_load(key)
-    chunks = [page_dict.get('page') if page_dict else '']
+    page_dict = mc_load(key)
+    chunks = [page_dict.get('page','') if page_dict else '']
     #~ i = 1
     #~ while True:
         #~ chunk = memcached.MEMCACHED_CLIENT().get('%s-c%d' % (key,i))
@@ -234,9 +266,7 @@ def route(route=None, **kw):
     :param immutable:  Indicates that the response body will not change over time. The resource, if unexpired, is unchanged on the server and therefore the client should not send a conditional revalidation.  immutable is only honored on https:// transactions
     :param no_transform: No transformations or conversions should be made to the resource (for example do not transform png to jpeg)
     :param s_maxage:  Overrides max-age, but it only applies to shared caches / proxies and is ignored by a private cache
-
-
-
+    :param content_type: set Content-Type
 
     :
     """
@@ -256,7 +286,7 @@ def route(route=None, **kw):
             #~ _logger.warn('\n\npath: %s\n' % request.httprequest.path)
             if routing.get('key'): # Function that returns a raw string for key making
                 # Format {path}{session}{etc}
-                key_raw = routing['key'](kw).format(  path=request.httprequest.path,
+                key_raw = routing['key'](kw).format(path=request.httprequest.path,
                                                     session='%s' % {k:v for k,v in request.session.items() if len(k)<40},
                                                     device_type='%s' % request.session.get('device_type','md'),  # xs sm md lg
                                                     context='%s' % {k:v for k,v in request.env.context.items() if not k == 'uid'},
@@ -288,12 +318,41 @@ def route(route=None, **kw):
             error = None
             try:
                 page_dict = mc_load(key)
+            except MemcacheClientError as e:
+                error = "MemcacheClientError %s " % e
+                _logger.warn(error) 
+            except MemcacheUnknownCommandError as e:
+                error = "MemcacheUnknownCommandError %s " % e
+                _logger.warn(error)
+            except MemcacheIllegalInputError as e:
+                error = "MemcacheIllegalInputError %s " % e
+                _logger.warn(error)
             except MemcacheServerError as e:
-                error = "Memcashed Server not responding %s " % e
+                error = "MemcacheServerError %s " % e
                 _logger.warn(error)
+            except MemcacheUnknownError as e:
+                error = "MemcacheUnknownError %s key: %s path: %s" % (e,key,request.httprequest.path)
+                _logger.warn(error)
+                return werkzeug.wrappers.Response(status=500,headers=[
+                        ('X-CacheKey',key),
+                        ('X-CacheError','MemcacheUnknownError %s' %e),
+                        ('X-CacheKeyRaw',key_raw),
+                        ('Server','Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)),
+                        ])
+            except MemcacheUnexpectedCloseError as e:
+                error = "MemcacheUnexpectedCloseError %s " % e
+                _logger.warn(error)   
             except Exception as e:
-                error = "Memcashed Error %s " % e
+                error = "Memcached Error %s key: %s path: %s" % (e,key,request.httprequest.path)
                 _logger.warn(error)
+                return werkzeug.wrappers.Response(status=500,headers=[
+                        ('X-CacheKey',key),
+                        ('X-CacheError','Memcached Error %s' % e),
+                        ('X-CacheKeyRaw',key_raw),
+                        ('Server','Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)),
+                        ])
+
+
 
             if page_dict and not page_dict.get('db') == request.env.cr.dbname:
                 _logger.warn('Database violation key=%s stored for=%s  env db=%s ' % (key,page_dict.get('db'),request.env.cr.dbname))
@@ -305,19 +364,11 @@ def route(route=None, **kw):
 
             if 'cache_viewkey' in kw.keys():
                 if page_dict:
-                    view_meta = '<h2>Metadata</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in page_dict.items() if not k == 'page'])
-                    view_meta += 'Page Len : %.2f Kb<br>'  % (len(page_dict['page']) / 1024)
-                    chunks = []
-                    i = 1
-                    while True:
-                        chunk = memcached.MEMCACHED_CLIENT().get('%s-c%d' % (key,i))
-                        if not chunk or i > 10:
-                            break
-                        chunks.append(chunk)
-                        i += 1
-                    view_meta += 'Chunks   : %s<br>' % ', '.join([len(c) for c in chunks])
-                    #~ view_stat = '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats().items()])
-                    #~ view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats('items').items()])
+                    res = mc_meta(key)
+                    view_meta = '<h2>Metadata</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in res['page_dict'].items() if not k == 'page'])
+                    view_meta += 'Page Len : %.2f Kb<br>'  % res['size']
+                    #~ view_meta += 'Chunks   : %s<br>' % ', '.join([len(c) for c in res['chunks']])
+                    view_meta += 'Chunks   : %s<br>' % res['chunks']
                     return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s' % (key,key,view_meta))
                 else:
                     if error:
@@ -329,6 +380,9 @@ def route(route=None, **kw):
                 args = request.httprequest.args.copy()
                 args['cache_key'] = key
                 return werkzeug.utils.redirect('{}?{}'.format(request.httprequest.path, url_encode(args)), 302)
+                
+                
+            
 
             max_age = routing.get('max_age',600)              # 10 minutes
             cache_age = routing.get('cache_age',24 * 60 * 60) # One day
@@ -342,6 +396,14 @@ def route(route=None, **kw):
                 response = f(*args, **kw) # calls original controller
                 render_start = timer()
 
+                if routing.get('content_type'):
+                    response.headers['Content-Type'] = routing.get('content_type')
+                    #~ if isinstance(response.headers,list) and isinstance(response.headers[0],tuple):
+                        #~ _logger.error('response is list and tuple')
+                    #~ header_dict = {h[0]: h[1] for h in response.headers}
+                    #~ header_dict['Content-Type'] = routing.get('content_type')
+                    #~ response.headers = [(h[0],h[1]) for h in header_dict.items()]
+
                 if not routing.get('binary'):
                     page = response.render()
                 else:
@@ -352,8 +414,8 @@ def route(route=None, **kw):
                     'cache-age':cache_age,
                     'private':  routing.get('private',False),
                     'key_raw':  key_raw,
-                    'render_time': timer()-render_start,
-                    'controller_time': render_start-controller_start,
+                    'render_time': '%.3f sec' % (timer()-render_start),
+                    'controller_time': '%.3f sec' % (render_start-controller_start),
                     'path':     request.httprequest.path,
                     'db':       request.env.cr.dbname,
                     'page':     base64.b64encode(page),
@@ -384,9 +446,19 @@ def route(route=None, **kw):
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
             # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
             # https://jakearchibald.com/2016/caching-best-practices/
+            #~ if page_dict.get('headers') and isinstance(page_dict['headers'],dict):
+                #~ _logger.error('respnse headers dict')
+                #~ for k,v in page_dict['headers'].items():
+                    #~ response.headers.add(k,v)
+                   #response.headers[k] = v
+            #~ if page_dict.get('headers') and isinstance(page_dict['headers'],list):
+                #~ _logger.error('respnse headers list')
+                
+                #~ response.headers = {h[0]: h[1] for h in response.headers}
             if page_dict.get('headers'):
                 for k,v in page_dict['headers'].items():
-                   response.headers[k] = v
+                    #~ response.headers.add(k,v)
+                    response.headers[k] = v
             response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s, %s' % (max_age,s_maxage,','.join([keyword for keyword in [routing.get('private','public'),routing.get('no-store'),routing.get('immutable'),routing.get('no-transform'),'no-cache','must-revalidate','proxy-revalidate'] if keyword] )) # private: must not be stored by a shared cache.
             response.headers['ETag'] = page_dict.get('ETag')
             response.headers['X-CacheKey'] = key

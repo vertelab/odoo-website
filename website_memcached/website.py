@@ -35,7 +35,6 @@ class MemCachedController(http.Controller):
 
     @http.route(['/mcpage/<string:key>',], type='http', auth="user", website=True)
     def memcached_page(self, key='',**post):
-        _logger.warn('Herw I am')
         page_dict = memcached.mc_load(key)
         if page_dict:
             return page_dict.get('page').decode('base64')
@@ -53,7 +52,8 @@ class MemCachedController(http.Controller):
         res = memcached.mc_meta(key)
         view_meta = '<h2>Metadata</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in res['page_dict'].items() if not k == 'page'])
         view_meta += 'Page Len : %.2f Kb<br>'  % res['size']
-        view_meta += 'Chunks   : %s<br>' % ', '.join([len(c) for c in res['chunks']])
+        #~ view_meta += 'Chunks   : %s<br>' % ', '.join([len(c) for c in res['chunks']])
+        view_meta += 'Chunks   : %s<br>' % res['chunks']
         return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s' % (key,key,view_meta))
 
     @http.route(['/mcflush','/mcflush/<string:flush_type>',], type='http', auth="user", website=True)

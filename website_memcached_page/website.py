@@ -98,13 +98,30 @@ class CachedHome(openerp.addons.web.controllers.main.Home):
     #~ @memcached.route(flush_type='js_bundle',binary=True,cache_age=60*60*24*30,max_age=604800)
     #~ def js_bundle(self, xmlid, version=None, **kw):
         #~ return super(CachedHome, self).js_bundle(xmlid, version, **kw)
+    #~ @http.route([/web/js/website.assets_frontend/6
+        #~ '/web/js/<xmlid>',
+        #~ '/web/js/<xmlid>/<version>',
+    #~ ], type='http', auth='public')
+    @memcached.route(['/web/js/website.assets_frontend/<version>',
+                      '/web/js/web.assets_common/<version>',
+                      '/web/js/website.assets_editor/<version>'],flush_type='js_bundle',binary=True,cache_age=60*60*24*30,max_age=604800)
+    def js_bundle_special(self, version=None, **kw):
+        if 'website.assets_frontend' in request.httprequest.path:
+            return super(CachedHome, self).js_bundle('website.assets_frontend', version, **kw)
+        if 'web.assets_common' in request.httprequest.path:
+            return super(CachedHome, self).js_bundle('web.assets_common', version, **kw)
+        if 'website.assets_editor' in request.httprequest.path:
+            return super(CachedHome, self).js_bundle('website.assets_editor', version, **kw)
+
+
 
     #~ @http.route([
         #~ '/web/css/<xmlid>',
         #~ '/web/css/<xmlid>/<version>',
         #~ '/web/css.<int:page>/<xmlid>/<version>',
     #~ ], type='http', auth='public')
-    @memcached.route(flush_type='css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,key=lambda k: '{db}{xmlid}')
+    @memcached.route(flush_type='css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,key=lambda k: '{db}{xmlid}',content_type="text/css; charset=utf-8;")
+    #~ @memcached.route(flush_type='css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,key=lambda k: '{db}{xmlid}')
     def css_bundle(self, xmlid, version=None, page=None, **kw):
         return super(CachedHome, self).css_bundle(xmlid, version, page, **kw)
 
