@@ -152,26 +152,48 @@ def get_flush_page(keys, title, url='', delete_url=''):
     #~ return '<H1>%s</H1><table>%s</table>' % (title,
         #~ ''.join(['<tr><td><a href="/mcpage/%s/delete">%s (delete)</a></td><td></td><td></td></tr>' % (k,k,p.get('path'),p.get('module'),p.get('flush_type')) for key in keys for p,k in [memcached.MEMCACHED_CLIENT().get(key),key]])
 def mc_save(key, page_dict,cache_age):
-    chunks = [page_dict['page'][i:1000*900] for i in range(int(math.ceil(len(page_dict['page']) / (1000.0*900))))]
-    for i,chunk in enumerate(chunks):
-        if i == 0:
-            page_dict['page'] = chunk
-            MEMCACHED_CLIENT().set(key,page_dict,cache_age)
-        else:
-            MEMCACHED_CLIENT().set('%s-c%d' % (key,i),chunk,cache_age)
+    MEMCACHED_CLIENT().set(key,page_dict,cache_age)
+    #~ chunks = [page_dict['page'][i:1000*900] for i in range(int(math.ceil(len(page_dict['page']) / (1000.0*900))))]
+    #~ for i,chunk in enumerate(chunks):
+        #~ if i == 0:
+            #~ page_dict['page'] = chunk
+            #~ MEMCACHED_CLIENT().set(key,page_dict,cache_age)
+        #~ else:
+            #~ MEMCACHED_CLIENT().set('%s-c%d' % (key,i),chunk,cache_age)
 
 def mc_load(key):
     page_dict = MEMCACHED_CLIENT().get(key)
-    if type(page_dict) != type({}):
-        return {}
-    i = 1
-    while True:
-        chunk = MEMCACHED_CLIENT().get('%s-c%d' % (key,i))
-        if not chunk or i > 10:
-            break
-        page_dict['page'] += chunk
-        i += 1
+    #~ if type(page_dict) != type({}):
+        #~ return {}
+    #~ i = 1
+    #~ while True:
+        #~ chunk = MEMCACHED_CLIENT().get('%s-c%d' % (key,i))
+        #~ if not chunk or i > 10:
+            #~ break
+        #~ page_dict['page'] += chunk
+        #~ i += 1
     return page_dict or {}
+
+def mc_delete(key):
+    MEMCACHED_CLIENT().delete(key)
+    #~ i = 1
+    #~ while True:
+        #~ if not MEMCACHED_CLIENT().delete('%s-c%d' % (key,i)) or i > 10:
+            #~ break
+        #~ i += 1
+    
+    
+def mc_meta(key):
+    page_dict = memcached.mc_load(key)
+    chunks = [page_dict.get('page') if page_dict else '']
+    #~ i = 1
+    #~ while True:
+        #~ chunk = memcached.MEMCACHED_CLIENT().get('%s-c%d' % (key,i))
+        #~ if not chunk or i > 10:
+            #~ break
+        #~ chunks.append(chunk)
+        #~ i += 1
+    return {'page_dict':page_dict,'size':len(page_dict.get('page','')) / 1024,'chunks':chunks}
     
 def route(route=None, **kw):
     """
@@ -259,12 +281,8 @@ def route(route=None, **kw):
 
             if 'cache_invalidate' in kw.keys():
                 kw.pop('cache_invalidate',None)
-                MEMCACHED_CLIENT().delete(key)
-                i = 1
-                while True:
-                    if not MEMCACHED_CLIENT().delete('%s-c%d' % (key,i)) or i > 10:
-                        break
-                    i += 1  
+                mc_delete(key)
+                  
 
             page_dict = None
             error = None
