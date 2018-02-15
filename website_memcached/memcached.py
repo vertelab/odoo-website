@@ -116,16 +116,16 @@ def MEMCACHED_CLIENT():
             #~ store commands (except from cas, incr, and decr, which default to
             #~ False).
           #~ allow_unicode_keys: bool, support unicode (utf8) keys
-          
+
           #http://pymemcache.readthedocs.io/en/latest/getting_started.html
-          
+
         except Exception as e:
             _logger.info('Cannot instantiate MEMCACHED CLIENT %s.' % e)
             raise MemcacheServerError(e)
         except TypeError as e:
             _logger.info('Type error MEMCACHED CLIENT %s.' % e)
             raise MemcacheServerError(e)
-        
+
     return MEMCACHED__CLIENT__
 
 # https://lzone.de/cheat-sheet/memcached
@@ -189,7 +189,14 @@ def get_flush_page(keys, title, url='', delete_url=''):
     rows = []
     for key in keys:
         p = mc_load(key)
-        rows.append(('<a href="/mcmeta/%s">%s</a>' %(key,key),'<a href="%s">%s</a>' % (p.get('path'),p.get('path')),p.get('module').replace('openerp.addons.','').split('.')[0],p.get('flush_type'),p.get('key_raw'),'<a href="/mcpage/%s/delete?url=%s">delete</a>' %(key,url)))
+        rows.append((
+            '<a href="/mcmeta/%s">%s</a>' %(key, key),
+            '<a href="%s">%s</a>' %(p.get('path'), p.get('path')),
+            p.get('module').replace('openerp.addons.','').split('.')[0],
+            p.get('flush_type'),
+            p.get('key_raw'),
+            '<a href="/mcpage/%s/delete?url=%s" class="fa fa-trash-o"/>' %(key,url)
+        ))
     return request.website.render("website_memcached.memcached_page", {
         'title': title,
         'header': [_('Key'),_('Path'),_('Module'),_('Flush Type'),_('Key Raw'),_('Cmd')],
@@ -238,8 +245,8 @@ def mc_delete(key):
         #~ if not MEMCACHED_CLIENT().delete('%s-c%d' % (key,i)) or i > 10:
             #~ break
         #~ i += 1
-    
-    
+
+
 def mc_meta(key):
     page_dict = mc_load(key)
     chunks = [page_dict.get('page','') if page_dict else '']
@@ -251,7 +258,7 @@ def mc_meta(key):
         #~ chunks.append(chunk)
         #~ i += 1
     return {'page_dict':page_dict,'size':len(page_dict.get('page','')) / 1024,'chunks':chunks}
-    
+
 def route(route=None, **kw):
     """
     Decorator marking the decorated method as being a handler for
@@ -337,7 +344,7 @@ def route(route=None, **kw):
             if 'cache_invalidate' in kw.keys():
                 kw.pop('cache_invalidate',None)
                 mc_delete(key)
-                  
+
 
             page_dict = None
             error = None
@@ -345,7 +352,7 @@ def route(route=None, **kw):
                 page_dict = mc_load(key)
             except MemcacheClientError as e:
                 error = "MemcacheClientError %s " % e
-                _logger.warn(error) 
+                _logger.warn(error)
             except MemcacheUnknownCommandError as e:
                 error = "MemcacheUnknownCommandError %s " % e
                 _logger.warn(error)
@@ -366,7 +373,7 @@ def route(route=None, **kw):
                         ])
             except MemcacheUnexpectedCloseError as e:
                 error = "MemcacheUnexpectedCloseError %s " % e
-                _logger.warn(error)   
+                _logger.warn(error)
             except Exception as e:
                 err = sys.exc_info()
                 error = "Memcached Error %s key: %s path: %s %s" % (e,key,request.httprequest.path, ''.join(traceback.format_exception(err[0], err[1], err[2])))
@@ -406,9 +413,9 @@ def route(route=None, **kw):
                 args = request.httprequest.args.copy()
                 args['cache_key'] = key
                 return werkzeug.utils.redirect('{}?{}'.format(request.httprequest.path, url_encode(args)), 302)
-                
-                
-            
+
+
+
 
             max_age = routing.get('max_age',600)              # 10 minutes
             cache_age = routing.get('cache_age',24 * 60 * 60) # One day
@@ -481,7 +488,7 @@ def route(route=None, **kw):
                    #response.headers[k] = v
             #~ if page_dict.get('headers') and isinstance(page_dict['headers'],list):
                 #~ _logger.error('respnse headers list')
-                
+
                 #~ response.headers = {h[0]: h[1] for h in response.headers}
             if page_dict.get('headers'):
                 for k,v in page_dict['headers'].items():

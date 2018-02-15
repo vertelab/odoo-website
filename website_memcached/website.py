@@ -50,11 +50,18 @@ class MemCachedController(http.Controller):
     @http.route(['/mcmeta/<string:key>',], type='http', auth="user", website=True)
     def memcached_meta(self, key='',**post):
         res = memcached.mc_meta(key)
-        view_meta = '<h2>Metadata</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in res['page_dict'].items() if not k == 'page'])
-        view_meta += 'Page Len : %.2f Kb<br>'  % res['size']
+        #~ view_meta = '<h2>Metadata</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in res['page_dict'].items() if not k == 'page'])
+        #~ view_meta += 'Page Len : %.2f Kb<br>'  % res['size']
         #~ view_meta += 'Chunks   : %s<br>' % ', '.join([len(c) for c in res['chunks']])
-        view_meta += 'Chunks   : %s<br>' % res['chunks']
-        return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s' % (key,key,view_meta))
+        #~ view_meta += 'Chunks   : %s<br>' % res['chunks']
+        #~ return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s' % (key,key,view_meta))
+        values = {
+            'url': '/mcpage/%s' %key,
+            'key': key,
+            'page_dict': res['page_dict'].items(),
+            'page_len': '%.2f' %res['size'],
+        }
+        return request.website.render('website_memcached.mcmeta_page', values)
 
     @http.route(['/mcflush','/mcflush/<string:flush_type>',], type='http', auth="user", website=True)
     def memcached_flush(self, flush_type='all',**post):
