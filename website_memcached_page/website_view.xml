@@ -7,6 +7,19 @@
                 <span>My Account</span>
             </xpath>
         </template>
+<!--
+        
+        <template id="memchached_menu" inherit_id="website.user_navbar" name="Memcached Menu">
+            <xpath expr="//ul[@id='memcached']/li" position="after">
+                    <li groups="base.group_website_designer"><a href="/mcflush/page"><span title="View all cached pages">Pages</span></a></li>
+                    <li groups="base.group_website_designer"><a href="/mcflush/page_meta"><span title="View all cached meta pages">Meta Pages</span></a></li>
+                    <li groups="base.group_website_designer"><a href="/mcflush/page_image"><span title="View all cached Page Images">Page Images</span></a></li>
+                    <li groups="base.group_website_designer"><a href="/mcflush/js_bundle"><span title="View all cached JavaScript">JavaScript</span></a></li>
+                    <li groups="base.group_website_designer"><a href="/mcflush/css_bundle"><span title="View all cached CSS">CSS</span></a></li>
+            </xpath>
+        </template>
+-->
+
 
     </data>
 </openerp>

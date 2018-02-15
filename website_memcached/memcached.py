@@ -133,6 +133,10 @@ class website(models.Model):
     _inherit = 'website'
 
     @api.model
+    def flush_types(self):
+        return flush_types
+
+    @api.model
     def memcache_get(self,key):
         return MEMCACHED_CLIENT().get(MEMCACHED_HASH(key))
 
@@ -175,7 +179,9 @@ def get_flush_page(keys, title, url='', delete_url=''):
     for key in keys:
         p = mc_load(key)
         html += '<tr><td><a href="/mcmeta/%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="/mcpage/%s/delete?url=%s">delete</a></td></tr>' % (key,key,p.get('path'),p.get('module'),p.get('flush_type'),p.get('key_raw'),key,url)
-    return html + '</table>'
+    html + '</table>'
+    return request.website.render("website_memcached.memcached_page", {'title': title,'main': html})
+
 
     #~ return '<H1>%s</H1><table>%s</table>' % (title,
         #~ ''.join(['<tr><td><a href="/mcpage/%s/delete">%s (delete)</a></td><td></td><td></td></tr>' % (k,k,p.get('path'),p.get('module'),p.get('flush_type')) for key in keys for p,k in [memcached.MEMCACHED_CLIENT().get(key),key]])
@@ -425,6 +431,8 @@ def route(route=None, **kw):
                     'headers': response.headers,
                     }
                 mc_save(key, page_dict,cache_age)
+                if routing.get('flush_type'):
+                    add_flush_type(routing.get('flush_type'))
                 #~ raise Warning(f.__module__,f.__name__,route())
             else:
                 request_dict = {h[0]: h[1] for h in request.httprequest.headers}

@@ -1,21 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
-        
-        <template id="memchached_menu" inherit_id="website.user_navbar" name="Memcached Menu">
-            <xpath expr="//ul[@id='oe_systray']/li" position="after">
-                <!-- Test -->
-                <li class="dropdown" groups="base.group_website_publisher">
-                    <a id="memcached-menu-button" class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        Memcached <span class="caret"/>
-                    </a>
-                    <ul class="dropdown-menu oe_memcached_menu" role="menu">
-                        <li groups="base.group_website_designer"><a href="/mcflush"><span title="View all cached pages">All Pages</span></a></li>
-                        <li groups="base.group_website_designer"><a t-att-href="'/mcpath?path=%s' % request.httprequest.path"><span title="View all cached pages for this path">This page</span></a></li>
-                    </ul>
-                </li>
-            </xpath>
-        </template>
-        
-    </data>
+  <data>
+    <template id="memchached_menu" inherit_id="website.user_navbar" name="Memcached Menu">
+      <xpath expr="//ul[@id='oe_systray']/li" position="after">
+        <li class="dropdown" groups="base.group_website_publisher">
+          <a id="memcached-menu-button" class="dropdown-toggle" data-toggle="dropdown" href="#">
+            Memcached
+            <span class="caret" />
+          </a>
+          <ul class="dropdown-menu oe_memcached_menu" role="menu" id='memcached'>
+            <li groups="base.group_website_designer">
+              <a href="/mcflush">
+                <span title="View all cached objects">All Objects</span>
+              </a>
+            </li>
+            <li groups="base.group_website_designer">
+              <a t-att-href="'/mcpath?path=%s' % request.httprequest.path">
+                <span title="View all cached objects for this path">This Path</span>
+              </a>
+            </li>
+            <t t-foreach='website.flush_types()' t-as='ft'>
+              <li groups="base.group_website_designer">
+                <a t-att-href="'/mcflush/%s' % ft">
+                  <span title="View all cached objects for this flush_type" t-esc='ft' />
+                </a>
+              </li>
+            </t>
+          </ul>
+        </li>
+      </xpath>
+    </template>
+    
+    <!-- Page -->
+    <template id='memcached_page' name="Memcached Page">
+      <t t-call="website.layout">
+        <div class="oe_structure">
+          <section class="mb0">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-8 col-md-offset-2" id="title_column">
+                    <h1 t-esc='title'/>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12" id="main_column">
+                <t t-raw="main"/>
+            </div>
+          </div>
+        </div>
+        <div class="oe_structure" />
+      </t>
+    </template>
+
+
+  </data>
 </openerp>
