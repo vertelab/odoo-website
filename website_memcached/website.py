@@ -70,25 +70,25 @@ class MemCachedController(http.Controller):
 
     @http.route(['/mcmodule','/mcmodule/<string:module>',], type='http', auth="user", website=True)
     def memcached_module(self, module='all',**post):
-        return http.Response(memcached.get_flush_page(memcached.get_keys(module=module), 'Cached Pages Model %s' % module, '/mcmodule/%s' % module, '/mcmodule/%s/delete' % module))
+        return memcached.get_flush_page(memcached.get_keys(module=module), 'Cached Pages Model %s' % module, '/mcmodule/%s' % module, '/mcmodule/%s/delete' % module)
 
     @http.route(['/mcmodule/<string:module>/delete',], type='http', auth="user", website=True)
     def memcached_module_delete(self, module='all',**post):
         for key in memcached.get_keys(module=module):
             memcached.mc_delete(key)
-        return http.Response(memcached.get_flush_page(memcached.get_keys(module=module), 'Cached Pages Model %s ' % module, '/mcmodule/%s' % module, '/mcmodule/%s/delete' % module))
+        return memcached.get_flush_page(memcached.get_keys(module=module), 'Cached Pages Model %s ' % module, '/mcmodule/%s' % module, '/mcmodule/%s/delete' % module)
 
     @http.route(['/mcpath',], type='http', auth="user", website=True)
     # Example: /mcpath?path=/foo/bar
     def memcached_path(self, path='all',**post):
-        return http.Response(memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s' % path, '/mcpath?path=%s' % path, '/mcpath/delete?path=%s' % path))
+        return memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s' % path, '/mcpath?path=%s' % path, '/mcpath/delete?path=%s' % path)
 
     @http.route(['/mcpath/delete',], type='http', auth="user", website=True)
     # Example: /mcpath/delete?path=/foo/bar
     def memcached_path_delete(self, path='all',**post):
         for key in memcached.get_keys(path=path):
             memcached.mc_delete(key)
-        return http.Response(memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s ' % path, '/mcpath/%s' % path, '/mcpath/delete?path=%s' % path))
+        return memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s ' % path, '/mcpath/%s' % path, '/mcpath/delete?path=%s' % path)
 
     @http.route(['/mcstats',], type='http', auth="user", website=True)
     def memcached_stats(self, **post):

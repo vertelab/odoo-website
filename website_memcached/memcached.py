@@ -26,6 +26,8 @@ from openerp.service import common
 import openerp
 import base64
 import math
+import sys
+import traceback
 
 import werkzeug.utils
 from werkzeug.http import http_date
@@ -62,9 +64,13 @@ def deserialize_pickle(key, value, flags):
     raise Exception('Unknown flags for value: {1}'.format(flags))
 
 try:
-    from pymemcache.client.base import Client,MemcacheClientError,MemcacheUnknownCommandError,MemcacheIllegalInputError,MemcacheServerError,MemcacheUnknownError,MemcacheUnexpectedCloseError
+    from pymemcache.client.base import PooledClient,Client,MemcacheClientError,MemcacheUnknownCommandError,MemcacheIllegalInputError,MemcacheServerError,MemcacheUnknownError,MemcacheUnexpectedCloseError
     #~ from pymemcache.client.hash import HashClient
     MEMCACHED__CLIENT__ = False
+    MEMCACHED_SERVER = False
+    MEMCACHE_CONNECT_TIMEOUT = 10
+    MEMCACHE_TIMEOUT = 1
+    MEMCACHE_NODELAY = True
     MEMCACHED_VERSION = ''
     #~ MEMCACHED_CLIENT = Client(('localhost', 11211), serializer=serialize_pickle, deserializer=deserialize_pickle)
     #~ from pymemcache.client.murmur3 import murmur3_32 as MEMCACHED_HASH
@@ -77,15 +83,17 @@ except Exception as e:
     _logger.info('missing pyhashxx %s' % e)
 def MEMCACHED_CLIENT():
     global MEMCACHED__CLIENT__
+    global MEMCACHED_SERVER
     global MEMCACHED_VERSION
+    if not MEMCACHED_SERVER:
+        MEMCACHED_SERVER = eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost",11211)')
     if not MEMCACHED__CLIENT__:
-        servers = eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost",11211)')
         try:
             #~ if type(servers) == list:
                 #~ MEMCACHED__CLIENT__ = HashClient(servers, serializer=serialize_pickle, deserializer=deserialize_pickle)
             #~ else:
-            MEMCACHED__CLIENT__ = Client(servers, serializer=serialize_pickle, deserializer=deserialize_pickle,no_delay=True,connect_timeout=10,timeout=0.01)
-            
+            MEMCACHED__CLIENT__ = PooledClient(MEMCACHED_SERVER, serializer=serialize_pickle, deserializer=deserialize_pickle,no_delay=MEMCACHE_NODELAY,connect_timeout=MEMCACHE_CONNECT_TIMEOUT,timeout=MEMCACHE_TIMEOUT)
+            MEMCACHED_VERSION = MEMCACHED__CLIENT__.version()
           #~ server: tuple(hostname, port)
           #~ serializer: optional function, see notes in the class docs.
           #~ deserializer: optional function, see notes in the class docs.
@@ -111,15 +119,13 @@ def MEMCACHED_CLIENT():
           
           #http://pymemcache.readthedocs.io/en/latest/getting_started.html
           
-            
-            
         except Exception as e:
             _logger.info('Cannot instantiate MEMCACHED CLIENT %s.' % e)
             raise MemcacheServerError(e)
         except TypeError as e:
             _logger.info('Type error MEMCACHED CLIENT %s.' % e)
             raise MemcacheServerError(e)
-        MEMCACHED_VERSION = MEMCACHED__CLIENT__.version()
+        
     return MEMCACHED__CLIENT__
 
 # https://lzone.de/cheat-sheet/memcached
@@ -175,12 +181,22 @@ def get_keys(flush_type=None,module=None,path=None):
     return keys
 
 def get_flush_page(keys, title, url='', delete_url=''):
-    html = '%s<H1>%s</H1><table style="width: 100%%;"><tr><th>Key</th><th>Path</th><th>Module</th><th>Flush_type</th><th>Key Raw</th><th>Cmd</th></tr>' % (('<a href="%s" style="float: right;">delete all</a>' % delete_url) if delete_url else '', title)
+    #~ html = '%s<H1>%s</H1><table style="width: 100%%;"><tr><th>Key</th><th>Path</th><th>Module</th><th>Flush_type</th><th>Key Raw</th><th>Cmd</th></tr>' % (('<a href="%s" style="float: right;">delete all</a>' % delete_url) if delete_url else '', title)
+    #~ for key in keys:
+        #~ p = mc_load(key)
+        #~ html += '<tr><td><a href="/mcmeta/%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="/mcpage/%s/delete?url=%s">delete</a></td></tr>' % (key,key,p.get('path'),p.get('module'),p.get('flush_type'),p.get('key_raw'),key,url)
+    #~ html + '</table>'
+    rows = []
     for key in keys:
         p = mc_load(key)
-        html += '<tr><td><a href="/mcmeta/%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="/mcpage/%s/delete?url=%s">delete</a></td></tr>' % (key,key,p.get('path'),p.get('module'),p.get('flush_type'),p.get('key_raw'),key,url)
-    html + '</table>'
-    return request.website.render("website_memcached.memcached_page", {'title': title,'main': html})
+        rows.append(('<a href="/mcmeta/%s">%s</a>' %(key,key),'<a href="%s">%s</a>' % (p.get('path'),p.get('path')),p.get('module').replace('openerp.addons.','').split('.')[0],p.get('flush_type'),p.get('key_raw'),'<a href="/mcpage/%s/delete?url=%s">delete</a>' %(key,url)))
+    return request.website.render("website_memcached.memcached_page", {
+        'title': title,
+        'header': [_('Key'),_('Path'),_('Module'),_('Flush Type'),_('Key Raw'),_('Cmd')],
+        'rows': rows,
+        'delete_url': delete_url,
+        'url': url,
+        })
 
 
     #~ return '<H1>%s</H1><table>%s</table>' % (title,
@@ -196,11 +212,14 @@ def mc_save(key, page_dict,cache_age):
             #~ MEMCACHED_CLIENT().set('%s-c%d' % (key,i),chunk,cache_age)
 
 def mc_load(key):
-    c = Client(('localhost',11211), serializer=serialize_pickle, deserializer=deserialize_pickle,no_delay=True,connect_timeout=10,timeout=0.01)
-    page_dict = c.get(key)
-    c.quit()
-    
-    
+    #~ global MEMCACHED_VERSION
+    #~ global MEMCACHED_SERVER
+    #~ c = Client(MEMCACHED_SERVER or eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost",11211)'), serializer=serialize_pickle, deserializer=deserialize_pickle,no_delay=True,connect_timeout=10,timeout=0.01)
+    #~ if not MEMCACHED_VERSION:
+        #~ MEMCACHED_VERSION = c.version()
+    #~ page_dict = c.get(key)
+    #~ c.quit()
+    #~ page_dict = MEMCACHED_CLIENT().get(key)
     #~ if type(page_dict) != type({}):
         #~ return {}
     #~ i = 1
@@ -210,7 +229,7 @@ def mc_load(key):
             #~ break
         #~ page_dict['page'] += chunk
         #~ i += 1
-    return page_dict or {}
+    return MEMCACHED_CLIENT().get(key) or {}
 
 def mc_delete(key):
     MEMCACHED_CLIENT().delete(key)
@@ -349,7 +368,8 @@ def route(route=None, **kw):
                 error = "MemcacheUnexpectedCloseError %s " % e
                 _logger.warn(error)   
             except Exception as e:
-                error = "Memcached Error %s key: %s path: %s" % (e,key,request.httprequest.path)
+                err = sys.exc_info()
+                error = "Memcached Error %s key: %s path: %s %s" % (e,key,request.httprequest.path, ''.join(traceback.format_exception(err[0], err[1], err[2])))
                 _logger.warn(error)
                 return werkzeug.wrappers.Response(status=500,headers=[
                         ('X-CacheKey',key),

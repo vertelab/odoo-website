@@ -39,7 +39,8 @@
             <div class="container">
               <div class="row">
                 <div class="col-md-8 col-md-offset-2" id="title_column">
-                    <h1 t-esc='title'/>
+                    <h1 class="col-md-6" t-esc='title'/>
+                    <div class="col-md-2" t-raw='delete_url'/>
                 </div>
               </div>
             </div>
@@ -48,7 +49,14 @@
         <div class="container">
           <div class="row">
             <div class="col-md-12" id="main_column">
-                <t t-raw="main"/>
+                <table>
+                    <th t-foreach='header' t-as='h'><span t-esc='h'/></th>
+                    <tr t-foreach='rows' t-as='row'>
+                        <td t-foreach='row' t-as='data'>
+                            <span t-raw='data'/>
+                        </td>
+                    </tr>
+                </table>
             </div>
           </div>
         </div>
