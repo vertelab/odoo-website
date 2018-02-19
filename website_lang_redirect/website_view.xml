@@ -6,5 +6,10 @@
                 <attribute name="t-attf-href">/web/login?redirect=/website_lang_redirect</attribute>
             </xpath>
         </template>
+        <template id="login" inherit_id="web.login" name="Override log in">
+            <xpath expr="//form[@class='oe_login_form']" position="attributes">
+                <attribute name="t-attf-action">/web/login{{ '?debug' if debug else '' }}?redirect=/website_lang_redirect</attribute>
+            </xpath>
+        </template>
     </data>
 </openerp>
