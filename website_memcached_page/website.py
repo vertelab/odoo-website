@@ -125,3 +125,9 @@ class CachedHome(openerp.addons.web.controllers.main.Home):
     def css_bundle(self, xmlid, version=None, page=None, **kw):
         return super(CachedHome, self).css_bundle(xmlid, version, page, **kw)
 
+class MemCachedController(http.Controller):
+    @http.route(['/remove_cached_page',], type='json', auth="user", website=True)
+    def remove_cached_page(self, url='',**kw):
+        for key in memcached.get_keys(flush_type='page', path=url):
+            memcached.mc_delete(key)
+        return 'deleted'

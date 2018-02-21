@@ -110,9 +110,3 @@ class MemCachedController(http.Controller):
 
         #~ view_stat = '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats().items()])
         #~ view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats('items').items()])
-
-    @http.route(['/remove_cached_page',], type='json', auth="user", website=True)
-    def remove_cached_page(self, url='',**kw):
-        for key in memcached.get_keys(flush_type='page', path=url):
-            memcached.mc_delete(key)
-        return 'deleted'
