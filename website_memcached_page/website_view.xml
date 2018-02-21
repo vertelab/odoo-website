@@ -7,8 +7,14 @@
                 <span>My Account</span>
             </xpath>
         </template>
+
+        <template id="assets_frontend" inherit_id="website.assets_frontend" name="Website Assets Frontend Override">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/website_memcached_page/static/src/js/main.js" />
+            </xpath>
+        </template>
 <!--
-        
+
         <template id="memchached_menu" inherit_id="website.user_navbar" name="Memcached Menu">
             <xpath expr="//ul[@id='memcached']/li" position="after">
                     <li groups="base.group_website_designer"><a href="/mcflush/page"><span title="View all cached pages">Pages</span></a></li>
