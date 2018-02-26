@@ -102,16 +102,20 @@ class CachedHome(openerp.addons.web.controllers.main.Home):
         #~ '/web/js/<xmlid>',
         #~ '/web/js/<xmlid>/<version>',
     #~ ], type='http', auth='public')
-    @memcached.route(['/web/js/website.assets_frontend/<version>',
-                      '/web/js/web.assets_common/<version>',
-                      '/web/js/website.assets_editor/<version>'],flush_type='js_bundle',binary=True,cache_age=60*60*24*30,max_age=604800)
-    def js_bundle_special(self, version=None, **kw):
-        if 'website.assets_frontend' in request.httprequest.path:
-            return super(CachedHome, self).js_bundle('website.assets_frontend', version, **kw)
-        if 'web.assets_common' in request.httprequest.path:
-            return super(CachedHome, self).js_bundle('web.assets_common', version, **kw)
-        if 'website.assets_editor' in request.httprequest.path:
-            return super(CachedHome, self).js_bundle('website.assets_editor', version, **kw)
+    #~ @memcached.route(['/web/js/website.assets_frontend/<version>',
+                      #~ '/web/js/web.assets_common/<version>',
+                      #~ '/web/js/website.assets_editor/<version>'],flush_type='js_bundle',binary=True,cache_age=60*60*24*30,max_age=604800)
+    #~ def js_bundle_special(self, version=None, **kw):
+        #~ if 'website.assets_frontend' in request.httprequest.path:
+            #~ return super(CachedHome, self).js_bundle('website.assets_frontend', version, **kw)
+        #~ if 'web.assets_common' in request.httprequest.path:
+            #~ return super(CachedHome, self).js_bundle('web.assets_common', version, **kw)
+        #~ if 'website.assets_editor' in request.httprequest.path:
+            #~ return super(CachedHome, self).js_bundle('website.assets_editor', version, **kw)
+
+    @memcached.route(flush_type='js_bundle',binary=True,cache_age=60*60*24*30,max_age=604800)
+    def js_bundle(self, xmlid, version=None, **kw):
+        return super(CachedHome, self).js_bundle(xmlid, version, **kw)
 
 
 
