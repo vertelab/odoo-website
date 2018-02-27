@@ -147,11 +147,8 @@ class reseller_register(http.Controller):
         return request.website.render('website_reseller_register.register_form', value)
 
 
-
-
-
     @http.route(['/reseller_register/<int:issue>/contact/new','/reseller_register/<int:issue>/contact/<int:contact>'], type='http', auth='public', website=True)
-    def reseller_register_new(self, issue=0, contact=0,**post):
+    def reseller_contact_new(self, issue=0, contact=0,**post):
         issue = request.env['project.issue'].sudo().browse(issue)
         if contact > 0:
             contact = request.env['res.partner'].sudo().browse(contact) 
@@ -198,7 +195,22 @@ class reseller_register(http.Controller):
             })
 
 
-
+    @http.route(['/reseller_register/<int:issue>/contact/<int:contact>/delete'], type='http', auth='public', website=True)
+    def reseller_contact_delete(self, issue=0, contact=0,**post):
+        issue = request.env['project.issue'].sudo().browse(issue)
+        if contact > 0:
+            contact = request.env['res.partner'].sudo().browse(contact) 
+            if not (contact in issue.partner_id.child_ids):
+                contact = request.env['res.partner'].sudo().browse([])
+        else:
+            contact = request.env['res.partner'].sudo().browse([])
+        contact.unlink()
+        return request.website.render('website_reseller_register.contact_form', {
+                'issue': issue,
+                'contact': request.env['res.partner'].sudo().browse([]),
+                'help': self.get_help(),
+                'validation':  {k,'has-success' for k in self.contact_fields()},
+            })
 
 
     @http.route(['/website_reseller_register_message_send'], type='json', auth="public", website=True)
