@@ -77,6 +77,8 @@ try:
 except Exception as e:
     _logger.info('website_memcached requires pymemcache (pip install pymemcache) %s.' % e)
 
+flush_types = {}
+
 try:
     from pyhashxx import hashxx as MEMCACHED_HASH
 except Exception as e:
@@ -85,6 +87,7 @@ def MEMCACHED_CLIENT():
     global MEMCACHED__CLIENT__
     global MEMCACHED_SERVER
     global MEMCACHED_VERSION
+    global flush_types
     if not MEMCACHED_SERVER:
         MEMCACHED_SERVER = eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost",11211)')
     if not MEMCACHED__CLIENT__:
@@ -94,6 +97,18 @@ def MEMCACHED_CLIENT():
             #~ else:
             MEMCACHED__CLIENT__ = PooledClient(MEMCACHED_SERVER, serializer=serialize_pickle, deserializer=deserialize_pickle,no_delay=MEMCACHE_NODELAY,connect_timeout=MEMCACHE_CONNECT_TIMEOUT,timeout=MEMCACHE_TIMEOUT)
             MEMCACHED_VERSION = MEMCACHED__CLIENT__.version()
+
+            items = MEMCACHED__CLIENT__.stats('items')
+            slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED__CLIENT__.stats('items').items() if k.split(':')[2] == 'number' }
+            key_lists = [MEMCACHED__CLIENT__.stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
+            keys =  [key for sublist in key_lists for key in sublist.keys()]
+            for key in keys:
+                page = MEMCACHED__CLIENT__.get(key)
+                if page and page.get('db'):
+                    if not flush_types.get(page['db'], None):
+                        flush_types[page['db']] = set()
+                    flush_types[page['db']].add(page.get('flush_type'))
+
           #~ server: tuple(hostname, port)
           #~ serializer: optional function, see notes in the class docs.
           #~ deserializer: optional function, see notes in the class docs.
@@ -120,7 +135,9 @@ def MEMCACHED_CLIENT():
           #http://pymemcache.readthedocs.io/en/latest/getting_started.html
 
         except Exception as e:
-            _logger.info('Cannot instantiate MEMCACHED CLIENT %s.' % e)
+            err = sys.exc_info()
+            error = ''.join(traceback.format_exception(err[0], err[1], err[2]))
+            _logger.info('Cannot instantiate MEMCACHED CLIENT\n%s' % error)
             raise MemcacheServerError(e)
         except TypeError as e:
             _logger.info('Type error MEMCACHED CLIENT %s.' % e)
@@ -130,17 +147,20 @@ def MEMCACHED_CLIENT():
 
 # https://lzone.de/cheat-sheet/memcached
 
-flush_types = set()
-
-def add_flush_type(name):
-    flush_types.add(name)
+def add_flush_type(db, name):
+    if flush_types.get(db):
+        flush_types[db].add(name)
+    else:
+        flush_types[db] = set(name)
 
 class website(models.Model):
     _inherit = 'website'
 
     @api.model
     def flush_types(self):
-        return flush_types
+        if not any(flush_types):
+            flush_types[self.env.cr.dbname] = set()
+        return flush_types[self.env.cr.dbname]
 
     @api.model
     def memcache_get(self,key):
@@ -159,7 +179,7 @@ class website(models.Model):
 
     @api.model
     def memcache_flush_types(self):
-        return list(flush_types)
+        return list(flush_types[self.env.cr.dbname])
 
 def get_keys(flush_type=None,module=None,path=None):
     items = MEMCACHED_CLIENT().stats('items')
@@ -313,8 +333,6 @@ def route(route=None, **kw):
             routing['routes'] = routes
         @functools.wraps(f)
         def response_wrap(*args, **kw):
-            if routing.get('flush_type'):
-                openerp.addons.website_memcached.memcached.add_flush_type(routing['flush_type'](kw))
             #~ _logger.warn('\n\npath: %s\n' % request.httprequest.path)
             if routing.get('key'): # Function that returns a raw string for key making
                 # Format {path}{session}{etc}
@@ -459,7 +477,7 @@ def route(route=None, **kw):
                     }
                 mc_save(key, page_dict,cache_age)
                 if routing.get('flush_type'):
-                    add_flush_type(routing['flush_type'](kw))
+                    add_flush_type(request.cr.dbname, routing['flush_type'](kw))
                 #~ raise Warning(f.__module__,f.__name__,route())
             else:
                 request_dict = {h[0]: h[1] for h in request.httprequest.headers}
