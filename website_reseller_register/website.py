@@ -130,7 +130,7 @@ class reseller_register(http.Controller):
             children_dict = self.get_children_post(issue, post)
             children = children_dict['children']
             validation = children_dict['validations']
-            for field in self.company_fileds():
+            for field in self.company_fields():
                 validation['company_%s' %field] = 'has-success'
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
@@ -146,12 +146,11 @@ class reseller_register(http.Controller):
                 value[k] = v
         return request.website.render('website_reseller_register.register_form', value)
 
-
     @http.route(['/reseller_register/<int:issue>/contact/new','/reseller_register/<int:issue>/contact/<int:contact>'], type='http', auth='public', website=True)
-    def reseller_contact_new(self, issue=0, contact=0,**post):
+    def reseller_contact_new(self, issue=0, contact=0, **post):
         issue = request.env['project.issue'].sudo().browse(issue)
         if contact > 0:
-            contact = request.env['res.partner'].sudo().browse(contact) 
+            contact = request.env['res.partner'].sudo().browse(contact)
             if not (contact in issue.partner_id.child_ids):
                 contact = request.env['res.partner'].sudo().browse([])
         else:
@@ -182,36 +181,43 @@ class reseller_register(http.Controller):
                 if not contact:
                     contact = request.env['res.partner'].sudo().create(values)
                 else:
-                    _logger.error('values %s' % values)
                     contact.sudo().write(values)
-                return request.website.render('website_reseller_register.register_form', {'issue': issue,'help': self.get_help(),'validation': validation})
+                return request.redirect('/reseller_register/%s' %issue.id)
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
         return request.website.render('website_reseller_register.contact_form', {
-                'issue': issue,
-                'contact': contact,
-                'help': self.get_help(),
-                'validation': validation,
-            })
-
+            'issue': issue,
+            'contact': contact,
+            'help': self.get_help(),
+            'validation': validation,
+        })
 
     @http.route(['/reseller_register/<int:issue>/contact/<int:contact>/delete'], type='http', auth='public', website=True)
-    def reseller_contact_delete(self, issue=0, contact=0,**post):
+    def reseller_contact_delete(self, issue=0, contact=0, **post):
         issue = request.env['project.issue'].sudo().browse(issue)
         if contact > 0:
-            contact = request.env['res.partner'].sudo().browse(contact) 
+            contact = request.env['res.partner'].sudo().browse(contact)
             if not (contact in issue.partner_id.child_ids):
                 contact = request.env['res.partner'].sudo().browse([])
         else:
             contact = request.env['res.partner'].sudo().browse([])
         contact.unlink()
-        return request.website.render('website_reseller_register.contact_form', {
-                'issue': issue,
-                'contact': request.env['res.partner'].sudo().browse([]),
-                'help': self.get_help(),
-                'validation':  {k,'has-success' for k in self.contact_fields()},
-            })
+        validation = {}
+        for k in self.contact_fields():
+            validation[k] = 'has-success'
+        return request.redirect('/reseller_register/%s' %issue.id)
 
+    @http.route(['/reseller_register/<int:issue>/attachment/<int:attachment>/delete'], type='http', auth='public', website=True)
+    def reseller_attachment_delete(self, issue=0, attachment=0, **post):
+        issue = request.env['project.issue'].sudo().browse(issue)
+        if attachment > 0:
+            attachment = request.env['ir.attachment'].sudo().browse(attachment)
+            if attachment.res_model == 'res.partner' and attachment.res_id != 0:
+                contact = request.env['res.partner'].browse(attachment.res_id)
+                if contact.parent_id == issue.partner_id:
+                    attachment.unlink()
+                    return request.redirect('/reseller_register/%s/contact/%s' %(issue.id, contact.id))
+        return request.redirect('/reseller_register/%s' %issue.id)
 
     @http.route(['/website_reseller_register_message_send'], type='json', auth="public", website=True)
     def website_reseller_register_message_send(self, issue_id, msg_body, **kw):
