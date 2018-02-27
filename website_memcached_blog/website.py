@@ -19,7 +19,7 @@
 #
 ##############################################################################
 
-
+from openerp import models, fields, api, _
 from openerp import http
 from openerp.addons.web.http import request
 from openerp.addons.website_memcached import memcached
