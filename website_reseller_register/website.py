@@ -175,6 +175,7 @@ class reseller_register(http.Controller):
                     'datas': base64.encodestring(post['attachment'].read()),
                     'datas_fname': post['attachment'].filename,
                 })
+            values['parent_id'] = issue.partner_id.id
             # Validation and store
             for field in self.contact_fields():
                 validation['contact_%s' %field] = 'has-success'
@@ -186,7 +187,7 @@ class reseller_register(http.Controller):
                 else:
                     _logger.error('values %s' % values)
                     contact.sudo().write(values)
-            return request.website.render('website_reseller_register.register_form', {'issue': issue,'help': self.get_help(),'validation': validation})
+                return request.website.render('website_reseller_register.register_form', {'issue': issue,'help': self.get_help(),'validation': validation})
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
         return request.website.render('website_reseller_register.contact_form', {
