@@ -305,8 +305,6 @@ def route(route=None, **kw):
     routing = kw.copy()
     assert not 'type' in routing or routing['type'] in ("http", "json")
     def decorator(f):
-        if kw.get('flush_type'):
-            openerp.addons.website_memcached.memcached.add_flush_type(kw.get('flush_type'))
         if route:
             if isinstance(route, list):
                 routes = route
@@ -315,6 +313,8 @@ def route(route=None, **kw):
             routing['routes'] = routes
         @functools.wraps(f)
         def response_wrap(*args, **kw):
+            if routing.get('flush_type'):
+                openerp.addons.website_memcached.memcached.add_flush_type(routing['flush_type'](kw))
             #~ _logger.warn('\n\npath: %s\n' % request.httprequest.path)
             if routing.get('key'): # Function that returns a raw string for key making
                 # Format {path}{session}{etc}
@@ -454,12 +454,12 @@ def route(route=None, **kw):
                     'page':     base64.b64encode(page),
                     'date':     http_date(),
                     'module':   f.__module__,
-                    'flush_type': routing.get('flush_type'),
+                    'flush_type': routing['flush_type'](kw) if routing.get('flush_type', None) else "",
                     'headers': response.headers,
                     }
                 mc_save(key, page_dict,cache_age)
                 if routing.get('flush_type'):
-                    add_flush_type(routing.get('flush_type'))
+                    add_flush_type(routing['flush_type'](kw))
                 #~ raise Warning(f.__module__,f.__name__,route())
             else:
                 request_dict = {h[0]: h[1] for h in request.httprequest.headers}

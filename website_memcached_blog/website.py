@@ -29,13 +29,20 @@ from openerp.addons.website_blog.controllers.main import QueryURL, WebsiteBlog
 import logging
 _logger = logging.getLogger(__name__)
 
+class Website(models.Model):
+    _inherit = 'website'
+
+    def get_kw_blog(self, kw):
+        return kw['blog'].name if kw.get('blog', None) else ''
+
+
 class CachedBlog(WebsiteBlog):
 
     #~ @http.route([
         #~ '/blog',
         #~ '/blog/page/<int:page>',
     #~ ], type='http', auth="public", website=True)
-    @memcached.route(flush_type='blog')
+    @memcached.route(flush_type=lambda kw: 'blog %s' %request.website.get_kw_blog(kw))
     def blogs(self, page=1, **post):
         return super(CachedBlog, self).blogs(page, **post)
 
@@ -45,7 +52,7 @@ class CachedBlog(WebsiteBlog):
         #~ '/blog/<model("blog.blog"):blog>/tag/<model("blog.tag"):tag>',
         #~ '/blog/<model("blog.blog"):blog>/tag/<model("blog.tag"):tag>/page/<int:page>',
     #~ ], type='http', auth="public", website=True)
-    @memcached.route(flush_type='blog')
+    @memcached.route(flush_type=lambda kw: 'blog %s' %request.website.get_kw_blog(kw))
     def blog(self, blog=None, tag=None, page=1, **opt):
         return super(CachedBlog, self).blog(blog, tag, page, **opt)
 
@@ -53,7 +60,7 @@ class CachedBlog(WebsiteBlog):
     #~ @http.route([
             #~ '''/blog/<model("blog.blog"):blog>/post/<model("blog.post", "[('blog_id','=',blog[0])]"):blog_post>''',
     #~ ], type='http', auth="public", website=True)
-    @memcached.route(flush_type='blog')
+    @memcached.route(flush_type=lambda kw: 'blog %s' %request.website.get_kw_blog(kw))
     def blog_post(self, blog, blog_post, tag_id=None, page=1, enable_editor=None, **post):
         return super(CachedBlog, self).blog_post(blog, blog_post, tag_id, page, enable_editor, **post)
 
@@ -67,7 +74,7 @@ class CachedBlog(WebsiteBlog):
     #~ ], type='http', auth="user", website=True)
     #~ def memcached_flush_blog(self,**post):
         #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='blog'),'Flush Blog','/mcflush/blog'))
-     
+
     #~ @http.route([
         #~ '/mcflush/blog/all',
     #~ ], type='http', auth="user", website=True)
