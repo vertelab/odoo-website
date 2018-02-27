@@ -21,6 +21,7 @@
 from openerp import models, fields, api, _
 from openerp.addons.web import http
 from openerp.http import request
+import base64
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -36,8 +37,12 @@ class reseller_register(http.Controller):
         return value
 
     # can be overrided with more company field
-    def company_fileds(self):
+    def company_fields(self):
         return ['name']
+
+    # can be overrided with more company field
+    def contact_fields(self):
+        return ['name','phone','mobile','email','image','attachment']
 
     # can be overrided with more address type
     def get_children_post(self, issue, post):
@@ -96,8 +101,11 @@ class reseller_register(http.Controller):
         help['help_contact_street2'] = _('')
         help['help_contact_zip'] = _('')
         help['help_contact_city'] = _('')
-        help['help_contact_phone'] = _('')
-        help['help_contact_email'] = _('')
+        help['help_contact_image'] = _('Please a picture of you. This makes it more personal.')
+        help['help_contact_mobile'] = _('Contatcs Cell')
+        help['help_contact_phone'] = _('Contatcs phone')
+        help['help_contact_email'] = _('Please add an email address')
+        help['help_contact_attachment'] = _('If you have more information or a diploma, you can attach it here. You can add more than one, but you have to save each one separate.')
         return help
 
     @http.route(['/reseller_register/new', '/reseller_register/<int:issue>'], type='http', auth='public', website=True)
@@ -137,6 +145,60 @@ class reseller_register(http.Controller):
             for k,v in children.items():
                 value[k] = v
         return request.website.render('website_reseller_register.register_form', value)
+
+
+
+
+
+    @http.route(['/reseller_register/<int:issue>/contact/new','/reseller_register/<int:issue>/contact/<int:contact>'], type='http', auth='public', website=True)
+    def reseller_register_new(self, issue=0, contact=0,**post):
+        issue = request.env['project.issue'].sudo().browse(issue)
+        if contact > 0:
+            contact = request.env['res.partner'].sudo().browse(contact) 
+            if not (contact in issue.partner_id.child_ids):
+                contact = request.env['res.partner'].sudo().browse([])
+        else:
+            contact = request.env['res.partner'].sudo().browse([])
+
+        validation = {}
+        if request.httprequest.method == 'POST':
+            # Values
+            values = {f: post['contact_%s' % f] for f in self.contact_fields() if post.get('contact_%s' % f) and f not in ['attachment','image']}
+            if post.get('image'):
+                image = post['image'].read()
+                values['image'] = base64.encodestring(image)
+            if post.get('attachment'):
+                attachment = request.env['ir.attachment'].sudo().create({
+                    'name': post['attachment'].filename,
+                    'res_model': 'res.partner',
+                    'res_id': contact.id,
+                    'datas': base64.encodestring(post['attachment'].read()),
+                    'datas_fname': post['attachment'].filename,
+                })
+            # Validation and store
+            for field in self.contact_fields():
+                validation['contact_%s' %field] = 'has-success'
+            if not values.get('contact_name'):
+                validation['conact_name'] = 'has-error'
+            if not 'has-error' in validation:
+                if not contact:
+                    contact = request.env['res.partner'].sudo().create(values)
+                else:
+                    _logger.error('values %s' % values)
+                    contact.sudo().write(values)
+            return request.website.render('website_reseller_register.register_form', {'issue': issue,'help': self.get_help(),'validation': validation})
+        else:
+            issue = request.env['project.issue'].sudo().browse(int(issue))
+        return request.website.render('website_reseller_register.contact_form', {
+                'issue': issue,
+                'contact': contact,
+                'help': self.get_help(),
+                'validation': validation,
+            })
+
+
+
+
 
     @http.route(['/website_reseller_register_message_send'], type='json', auth="public", website=True)
     def website_reseller_register_message_send(self, issue_id, msg_body, **kw):
