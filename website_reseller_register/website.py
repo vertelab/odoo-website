@@ -22,6 +22,8 @@ from openerp import models, fields, api, _
 from openerp.addons.web import http
 from openerp.http import request
 import base64
+import sys
+import traceback
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -176,10 +178,40 @@ class reseller_register(http.Controller):
             for field in self.contact_fields():
                 validation['contact_%s' %field] = 'has-success'
             if not values.get('contact_name'):
-                validation['conact_name'] = 'has-error'
+                validation['contact_name'] = 'has-error'
             if not 'has-error' in validation:
                 if not contact:
-                    contact = request.env['res.partner'].sudo().create(values)
+                    if values.get('email') in request.env['res.users'].sudo().search([]).mapped('login'):
+                        validation['contact_email'] = 'has-error'
+                        contact = request.env['res.partner'].sudo().browse([])
+                        help_dic = self.get_help()
+                        help_dic['help_contact_email'] = _('This email is alreay exist. Choose another one!')
+                        return request.website.render('website_reseller_register.contact_form', {
+                            'issue': issue,
+                            'contact': contact,
+                            'help': help_dic,
+                            'validation': validation,
+                        })
+                    try:
+                        user = request.env['res.users'].sudo().create({
+                            'name': values.get('name'),
+                            'login': values.get('email'),
+                            'image': values.get('image'),
+                        })
+                        user.partner_id.sudo().write({
+                            'email': values.get('email'),
+                            'phone': values.get('phone'),
+                            'mobile': values.get('mobile'),
+                            'parent_id': values.get('parent_id'),
+                        })
+                        try:
+                            user.action_reset_password()
+                        except:
+                            _logger.warn('Cannot send mail to %s. Please check your mail server configuration.' %user.name)
+                    except Exception as e:
+                        err = sys.exc_info()
+                        error = ''.join(traceback.format_exception(err[0], err[1], err[2]))
+                        _logger.info('Cannot create user %s: %s' % (values.get('name'), error))
                 else:
                     contact.sudo().write(values)
                 return request.redirect('/reseller_register/%s' %issue.id)

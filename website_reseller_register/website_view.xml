@@ -221,7 +221,7 @@
                                     </div>
                                     <div t-att-class="'form-group %s' %validation.get('contact_name')">
                                         <label for="contact_name">Name</label>
-                                        <input type="text" class="form-control" name="contact_name" t-att-value="contact.name if contact else ''" placeholder="Given and family name " />
+                                        <input type="text" class="form-control" name="contact_name" t-att-value="contact.name if contact else ''" placeholder="Given and family name " required="1" />
                                         <small t-esc="help.get('help_contact_name')" />
                                     </div>
                                     <div t-att-class="'form-group %s' %validation.get('contact_phone')">
@@ -236,7 +236,7 @@
                                     </div>
                                     <div t-att-class="'form-group %s' %validation.get('contact_email')">
                                         <label for="contact_email">Email</label>
-                                        <input type="email" class="form-control" name="contact_email" t-att-value="contact.email if contact else ''" placeholder="" />
+                                        <input type="email" class="form-control" name="contact_email" t-att-value="contact.email if contact else ''" placeholder="" required="1" />
                                         <small t-esc="help.get('help_contact_email')" />
                                     </div>
                                 </div>
