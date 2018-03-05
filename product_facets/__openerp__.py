@@ -29,7 +29,7 @@ Adds facets, which act as product attributes, but without creating new product v
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['product'],
+    'depends': ['website_sale'],
     'data': [
         'product_facet_view.xml',
         'security/ir.model.access.csv',
