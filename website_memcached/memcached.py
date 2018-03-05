@@ -89,7 +89,10 @@ def MEMCACHED_CLIENT():
     global MEMCACHED_VERSION
     global flush_types
     if not MEMCACHED_SERVER:
-        MEMCACHED_SERVER = eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost",11211)')
+        try:
+            MEMCACHED_SERVER = eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost",11211)')
+        except:
+            MEMCACHED_SERVER = ("localhost",11211)
     if not MEMCACHED__CLIENT__:
         try:
             #~ if type(servers) == list:
@@ -181,7 +184,7 @@ class website(models.Model):
     def memcache_flush_types(self):
         return list(flush_types[self.env.cr.dbname])
 
-def get_keys(flush_type=None,module=None,path=None):
+def get_keys(flush_type=None,module=None,path=None, db=None):
     items = MEMCACHED_CLIENT().stats('items')
     slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
     key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
@@ -196,7 +199,9 @@ def get_keys(flush_type=None,module=None,path=None):
     if path:
        keys = [key for key in keys if path == 'all' or path == mc_load(key).get('path')]
     # Remove other databases
-    keys = [key for key in keys if request.env.cr.dbname == mc_load(key).get('db')]
+    if not db:
+        db = request.env.cr.dbname
+    keys = [key for key in keys if db == mc_load(key).get('db')]
 
     return keys
 
