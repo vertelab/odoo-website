@@ -472,7 +472,7 @@ def route(route=None, **kw):
                     'page':     base64.b64encode(page),
                     'date':     http_date(),
                     'module':   f.__module__,
-                    'flush_type': routing['flush_type'](kw) if routing.get('flush_type', None) else "",
+                    'flush_type': routing['flush_type'](kw).lower().replace(u'å', 'a').replace(u'ä', 'a').replace(u'ö', 'o').replace(' ', '-') if routing.get('flush_type', None) else "",
                     'headers': response.headers,
                     }
                 mc_save(key, page_dict,cache_age)
