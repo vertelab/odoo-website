@@ -1,8 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_product_facet_manager,product.facet.manager,model_product_facet,base.group_sale_manager,1,1,1,1
-access_product_facet_all,product.facet.all,model_product_facet,,1,0,0,0
-access_product_facet_line_manager,product.facet.line.manager,model_product_facet_line,base.group_sale_manager,1,1,1,1
-access_product_facet_line_all,product.facet.line.all,model_product_facet_line,,1,0,0,0
-access_product_product_facet_line_all,product.product.facet.line.all,model_product_product_facet_line,,1,0,0,0
-access_product_facet_value_manager,product.facet.value.manager,model_product_facet_value,base.group_sale_manager,1,1,1,1
-access_product_facet_value_all,product.facet.value.all,model_product_facet_value,,1,0,0,0
