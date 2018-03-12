@@ -460,7 +460,8 @@ def route(route=None, **kw):
                     #~ header_dict['Content-Type'] = routing.get('content_type')
                     #~ response.headers = [(h[0],h[1]) for h in header_dict.items()]
 
-                if not routing.get('binary'):
+                if response.template:
+                    #~ _logger.error('template %s values %s response %s' % (response.template,response.qcontext,response.response))
                     page = response.render()
                 else:
                     page = ''.join(response.response)
