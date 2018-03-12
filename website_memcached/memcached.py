@@ -501,6 +501,7 @@ def route(route=None, **kw):
                         ('Server','Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)),
                         ])
             response = http.Response(base64.b64decode(page_dict.get('page'))) # always create a new response (drop response from controller)
+            response.headers = page_dict.get('headers',[])
 
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
             # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
