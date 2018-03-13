@@ -133,6 +133,7 @@ class reseller_register(http.Controller):
             if not issue.partner_id.check_token(post.get('token')):
                 return request.website.render('website.403', {})
             issue.partner_id.write(self.get_company_post(post))
+            issue.partner_id.write({'active': True})
             children_dict = self.get_children_post(issue, post)
             children = children_dict['children']
             validation = children_dict['validations']
@@ -157,7 +158,6 @@ class reseller_register(http.Controller):
     @http.route(['/reseller_register/<int:issue>/contact/new', '/reseller_register/<int:issue>/contact/<int:contact>'], type='http', auth='public', website=True)
     def reseller_contact_new(self, issue=0, contact=0, **post):
         issue = request.env['project.issue'].sudo().browse(issue)
-        _logger.warn(post.get('token'))
         if not issue.partner_id.check_token(post.get('token')):
             return request.website.render('website.403', {})
         if contact > 0:
@@ -202,7 +202,7 @@ class reseller_register(http.Controller):
                             'validation': validation,
                         })
                     try:
-                        user = request.env['res.users'].sudo().create({
+                        user = request.env['res.users'].sudo().with_context(no_reset_password=True).create({
                             'name': values.get('name'),
                             'login': values.get('email'),
                             'image': values.get('image'),

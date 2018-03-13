@@ -29,7 +29,7 @@
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
     'depends': ['base'],
-    'data': [ ],
+    'data': [ 'partner_view.xml' ],
     'application': False,
     'installable': True,
 }

@@ -9,7 +9,7 @@
                         <div class="col-md-12 mt32 mb32">
                             <form t-att-action="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)" method="post">
                                 <h4 id="title_company">
-                                    <strong>Company Infomation</strong>
+                                    <strong>Company Information</strong>
                                 </h4>
                                 <div id="company_name" t-att-class="'form-group %s' %validation.get('company_name')">
                                     <label for="company_name">Company Name</label>
