@@ -29,7 +29,7 @@ A web form for public user to registe as reseller
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website', 'project_issue', 'auth_signup'],
+    'depends': ['website', 'project_issue', 'auth_signup', 'partner_token'],
     'data': [
         'project_data.xml',
         'project_view.xml',
