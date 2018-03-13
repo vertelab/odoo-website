@@ -7,7 +7,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12 mt32 mb32">
-                            <form t-att-action="'/reseller_register/%s' %issue.id" method="post">
+                            <form t-att-action="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)" method="post">
                                 <h4 id="title_company">
                                     <strong>Company Infomation</strong>
                                 </h4>
@@ -133,7 +133,7 @@
                                                         <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="'%s' %(('data:image/png;base64,%s' %contact.image_small) if contact.image_small else '/web/static/src/img/placeholder.png')"/>
                                                     </td>
                                                     <td>
-                                                        <a t-att-href="'/reseller_register/%s/contact/%s' %(issue.id, contact.id)"><span t-field="contact.name" /></a>
+                                                        <a t-att-href="'/reseller_register/%s/contact/%s?token=%s' %(issue.id, contact.id, issue.partner_id.token)"><span t-field="contact.name" /></a>
                                                     </td>
                                                     <td>
                                                         <span t-field="contact.phone" />
@@ -150,7 +150,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td/>
-                                                    <td><a t-att-href="'/reseller_register/%s/contact/new' % issue.id"><u>New Contact</u></a></td>
+                                                    <td><a t-att-href="'/reseller_register/%s/contact/new?token=%s' % (issue.id, issue.partner_id.token)"><u>New Contact</u></a></td>
                                                     <td/>
                                                     <td/>
                                                     <td/>
@@ -207,6 +207,7 @@
                     <div class="row">
                         <div class="col-md-12 mt32 mb32">
                             <form t-att-action="'/reseller_register/%s/contact/%s' %(issue.id,contact.id if contact else 'new')" method="post" enctype="multipart/form-data">
+                                <input name="token" t-att-value="issue.partner_id.token" type="hidden"/>
                                 <h4 id="title_contact">
                                     <strong>Contact Infomation</strong>
                                 </h4>
@@ -281,7 +282,7 @@
                                 <!-- contact person -->
                                 <div class="container">
                                     <div class="pull-right mt16 mb16">
-                                        <a t-att-href="'/reseller_register/%s' %issue.id" role="button" class="btn btn-default">Back</a>
+                                        <a t-att-href="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)" role="button" class="btn btn-default">Back</a>
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>
                                 </div>
