@@ -321,13 +321,31 @@ class fts_model(models.AbstractModel):
         else:
             self._fts_trigger = False
 
-    @api.model
-    def _lang_o2pg(self, lang):
+    @api.cr_context
+    def _lang_o2pg(self, cr, lang, context=None):
         """
-        Return the corresponding name of the language in postgresql.
+        Return the corresponding name of the language and fts column in postgresql.
         """
-        langs = {}
-        return langs.get(lang, 'swedish')
+        col_name = '_fts_vector_%s' % lang.lower()
+        langs = {
+            'da': 'danish',
+            'nl': 'dutch',
+            'en': 'english',
+            'fi': 'finnish',
+            'fr': 'french',
+            'de': 'german',
+            'hu': 'hungarian',
+            'it': 'italian',
+            'no': 'norwegian',
+            'pt': 'portuguese',
+            'ro': 'romanian',
+            'ru': 'russian',
+            'es': 'spanish',
+            'sv': 'swedish',
+            'tr': 'turkish',
+        }
+        lang = lang.split('_')[0]
+        return langs.get(lang, 'simple'), col_name
 
     @api.model
     def _get_fts_vector_expr_old(self):
@@ -372,89 +390,166 @@ class fts_model(models.AbstractModel):
 
         """
         res = super(fts_model, self)._auto_init(cr, context)
+        
+        
+        #~ cr.execute("SELECT res_id FROM ir_model_data WHERE module = 'base' and name = 'user_root';")
+        #~ res = cr.dictfetchone()
+        #~ user_id = res['res_id']
+        #~ _logger.warn('\n\nuser_id: %s' % user_id)
+        #~ env = api.Environment(cr, user_id, context)
+        #~ env[self._name]._init_fts_fields()
+        #~ return res
+    
+    #~ @api.model
+    #~ def _init_fts_fields(self):
+        #~ cr, context = self._cr, self._context
+        cr.execute("DROP FUNCTION IF EXISTS website_fts_translate_term(language text, term text, model text, field text, t_name text, obj_id integer);")
+        cr.execute("""CREATE FUNCTION website_fts_translate_term(language text, term text, model text, field text, t_name text, obj_id integer) RETURNS text AS $$
+DECLARE result text;
+    BEGIN
+        result := model || ',' || field;
+        SELECT value INTO result FROM ir_translation it WHERE
+            it.name = result AND
+            it.lang = language AND
+            it.res_id = obj_id AND
+            it.value != '' AND
+            it.src = term
+        ORDER BY id
+        LIMIT 1;
+        return COALESCE(result, term);
+    END;
+$$ LANGUAGE plpgsql;""")
+        langs = set()
+        cr.execute("SELECT code from res_lang WHERE id in (SELECT lang_id FROM website_lang_rel);")
+        for d in cr.dictfetchall():
+            langs.add(d['code'])
+        _logger.warn('FTS languages: %s' % ', '.join(langs))
         columns = self._select_column_data(cr)
-        update_index = False
-        if self._auto and '_fts_vector' not in columns:
-            # Add _fts_vector column to the table
-            cr.execute('ALTER TABLE "%s" ADD COLUMN "_fts_vector" tsvector' % self._table)
-            update_index = True
-        if self._auto and self._fts_fields_d and '_fts_trigger' in columns:
-            #~ # Create data to handle triggers on all related tables.
-            #~ triggers = {}
-            #~ for field in self._fts_fields_d:
-                #~ if field.get('related'):
-                    #~ table = field['related_table']
-                    #~ name = field['related']
-                #~ else:
-                    #~ table = self._table
-                    #~ name = field['name']
-                #~ if table not in triggers:
-                    #~ triggers[table] = []
-                #~ triggers[table].append(name)
-            #~ # Drop all old triggers.
-            #~ for trigger in triggers:
-                #~ if trigger == self._table:
-                    #~ tname = 'upd_fts_vector'
-                #~ else:
-                    #~ tname = 'upd_fts_vector_%s' % self._table
-                #~ cr.execute("DROP TRIGGER IF EXISTS %s ON %s;" % tname, trigger)
-            cr.execute("DROP TRIGGER IF EXISTS upd_fts_vector ON %s;" % self._table)
-            
-            # Create function that updates the new _fts_vector column.
-            func_name = '%s_fts_vector_trigger' % self._table
-            cr.execute("DROP FUNCTION IF EXISTS %s();" % func_name)
-            fields = []
-            _logger.warn('_fts_fields_d %s: %s' % (self._table, self._fts_fields_d))
-            for field in self._fts_fields_d:
-                if field.get('sql'):
-                    fields.append(field['sql'])
-                elif field.get('related'):
-                    fields.append("        setweight(to_tsvector('swedish', COALESCE((SELECT %s FROM %s WHERE id = new.%s), '')), '%s')" % (
-                        field['related'].split('.')[1],
-                        field['related_table'],
-                        field['related'].split('.')[0],
-                        field.get('weight', 'D')))
-                else:
-                    fields.append("        setweight(to_tsvector('swedish', COALESCE(new.%s, '')), '%s')" % (field['name'], field.get('weight', 'D')))
-            fields = ' ||\n'.join(fields) + ';'
-            expr = "CREATE FUNCTION %s() RETURNS trigger AS $$\n" \
-            "begin\n" \
-            "    new._fts_vector :=%s\n" \
-            "    return new;\n" \
-            "end\n" \
-            "$$ LANGUAGE plpgsql;" % (func_name, fields)
-            _logger.debug(expr)
-            cr.execute(expr)
-            # Bind the update function to a trigger.
-            #~ fields = []
-            #~ for field in self._fts_fields_d:
-                #~ fields.append(field['name'])
-            #~ fields = ', '.join(fields)
+        for field in self._fts_fields_d:
+            _logger.warn(self._fields.get(field['name']))
+        for lang in langs:
+            update_index = False
+            ps_lang, col_name = self._lang_o2pg(cr, lang, context)
+            if self._auto and col_name not in columns:
+                # Add _fts_vector column to the table
+                _logger.warn('Adding column %s.%s' % (self._table, col_name))
+                cr.execute('ALTER TABLE "%s" ADD COLUMN "%s" tsvector' % (self._table, col_name))
+                update_index = True
+            if self._auto and self._fts_fields_d and '_fts_trigger' in columns:
+                #~ cr.execute("DROP TRIGGER IF EXISTS upd_fts_vector ON %s;" % self._table)
+                #~ func_name = '%s_fts_vector_trigger' % self._table
+                #~ cr.execute("DROP FUNCTION IF EXISTS %s();" % func_name)
+                
+                trigger_name = 'upd%s' % col_name
+                func_name = '%s%s_trigger' % (self._table, col_name)
+                
+                cr.execute("DROP TRIGGER IF EXISTS %s ON %s;" % (trigger_name, self._table))
+                
+                # Create function that updates the new _fts_vector column.
+                cr.execute("DROP FUNCTION IF EXISTS %s();" % func_name)
+                declares = []
+                selects = []
+                fields = []
+                _logger.warn('_fts_fields_d %s: %s' % (self._table, self._fts_fields_d))
+                for field in self._fts_fields_d:
+                    relational_fields = None
+                    if '.' in field['name']:
+                        relational_fields = field['name'].split('.')
+                        field_obj = self._fields[relational_fields[0]]
+                    else:
+                        field_obj = self._fields[field['name']]
+                        relational_fields = field_obj.related
+                    _logger.warn(relational_fields)
+                    if field.get('sql'):
+                        fields.append(field['sql'].format(lang=lang, ps_lang=ps_lang, col_name=col_name))
+                    elif relational_fields:
+                        var_name = "fts_trans_%s" % '_'.join(relational_fields)
+                        declares.append("DECLARE %s text;\n" % var_name)
+                        selects.append(self._fts_get_related_select(cr, var_name, lang, ps_lang, self, relational_fields, context))
+                        fields.append("        setweight(to_tsvector('%s', COALESCE(%s, '')), '%s')" % (
+                            ps_lang, var_name, field.get('weight', 'D')))
+                    #~ elif hasattr(field_obj, 'translate'):
+                    elif field_obj.translate:
+                        var_name = "fts_trans_%s" % field['name']
+                        declares.append("DECLARE %s text;\n" % var_name)
+                        selects.append("    SELECT website_fts_translate_term('%s', new.%s, '%s', '%s', '%s', new.id) INTO %s;\n" % (
+                            lang, field['name'], self._name, field['name'], self._table, var_name))
+                        fields.append("setweight(to_tsvector('%s', COALESCE(%s, '')), '%s')" % (
+                            ps_lang, var_name, field.get('weight', 'D')))
+                    else:
+                        fields.append("setweight(to_tsvector('%s', COALESCE(new.%s, '')), '%s')" % (ps_lang, field['name'], field.get('weight', 'D')))
+                fields = ' ||\n        '.join(fields) + ';'
+                expr = "CREATE FUNCTION %s() RETURNS trigger AS $$\n%s" \
+                "BEGIN\n%s" \
+                "    new.%s := %s\n" \
+                "    return new;\n" \
+                "END;\n" \
+                "$$ LANGUAGE plpgsql;" % (func_name, ''.join(declares), ''.join(selects), col_name, fields)
+                _logger.debug(expr)
+                cr.execute(expr)
+                expr = "CREATE TRIGGER %s BEFORE INSERT OR UPDATE OF _fts_trigger ON %s " \
+                    "FOR EACH ROW EXECUTE PROCEDURE %s();" % (trigger_name, self._table, func_name)
+                _logger.debug(expr)
+                cr.execute(expr)
+                if update_index:
+                    # Create index on the _fts_vector column.
+                    cr.execute("CREATE INDEX %s%s_idx ON %s USING GIST (%s);" % (self._table, col_name, self._table, col_name))
+        return res
 
-            #~ # Create triggers on relevant tables.
-            #~ for table in triggers:
-                #~ if table == self._table:
-                    #~ tname = 'upd_fts_vector'
-                #~ else:
-                    #~ tname = 'upd_fts_vector_%s' % self._table
-                #~ expr = "CREATE TRIGGER %s BEFORE INSERT OR UPDATE OF %s ON %s " \
-                #~ "FOR EACH ROW EXECUTE PROCEDURE %s();" % (tname, ', '.join(triggers[table]), table, func_name)
-                #~ _logger.debug(expr)
-                #~ cr.execute(expr)
-            expr = "CREATE TRIGGER upd_fts_vector BEFORE INSERT OR UPDATE OF _fts_trigger ON %s " \
-                "FOR EACH ROW EXECUTE PROCEDURE %s();" % (self._table, func_name)
-            _logger.debug(expr)
-            cr.execute(expr)
-            if update_index:
-                # Create index on the _fts_vector column.
-                cr.execute("CREATE INDEX %s_fts_vector_idx ON %s USING GIST (_fts_vector);" % (self._table, self._table))
+    @api.cr_context
+    def _fts_get_related_select(self, cr, var_name, lang, ps_lang, model, fields, context):
+        """
+        Build the SQL statements necessary to get translated terms for a chain of relational field.
+        :param lang: A string with the name of the language in Odoo.
+        :param ps_lang: A string with the name of the language in postgresql.
+        :param model: An Odoo model object.
+        :param fields: A list of fields (strings). First item must be a relational field on model. Last item must be a text field.
+        :return: TBD
+        """
+        res = ''
+        for field in fields:
+            field_obj = model._fields[field]
+            if field_obj.type == 'one2many':
+                table = model._table
+                model = self.pool.get(field_obj.comodel_name)
+                inverse_name = field_obj.inverse_name
+                if not res:
+                    res = "FROM %s WHERE %s IN (SELECT id FROM %s WHERE id = new.id)" % (model._table, inverse_name, table)
+                else:
+                    res = "FROM %s WHERE %s IN (SELECT id %s)" % (model._table, inverse_name, res)
+            elif field_obj.type == 'many2one':
+                table = model._table
+                model = self.pool.get(field_obj.comodel_name)
+                if not res:
+                    res = "FROM %s WHERE id IN (SELECT %s FROM %s WHERE id = new.id)" % (model._table, field, table)
+                else:
+                    res = "FROM %s WHERE id IN (SELECT %s %s)" % (model._table, field, res)
+            elif field_obj.type == 'many2many':
+                table = model._table
+                model = self.pool.get(field_obj.comodel_name)
+                if not res:
+                    res = "FROM %s WHERE id IN (SELECT %s FROM %s WHERE %s = new.id)" % (model._table, field_obj.column2, field_obj.relation, field_obj.column1)
+                else:
+                    res = "FROM %s WHERE id IN (SELECT %s FROM %s WHERE %s IN (SELECT id %s))" % (model._table, field_obj.column2, field_obj.relation, field_obj.column1, res)
+            else:
+                #~ if hasattr(field_obj, 'translate'):
+                if field_obj.translate:
+                    res = "    SELECT string_agg(name, ' ') INTO %s FROM (SELECT website_fts_translate_term('%s', obj.name, '%s', '%s', '%s', obj.id) as name FROM (SELECT id, %s %s) AS obj) AS result;\n" % (var_name, lang, model._name, field, model._table, field, res)
+                else:
+                    res = "    SELECT string_agg(name, ' ') INTO %s FROM (SELECT %s %s) AS result;\n" % (var_name, field, res)
         return res
 
     @api.model
-    def _fts_reindex(self):
-        expr = "REINDEX INDEX %s_fts_vector_idx;" % self._table
-        _logger.debug(expr)
-        self.env.cr.execute(expr)
+    def _fts_reindex(self, langs=None):
+        if not langs:
+            langs = set()
+            self.env.cr.execute("SELECT code from res_lang WHERE id in (SELECT lang_id FROM website_lang_rel);")
+            for d in cr.dictfetchall():
+                langs.add(d['code'])
+        for lang in langs:
+            expr = "REINDEX INDEX %s_fts_vector_%s_idx;" % (self._table, lang)
+            _logger.debug(expr)
+            self.env.cr.execute(expr)
 
     @api.model
     def _fts_update_vector(self):
@@ -509,8 +604,9 @@ class fts_model(models.AbstractModel):
         :param domain: An optional Odoo search domain.
         :return: a list of dicts with ids and weights ([[{'id': 1, 'ts_rank': 0.23}]).
         """
-        # TODO: Check access rights and rules. Look at _search() and _apply_ir_rules() in models.
-        #self.check_access_rights(cr, access_rights_uid or user, 'read')
+        lang = self._context.get('lang')
+        ps_lang, col_name = self._lang_o2pg(lang)
+        _logger.warn('\n\nlang: %s\nps_lang: %s\ncol_name: %s' % (lang, ps_lang, col_name))
         self.check_access_rights('read')
         # TODO: Clean query from problematic characters.
         lexemes = self._fts_get_lexemes(query)
@@ -518,11 +614,11 @@ class fts_model(models.AbstractModel):
         query = self._where_calc(domain)
         self._apply_ir_rules(query, 'read')
         #where, values = self._fts_get_where_clause(query)
-        query.where_clause.append('''"%s"."%s" @@ to_tsquery('swedish', %%s)''' % (self._table, '_fts_vector'))
+        query.where_clause.append('''"%s"."%s" @@ to_tsquery('%s', %%s)''' % (self._table, col_name, ps_lang))
         query.where_clause_params.append(lexemes)
         from_clause, where_clause, params = query.get_sql()
         params = [lexemes] + params
-        expr = '''SELECT "%s"."id", ts_rank("%s"."%s", to_tsquery('swedish', %%s)) FROM %s WHERE %s;''' % (self._table, self._table, '_fts_vector', from_clause, where_clause)
+        expr = '''SELECT "%s"."id", ts_rank("%s"."%s", to_tsquery('%s', %%s)) FROM %s WHERE %s;''' % (self._table, self._table, col_name, ps_lang, from_clause, where_clause)
         _logger.debug(expr)
         _logger.debug(params)
         self.env.cr.execute(expr, params)

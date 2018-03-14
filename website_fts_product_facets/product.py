@@ -41,8 +41,23 @@ class product_facet_value(models.Model):
     _name = 'product.facet.value'
     _inherit = ['product.facet.value', 'fts.model']
 
-    _fts_fields = ['facet_id','value_ids','product_tmpl_id']
+    _fts_fields = ['facet_id', 'product_tmpl_id']
 
+    _fts_fields_d = [
+        {'name': 'facet_name', 'weight': 'A', 'related': 'facet_id.name', 'related_table': 'product_template'},
+        {'name': 'name', 'weight': 'A', 'related': 'product_tmpl_id.name', 'related_table': 'product_template'},
+    ]
+    
+    _fts_trigger = fields.Boolean(string='Trigger FTS Update', help='Change this field to update FTS.', compute='_compute_fts_trigger', store=True)
+
+    @api.depends('facet_id.name', 'name')
+    @api.one
+    def _compute_fts_trigger(self):
+        # TODO: Trigger this update when relevant translations change.
+        if self._fts_trigger:
+            self._fts_trigger = True
+        else:
+            self._fts_trigger = False
 
     @api.one
     def _full_text_search_update(self):

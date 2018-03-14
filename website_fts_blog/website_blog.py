@@ -45,8 +45,8 @@ class Blog(models.Model):
     _fts_fields_d = [
         {'name': 'name', 'weight': 'A'},
         {'name': 'subtitle', 'weight': 'A'},
-        {'name': 'blog_id', 'weight': 'A', 'related': 'blog_id.name', 'related_table': 'blog_blog'},
-        {'name': 'author_id', 'weight': 'A', 'related': 'author_id.name', 'related_table': 'res_partner'},
+        {'name': 'blog_id.name', 'weight': 'A', 'related': 'blog_id.name', 'related_table': 'blog_blog'},
+        {'name': 'author_id.name', 'weight': 'A', 'related': 'author_id.name', 'related_table': 'res_partner'},
         {'name': 'content', 'weight': 'C'},
     ]
 
