@@ -17,7 +17,7 @@ $(document).ready(function(){
             "issue_id": self.data('value'),
             "msg_body": self.closest("#message_box").find("#msgbox").val()
         }).done(function(data){
-            $("#messages").load(location.href + " #messages");
+            $("#message_box").load(location.href + " #message_box");
             $("#msgbox").addClass('hidden');
             $("#send_msgbox").addClass('hidden');
             $("#close_msgbox").addClass('hidden');

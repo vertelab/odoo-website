@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2004-2016 Vertel AB (<http://vertel.se>).
+#    Copyright (C) 2004-2018 Vertel AB (<http://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,20 +20,16 @@
 ##############################################################################
 
 {
-    'name': 'Product Facets',
-    'version': '0.2',
+    'name': 'Partner Token',
+    'version': '0.1',
     'category': '',
-    'summary': "Adds facets to products",
+    'summary': "",
     'description': """
-Adds facets, which act as product attributes, but without creating new product variants.
 """,
     'author': 'Vertel AB',
     'website': 'http://www.vertel.se',
-    'depends': ['website_sale'],
-    'data': [
-        'product_facet_view.xml',
-        'security/ir.model.access.csv',
-    ],
+    'depends': ['base'],
+    'data': [ 'partner_view.xml' ],
     'application': False,
     'installable': True,
 }

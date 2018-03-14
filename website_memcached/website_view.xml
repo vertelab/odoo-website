@@ -1,21 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        
         <template id="memchached_menu" inherit_id="website.user_navbar" name="Memcached Menu">
             <xpath expr="//ul[@id='oe_systray']/li" position="after">
-                <!-- Test -->
                 <li class="dropdown" groups="base.group_website_publisher">
                     <a id="memcached-menu-button" class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        Memcached <span class="caret"/>
+                        Memcached
+                        <span class="caret" />
                     </a>
-                    <ul class="dropdown-menu oe_memcached_menu" role="menu">
-                        <li groups="base.group_website_designer"><a href="/mcflush"><span title="View all cached pages">All Pages</span></a></li>
-                        <li groups="base.group_website_designer"><a t-att-href="'/mcpath?path=%s' % request.httprequest.path"><span title="View all cached pages for this path">This page</span></a></li>
+                    <ul class="dropdown-menu oe_memcached_menu" role="menu" id='memcached'>
+                        <li groups="base.group_website_designer">
+                            <a href="/mcflush">
+                                <span title="View all cached objects">All Objects</span>
+                            </a>
+                        </li>
+                        <li groups="base.group_website_designer">
+                            <a t-att-href="'/mcpath?path=%s' % request.httprequest.path">
+                                <span title="View all cached objects for this path">This Path</span>
+                            </a>
+                        </li>
+                        <t t-foreach='website.flush_types()' t-as='ft'>
+                            <li groups="base.group_website_designer">
+                                <a t-att-href="'/mcflush/%s' % ft">
+                                    <span title="View all cached objects for this flush_type" t-esc='ft' />
+                                </a>
+                            </li>
+                        </t>
                     </ul>
                 </li>
             </xpath>
         </template>
-        
+        <!-- Page -->
+        <template id="memcached_page" name="Memcached Page">
+            <t t-call="website.layout">
+                <div class="oe_structure">
+                    <section class="mb0">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-11" id="title_column">
+                                    <h1 class="text-center" t-esc="title" />
+                                </div>
+                                <div class="col-md-1">
+                                    <a t-att-href="delete_url" class="btn btn-danger mt32">Flush All <i class="fa fa-trash-o"/></a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="table-responsive" id="main_column">
+                            <table class="table table-bordered table-hover text-center">
+                                <thead>
+                                    <t t-foreach="header" t-as="h">
+                                        <th t-esc="h" class="text-center" />
+                                    </t>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="rows" t-as="row">
+                                        <td t-foreach="row" t-as="data">
+                                            <t t-raw="data" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="mcmeta_page" name="Memcached Metadata Page">
+            <t t-call="website.layout">
+                <div class="oe_structure">
+                    <section class="mb0">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12" id="title_column">
+                                    <a t-att-href="url"><h1 class="text-center">Key <t t-esc="key"/></h1></a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <h3 class="text-center">Metadata</h3>
+                        <div class="table-responsive" id="main_column">
+                            <table class="table table-bordered table-hover">
+                                <tbody>
+                                    <tr t-foreach="page_dict" t-as="kv">
+                                        <t t-if="kv[0] != 'page'">
+                                            <td><t t-esc="kv[0]"/></td>
+                                            <td><t t-esc="kv[1]"/></td>
+                                        </t>
+                                    </tr>
+                                    <tr>
+                                        <td>Page</td>
+                                        <td><t t-esc="page_len"/> KB</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
     </data>
 </openerp>
