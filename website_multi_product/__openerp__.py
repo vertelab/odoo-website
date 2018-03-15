@@ -10,6 +10,7 @@ Multi Website Product domain
 
         """,
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'depends': ['website_multi','website_sale'],
     'installable': True,
     'data': [

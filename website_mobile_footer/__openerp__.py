@@ -23,6 +23,7 @@
     'name': 'Website Mobile Footer',
     'version': '0.1',
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'category': 'website',
     'website': 'http://www.vertel.se',
     'summary': 'Hides website automatic footer for small devices',

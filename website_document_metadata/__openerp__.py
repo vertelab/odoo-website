@@ -25,6 +25,7 @@
     'category': 'website',
     'summary': "Manager document metadata in backend",
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website', 'document'],
     'data': ['website_view.xml'],

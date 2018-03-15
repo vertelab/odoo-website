@@ -25,6 +25,7 @@
     'category': '',
     'description': """Publish a page, set groups on page""",
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website_page_groups', 'sale_agent'],
     'data': [

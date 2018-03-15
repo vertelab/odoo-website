@@ -26,6 +26,7 @@
     'summary': "Adds help button to gantt views.",
     'description': """""",
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['help_online', 'web_gantt'],
     'data': ['website_help_view.xml'],

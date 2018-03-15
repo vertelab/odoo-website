@@ -96,6 +96,7 @@ Default are Database + Path + Context eg {db},{path},{context}
 
 """,
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website'],
     'external_dependencies': {'python': ['pymemcache', 'pyhashxx']},

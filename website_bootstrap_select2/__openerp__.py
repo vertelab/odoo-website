@@ -28,6 +28,7 @@
 Manual can be found at https://select2.github.io/
 """,
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website'],
     'data': [

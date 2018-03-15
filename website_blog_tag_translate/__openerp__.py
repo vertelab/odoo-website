@@ -26,6 +26,7 @@
     'summary': "Translate blog tags.",
     'description': """""",
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website_blog'],
     'data': [],

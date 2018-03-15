@@ -26,6 +26,7 @@
     'summary': "Fixes the google maps image generation on partner.",
     'description': """Adds a Google Maps API Key to Website Settings. Map generation now supports custom markers.""",
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website'],
     'data': ['website_view.xml'],

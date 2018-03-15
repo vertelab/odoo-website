@@ -33,6 +33,7 @@ Add simple category pages for products
 
 """,
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website_sale','website_product_templates'],
     'data': ['website_product_pcategory.xml',

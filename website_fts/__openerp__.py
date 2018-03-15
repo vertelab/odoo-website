@@ -30,6 +30,7 @@ Search in blogs and static web pages
 Financed by Dermanord AB
 """,
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website'],
     'external_dependencies': {'python': ['bs4',]},
