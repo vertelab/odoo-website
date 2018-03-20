@@ -51,18 +51,11 @@ class product_template(models.Model):
     _inherit = ['product.template', 'fts.model']
 
     _fts_fields = ['website_published', 'name', 'description_sale']
-    _fts_fields_d = [
-        {'name': 'name', 'weight': 'A'},
-        {'name': 'description_sale', 'weight': 'B'}]
 
-    @api.depends('name', 'description_sale')
-    @api.one
-    def _compute_fts_trigger(self):
-        # TODO: Trigger this update when relevant translations change.
-        if self._fts_trigger:
-            self._fts_trigger = True
-        else:
-            self._fts_trigger = False
+    def _get_fts_fields(self):
+        return [
+            {'name': 'name', 'weight': 'A'},
+            {'name': 'description_sale', 'weight': 'B'}]
 
     @api.one
     def _full_text_search_update(self):
@@ -89,22 +82,14 @@ class product_product(models.Model):
     _inherit = ['product.product', 'fts.model']
 
     _fts_fields = ['website_published','name','description_sale','default_code','ean13','product_tmpl_id','attribute_value_ids']
-    _fts_fields_d = [
-        {'name': 'name', 'weight': 'A', 'related': 'product_tmpl_id.name', 'related_table': 'product_template'},
-        {'name': 'description_sale', 'weight': 'B'},
-        {'name': 'default_code', 'weight': 'A'},
-        {'name': 'ean13', 'weight': 'A'}]
-
+    
+    def _get_fts_fields(self):
+        return [
+            {'name': 'name', 'weight': 'A', 'related': 'product_tmpl_id.name', 'related_table': 'product_template'},
+            {'name': 'description_sale', 'weight': 'B'},
+            {'name': 'default_code', 'weight': 'A'},
+            {'name': 'ean13', 'weight': 'A'}]
     _fts_trigger = fields.Boolean(string='Trigger FTS Update', help='Change this field to update FTS.', compute='_compute_fts_trigger', store=True)
-
-    @api.depends('product_tmpl_id.name', 'description_sale', 'default_code', 'ean13')
-    @api.one
-    def _compute_fts_trigger(self):
-        # TODO: Trigger this update when relevant translations change.
-        if self._fts_trigger:
-            self._fts_trigger = True
-        else:
-            self._fts_trigger = False
 
     @api.one
     def _full_text_search_update(self):
@@ -140,7 +125,10 @@ class product_public_category(models.Model):
     _inherit = ['product.public.category', 'fts.model']
 
     _fts_fields = ['name']
-    _fts_fields_d = [{'name': 'name', 'weight': 'A'}]
+    #~ _fts_fields_d = [{'name': 'name', 'weight': 'A'}]
+
+    def _get_fts_fields(self):
+        return [{'name': 'name', 'weight': 'A'}]
 
     @api.one
     def _full_text_search_update(self):

@@ -30,7 +30,7 @@ Financed by Dermanord AB
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
-    'depends': ['website_fts','product_facets'],
+    'depends': ['website_fts_product','product_facets'],
     'data': [
         'website_search.xml',
     ],

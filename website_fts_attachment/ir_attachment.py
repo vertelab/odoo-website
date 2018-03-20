@@ -45,21 +45,24 @@ class document_file(models.Model):
     group_ids = fields.Many2many(string='Groups', comodel_name='res.groups')
 
     _fts_fields = ['index_content','name','description']
-    _fts_fields_d = [{'name': 'index_content'}, {'name': 'name'}, {'name': 'description'}]
+    #~ _fts_fields_d = [{'name': 'index_content'}, {'name': 'name'}, {'name': 'description'}]
 
-    @api.depends('index_content','name','description')
-    @api.one
-    def _compute_fts_trigger(self):
-        """
-        Dummy field to trigger the updates on SQL level. Tracking
-        changes is much easier on Odoo level than on SQL level. Make
-        this field dependant on the relevant fields.
-        """
-        # TODO: Trigger this update when relevant translations change.
-        if self._fts_trigger:
-            self._fts_trigger = True
-        else:
-            self._fts_trigger = False
+    def _get_fts_fields(self):
+        return [{'name': 'index_content'}, {'name': 'name'}, {'name': 'description'}]
+    
+    #~ @api.depends('index_content','name','description')
+    #~ @api.one
+    #~ def _compute_fts_trigger(self):
+        #~ """
+        #~ Dummy field to trigger the updates on SQL level. Tracking
+        #~ changes is much easier on Odoo level than on SQL level. Make
+        #~ this field dependant on the relevant fields.
+        #~ """
+        #~ # TODO: Trigger this update when relevant translations change.
+        #~ if self._fts_trigger:
+            #~ self._fts_trigger = True
+        #~ else:
+            #~ self._fts_trigger = False
 
     @api.one
     def _full_text_search_update(self):

@@ -42,27 +42,35 @@ class Blog(models.Model):
     _inherit = ['blog.post', 'fts.model']
 
     _fts_fields = ['content','website_published','name','subtitle','blog_id','author_id']
-    _fts_fields_d = [
-        {'name': 'name', 'weight': 'A'},
-        {'name': 'subtitle', 'weight': 'A'},
-        {'name': 'blog_id.name', 'weight': 'A', 'related': 'blog_id.name', 'related_table': 'blog_blog'},
-        {'name': 'author_id.name', 'weight': 'A', 'related': 'author_id.name', 'related_table': 'res_partner'},
-        {'name': 'content', 'weight': 'C'},
-    ]
+    #~ _fts_fields_d = [
+        #~ {'name': 'name', 'weight': 'A'},
+        #~ {'name': 'subtitle', 'weight': 'A'},
+        #~ {'name': 'blog_id.name', 'weight': 'A', 'related': 'blog_id.name', 'related_table': 'blog_blog'},
+        #~ {'name': 'author_id.name', 'weight': 'A', 'related': 'author_id.name', 'related_table': 'res_partner'},
+        #~ {'name': 'content', 'weight': 'C'},
+    #~ ]
+    def _get_fts_fields(self):
+        return [
+            {'name': 'name', 'weight': 'A'},
+            {'name': 'subtitle', 'weight': 'A'},
+            {'name': 'blog_id.name', 'weight': 'A', 'related': 'blog_id.name', 'related_table': 'blog_blog'},
+            {'name': 'author_id.name', 'weight': 'A', 'related': 'author_id.name', 'related_table': 'res_partner'},
+            {'name': 'content', 'weight': 'C'},
+        ]
 
-    @api.depends('content','website_published','name','subtitle','blog_id.name','author_id.name')
-    @api.one
-    def _compute_fts_trigger(self):
-        """
-        Dummy field to trigger the updates on SQL level. Tracking
-        changes is much easier on Odoo level than on SQL level. Make
-        this field dependant on the relevant fields.
-        """
-        # TODO: Trigger this update when relevant translations change.
-        if self._fts_trigger:
-            self._fts_trigger = True
-        else:
-            self._fts_trigger = False
+    #~ @api.depends('content','website_published','name','subtitle','blog_id.name','author_id.name')
+    #~ @api.one
+    #~ def _compute_fts_trigger(self):
+        #~ """
+        #~ Dummy field to trigger the updates on SQL level. Tracking
+        #~ changes is much easier on Odoo level than on SQL level. Make
+        #~ this field dependant on the relevant fields.
+        #~ """
+        #~ # TODO: Trigger this update when relevant translations change.
+        #~ if self._fts_trigger:
+            #~ self._fts_trigger = True
+        #~ else:
+            #~ self._fts_trigger = False
 
     @api.one
     def _full_text_search_update(self):
