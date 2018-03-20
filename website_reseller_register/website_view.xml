@@ -252,7 +252,7 @@
                                         <th>Type</th>
                                         <th />
                                     </thead>
-                                    <tbody>
+                                    <tbody t-if="contact">
                                         <tr t-foreach="request.env['ir.attachment'].search([('res_model','=','res.partner'),('res_id','=',contact.id)])" t-as="attachment">
                                             <td>
                                                 <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="'/web/binary/image?model=ir.attachment&amp;field=datas&amp;id=%s' %attachment.id"/>
