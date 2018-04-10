@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    
+    <record id="translation_wizard_form" model="ir.ui.view">
+      <field name="name">website.translate.wizard.form</field>
+      <field name="model">website.translate.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Translations">
+          <div class="col-md-4">
+            <group>
+              <field name="view_id"/>
+              <field name="lang"/>
+              <field name="user_id"/>
+              <field name="delete_unused"/>
+            </group>
+            <button type="object" name="save_translations" string="Save Sources"/>
+          </div>
+          <div>
+          <h1>Instructions</h1>
+          Choose a view and a language. All translatable terms connected to that view and language will generate a line below. The tool will match the translatable terms to matching translation objects. Exact matches will be marked as Translated. If no exact match is found, a best guess will be made.
+          You can match a translatable term to another translation object, or create a new one.
+          You can edit the Translation value for the translation objects.
+          Changes will be saved when you hit the Save button.
+          Use the Save Sources button to save the new sources to their matched translation objects.
+          If you wish to delete any unmatched translations (listed under the Unused Translations tab), check the Delete Unused Translations box before saving sources.
+          </div>
+          <notebook>
+            <page string="Translation Terms">
+              <field name="row_ids">
+                <tree>
+                  <field name="translated"/>
+                  <field name="multiple"/>
+                  <field name="source"/>
+                  <field name="value"/>
+                  <field name="translation_id" context="{'translation_wizard_ir_translation_ids': translation_ids}" domain="[('name', '=', 'website'), ('res_id', '=', view_id), ('lang', '=', lang]"/>
+                  <field name="translation_ids" invisible="1"/>
+                  <field name="view_id" invisible="1"/>
+                  <field name="lang" invisible="1"/>
+                </tree>
+              </field>
+            </page>
+            <page string="Unused Translations">
+              <p>These translation terms are connected to this view, but aren't currently used.</p>
+              <field name="unused_translation_ids"/>
+            </page>
+            <page string="All Translations">
+              <p>These are all the translation terms used by this view.</p>
+              <field name="translation_ids"/>
+            </page>
+            <page string="Views">
+              <p>These are all the views that make up the main view.</p>
+              <field name="view_ids"/>
+            </page>
+          </notebook>
+        </form>
+      </field>
+    </record>
+    
+    <record id="translation_wizard_tree" model="ir.ui.view">
+      <field name="name">website.translate.wizard.tree</field>
+      <field name="model">website.translate.wizard</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="write_date"/>
+        </tree>
+      </field>
+    </record>
+    
+    <record id="translation_wizard_row_form" model="ir.ui.view">
+      <field name="name">website.translate.row.form</field>
+      <field name="model">website.translate.row</field>
+      <field name="arch" type="xml">
+        <form string="Translation Term">
+          <group>
+            <field name="view_id"/>
+            <field name="lang"/>
+            <field name="translated"/>
+            <field name="multiple"/>
+            <field name="source"/>
+            <field name="value"/>
+            <field name="translation_id" context="{'translation_wizard_ir_translation_ids': translation_ids}" domain="[('name', '=', 'website'), ('res_id', '=', view_id), ('lang', '=', lang]"/>
+            <field name="translation_ids" invisible="1"/>
+            <field name="view_id" invisible="1"/>
+          </group>
+        </form>
+      </field>
+    </record>
+    
+    <record id="translation_wizard_action" model="ir.actions.act_window">
+      <field name="name">Translation Wizard</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">website.translate.wizard</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form,tree</field>
+      <field name="target">current</field>
+      <field name="context">{}</field>
+      <field name="domain"></field>
+    </record>
+    
+    <menuitem name="Website Translations" id="menu_translation_wizard" parent="base.menu_translation" action="translation_wizard_action" sequence="1" />
+    
+  </data>
+</openerp>
