@@ -36,7 +36,7 @@ _logger = logging.getLogger(__name__)
 class CachedWebsite(Website):
 
     #~ @http.route('/page/<page:page>', type='http', auth="public", website=True)
-    @memcached.route(flush_type=lambda kw: 'page', key=lambda k: '{db}{path}{logged_in}{lang}')
+    @memcached.route(flush_type=lambda kw: 'page', key=lambda k: '{db}{path}{logged_in}{publisher}{designer}{lang}')
     def page(self, page, **opt):
         return super(CachedWebsite, self).page(page, **opt)
 
