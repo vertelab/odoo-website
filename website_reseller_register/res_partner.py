@@ -18,26 +18,20 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from openerp import models, fields, api, _
 
-{
-    'name': 'Website Reseller Register',
-    'version': '0.1',
-    'category': 'website',
-    'description': """
-A web form for public user to registe as reseller
-=================================================
-""",
-    'author': 'Vertel AB',
-    'license': 'AGPL-3',
-    'website': 'http://www.vertel.se',
-    'depends': ['website', 'project_issue', 'auth_signup', 'partner_token'],
-    'data': [
-        'project_data.xml',
-        'res_partner_data.xml',
-        'project_view.xml',
-        'website_view.xml',
-    ],
-    'application': False,
-    'installable': True,
-}
-# vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:
+import logging
+_logger = logging.getLogger(__name__)
+
+
+class res_partner(models.Model):
+    _inherit = 'res.partner'
+
+    @api.model
+    def remove_inactive_reseller(self):
+        partners = self.env['res.partner'].search([('active', '=', False), ('is_company', '=', True), ('name', '=', 'My Company'), ('child_ids', '=', False)])
+        issues = self.env['project.issue'].search([('stage_id', '=', self.env.ref('project.project_tt_analysis').id), ('partner_id', 'in', partners.mapped('id'))])
+        for i in issues:
+            i.unlink()
+        for p in partners:
+            p.unlink()
