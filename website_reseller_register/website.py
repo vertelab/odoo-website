@@ -29,13 +29,13 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-PARTNER_FIELDS = ['name', 'street', 'street2', 'zip', 'city', 'phone', 'email']
+PARTNER_FIELDS = ['name', 'street', 'street2', 'zip', 'city', 'country_id', 'phone', 'email']
 
 class reseller_register(http.Controller):
 
     # can be overrided with more company field
     def get_company_post(self, post):
-        value = {'name': post.get('company_name')}
+        value = {'name': post.get('company_name'), 'company_registry': post.get('company_registry')}
         return value
 
     # can be overrided with more company field
@@ -47,8 +47,12 @@ class reseller_register(http.Controller):
         return ['name','phone','mobile','email','image','attachment']
 
     # can be overrided with more address type
+    def get_address_type(self):
+        return ['delivery', 'invoice', 'contact']
+
+    # can be overrided with more address type
     def get_children_post(self, issue, post):
-        address_type = ['delivery', 'invoice', 'contact']
+        address_type = self.get_address_type()
         children = {}
         validations = {}
         for at in address_type:
@@ -59,7 +63,7 @@ class reseller_register(http.Controller):
 
     # can be overrided with more address type
     def get_children(self, issue):
-        address_type = ['delivery', 'invoice', 'contact']
+        address_type = self.get_address_type()
         children = {}
         for at in address_type:
             children[at] = issue.partner_id.child_ids.filtered(lambda c: c.type == at)
@@ -67,7 +71,13 @@ class reseller_register(http.Controller):
 
     def get_child(self, issue, address_type, post):
         validation = {}
-        child_dict = {k.split('_')[1]:v for k,v in post.items() if k.split('_')[0] == address_type}
+        child_dict = {}
+        for k,v in post.items():
+            if k.split('_')[0] == address_type:
+                if len(k.split('_')) > 2:
+                    child_dict['_'.join(k.split('_')[1:])] = v
+                else:
+                    child_dict[k[1]] = v
         if any(child_dict):
             if address_type != 'contact':
                 child_dict['name'] = address_type
@@ -88,16 +98,19 @@ class reseller_register(http.Controller):
     def get_help(self):
         help = {}
         help['help_company_name'] = _('')
+        help['help_company_registry'] = _('')
         help['help_delivery_street'] = _('')
         help['help_delivery_street2'] = _('')
         help['help_delivery_zip'] = _('')
         help['help_delivery_city'] = _('')
+        help['help_delivery_country_id'] = _('')
         help['help_delivery_phone'] = _('')
         help['help_delivery_email'] = _('')
         help['help_invoice_street'] = _('')
         help['help_invoice_street2'] = _('')
         help['help_invoice_zip'] = _('')
         help['help_invoice_city'] = _('')
+        help['help_invoice_country_id'] = _('')
         help['help_invoice_phone'] = _('')
         help['help_invoice_email'] = _('')
         help['help_contact_street'] = _('')
@@ -149,6 +162,7 @@ class reseller_register(http.Controller):
             'issue': issue,
             'help': help,
             'validation': validation,
+            'country_selection': [(country['id'], country['name']) for country in request.env['res.country'].search_read([], ['name'])],
         }
         if any(children):
             for k,v in children.items():
