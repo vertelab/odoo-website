@@ -36,5 +36,4 @@ class project_issue(models.Model):
 
     @api.one
     def activate_reseller(self):
-        _logger.warn('<<<<<<< %s' %self.partner_id)
         self.partner_id.write({'active': True})
