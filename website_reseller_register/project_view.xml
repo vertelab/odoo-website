@@ -20,7 +20,7 @@
                 <field name="partner_id" position="after">
                     <field name="use_reseller" invisible="1"/>
                     <label for="activate_reseller" string="Activate Reseller" attrs="{'invisible': [('use_reseller', '=', False)]}"/>
-                    <button icon="gtk-redo" name="activate_reseller" type="object" class="oe_inline oe_highlight" attrs="{'invisible': [('use_reseller', '=', False)]}"/>
+                    <button icon="gtk-apply" name="activate_reseller" type="object" class="oe_inline oe_highlight" attrs="{'invisible': [('use_reseller', '=', False)]}"/>
                 </field>
             </field>
         </record>
