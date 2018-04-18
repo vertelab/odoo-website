@@ -23,6 +23,16 @@
                                         <input type="text" class="form-control" name="company_registry" t-att-value="issue.partner_id.company_registry" placeholder="123456-7897" />
                                     </div>
                                 </div>
+                                <div id="company_property_invoice_type" class="form-group">
+                                     <label class="col-md-3 col-sm-4 control-label" for="invoicetype">Invoice Type</label>
+                                     <div class="col-md-7 col-sm-8">
+                                        <select class="form-control" name="invoicetype">
+                                            <t t-foreach="invoice_type_selection" t-as="type">
+                                                <option t-att-value="type[0]" t-att="{'selected': '1'} if type[0] == (issue.partner_id.property_invoice_type and issue.partner_id.property_invoice_type.id) else {}"><t t-esc="type[1]"/></option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
                                 <ul class="nav nav-tabs">
                                     <li id="nav_delivery" class="active">
                                         <a data-toggle="tab" href="#delivery" class="hidden-xs">Delivery</a>

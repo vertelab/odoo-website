@@ -133,7 +133,8 @@ class reseller_register(http.Controller):
             partner = request.env['res.partner'].sudo().create({
                 'name': _('My Company'),
                 'is_company': True,
-                'active': False
+                'active': False,
+                'property_invoice_type': None,
             })
             issue = request.env['project.issue'].sudo().create({
                 'name': 'New Reseller Application',
@@ -145,8 +146,9 @@ class reseller_register(http.Controller):
             issue = request.env['project.issue'].sudo().browse(int(issue))
             if not issue.partner_id.check_token(post.get('token')):
                 return request.website.render('website.403', {})
+            if post.get('invoicetype'):
+                issue.partner_id.write({'property_invoice_type': int(post.get('invoicetype'))})
             issue.partner_id.write(self.get_company_post(post))
-            issue.partner_id.write({'active': True})
             children_dict = self.get_children_post(issue, post)
             children = children_dict['children']
             validation = children_dict['validations']
@@ -163,6 +165,7 @@ class reseller_register(http.Controller):
             'help': help,
             'validation': validation,
             'country_selection': [(country['id'], country['name']) for country in request.env['res.country'].search_read([], ['name'])],
+            'invoice_type_selection': [(invoice_type['id'], invoice_type['name']) for invoice_type in request.env['sale_journal.invoice.type'].search_read([], ['name'])],
         }
         if any(children):
             for k,v in children.items():
