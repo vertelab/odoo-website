@@ -19,11 +19,22 @@
 #
 ##############################################################################
 from openerp import models, fields, api, _
-
 import logging
 _logger = logging.getLogger(__name__)
+
 
 class project(models.Model):
     _inherit = 'project.project'
 
     use_reseller = fields.Boolean(string='Reseller', help='Check this field if this project manages reseller register issues')
+
+
+class project_issue(models.Model):
+    _inherit = 'project.issue'
+
+    use_reseller = fields.Boolean(string='Reseller', related='project_id.use_reseller')
+
+    @api.one
+    def activate_reseller(self):
+        _logger.warn('<<<<<<< %s' %self.partner_id)
+        self.partner_id.write({'active': True})

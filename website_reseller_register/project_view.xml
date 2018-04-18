@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <record id="edit_project" model="ir.ui.view">
+            <field name="name">project.project.form.inherited.website_reseller_register</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.edit_project"/>
+            <field name="arch" type="xml">
+                <div name="options_active" position="inside">
+                    <field name="use_reseller" class="oe_inline"/>
+                    <label for="use_reseller" string="Use Reseller"/>
+                </div>
+            </field>
+        </record>
+        <record id="project_issue_form_view" model="ir.ui.view">
+            <field name="name">Project Issue Tracker Form.inherited.website_reseller_register</field>
+            <field name="model">project.issue</field>
+            <field name="inherit_id" ref="project_issue.project_issue_form_view"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="use_reseller" invisible="1"/>
+                    <label for="activate_reseller" string="Activate Reseller" attrs="{'invisible': [('use_reseller', '=', False)]}"/>
+                    <button icon="gtk-redo" name="activate_reseller" type="object" class="oe_inline oe_highlight" attrs="{'invisible': [('use_reseller', '=', False)]}"/>
+                </field>
+            </field>
+        </record>
     </data>
 </openerp>
