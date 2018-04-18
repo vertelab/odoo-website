@@ -165,7 +165,7 @@ class reseller_register(http.Controller):
             'help': help,
             'validation': validation,
             'country_selection': [(country['id'], country['name']) for country in request.env['res.country'].search_read([], ['name'])],
-            'invoice_type_selection': [(invoice_type['id'], invoice_type['name']) for invoice_type in request.env['sale_journal.invoice.type'].search_read([], ['name'])],
+            'invoice_type_selection': [(invoice_type['id'], invoice_type['name']) for invoice_type in request.env['sale_journal.invoice.type'].sudo().search_read([], ['name'])],
         }
         if any(children):
             for k,v in children.items():
