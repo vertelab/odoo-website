@@ -27,7 +27,7 @@ class website_config_settings(models.TransientModel):
 
     @api.model
     def get_default_memcached_db(self, fields):
-        return {'memcached_db': self.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '[("localhost", 11211)]'}
+        return {'memcached_db': self.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost", 11211)'}
 
     @api.one
     def set_memcached_db(self):
