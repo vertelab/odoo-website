@@ -35,19 +35,19 @@
                                 </div>
                                 <ul class="nav nav-tabs">
                                     <li id="nav_delivery" class="active">
-                                        <a data-toggle="tab" href="#delivery" class="hidden-xs">Delivery</a>
+                                        <a data-toggle="tab" href="#delivery" class="hidden-xs">Delivery Address</a>
                                         <a data-toggle="tab" href="#delivery" class="hidden-lg hidden-md hidden-sm">
                                             <i class="fa fa-truck" />
                                         </a>
                                     </li>
                                     <li id="nav_invoice" class="">
-                                        <a data-toggle="tab" href="#invoice" class="hidden-xs">Invoice</a>
+                                        <a data-toggle="tab" href="#invoice" class="hidden-xs">Invoice Address</a>
                                         <a data-toggle="tab" href="#invoice" class="hidden-lg hidden-md hidden-sm">
                                             <i class="fa fa-file-o" />
                                         </a>
                                     </li>
                                     <li id="nav_contact" class="">
-                                        <a data-toggle="tab" href="#contact" class="hidden-xs">Contact</a>
+                                        <a data-toggle="tab" href="#contact" class="hidden-xs">My Employees</a>
                                         <a data-toggle="tab" href="#contact" class="hidden-lg hidden-md hidden-sm">
                                             <i class="fa fa-users" />
                                         </a>
@@ -55,9 +55,6 @@
                                 </ul>
                                 <div class="tab-content">
                                     <div id="delivery" class="tab-pane fade in active">
-                                        <h4 id="title_delivery">
-                                            <strong>Delivery</strong>
-                                        </h4>
                                         <p id="instruction_delivery" />
                                         <div t-att-class="'form-group %s' %validation.get('delivery_street')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_street">Street</label>
@@ -114,9 +111,6 @@
                                         </div>
                                     </div>
                                     <div id="invoice" class="tab-pane fade">
-                                        <h4 id="title_invoice">
-                                            <strong>Invoice</strong>
-                                        </h4>
                                         <p id="instruction_invoice" />
                                         <div t-att-class="'form-group %s' %validation.get('invoice_street')">
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_street">Street</label>
@@ -173,9 +167,6 @@
                                         </div>
                                     </div>
                                     <div id="contact" class="tab-pane fade">
-                                        <h4 id="title_contact">
-                                            <strong>Contact</strong>
-                                        </h4>
                                         <table class="table table-responsive table-striped table-bordered">
                                             <thead>
                                                 <th/>
@@ -183,6 +174,9 @@
                                                 <th>Phone</th>
                                                 <th>Cell</th>
                                                 <th>Email</th>
+<!--
+                                                <th>Password Reset</th>
+-->
                                                 <th/>
                                             </thead>
                                             <tbody>
@@ -202,6 +196,11 @@
                                                     <td>
                                                         <span t-field="contact.email" />
                                                     </td>
+<!--
+                                                    <td class="text-center">
+                                                        <a href="javascript:void(0);" class="fa fa-envelope-o fa-2x" t-att-onclick="'''RRpwReset(%s, %s);''' %(issue.partner_id.user_id.id, contact.id)" />
+                                                    </td>
+-->
                                                     <td class="text-center">
                                                         <a t-att-href="'/reseller_register/%s/contact/%s/delete' % (issue.id,contact.id)" class="fa fa-trash-o fa-2x" />
                                                     </td>

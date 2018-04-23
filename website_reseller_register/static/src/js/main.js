@@ -25,3 +25,12 @@ $(document).ready(function(){
         });
     });
 });
+
+//~ function RRpwReset(user_id, partner_id) {
+    //~ openerp.jsonRpc("/reseller_register/contact/pw_reset", "call", {
+        //~ 'user_id': user_id,
+        //~ 'partner_id': partner_id,
+    //~ }).done(function(data){
+        //~ window.alert(data);
+    //~ });
+//~ }

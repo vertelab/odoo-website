@@ -135,6 +135,7 @@ class reseller_register(http.Controller):
                 'is_company': True,
                 'active': False,
                 'property_invoice_type': None,
+                'website_short_description': None,
             })
             issue = request.env['project.issue'].sudo().create({
                 'name': 'New Reseller Application',
@@ -143,17 +144,8 @@ class reseller_register(http.Controller):
             })
             return partner.redirect_token('/reseller_register/%s' %issue.id)
         elif request.httprequest.method == 'POST':
+            self.update_partner_info(issue, post)
             issue = request.env['project.issue'].sudo().browse(int(issue))
-            if not issue.partner_id.check_token(post.get('token')):
-                return request.website.render('website.403', {})
-            if post.get('invoicetype'):
-                issue.partner_id.write({'property_invoice_type': int(post.get('invoicetype'))})
-            issue.partner_id.write(self.get_company_post(post))
-            children_dict = self.get_children_post(issue, post)
-            children = children_dict['children']
-            validation = children_dict['validations']
-            for field in self.company_fields():
-                validation['company_%s' %field] = 'has-success'
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
             if not issue.partner_id.check_token(post.get('token')):
@@ -171,6 +163,21 @@ class reseller_register(http.Controller):
             for k,v in children.items():
                 value[k] = v
         return request.website.render('website_reseller_register.register_form', value)
+
+    # can be overrided
+    def update_partner_info(self, issue, post):
+        issue = request.env['project.issue'].sudo().browse(int(issue))
+        if not issue.partner_id.check_token(post.get('token')):
+            return request.website.render('website.403', {})
+        if post.get('invoicetype'):
+            issue.partner_id.write({'property_invoice_type': int(post.get('invoicetype'))})
+        issue.partner_id.write({'website_short_description': post.get('website_short_description', '')})
+        issue.partner_id.write(self.get_company_post(post))
+        children_dict = self.get_children_post(issue, post)
+        children = children_dict['children']
+        validation = children_dict['validations']
+        for field in self.company_fields():
+            validation['company_%s' %field] = 'has-success'
 
     @http.route(['/reseller_register/<int:issue>/contact/new', '/reseller_register/<int:issue>/contact/<int:contact>'], type='http', auth='public', website=True)
     def reseller_contact_new(self, issue=0, contact=0, **post):
