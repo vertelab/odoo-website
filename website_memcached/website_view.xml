@@ -10,15 +10,21 @@
                     </a>
                     <ul class="dropdown-menu oe_memcached_menu" role="menu" id='memcached'>
                         <li groups="base.group_website_designer">
-                            <a href="/mcflush">
-                                <span title="View all cached objects">All Objects</span>
+                            <a t-att-href="'/mcclearpath?path=%s' % request.httprequest.path">
+                                <span title="Clear all cached objects for this path">Clear This Path</span>
                             </a>
                         </li>
                         <li groups="base.group_website_designer">
                             <a t-att-href="'/mcpath?path=%s' % request.httprequest.path">
-                                <span title="View all cached objects for this path">This Path</span>
+                                <span title="View all cached objects for this path">View This Path</span>
                             </a>
                         </li>
+                        <li groups="base.group_website_designer">
+                            <a href="/mcflush">
+                                <span title="View all cached objects">All Objects</span>
+                            </a>
+                        </li>
+                        
                         <t t-foreach='website.flush_types()' t-as='ft'>
                             <li groups="base.group_website_designer">
                                 <a t-att-href="'/mcflush/%s' % ft">
