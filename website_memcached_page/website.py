@@ -33,6 +33,22 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+class ir_ui_view(models.Model):
+    _inherit = 'ir.ui.view'
+    
+    @api.multi
+    def write(self, values):
+        for o in self:
+            model_data = self.env['ir.model.data'].search([('model','=','ir.ui.view'),('res_id','=',o.id)],limit=1)
+            if model_data and model_data.module == 'website':
+                for key in memcached.get_keys(path='/page/%s' % model_data.name):
+                    memcached.mc_delete(key) 
+        return super(ir_ui_view, self).write(values)
+
+  
+
+
+
 class CachedWebsite(Website):
 
     #~ @http.route('/page/<page:page>', type='http', auth="public", website=True)
