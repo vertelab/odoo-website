@@ -241,7 +241,7 @@ class reseller_register(http.Controller):
                         validation['contact_email'] = 'has-error'
                         contact = request.env['res.partner'].sudo().browse([])
                         help_dic = self.get_help()
-                        help_dic['help_contact_email'] = _('This email is alreay exist. Choose another one!')
+                        help_dic['help_contact_email'] = _('This email is aldready exist. Choose another one!')
                         return request.website.render('website_reseller_register.contact_form', {
                             'issue': issue,
                             'contact': contact,
