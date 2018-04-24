@@ -147,9 +147,26 @@ class reseller_register(http.Controller):
             })
             return partner.redirect_token('/reseller_register/%s' %issue.id)
         elif request.httprequest.method == 'POST':
-            issue = request.env['project.issue'].sudo().browse(int(issue))
-            self.update_partner_info(issue, post)
-            return request.redirect('/reseller_register/thanks')
+            try:
+                issue = request.env['project.issue'].sudo().browse(int(issue))
+                self.update_partner_info(issue, post)
+                return request.redirect('/reseller_register/thanks')
+            except Exception as e:
+                _logger.error(str(e))
+                value = {}
+                if e[0] == 'ValidateError':
+                    f = self.find_field_name(e[1])
+                    if f == 'vat':
+                        validation['company_company_registry'] = 'has-danger'
+                        help['help_company_registry'] = _('Control your organization number.')
+                value = {
+                    'issue': issue,
+                    'validation': validation,
+                    'help': help,
+                    'country_selection': [(country['id'], country['name']) for country in request.env['res.country'].search_read([], ['name'])],
+                    'invoice_type_selection': [(invoice_type['id'], invoice_type['name']) for invoice_type in request.env['sale_journal.invoice.type'].sudo().search_read([], ['name'])],
+                }
+                return request.website.render('website_reseller_register.register_form', value)
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
             if not issue.partner_id.check_token(post.get('token')):
@@ -181,6 +198,9 @@ class reseller_register(http.Controller):
         validation = children_dict['validations']
         for field in self.company_fields():
             validation['company_%s' %field] = 'has-success'
+
+    def find_field_name(self, s):
+        return s[(s.index('Field(s) `')+len('Field(s) `')):s.index('` ')]
 
     @http.route(['/reseller_register/<int:issue>/contact/new', '/reseller_register/<int:issue>/contact/<int:contact>'], type='http', auth='public', website=True)
     def reseller_contact_new(self, issue=0, contact=0, **post):

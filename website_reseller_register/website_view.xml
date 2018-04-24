@@ -15,12 +15,14 @@
                                     <label class="col-md-3 col-sm-4 control-label" for="company_name">Company Name</label>
                                     <div class="col-md-7 col-sm-8">
                                         <input type="text" class="form-control" name="company_name" t-att-value="issue.partner_id.name" placeholder="" />
+                                        <small t-esc="help.get('help_company_name')" />
                                     </div>
                                 </div>
                                 <div id="company_org" t-att-class="'form-group %s' %validation.get('company_company_registry')">
                                      <label class="col-md-3 col-sm-4 control-label" for="company_registry">Organization Number</label>
                                      <div class="col-md-7 col-sm-8">
                                         <input type="text" class="form-control" name="company_registry" t-att-value="issue.partner_id.company_registry" placeholder="123456-7897" />
+                                        <small t-esc="help.get('help_company_registry')" />
                                     </div>
                                 </div>
                                 <div id="company_property_invoice_type" class="form-group">
