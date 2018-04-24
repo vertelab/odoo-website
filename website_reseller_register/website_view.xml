@@ -56,7 +56,7 @@
                                 <div class="tab-content">
                                     <div id="delivery" class="tab-pane fade in active">
                                         <p id="instruction_delivery" />
-                                        <t t-set="delivery" t-value="issue.partner_id.child_ids.filtered(lambda c: c.type == 'delivery')[0] or None"/>
+                                        <t t-set="delivery" t-value="issue.partner_id.child_ids.filtered(lambda c: c.type == 'delivery')[0] if issue.partner_id.child_ids.filtered(lambda c: c.type == 'delivery') else None"/>
                                         <div t-att-class="'form-group %s' %validation.get('delivery_street')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_street">Street</label>
                                             <div class="col-md-7 col-sm-8">
@@ -113,7 +113,7 @@
                                     </div>
                                     <div id="invoice" class="tab-pane fade">
                                         <p id="instruction_invoice" />
-                                        <t t-set="invoice" t-value="issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice')[0] or None"/>
+                                        <t t-set="invoice" t-value="issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice')[0] if issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice') else None"/>
                                         <div t-att-class="'form-group %s' %validation.get('invoice_street')">
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_street">Street</label>
                                             <div class="col-md-7 col-sm-8">
