@@ -33,6 +33,7 @@ A web form for public user to registe as reseller
     'depends': ['website', 'project_issue', 'auth_signup', 'partner_token', 'sale_journal',],
     'data': [
         'project_data.xml',
+        'website_data.xml',
         'res_partner_data.xml',
         'project_view.xml',
         'website_view.xml',

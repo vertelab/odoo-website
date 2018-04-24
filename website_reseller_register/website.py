@@ -149,6 +149,7 @@ class reseller_register(http.Controller):
         elif request.httprequest.method == 'POST':
             issue = request.env['project.issue'].sudo().browse(int(issue))
             self.update_partner_info(issue, post)
+            return request.redirect('/reseller_register/thanks')
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
             if not issue.partner_id.check_token(post.get('token')):
@@ -301,3 +302,7 @@ class reseller_register(http.Controller):
             if message:
                 return True
         return False
+
+    @http.route(['/reseller_register/thanks'], type='http', auth='public', website=True)
+    def thanks_for_your_application(self, **post):
+        return request.website.render('website_reseller_register.thanks_for_your_application', {})
