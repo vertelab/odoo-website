@@ -178,9 +178,7 @@
                                                 <th>Phone</th>
                                                 <th>Cell</th>
                                                 <th>Email</th>
-<!--
                                                 <th>Password Reset</th>
--->
                                                 <th/>
                                             </thead>
                                             <tbody>
@@ -200,11 +198,12 @@
                                                     <td>
                                                         <span t-field="contact.email" />
                                                     </td>
-<!--
                                                     <td class="text-center">
-                                                        <a href="javascript:void(0);" class="fa fa-envelope-o fa-2x" t-att-onclick="'''RRpwReset(%s, %s);''' %(issue.partner_id.user_id.id, contact.id)" />
+                                                        <t t-set="contact_user" t-value="request.env['res.users'].search([('partner_id', '=', contact.id)])"/>
+                                                        <t t-if="contact_user">
+                                                            <a href="javascript:void(0);" class="fa fa-envelope-o fa-2x" t-att-onclick="'''RRpwReset(%s, %s);''' %(contact_user.id, contact.id)" />
+                                                        </t>
                                                     </td>
--->
                                                     <td class="text-center">
                                                         <a t-att-href="'/reseller_register/%s/contact/%s/delete' % (issue.id,contact.id)" class="fa fa-trash-o fa-2x" />
                                                     </td>

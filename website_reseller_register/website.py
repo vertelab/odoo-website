@@ -323,6 +323,22 @@ class reseller_register(http.Controller):
                 return True
         return False
 
+    @http.route(['/reseller_register/contact/pw_reset'], type='json', auth='public', website=True)
+    def contact_pw_reset(self, user_id=0, partner_id=0, **kw):
+        _user = request.env['res.users'].sudo().browse(user_id)
+        company = _user.partner_id.commercial_partner_id
+        user = request.env['res.users'].sudo().search([('partner_id', '=', partner_id)])
+        try:
+            if not user:
+                raise Warning(_("Contact '%s' has no user.") % partner_id)
+            user.action_reset_password()
+            return _(u'Password reset has been sent to user %s by email') % user.name
+        except:
+            err = sys.exc_info()
+            error = ''.join(traceback.format_exception(err[0], err[1], err[2]))
+            _logger.exception(_('Cannot send mail to %s. Please check your mail server configuration.') % user.name)
+            return _('Cannot send mail to %s. Please check your mail server configuration.') % user.name
+
     @http.route(['/reseller_register/thanks'], type='http', auth='public', website=True)
     def thanks_for_your_application(self, **post):
         return request.website.render('website_reseller_register.thanks_for_your_application', {})
