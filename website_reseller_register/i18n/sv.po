@@ -195,7 +195,7 @@ msgstr "Ny kontakt"
 #. module: website_reseller_register
 #: view:website:website_reseller_register.register_form
 msgid "Organization Number"
-msgstr "Organizations nummer"
+msgstr "Organisationsnummer"
 
 #. module: website_reseller_register
 #: model:ir.model,name:website_reseller_register.model_res_partner
@@ -205,7 +205,7 @@ msgstr "Partner"
 #. module: website_reseller_register
 #: view:website:website_reseller_register.register_form
 msgid "Password Reset"
-msgstr "Återställa lösenord"
+msgstr "Lösenordsåterställning"
 
 #. module: website_reseller_register
 #: code:addons/website_reseller_register/website.py:335
