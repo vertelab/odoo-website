@@ -30,6 +30,7 @@ Launch PDF-document instead of html-page
 Financed by Dermanord AB
 """,
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website'],
     'data': ['ir_ui_view_view.xml'],

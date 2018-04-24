@@ -26,6 +26,7 @@
     'summary': "Adds the ability to use postgres geo fields.",
     'description': """""",
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['base'],
     'data': [],

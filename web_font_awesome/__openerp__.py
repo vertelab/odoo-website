@@ -25,6 +25,7 @@
     'category': 'website',
     'summary': "Updated Font Awsome files",
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['web'],
     'data': ['web_view.xml'],

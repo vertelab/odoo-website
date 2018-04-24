@@ -23,10 +23,12 @@ from openerp import models, fields, api, _
 from openerp import http
 from openerp.http import request
 from openerp.exceptions import Warning
+from openerp.tools import SKIPPED_ELEMENT_TYPES, SKIPPED_ELEMENTS
 from datetime import datetime, timedelta
 import operator
 import sys, traceback
 import string
+from lxml import etree
 
 #from openerp.addons.website_fts.html2text import html2text
 import re
@@ -54,8 +56,7 @@ def cmp_len(x, y):
         return -1
     return 0
 
-# TODO: Test how this method works over multiple databases. Yep, it leaks.
-_fts_models = set()
+_fts_models = {}
 
 class fts_fts(models.Model):
     _name = 'fts.fts'
@@ -71,12 +72,8 @@ class fts_fts(models.Model):
     facet = fields.Selection([('term','Term'),('author','Author')], string='Facet')
 
     @api.model
-    def register_fts_model(self, model):
-        _fts_models.add(model)
-
-    @api.model
     def get_fts_models(self):
-        return _fts_models
+        return _fts_models[self._cr.dbname]
 
     @api.model
     def fts_search(self, query, domain=None, models=None, limit=0, offset=0, domains=None):
@@ -116,7 +113,7 @@ class fts_fts(models.Model):
         count = 0
         start = datetime.now()
         limit = timedelta(minutes=float(self.env['ir.config_parameter'].get_param('website_fts.time_limit', '4.5')))
-        for model in _fts_models:
+        for model in self.get_fts_models():
             records = self.env[model].search([('fts_dirty', '=', True)], order='create_date asc')
             _logger.info('Updating FTS terms for %s(%s%s)' % (records._name, ', '.join([str(id) for id in records._ids[:10]]), ('... [%s more]' % (len(records._ids) -10)) if len(records._ids) > 10 else ''))
             for record in records:
@@ -284,8 +281,7 @@ class fts_model(models.AbstractModel):
     """
     Inherit this model to make a model searchable through the FTS.
     
-    All inheriting models need to define the fields that should be used to build the searchable document.
-    Override _fts_trigger and make it depend on all fields that make up the document.
+    All inheriting models need to define the fields that should be used to build the searchable document in _get_fts_fields().
     """
 
     _name = 'fts.model'
@@ -293,21 +289,44 @@ class fts_model(models.AbstractModel):
 
     _fts_fields = []
     _fts_fields_d = []
-    # {
-    #     'name': field_name,
-    #     ['weight': 'A' / 'B' / 'C' / 'D',]
-    #     ['related': related_field_name (e.g. 'foo_id.bar'),]
-    #     ['related_table': related_table_name,]
-    #     ['trigger_only': True / False,]
-    # }
-    
-    # name: the name of the field to be used in fts.
-    # weight: A label for weighting search results. A > B > C > D.
-    # trigger_only: Only use this field to trigger recompute. Field should not be used to build the searchable document.
+
+    def _get_fts_fields(self):
+        """
+        Return a list of dicts describing how to build the FTS search document.
+        [{
+            'name': field_name,
+            ['weight': 'A' / 'B' / 'C' / 'D',]
+            ['trigger_only': True / False,]
+            ['sql_vars': [variable_name],]
+            ['sql_select': [select_expression],]
+            ['sql_vector': [vector_expression],]
+            ['dependencies': [depends_field_name],]
+        }]
+        name: the name of the field to be used in fts.
+        weight: A label for weighting search results. A > B > C > D.
+        trigger_only: Only use this field to trigger recompute. Field should not be used to build the searchable document.
+        sql_vars: List of extra variables to declare in the document building function.
+        sql_select: List of SQL expressions to execute before building the document.
+        sql_vector: List of vector expressions that should be added to the document. Use this to override the automatic handling.
+        dependencies: Override field dependencies with this list. ***NOT IMPLEMENTED***
+        """
+        return  []
 
     fts_dirty = fields.Boolean(string='Dirty', help='FTS terms for this record need to be updated', default=True)
     _fts_trigger = fields.Boolean(string='Trigger FTS Update', help='Change this field to update FTS.', compute='_compute_fts_trigger', store=True)
 
+    @api.model
+    def _get_fts_depends(self):
+        fields = set()
+        for field in self._get_fts_fields():
+            if field.get('dependencies'):
+                fields |= set(field['dependencies'])
+            else:
+                fields.add(field['name'])
+        _logger.debug('%s._get_fts_depends: %s' % (self._name, fields))
+        return list(fields)
+
+    @api.depends(_get_fts_depends)
     @api.one
     def _compute_fts_trigger(self):
         """
@@ -321,37 +340,54 @@ class fts_model(models.AbstractModel):
         else:
             self._fts_trigger = False
 
-    @api.model
-    def _lang_o2pg(self, lang):
+    @api.cr_context
+    def _lang_o2pg(self, cr, lang, context=None):
         """
-        Return the corresponding name of the language in postgresql.
+        Return the corresponding name of the language and fts column in postgresql.
         """
-        langs = {}
-        return langs.get(lang, 'swedish')
+        col_name = '_fts_vector_%s' % lang.lower()
+        return 'simple', col_name
+        # Language specific search rules work very poorly when matching incomplete terms. Skip them until we find a better solution.
+        #~ langs = {
+            #~ 'da': 'danish',
+            #~ 'nl': 'dutch',
+            #~ 'en': 'english',
+            #~ 'fi': 'finnish',
+            #~ 'fr': 'french',
+            #~ 'de': 'german',
+            #~ 'hu': 'hungarian',
+            #~ 'it': 'italian',
+            #~ 'no': 'norwegian',
+            #~ 'pt': 'portuguese',
+            #~ 'ro': 'romanian',
+            #~ 'ru': 'russian',
+            #~ 'es': 'spanish',
+            #~ 'sv': 'swedish',
+            #~ 'tr': 'turkish',
+        #~ }
+        #~ lang = lang.split('_')[0]
+        #~ return langs.get(lang, 'simple'), col_name
 
-    @api.model
-    def _get_fts_vector_expr_old(self):
-        fields = []
-        for field in self._fts_fields_d:
-            if not field.get('trigger_only'):
-                fields.append("        setweight(to_tsvector('english', COALESCE(%s,'')), '%s')" % (field['name'], field.get('weight', 'D')))
-        return ' ||\n'.join(fields)
+    @api.cr_context
+    def _fts_drop_obsolete_sql_stuff(self, cr, context):
+        """
+        Drop obsolete SQL functions and triggers that were defined in earlier versions.
+        """
+        cr.execute("DROP TRIGGER IF EXISTS upd_fts_vector ON %s;" % self._table)
+        func_name = '%s_fts_vector_trigger' % self._table
+        cr.execute("DROP FUNCTION IF EXISTS %s();" % func_name)
 
-    @api.model
-    def _get_fts_vector_expr(self):
-        def field2sql_expr(name):
-            field = self.fields_get([name])[name]
-            if field.get('related'):
-                rel_name = field['related'][0]
-                # TODO: What about more than one level? Is that possible?
-                #rel_field = self.fields_get([rel_name])
-                return '"%s_%s"."%s"' % (self._table, rel_name, name)
-            return '"%s"."%s"' % (self._table, name)
-        fields = []
-        for field in self._fts_fields_d:
-            if not field.get('trigger_only'):
-                fields.append('''        setweight(to_tsvector("english", COALESCE(%s,"")), "%s")''' % (field2sql_expr(field['name']), field.get('weight', 'D')))
-        return ' ||\n'.join(fields)
+    @api.cr_context
+    def _fts_get_langs(self, cr, context):
+        langs = set()
+        cr.execute("SELECT code from res_lang WHERE id in (SELECT lang_id FROM website_lang_rel);")
+        for d in cr.dictfetchall():
+            langs.add(d['code'])
+        return langs
+
+    @api.cr_context
+    def _get_fts_models(self, cr, context=None):
+        return _fts_models[cr.dbname].copy()
 
     def _auto_init(self, cr, context=None):
         """
@@ -372,134 +408,265 @@ class fts_model(models.AbstractModel):
 
         """
         res = super(fts_model, self)._auto_init(cr, context)
+        
+        
+        #~ cr.execute("SELECT res_id FROM ir_model_data WHERE module = 'base' and name = 'user_root';")
+        #~ res = cr.dictfetchone()
+        #~ user_id = res['res_id']
+        #~ _logger.warn('\n\nuser_id: %s' % user_id)
+        #~ env = api.Environment(cr, user_id, context)
+        #~ env[self._name]._init_fts_fields()
+        #~ return res
+    
+    #~ @api.model
+    #~ def _init_fts_fields(self):
+        #~ cr, context = self._cr, self._context
+        cr.execute("DROP FUNCTION IF EXISTS website_fts_translate_term(language text, term text, model text, field text, t_name text, obj_id integer);")
+        cr.execute("""CREATE FUNCTION website_fts_translate_term(language text, term text, model text, field text, t_name text, obj_id integer) RETURNS text AS $$
+DECLARE result text;
+    BEGIN
+        result := model || ',' || field;
+        SELECT value INTO result FROM ir_translation it WHERE
+            it.name = result AND
+            it.lang = language AND
+            it.res_id = obj_id AND
+            it.value != '' AND
+            it.src = term
+        ORDER BY id
+        LIMIT 1;
+        return COALESCE(result, term);
+    END;
+$$ LANGUAGE plpgsql;""")
+        # TODO: Replace this with _fts_get_langs and test it
+        langs = set()
+        cr.execute("SELECT code from res_lang WHERE id in (SELECT lang_id FROM website_lang_rel);")
+        for d in cr.dictfetchall():
+            langs.add(d['code'])
+        _logger.debug('FTS languages: %s' % ', '.join(langs))
         columns = self._select_column_data(cr)
-        update_index = False
-        if self._auto and '_fts_vector' not in columns:
-            # Add _fts_vector column to the table
-            cr.execute('ALTER TABLE "%s" ADD COLUMN "_fts_vector" tsvector' % self._table)
-            update_index = True
-        if self._auto and self._fts_fields_d and '_fts_trigger' in columns:
-            #~ # Create data to handle triggers on all related tables.
-            #~ triggers = {}
-            #~ for field in self._fts_fields_d:
-                #~ if field.get('related'):
-                    #~ table = field['related_table']
-                    #~ name = field['related']
-                #~ else:
-                    #~ table = self._table
-                    #~ name = field['name']
-                #~ if table not in triggers:
-                    #~ triggers[table] = []
-                #~ triggers[table].append(name)
-            #~ # Drop all old triggers.
-            #~ for trigger in triggers:
-                #~ if trigger == self._table:
-                    #~ tname = 'upd_fts_vector'
-                #~ else:
-                    #~ tname = 'upd_fts_vector_%s' % self._table
-                #~ cr.execute("DROP TRIGGER IF EXISTS %s ON %s;" % tname, trigger)
-            cr.execute("DROP TRIGGER IF EXISTS upd_fts_vector ON %s;" % self._table)
-            
-            # Create function that updates the new _fts_vector column.
-            func_name = '%s_fts_vector_trigger' % self._table
-            cr.execute("DROP FUNCTION IF EXISTS %s();" % func_name)
-            fields = []
-            _logger.warn('_fts_fields_d %s: %s' % (self._table, self._fts_fields_d))
-            for field in self._fts_fields_d:
-                if field.get('sql'):
-                    fields.append(field['sql'])
-                elif field.get('related'):
-                    fields.append("        setweight(to_tsvector('swedish', COALESCE((SELECT %s FROM %s WHERE id = new.%s), '')), '%s')" % (
-                        field['related'].split('.')[1],
-                        field['related_table'],
-                        field['related'].split('.')[0],
-                        field.get('weight', 'D')))
-                else:
-                    fields.append("        setweight(to_tsvector('swedish', COALESCE(new.%s, '')), '%s')" % (field['name'], field.get('weight', 'D')))
-            fields = ' ||\n'.join(fields) + ';'
-            expr = "CREATE FUNCTION %s() RETURNS trigger AS $$\n" \
-            "begin\n" \
-            "    new._fts_vector :=%s\n" \
-            "    return new;\n" \
-            "end\n" \
-            "$$ LANGUAGE plpgsql;" % (func_name, fields)
-            _logger.debug(expr)
-            cr.execute(expr)
-            # Bind the update function to a trigger.
-            #~ fields = []
-            #~ for field in self._fts_fields_d:
-                #~ fields.append(field['name'])
-            #~ fields = ', '.join(fields)
+        fts_fields = self._get_fts_fields()
+        for lang in langs:
+            update_index = False
+            ps_lang, col_name = self._lang_o2pg(cr, lang, context)
+            if self._auto and col_name not in columns:
+                # Add _fts_vector column to the table
+                _logger.debug('Adding column %s.%s' % (self._table, col_name))
+                cr.execute('ALTER TABLE "%s" ADD COLUMN "%s" tsvector' % (self._table, col_name))
+                update_index = True
+            if self._auto and fts_fields and '_fts_trigger' in columns:
+                self._fts_drop_obsolete_sql_stuff(cr, context)
+                trigger_name = 'upd%s' % col_name
+                func_name = '%s%s_trigger' % (self._table, col_name)
+                
+                cr.execute("DROP TRIGGER IF EXISTS %s ON %s;" % (trigger_name, self._table))
+                
+                # Create function that updates the new _fts_vector column.
+                cr.execute("DROP FUNCTION IF EXISTS %s();" % func_name)
+                # Declarations of extra variables the function needs
+                declares = []
+                # SQL code to select data into the variables
+                selects = []
+                # Code to build a part of the document
+                fields = []
+                var_count = 0
+                # TODO: Add support for more column types (float and int)
+                for field in fts_fields:
+                    if field.get('trigger_only'):
+                        continue
+                    if '.' in field['name']:
+                        # Hande related fields dot notation
+                        relational_fields = field['name'].split('.')
+                        field_obj = self._fields[relational_fields[0]]
+                    else:
+                        # Handle related fields
+                        field_obj = self._fields[field['name']]
+                        relational_fields = field_obj.related
+                    _logger.debug('related fields: %s' % (relational_fields,))
+                    if field.get('sql_vector'):
+                        # TODO: Test that this actually works
+                        declares += field.get('sql_vars', [])
+                        selects += [s.format(lang=lang, ps_lang=ps_lang, col_name=col_name, weight=field.get('weight', 'D')) for s in field.get('sql_selects', [])]
+                        fields += [f.format(lang=lang, ps_lang=ps_lang, col_name=col_name, weight=field.get('weight', 'D')) for f in field['sql_vector']]
+                    elif relational_fields:
+                        var_name = "fts_tmp_%s" % var_count
+                        var_count += 1
+                        declares.append("DECLARE %s text;" % var_name)
+                        selects.append(self._fts_get_related_select(cr, var_name, lang, ps_lang, self, relational_fields, context))
+                        fields.append("setweight(to_tsvector('%s', COALESCE(%s, '')), '%s')" % (
+                            ps_lang, var_name, field.get('weight', 'D')))
+                    elif field_obj.translate:
+                        var_name = "fts_tmp_%s" % var_count
+                        var_count += 1
+                        declares.append("DECLARE %s text;\n" % var_name)
+                        selects.append("SELECT website_fts_translate_term('%s', new.%s, '%s', '%s', '%s', new.id) INTO %s;" % (
+                            lang, field['name'], self._name, field['name'], self._table, var_name))
+                        fields.append("setweight(to_tsvector('%s', COALESCE(%s, '')), '%s')" % (
+                            ps_lang, var_name, field.get('weight', 'D')))
+                    else:
+                        fields.append("setweight(to_tsvector('%s', COALESCE(new.%s, '')), '%s')" % (ps_lang, field['name'], field.get('weight', 'D')))
+                fields = ' ||\n        '.join(fields) + ';'
+                declares = ['\n%s' % d for d in declares]
+                selects = ['\n    %s' % s for s in selects]
+                expr = "CREATE FUNCTION %s() RETURNS trigger AS $$%s\n" \
+                "BEGIN%s\n" \
+                "    new.%s := %s\n" \
+                "    return new;\n" \
+                "END;\n" \
+                "$$ LANGUAGE plpgsql;" % (func_name, ''.join(declares), ''.join(selects), col_name, fields)
+                _logger.debug(expr)
+                cr.execute(expr)
+                expr = "CREATE TRIGGER %s BEFORE INSERT OR UPDATE OF _fts_trigger ON %s " \
+                    "FOR EACH ROW EXECUTE PROCEDURE %s();" % (trigger_name, self._table, func_name)
+                _logger.debug(expr)
+                cr.execute(expr)
+                if update_index:
+                    # Create index on the _fts_vector column.
+                    cr.execute("CREATE INDEX %s%s_idx ON %s USING GIST (%s);" % (self._table, col_name, self._table, col_name))
+        return res
 
-            #~ # Create triggers on relevant tables.
-            #~ for table in triggers:
-                #~ if table == self._table:
-                    #~ tname = 'upd_fts_vector'
-                #~ else:
-                    #~ tname = 'upd_fts_vector_%s' % self._table
-                #~ expr = "CREATE TRIGGER %s BEFORE INSERT OR UPDATE OF %s ON %s " \
-                #~ "FOR EACH ROW EXECUTE PROCEDURE %s();" % (tname, ', '.join(triggers[table]), table, func_name)
-                #~ _logger.debug(expr)
-                #~ cr.execute(expr)
-            expr = "CREATE TRIGGER upd_fts_vector BEFORE INSERT OR UPDATE OF _fts_trigger ON %s " \
-                "FOR EACH ROW EXECUTE PROCEDURE %s();" % (self._table, func_name)
-            _logger.debug(expr)
-            cr.execute(expr)
-            if update_index:
-                # Create index on the _fts_vector column.
-                cr.execute("CREATE INDEX %s_fts_vector_idx ON %s USING GIST (_fts_vector);" % (self._table, self._table))
+    @api.cr_context
+    def _fts_get_related_select(self, cr, var_name, lang, ps_lang, model, fields, context):
+        """
+        Build the SQL statements necessary to get translated terms for a chain of relational field.
+        :param lang: A string with the name of the language in Odoo.
+        :param ps_lang: A string with the name of the language in postgresql.
+        :param model: An Odoo model object.
+        :param fields: A list of fields (strings). First item must be a relational field on model. Last item must be a text field.
+        :return: TBD
+        """
+        _logger.debug('_fts_get_related_select model = %s, fields = %s' % (model, fields))
+        env = api.Environment(cr, None, context)
+        res = ''
+        for field in fields:
+            field_obj = model._fields[field]
+            if field_obj.type == 'one2many':
+                table = model._table
+                model = self.pool.get(field_obj.comodel_name)
+                inverse_name = field_obj.inverse_name
+                if not res:
+                    res = "FROM %s WHERE %s IN (SELECT id FROM %s WHERE id = new.id)" % (model._table, inverse_name, table)
+                else:
+                    res = "FROM %s WHERE %s IN (SELECT id %s)" % (model._table, inverse_name, res)
+                #~ _logger.debug('one2many: %s' % res)
+            elif field_obj.type == 'many2one':
+                table = model._table
+                model = self.pool.get(field_obj.comodel_name)
+                if not res:
+                    res = "FROM %s WHERE id IN (SELECT %s FROM %s WHERE id = new.id)" % (model._table, field, table)
+                else:
+                    res = "FROM %s WHERE id IN (SELECT %s %s)" % (model._table, field, res)
+                #~ _logger.debug('many2one: %s' % res)
+            elif field_obj.type == 'many2many':
+                table = model._table
+                model = self.pool.get(field_obj.comodel_name)
+                relation, column1, column2 = field_obj.to_column()._sql_names(env[field_obj.model_name])
+                if not res:
+                    res = "FROM %s WHERE id IN (SELECT %s FROM %s WHERE %s = new.id)" % (model._table, column2, relation, column1)
+                else:
+                    res = "FROM %s WHERE id IN (SELECT %s FROM %s WHERE %s IN (SELECT id %s))" % (model._table, column2, relation, column1, res)
+                #~ _logger.debug('many2many: %s' % res)
+            else:
+                if field_obj.translate:
+                    res = "SELECT string_agg(name, ' ') INTO %s FROM (SELECT website_fts_translate_term('%s', obj.name, '%s', '%s', '%s', obj.id) as name FROM (SELECT id, %s %s) AS obj) AS result;" % (var_name, lang, model._name, field, model._table, field, res)
+                else:
+                    res = "SELECT string_agg(name, ' ') INTO %s FROM (SELECT %s %s) AS result;" % (var_name, field, res)
+                #~ _logger.debug('finished: %s' % res)
         return res
 
     @api.model
-    def _fts_reindex(self):
-        expr = "REINDEX INDEX %s_fts_vector_idx;" % self._table
-        _logger.debug(expr)
-        self.env.cr.execute(expr)
+    def _fts_etree2document(self, arch):
+        """
+        Convert an etree object to a list describing an FTS document.
+        """
+        doc = []
+        if type(arch) not in SKIPPED_ELEMENT_TYPES and arch.tag not in SKIPPED_ELEMENTS:
+            text = arch.text and arch.text.strip()
+            if text:
+                doc.append(text)
+            tail = arch.tail and arch.tail.strip()
+            if tail:
+                doc.append(tail)
+
+            for attr_name in ('title', 'alt', 'label', 'placeholder'):
+                attr = arch.get(attr_name)
+                attr = attr and attr.strip()
+                if attr:
+                    doc.append(attr)
+            for node in arch.iterchildren("*"):
+                doc += self._fts_etree2document(node)
+        return doc
 
     @api.model
-    def _fts_update_vector(self):
+    def fts_xml2document(self, xml):
+        try:
+            arch_tree = etree.fromstring(xml)
+        except:
+            try:
+                arch_tree = etree.fromstring('<div>%s</div>' % xml)
+            except:
+                _logger.exception("Couldn't read XML document.")
+                return ''
+        doc = self._fts_etree2document(arch_tree)
+        return ' '.join(doc)
+
+    @api.model
+    def _fts_reindex(self, langs=None):
+        """
+        Reindex the FTS columns for this model.
+        :param langs: List of languages that should be reindexed. Will default to all languages.
+        """
+        if not langs:
+            langs = self._fts_get_langs()
+        for lang in langs:
+            expr = "REINDEX INDEX %s_fts_vector_%s_idx;" % (self._table, lang)
+            _logger.debug(expr)
+            self.env.cr.execute(expr)
+
+    @api.model
+    def _fts_update_vector(self, record_ids=None):
+        """
+        Trigger an update of the FTS columns for this model.
+        :param record_ids: List of the records that should be updated. Will default to all records.
+        """
         _logger.debug('Updating FTS for %s' % self._name)
-        expr = "SELECT id FROM %s WHERE _fts_trigger in (false, NULL);" % self._table
+        if record_ids:
+            params = [tuple(record_ids)]
+            where = ' AND id IN %s'
+        else:
+            params = []
+            where = ''
+        expr = "SELECT id FROM %s WHERE _fts_trigger in (false, NULL)%s;" % (self._table, where)
         _logger.debug(expr)
-        self.env.cr.execute(expr)
+        self.env.cr.execute(expr, params)
         f_ids = [d['id'] for d in self.env.cr.dictfetchall()]
-        expr = "SELECT id FROM %s WHERE _fts_trigger = true;" % self._table
+        expr = "SELECT id FROM %s WHERE _fts_trigger = true%s;" % (self._table, where)
         _logger.debug(expr)
-        self.env.cr.execute(expr)
+        self.env.cr.execute(expr, params)
         t_ids = [d['id'] for d in self.env.cr.dictfetchall()]
         if f_ids:
-            expr = "UPDATE  %s SET _fts_trigger = true WHERE id in %%s;" % self._table
+            expr = "UPDATE %s SET _fts_trigger = true WHERE id in %%s;" % self._table
             _logger.debug(expr)
             _logger.debug(f_ids)
             self.env.cr.execute(expr, [tuple(f_ids)])
         if t_ids:
-            expr = "UPDATE  %s SET _fts_trigger = false WHERE id in %%s;" % self._table
+            expr = "UPDATE %s SET _fts_trigger = false WHERE id in %%s;" % self._table
             _logger.debug(expr)
             _logger.debug(t_ids)
             self.env.cr.execute(expr, [tuple(t_ids)])
 
     @api.model
-    def _fts_get_lexemes(self, query):
-        """
-        Convert raw user input to an FTS ready expression.
-        :param query: Search string.
-        :return: List of search terms (lexemes).
-        """
-        # TODO: Find all excluded chars. Replace to not ruin query?
-        # ! = not, & = and, | = or
-        # \ = escape char. escape all weird chars?
-        escape = string.punctuation
-        for c in escape:
-            query = query.replace(c, ' ')
-        query = [('%s:*' % x.strip()) for x in query.split(' ') if x.strip()]
-        return query
-
-    @api.model
-    def _fts_get_where_clause(self, query):
-        """Inheritable function to get any extra expressions and values for the FTS search WHERE clause.
-        Example: return ["website_published = %s"], [True]
-        """
-        return [], []
+    def _fts_get_ts_query(self, query, ps_lang):
+        self._cr.execute("SELECT plainto_tsquery(%s, %s);", [ps_lang, query])
+        query = self._cr.dictfetchone()['plainto_tsquery'].split("'")
+        res = ""
+        inside_str = False
+        for s in query:
+            if inside_str:
+                res += "%s:*" % s
+            else:
+                res += s
+            inside_str = not inside_str
+        return res
 
     @api.model
     def fts_search(self, query, domain=[]):
@@ -509,28 +676,26 @@ class fts_model(models.AbstractModel):
         :param domain: An optional Odoo search domain.
         :return: a list of dicts with ids and weights ([[{'id': 1, 'ts_rank': 0.23}]).
         """
-        # TODO: Check access rights and rules. Look at _search() and _apply_ir_rules() in models.
-        #self.check_access_rights(cr, access_rights_uid or user, 'read')
+        _logger.debug('%s.fts_search domain: %s, query: %s' % (self._name, domain, query))
+        lang = self._context.get('lang')
+        ps_lang, col_name = self._lang_o2pg(lang)
+        _logger.debug('lang: %s, ps_lang: %s, col_name: %s' % (lang, ps_lang, col_name))
         self.check_access_rights('read')
-        # TODO: Clean query from problematic characters.
-        lexemes = self._fts_get_lexemes(query)
-        lexemes = ' & '.join(lexemes)
-        query = self._where_calc(domain)
-        self._apply_ir_rules(query, 'read')
-        #where, values = self._fts_get_where_clause(query)
-        query.where_clause.append('''"%s"."%s" @@ to_tsquery('swedish', %%s)''' % (self._table, '_fts_vector'))
-        query.where_clause_params.append(lexemes)
-        from_clause, where_clause, params = query.get_sql()
-        params = [lexemes] + params
-        expr = '''SELECT "%s"."id", ts_rank("%s"."%s", to_tsquery('swedish', %%s)) FROM %s WHERE %s;''' % (self._table, self._table, '_fts_vector', from_clause, where_clause)
+        query = self._fts_get_ts_query(query, ps_lang)
+        query_obj = self._where_calc(domain)
+        self._apply_ir_rules(query_obj, 'read')
+        query_obj.where_clause.append('''"%s"."%s" @@ %%s''' % (self._table, col_name))
+        query_obj.where_clause_params.append(query)
+        from_clause, where_clause, params = query_obj.get_sql()
+        params = [query] + params
+        expr = '''SELECT "%s"."id", ts_rank("%s"."%s", %%s), '%s' AS model FROM %s WHERE %s ORDER BY ts_rank DESC;''' % (
+            self._table, self._table, col_name, self._name, from_clause, where_clause)
         _logger.debug(expr)
         _logger.debug(params)
         self.env.cr.execute(expr, params)
         res = {}
         results = self.env.cr.dictfetchall()
         _logger.debug(results)
-        #~ for d in results:
-            #~ res[d['id']] = d['ts_rank']
         return results
 
     @api.model
@@ -558,11 +723,12 @@ class fts_model(models.AbstractModel):
         """
         Register this model as an FTS model.
         """
-        # TODO: Stop leaking between databases.
         res = super(fts_model, self)._setup_complete()
-        _logger.warn('_setup_complete %s' % self._name)
         if self._name != 'fts.model':
-            self.env['fts.fts'].register_fts_model(self._name)
+            db = self._cr.dbname
+            if db not in _fts_models:
+                _fts_models[db] = set()
+            _fts_models[db].add(self._name)
         return res
 
     @api.multi
@@ -613,30 +779,24 @@ class fts_website(models.Model):
     res_id = fields.Integer()
 
 
-class view(models.Model):
+class View(models.Model):
     _name = 'ir.ui.view'
     _inherit = ['ir.ui.view', 'fts.model']
 
     _fts_fields = ['arch', 'groups_id']
-    _fts_fields_d = [{'name': 'arch'}]
 
-    @api.depends('arch')
-    @api.one
-    def _compute_fts_trigger(self):
-        """
-        Dummy field to trigger the updates on SQL level. Tracking
-        changes is much easier on Odoo level than on SQL level. Make
-        this field dependant on the relevant fields.
-        """
-        # TODO: Trigger this update when relevant translations change.
-        if self._fts_trigger:
-            self._fts_trigger = True
-        else:
-            self._fts_trigger = False
+    def _get_fts_fields(self):
+        return [{
+            'name': 'arch',
+            'weight': 'A',
+            'sql_vector': ["setweight(to_tsvector('{ps_lang}', COALESCE(arch_doc, '')), '{weight}')"],
+            'sql_selects': ["SELECT document INTO arch_doc FROM ir_ui_view_fts WHERE view_id = new.id AND lang = '{lang}';"],
+            'sql_vars': ['DECLARE arch_doc text;'],
+        }]
 
     @api.one
     def _full_text_search_update(self):
-        super(view, self)._full_text_search_update()
+        super(View, self)._full_text_search_update()
         if self.type == 'qweb' and 't-call="website.layout"' in self.arch:
             website = self.env['fts.website'].search([('res_id','=',self.id)])
             if website:
@@ -644,6 +804,112 @@ class view(models.Model):
             else:
                 website = self.env['fts.website'].create({'name': self.name, 'xml_id': self.xml_id, 'body': self.env['fts.fts'].get_text([self.arch],[]), 'res_id': self.id, 'group_ids': self.groups_id })
             self.env['fts.fts'].update_html('fts.website',website.id,html=website.body,groups=website.group_ids)
+
+    @api.model
+    def _fts_update_vector(self, record_ids=None):
+        """
+        Update FTS columns for views.
+        Search only makes sense for primary qweb views, so we limit key parts of this function to those views.
+        """
+        # Delete all existing ir.ui.view.fts lines. Also delete any lines belonging to non-primary or non-qweb views.
+        if record_ids:
+            fts_docs = self.env['ir.ui.view.fts'].search(['|', ('view_id', 'in', record_ids), '|', ('view_id.type', '!=', 'qweb'), ('view_id.mode', '!=', 'primary')])
+        else:
+            fts_docs = self.env['ir.ui.view.fts'].search([])
+        if fts_docs:
+            fts_docs.unlink()
+        if record_ids:
+            # Find all primary qweb views associated with the given views
+            ids = set(v['id'] for v in self.env['ir.ui.view'].search_read([('id', 'in', record_ids), ('type', '=', 'qweb'), ('mode', '!=', 'primary')], ['id']))
+            primary = set(v['id'] for v in self.env['ir.ui.view'].search_read([('id', 'in', record_ids), ('type', '=', 'qweb'), ('mode', '=', 'primary')], ['id']))
+            while ids:
+                primary |= set(v['id'] for v in self.env['ir.ui.view'].search_read([('inherit_children_ids', 'in', list(ids)), ('type', '=', 'qweb'), ('mode', '=', 'primary')], ['id']))
+                ids = set(v['id'] for v in self.env['ir.ui.view'].search_read([('inherit_children_ids', 'in', list(ids)), ('type', '=', 'qweb'), ('mode', '!=', 'primary')], ['id']))
+        else:
+            # Find all primary qweb views
+            primary = [v['id'] for v in self.env['ir.ui.view'].search_read([('mode', '=', 'primary'), ('type', '=', 'qweb')], ['id'])]
+        langs = self._fts_get_langs()
+        # Create ir.ui.view.fts lines for the primary views
+        for id in primary:
+            for lang in langs:
+                arch = self.with_context(lang=lang).read_template(id)
+                doc = self.fts_xml2document(arch)
+                self.env['ir.ui.view.fts'].create({'document': doc, 'lang': lang, 'view_id': id})
+        if record_ids:
+            # Update FTS columns for both the specified views and their associated primaries
+            record_ids = list(set(record_ids) | primary)
+        return super(View, self)._fts_update_vector(record_ids=record_ids)
+
+class ViewFTS(models.Model):
+    _name = 'ir.ui.view.fts'
+
+    document = fields.Char(default='')
+    view_id = fields.Many2one(comodel_name='ir.ui.view', required=True, ondelete='cascade')
+    lang = fields.Char(required=True)
+
+class IrTranslation(models.Model):
+    _inherit = "ir.translation"
+
+    @api.model
+    def _fts_update_records(self, records):
+        for model in records:
+            ids = list(records[model])
+            if model == 'website':
+                model = 'ir.ui.view'
+            self.env[model]._fts_update_vector(record_ids=ids)
+
+    @api.model
+    @api.returns('self', lambda value: value.id)
+    def create(self, vals):
+        fts_models = self.env['fts.model']._get_fts_models()
+        fts_models.add('website')
+        fts = {}
+        res = super(IrTranslation, self).create(vals)
+        for trans in res:
+            model = trans.name.split(',')[0]
+            if model in fts_models:
+                if model not in fts:
+                    fts[model] = set()
+                fts[model].add(trans.res_id)
+        self._fts_update_records(fts)
+        return res
+
+    @api.multi
+    def unlink(self):
+        fts_models = self.env['fts.model']._get_fts_models()
+        fts_models.add('website')
+        fts = {}
+        for trans in self:
+            model = trans.name.split(',')[0]
+            if model in fts_models:
+                if model not in fts:
+                    fts[model] = set()
+                fts[model].add(trans.res_id)
+        res = super(IrTranslation, self).unlink()
+        self._fts_update_records(fts)
+        return res
+
+    @api.multi
+    def write(self, vals):
+        #~ _logger.warn('%s.write(%s)' % (self, vals))
+        fts_models = self.env['fts.model']._get_fts_models()
+        fts_models.add('website')
+        fts = {}
+        for trans in self:
+            model = trans.name.split(',')[0]
+            if model in fts_models:
+                if model not in fts:
+                    fts[model] = set()
+                fts[model].add(trans.res_id)
+        res = super(IrTranslation, self).write(vals)
+        for trans in self:
+            model = trans.name.split(',')[0]
+            if model in fts_models:
+                if model not in fts:
+                    fts[model] = set()
+                fts[model].add(trans.res_id)
+        self._fts_update_records(fts)
+        return res
 
 class WebsiteFullTextSearch(http.Controller):
 
@@ -692,8 +958,8 @@ class WebsiteFullTextSearch(http.Controller):
 
     @http.route(['/search_results'], type='http', auth="public", website=True)
     def search_result(self, search='', times=0, **post):
-        vals = request.env['fts.fts'].term_search(search)
-        vals['kw'] = search
+        terms = request.env['fts.test'].term_search_browse(search)
+        vals = {'terms': terms, 'kw': search}
         return request.website.render("website_fts.search_result", vals)
 
     @http.route(['/search_suggestion'], type='json', auth="public", website=True)
@@ -704,7 +970,7 @@ class WebsiteFullTextSearch(http.Controller):
             domains[model] = request.env[model].fts_get_default_suggestion_domain()
         result = request.env['fts.fts'].fts_search(search, [], res_model, limit, offset, domains)
         result_models = {}
-        for model in request.env['fts.fts'].get_fts_models():
+        for model in request.env['fts.test'].get_fts_models():
             ids = []
             for res in result:
                 if res['model'] == model:
@@ -734,8 +1000,12 @@ class fts_test(models.TransientModel):
     _description = 'FTS Test Wizard'
 
     @api.model
+    def get_fts_models(self):
+        return _fts_models[self._cr.dbname]
+
+    @api.model
     def _default_fts_model_ids(self):
-        for model in _fts_models:
+        for model in self.get_fts_models():
             obj = self.env['fts.test.model'].search([('name', '=', model)])
             if not obj:
                 self.env['fts.test.model'].create({'name': model})
@@ -821,3 +1091,84 @@ class fts_test(models.TransientModel):
                             ', '.join([m.name for m in self.fts_model_ids]),
                             count
                     )] + rows[-2:])
+
+    @api.cr_context
+    def _lang_o2pg(self, cr, lang, context=None):
+        """
+        Return the corresponding name of the language and fts column in postgresql.
+        """
+        col_name = '_fts_vector_%s' % lang.lower()
+        return 'simple', col_name
+        # Language specific search rules work very poorly when matching incomplete terms. Skip them until we find a better solution.
+        #~ langs = {
+            #~ 'da': 'danish',
+            #~ 'nl': 'dutch',
+            #~ 'en': 'english',
+            #~ 'fi': 'finnish',
+            #~ 'fr': 'french',
+            #~ 'de': 'german',
+            #~ 'hu': 'hungarian',
+            #~ 'it': 'italian',
+            #~ 'no': 'norwegian',
+            #~ 'pt': 'portuguese',
+            #~ 'ro': 'romanian',
+            #~ 'ru': 'russian',
+            #~ 'es': 'spanish',
+            #~ 'sv': 'swedish',
+            #~ 'tr': 'turkish',
+        #~ }
+        #~ lang = lang.split('_')[0]
+        #~ return langs.get(lang, 'simple'), col_name
+
+    @api.model
+    def _fts_get_ts_query(self, query, ps_lang):
+        self._cr.execute("SELECT plainto_tsquery(%s, %s);", [ps_lang, query])
+        query = self._cr.dictfetchone()['plainto_tsquery'].split("'")
+        res = ""
+        inside_str = False
+        for s in query:
+            if inside_str:
+                res += "%s:*" % s
+            else:
+                res += s
+            inside_str = not inside_str
+        return res
+
+    @api.model
+    def term_search(self, query, models=None, limit=25, domain=None, offset=0):
+        models = models or self.get_fts_models()
+        domain = domain or []
+        lang = self._context.get('lang')
+        ps_lang, col_name = self._lang_o2pg(lang)
+        _logger.debug('lang: %s, ps_lang: %s, col_name: %s' % (lang, ps_lang, col_name))
+        query = self._fts_get_ts_query(query, ps_lang)
+        expressions = []
+        parameters = []
+        for model in models:
+            fts_model = self.env[model]
+            fts_model.check_access_rights('read')
+            query_obj = fts_model._where_calc(domain)
+            fts_model._apply_ir_rules(query_obj, 'read')
+            query_obj.where_clause.append('''"%s"."%s" @@ %%s''' % (fts_model._table, col_name))
+            query_obj.where_clause_params.append(query)
+            from_clause, where_clause, params = query_obj.get_sql()
+            parameters += [query] + params
+            expressions.append('''(SELECT "%s"."id", ts_rank("%s"."%s", %%s), '%s' AS model FROM %s WHERE %s ORDER BY ts_rank DESC)''' % (
+                fts_model._table, fts_model._table, col_name, fts_model._name, from_clause, where_clause))
+        expr = ' UNION ALL '.join(expressions) + " ORDER BY ts_rank DESC, id, model LIMIT %s OFFSET %s;"
+        parameters += [limit, offset]
+        _logger.debug(expr)
+        _logger.debug(parameters)
+        self.env.cr.execute(expr, parameters)
+        results = self.env.cr.dictfetchall()
+        _logger.debug(results)
+        return results
+    
+    @api.model
+    def term_search_browse(self, query, models=None, limit=25, domain=None, offset=0):
+        results = self.term_search(query, models=models, limit=limit, domain=domain, offset=offset)
+        # TODO: This could probably be done more efficiently
+        for res in results:
+            res['object'] = self.env[res['model']].browse(res['id'])
+        return results
+        

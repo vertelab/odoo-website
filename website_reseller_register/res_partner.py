@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2004-2017 Vertel AB (<http://vertel.se>).
+#    Copyright (C) 2018- Vertel AB (<http://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -18,21 +18,20 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from openerp import models, fields, api, _
 
-{
-    'name': 'Help Online Gantt',
-    'version': '0.1',
-    'category': 'website',
-    'summary': "Adds help button to gantt views.",
-    'description': """""",
-    'author': 'Vertel AB',
-    'license': 'AGPL-3',
-    'website': 'http://www.vertel.se',
-    'depends': ['help_online', 'web_gantt'],
-    'data': ['website_help_view.xml'],
-    'application': False,
-    'installable': True,
-    'autoinstall': True,
-}
+import logging
+_logger = logging.getLogger(__name__)
 
-# vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:
+
+class res_partner(models.Model):
+    _inherit = 'res.partner'
+
+    @api.model
+    def remove_inactive_reseller(self):
+        partners = self.env['res.partner'].search([('active', '=', False), ('is_company', '=', True), ('name', '=', 'My Company'), ('child_ids', '=', False)])
+        issues = self.env['project.issue'].search([('stage_id', '=', self.env.ref('project.project_tt_analysis').id), ('partner_id', 'in', partners.mapped('id'))])
+        for i in issues:
+            i.unlink()
+        for p in partners:
+            p.unlink()

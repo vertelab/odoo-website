@@ -29,6 +29,7 @@ Demo page for show all snippets, fonts, device info.
 ====================================================
 """,
     'author': 'Vertel AB',
+    'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website'],
     'data': [

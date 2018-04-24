@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2004-2017 Vertel AB (<http://vertel.se>).
+#    Copyright (C) 2004-2016 Vertel AB (<http://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,19 +20,20 @@
 ##############################################################################
 
 {
-    'name': 'Help Online Gantt',
+    'name': 'Website Translation Wizard',
     'version': '0.1',
     'category': 'website',
-    'summary': "Adds help button to gantt views.",
-    'description': """""",
+    'summary': "Translation Wizard",
+    'description': """
+
+""",
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
-    'depends': ['help_online', 'web_gantt'],
-    'data': ['website_help_view.xml'],
+    'depends': ['website'],
+    'data': ['website_translate_view.xml'],
     'application': False,
     'installable': True,
-    'autoinstall': True,
 }
 
 # vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:
