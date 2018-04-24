@@ -75,9 +75,12 @@ class reseller_register(http.Controller):
         for k,v in post.items():
             if k.split('_')[0] == address_type:
                 if len(k.split('_')) > 2:
-                    child_dict['_'.join(k.split('_')[1:])] = v
+                    if '_'.join(k.split('_')[1:]) == 'country_id':
+                        child_dict['_'.join(k.split('_')[1:])] = int(v)
+                    else:
+                        child_dict['_'.join(k.split('_')[1:])] = v
                 else:
-                    child_dict[k[1]] = v
+                    child_dict[k.split('_')[1]] = v
         if any(child_dict):
             if address_type != 'contact':
                 child_dict['name'] = address_type
@@ -88,7 +91,7 @@ class reseller_register(http.Controller):
             if not child:
                 child = request.env['res.partner'].sudo().create(child_dict)
             else:
-                child.write(child_dict)
+                child.sudo().write(child_dict)
             for field in PARTNER_FIELDS:
                 validation['%s_%s' %(address_type, field)] = 'has-success'
             return {'child': child, 'validation': validation}
@@ -144,8 +147,8 @@ class reseller_register(http.Controller):
             })
             return partner.redirect_token('/reseller_register/%s' %issue.id)
         elif request.httprequest.method == 'POST':
-            self.update_partner_info(issue, post)
             issue = request.env['project.issue'].sudo().browse(int(issue))
+            self.update_partner_info(issue, post)
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
             if not issue.partner_id.check_token(post.get('token')):
@@ -166,7 +169,6 @@ class reseller_register(http.Controller):
 
     # can be overrided
     def update_partner_info(self, issue, post):
-        issue = request.env['project.issue'].sudo().browse(int(issue))
         if not issue.partner_id.check_token(post.get('token')):
             return request.website.render('website.403', {})
         if post.get('invoicetype'):
