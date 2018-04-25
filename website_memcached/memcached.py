@@ -408,8 +408,6 @@ def route(route=None, **kw):
                         ('Server','Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)),
                         ])
 
-
-
             if page_dict and not page_dict.get('db') == request.env.cr.dbname:
                 _logger.warn('Database violation key=%s stored for=%s  env db=%s ' % (key,page_dict.get('db'),request.env.cr.dbname))
                 page_dict = None
@@ -424,7 +422,7 @@ def route(route=None, **kw):
                     view_meta = '<h2>Metadata</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in res['page_dict'].items() if not k == 'page'])
                     view_meta += 'Page Len : %.2f Kb<br>'  % res['size']
                     #~ view_meta += 'Chunks   : %s<br>' % ', '.join([len(c) for c in res['chunks']])
-                    view_meta += 'Chunks   : %s<br>' % res['chunks']
+                    #~ view_meta += 'Chunks   : %s<br>' % res['chunks']
                     return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s' % (key,key,view_meta))
                 else:
                     if error:
@@ -437,21 +435,17 @@ def route(route=None, **kw):
                 args['cache_key'] = key
                 return werkzeug.utils.redirect('{}?{}'.format(request.httprequest.path, url_encode(args)), 302)
 
-
-
-
             max_age = routing.get('max_age',600)              # 10 minutes
             cache_age = routing.get('cache_age',24 * 60 * 60) # One day
             s_maxage =  routing.get('s_maxage',max_age)
             page = None
 
             if not page_dict:
-                _logger.warn('\n\nNo page_dict\n%s\n' % error)
                 page_dict = {}
                 controller_start = timer()
                 response = f(*args, **kw) # calls original controller
                 render_start = timer()
-
+                
                 if routing.get('content_type'):
                     response.headers['Content-Type'] = routing.get('content_type')
                     #~ if isinstance(response.headers,list) and isinstance(response.headers[0],tuple):
@@ -460,7 +454,8 @@ def route(route=None, **kw):
                     #~ header_dict['Content-Type'] = routing.get('content_type')
                     #~ response.headers = [(h[0],h[1]) for h in header_dict.items()]
 
-                if not routing.get('binary'):
+                if response.template:
+                    #~ _logger.error('template %s values %s response %s' % (response.template,response.qcontext,response.response))
                     page = response.render()
                 else:
                     page = ''.join(response.response)
@@ -477,6 +472,7 @@ def route(route=None, **kw):
                     'page':     base64.b64encode(page),
                     'date':     http_date(),
                     'module':   f.__module__,
+                    'status_code': response.status_code,
                     'flush_type': routing['flush_type'](kw).lower().replace(u'å', 'a').replace(u'ä', 'a').replace(u'ö', 'o').replace(' ', '-') if routing.get('flush_type', None) else "",
                     'headers': response.headers,
                     }
@@ -488,8 +484,7 @@ def route(route=None, **kw):
                 request_dict = {h[0]: h[1] for h in request.httprequest.headers}
                 #~ _logger.warn('Page Exists If-None-Match %s Etag %s' %(request_dict.get('If-None-Match'), page_dict.get('ETag')))
                 if request_dict.get('If-None-Match') and (request_dict.get('If-None-Match') == page_dict.get('ETag')):
-                    #~ _logger.warn('returns 304')
-                    return werkzeug.wrappers.Response(status=304,headers=[
+                    header = [
                         ('X-CacheETag', page_dict.get('ETag')),
                         ('X-CacheKey',key),
                         ('X-Cache','newly rendered' if page else 'from cache'),
@@ -498,7 +493,12 @@ def route(route=None, **kw):
                         ('X-CacheRender',page_dict.get('render_time')),
                         ('X-CacheCacheAge',cache_age),
                         ('Server','Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)),
-                        ])
+                        ]
+                    header += [(k,v) for k,v in page_dict.get('headers',[(None,None)])]
+                    _logger.warn('returns 304 headers %s' % header)
+                    if page_dict.get('status_code') in ['301','302','307','308']:
+                        return werkzeug.wrappers.Response(status=page_dict['status_code'],headers=header)
+                    return werkzeug.wrappers.Response(status=304,headers=header)
             response = http.Response(base64.b64decode(page_dict.get('page'))) # always create a new response (drop response from controller)
 
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
@@ -528,6 +528,7 @@ def route(route=None, **kw):
             response.headers['X-CacheBlacklist'] = kw.get('blacklist','')
             response.headers['Date'] = page_dict.get('date',http_date())
             response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)
+            response.status_code = int(page_dict.get('status_code','200'))
             return response
 
         response_wrap.routing = routing
