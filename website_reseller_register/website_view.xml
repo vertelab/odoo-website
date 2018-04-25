@@ -7,7 +7,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12 mt32 mb32">
-                            <form class="form-horizontal mt32" t-att-action="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)" method="post">
+                            <form class="form-horizontal mt32" t-att-action="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)" method="post" enctype="multipart/form-data">
                                 <h4 id="title_company" class="col-md-12">
                                     <strong>Company Information</strong>
                                 </h4>
@@ -15,12 +15,14 @@
                                     <label class="col-md-3 col-sm-4 control-label" for="company_name">Company Name</label>
                                     <div class="col-md-7 col-sm-8">
                                         <input type="text" class="form-control" name="company_name" t-att-value="issue.partner_id.name" placeholder="" />
+                                        <small t-esc="help.get('help_company_name')" />
                                     </div>
                                 </div>
                                 <div id="company_org" t-att-class="'form-group %s' %validation.get('company_company_registry')">
                                      <label class="col-md-3 col-sm-4 control-label" for="company_registry">Organization Number</label>
                                      <div class="col-md-7 col-sm-8">
                                         <input type="text" class="form-control" name="company_registry" t-att-value="issue.partner_id.company_registry" placeholder="123456-7897" />
+                                        <small t-esc="help.get('help_company_registry')" />
                                     </div>
                                 </div>
                                 <div id="company_property_invoice_type" class="form-group">
@@ -35,19 +37,19 @@
                                 </div>
                                 <ul class="nav nav-tabs">
                                     <li id="nav_delivery" class="active">
-                                        <a data-toggle="tab" href="#delivery" class="hidden-xs">Delivery</a>
+                                        <a data-toggle="tab" href="#delivery" class="hidden-xs">Delivery Address</a>
                                         <a data-toggle="tab" href="#delivery" class="hidden-lg hidden-md hidden-sm">
                                             <i class="fa fa-truck" />
                                         </a>
                                     </li>
                                     <li id="nav_invoice" class="">
-                                        <a data-toggle="tab" href="#invoice" class="hidden-xs">Invoice</a>
+                                        <a data-toggle="tab" href="#invoice" class="hidden-xs">Invoice Address</a>
                                         <a data-toggle="tab" href="#invoice" class="hidden-lg hidden-md hidden-sm">
                                             <i class="fa fa-file-o" />
                                         </a>
                                     </li>
                                     <li id="nav_contact" class="">
-                                        <a data-toggle="tab" href="#contact" class="hidden-xs">Contact</a>
+                                        <a data-toggle="tab" href="#contact" class="hidden-xs">My Employees</a>
                                         <a data-toggle="tab" href="#contact" class="hidden-lg hidden-md hidden-sm">
                                             <i class="fa fa-users" />
                                         </a>
@@ -55,10 +57,8 @@
                                 </ul>
                                 <div class="tab-content">
                                     <div id="delivery" class="tab-pane fade in active">
-                                        <h4 id="title_delivery">
-                                            <strong>Delivery</strong>
-                                        </h4>
                                         <p id="instruction_delivery" />
+                                        <t t-set="delivery" t-value="issue.partner_id.child_ids.filtered(lambda c: c.type == 'delivery')[0] if issue.partner_id.child_ids.filtered(lambda c: c.type == 'delivery') else None"/>
                                         <div t-att-class="'form-group %s' %validation.get('delivery_street')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_street">Street</label>
                                             <div class="col-md-7 col-sm-8">
@@ -114,10 +114,8 @@
                                         </div>
                                     </div>
                                     <div id="invoice" class="tab-pane fade">
-                                        <h4 id="title_invoice">
-                                            <strong>Invoice</strong>
-                                        </h4>
                                         <p id="instruction_invoice" />
+                                        <t t-set="invoice" t-value="issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice')[0] if issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice') else None"/>
                                         <div t-att-class="'form-group %s' %validation.get('invoice_street')">
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_street">Street</label>
                                             <div class="col-md-7 col-sm-8">
@@ -173,9 +171,6 @@
                                         </div>
                                     </div>
                                     <div id="contact" class="tab-pane fade">
-                                        <h4 id="title_contact">
-                                            <strong>Contact</strong>
-                                        </h4>
                                         <table class="table table-responsive table-striped table-bordered">
                                             <thead>
                                                 <th/>
@@ -183,6 +178,7 @@
                                                 <th>Phone</th>
                                                 <th>Cell</th>
                                                 <th>Email</th>
+                                                <th>Password Reset</th>
                                                 <th/>
                                             </thead>
                                             <tbody>
@@ -201,6 +197,12 @@
                                                     </td>
                                                     <td>
                                                         <span t-field="contact.email" />
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <t t-set="contact_user" t-value="request.env['res.users'].search([('partner_id', '=', contact.id)])"/>
+                                                        <t t-if="contact_user">
+                                                            <a href="javascript:void(0);" class="fa fa-envelope-o fa-2x" t-att-onclick="'''RRpwReset(%s, %s);''' %(contact_user.id, contact.id)" />
+                                                        </t>
                                                     </td>
                                                     <td class="text-center">
                                                         <a t-att-href="'/reseller_register/%s/contact/%s/delete' % (issue.id,contact.id)" class="fa fa-trash-o fa-2x" />

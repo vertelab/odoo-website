@@ -97,6 +97,13 @@ class MemCachedController(http.Controller):
             memcached.mc_delete(key)
         return memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s ' % path, '/mcpath/%s' % path, '/mcpath/delete?path=%s' % path)
 
+    @http.route(['/mcclearpath',], type='http', auth="user", website=True)
+    # Example: /mcpath?path=/foo/bar
+    def memcached_clear_path(self, path='all',**post):
+        for key in memcached.get_keys(path=path):
+            memcached.mc_delete(key)
+        return request.redirect(path, code=301)
+
     @http.route(['/mcstats',], type='http', auth="user", website=True)
     def memcached_stats(self, **post):
         slab_limit = {k.split(':')[1]:v for k,v in memcached.MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }

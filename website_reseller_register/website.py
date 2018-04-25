@@ -75,9 +75,12 @@ class reseller_register(http.Controller):
         for k,v in post.items():
             if k.split('_')[0] == address_type:
                 if len(k.split('_')) > 2:
-                    child_dict['_'.join(k.split('_')[1:])] = v
+                    if '_'.join(k.split('_')[1:]) == 'country_id':
+                        child_dict['_'.join(k.split('_')[1:])] = int(v)
+                    else:
+                        child_dict['_'.join(k.split('_')[1:])] = v
                 else:
-                    child_dict[k[1]] = v
+                    child_dict[k.split('_')[1]] = v
         if any(child_dict):
             if address_type != 'contact':
                 child_dict['name'] = address_type
@@ -88,7 +91,7 @@ class reseller_register(http.Controller):
             if not child:
                 child = request.env['res.partner'].sudo().create(child_dict)
             else:
-                child.write(child_dict)
+                child.sudo().write(child_dict)
             for field in PARTNER_FIELDS:
                 validation['%s_%s' %(address_type, field)] = 'has-success'
             return {'child': child, 'validation': validation}
@@ -135,6 +138,7 @@ class reseller_register(http.Controller):
                 'is_company': True,
                 'active': False,
                 'property_invoice_type': None,
+                'website_short_description': None,
             })
             issue = request.env['project.issue'].sudo().create({
                 'name': 'New Reseller Application',
@@ -143,17 +147,26 @@ class reseller_register(http.Controller):
             })
             return partner.redirect_token('/reseller_register/%s' %issue.id)
         elif request.httprequest.method == 'POST':
-            issue = request.env['project.issue'].sudo().browse(int(issue))
-            if not issue.partner_id.check_token(post.get('token')):
-                return request.website.render('website.403', {})
-            if post.get('invoicetype'):
-                issue.partner_id.write({'property_invoice_type': int(post.get('invoicetype'))})
-            issue.partner_id.write(self.get_company_post(post))
-            children_dict = self.get_children_post(issue, post)
-            children = children_dict['children']
-            validation = children_dict['validations']
-            for field in self.company_fields():
-                validation['company_%s' %field] = 'has-success'
+            try:
+                issue = request.env['project.issue'].sudo().browse(int(issue))
+                self.update_partner_info(issue, post)
+                return request.redirect('/reseller_register/%s/thanks' %issue.id)
+            except Exception as e:
+                _logger.error(str(e))
+                value = {}
+                if e[0] == 'ValidateError':
+                    f = self.find_field_name(e[1])
+                    if f == 'vat':
+                        validation['company_company_registry'] = 'has-danger'
+                        help['help_company_registry'] = _('Control your organization number.')
+                value = {
+                    'issue': issue,
+                    'validation': validation,
+                    'help': help,
+                    'country_selection': [(country['id'], country['name']) for country in request.env['res.country'].search_read([], ['name'])],
+                    'invoice_type_selection': [(invoice_type['id'], invoice_type['name']) for invoice_type in request.env['sale_journal.invoice.type'].sudo().search_read([], ['name'])],
+                }
+                return request.website.render('website_reseller_register.register_form', value)
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
             if not issue.partner_id.check_token(post.get('token')):
@@ -171,6 +184,23 @@ class reseller_register(http.Controller):
             for k,v in children.items():
                 value[k] = v
         return request.website.render('website_reseller_register.register_form', value)
+
+    # can be overrided
+    def update_partner_info(self, issue, post):
+        if not issue.partner_id.check_token(post.get('token')):
+            return request.website.render('website.403', {})
+        if post.get('invoicetype'):
+            issue.partner_id.write({'property_invoice_type': int(post.get('invoicetype'))})
+        issue.partner_id.write({'website_short_description': post.get('website_short_description', '')})
+        issue.partner_id.write(self.get_company_post(post))
+        children_dict = self.get_children_post(issue, post)
+        children = children_dict['children']
+        validation = children_dict['validations']
+        for field in self.company_fields():
+            validation['company_%s' %field] = 'has-success'
+
+    def find_field_name(self, s):
+        return s[(s.index('Field(s) `')+len('Field(s) `')):s.index('` ')]
 
     @http.route(['/reseller_register/<int:issue>/contact/new', '/reseller_register/<int:issue>/contact/<int:contact>'], type='http', auth='public', website=True)
     def reseller_contact_new(self, issue=0, contact=0, **post):
@@ -211,7 +241,7 @@ class reseller_register(http.Controller):
                         validation['contact_email'] = 'has-error'
                         contact = request.env['res.partner'].sudo().browse([])
                         help_dic = self.get_help()
-                        help_dic['help_contact_email'] = _('This email is alreay exist. Choose another one!')
+                        help_dic['help_contact_email'] = _('This email is aldready exist. Choose another one!')
                         return request.website.render('website_reseller_register.contact_form', {
                             'issue': issue,
                             'contact': contact,
@@ -292,3 +322,23 @@ class reseller_register(http.Controller):
             if message:
                 return True
         return False
+
+    @http.route(['/reseller_register/contact/pw_reset'], type='json', auth='public', website=True)
+    def contact_pw_reset(self, user_id=0, partner_id=0, **kw):
+        _user = request.env['res.users'].sudo().browse(user_id)
+        company = _user.partner_id.commercial_partner_id
+        user = request.env['res.users'].sudo().search([('partner_id', '=', partner_id)])
+        try:
+            if not user:
+                raise Warning(_("Contact '%s' has no user.") % partner_id)
+            user.action_reset_password()
+            return _(u'Password reset has been sent to user %s by email') % user.name
+        except:
+            err = sys.exc_info()
+            error = ''.join(traceback.format_exception(err[0], err[1], err[2]))
+            _logger.exception(_('Cannot send mail to %s. Please check your mail server configuration.') % user.name)
+            return _('Cannot send mail to %s. Please check your mail server configuration.') % user.name
+
+    @http.route(['/reseller_register/<int:issue>/thanks'], type='http', auth='public', website=True)
+    def thanks_for_your_application(self, issue, **post):
+        return request.website.render('website_reseller_register.thanks_for_your_application', {'issue': request.env['project.issue'].browse(issue)})
