@@ -275,7 +275,7 @@ msgstr "Skicka"
 #. module: website_reseller_register
 #: view:website:website_reseller_register.thanks_for_your_application
 msgid "Thanks for your application!"
-msgstr "Tack för din ansöka!"
+msgstr "Tack för din ansökan!"
 
 #. module: website_reseller_register
 #: view:website:website_reseller_register.thanks_for_your_application
