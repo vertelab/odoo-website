@@ -278,6 +278,11 @@ msgid "Thanks for your application!"
 msgstr "Tack för din ansöka!"
 
 #. module: website_reseller_register
+#: view:website:website_reseller_register.thanks_for_your_application
+msgid "Use this link to review your registration"
+msgstr "Använd den här länken för att granska din registrering"
+
+#. module: website_reseller_register
 #: code:addons/website_reseller_register/website.py:244
 #, python-format
 msgid "This email is already exist. Choose another one!"
