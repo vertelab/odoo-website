@@ -18,9 +18,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from openerp import models, fields, api, _
-from openerp.addons.web import http
-from openerp.http import request
+from odoo import models, fields, api, _
+from odoo.addons.web import http
+from odoo.http import request
 import random
 import string
 import werkzeug

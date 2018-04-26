@@ -19,12 +19,12 @@
 #
 ##############################################################################
 
-from openerp import models, fields, api, _
-from openerp import http
-from openerp.addons.web.http import request
-from openerp.addons.website_memcached import memcached
+from odoo import models, fields, api, _
+from odoo import http
+from odoo.http import request
+from odoo.addons.website_memcached import memcached
 
-from openerp.addons.website_blog.controllers.main import QueryURL, WebsiteBlog
+from odoo.addons.website_blog.controllers.main import QueryURL, WebsiteBlog
 
 import logging
 _logger = logging.getLogger(__name__)

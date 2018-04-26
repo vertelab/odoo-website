@@ -19,14 +19,14 @@
 #
 ##############################################################################
 
-import openerp
-from openerp import http
-from openerp.addons.web.http import request
-from openerp.addons.website_memcached import memcached
+import odoo
+from odoo import http
+from odoo.http import request
+from odoo.addons.website_memcached import memcached
 
-from openerp.addons.website.controllers.main import Website
+from odoo.addons.website.controllers.main import Website
 
-from openerp import models, fields, api, _
+from odoo import models, fields, api, _
 
 
 import logging
@@ -104,7 +104,7 @@ class CachedWebsite(Website):
         #~ return super(CachedWebsite, self).actions_server(path_or_xml_id_or_id, **post)
 
 
-class CachedBinary(openerp.addons.web.controllers.main.Binary):
+class CachedBinary(odoo.addons.web.controllers.main.Binary):
 
     #~ @http.route([
         #~ '/web/binary/company_logo',
@@ -116,7 +116,7 @@ class CachedBinary(openerp.addons.web.controllers.main.Binary):
         return super(CachedBinary, self).company_logo(dbname, **kw)
 
 
-class CachedHome(openerp.addons.web.controllers.main.Home):
+class CachedHome(odoo.addons.web.controllers.main.Home):
 
     #~ @http.route([
         #~ '/web/js/<xmlid>',

@@ -19,8 +19,8 @@
 #
 ##############################################################################
 
-from openerp import models, fields, api, _
-from openerp.http import request
+from odoo import models, fields, api, _
+from odoo.http import request
 import werkzeug
 
 import logging

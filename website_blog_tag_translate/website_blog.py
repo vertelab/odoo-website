@@ -19,7 +19,7 @@
 #
 ##############################################################################
 
-from openerp import models, fields, api, _
+from odoo import models, fields, api, _
 
 class BlogTag(models.Model):
     _inherit = 'blog.tag'

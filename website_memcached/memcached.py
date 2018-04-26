@@ -19,11 +19,11 @@
 #
 ##############################################################################
 
-from openerp import models, fields, api, _
-from openerp import http
-from openerp.http import request
-from openerp.service import common
-import openerp
+from odoo import models, fields, api, _
+from odoo import http
+from odoo.http import request
+from odoo.service import common
+import odoo
 import base64
 import math
 import sys

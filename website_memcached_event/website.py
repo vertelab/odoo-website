@@ -18,12 +18,12 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from openerp import models, fields, api, _
-from openerp import http
-from openerp.addons.web.http import request
-from openerp.addons.website_memcached import memcached
+from odoo import models, fields, api, _
+from odoo import http
+from odoo.http import request
+from odoo.addons.website_memcached import memcached
 
-from openerp.addons.website_event.controllers.main import website_event
+from odoo.addons.website_event.controllers.main import website_event
 
 import logging
 _logger = logging.getLogger(__name__)
