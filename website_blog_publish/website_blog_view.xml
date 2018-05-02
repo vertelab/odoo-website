@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<openerp>
+  <data>
+    <!-- page form view  -->
+    <record model="ir.ui.view" id="view_blog_post_form">
+      <field name="name">blog.post.form</field>
+      <field name="model">blog.post</field>
+      <field name="inherit_id" ref="website_blog.view_blog_post_form" />
+      <field name="arch" type="xml">
+        <group string="Technical" position="inside">
+          <label for="date_start" string="Publish start/stop" />
+          <div>
+            <field name="date_start" nolabel="1" class="oe_inline" />
+            <field name="date_stop" nolabel="1" class="oe_inline" />
+            <field name="website_published" class="pull-right oe_inline" nolabel="1" widget="website_button" />
+          </div>
+        </group>
+      </field>
+    </record>
+  </data>
+</openerp>
