@@ -7,6 +7,9 @@
                     <section>
                         <h1 class="text-center">Thanks for your application!</h1>
                     </section>
+                    <section>
+                        <a t-att-href="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)"><h3 class="text-center">Use this link to review your registration</h3></a>
+                    </section>
                 </div>
             </div>
         </template>

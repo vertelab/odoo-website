@@ -7,7 +7,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12 mt32 mb32">
-                            <form class="form-horizontal mt32" t-att-action="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)" method="post">
+                            <form class="form-horizontal mt32" t-att-action="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)" method="post" enctype="multipart/form-data">
                                 <h4 id="title_company" class="col-md-12">
                                     <strong>Company Information</strong>
                                 </h4>

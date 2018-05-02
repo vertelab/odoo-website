@@ -813,9 +813,9 @@ class View(models.Model):
         """
         # Delete all existing ir.ui.view.fts lines. Also delete any lines belonging to non-primary or non-qweb views.
         if record_ids:
-            fts_docs = self.env['ir.ui.view.fts'].search(['|', ('view_id', 'in', record_ids), '|', ('view_id.type', '!=', 'qweb'), ('view_id.mode', '!=', 'primary')])
+            fts_docs = self.env['ir.ui.view.fts'].sudo().search(['|', ('view_id', 'in', record_ids), '|', ('view_id.type', '!=', 'qweb'), ('view_id.mode', '!=', 'primary')])
         else:
-            fts_docs = self.env['ir.ui.view.fts'].search([])
+            fts_docs = self.env['ir.ui.view.fts'].sudo().search([])
         if fts_docs:
             fts_docs.unlink()
         if record_ids:
@@ -834,7 +834,7 @@ class View(models.Model):
             for lang in langs:
                 arch = self.with_context(lang=lang).read_template(id)
                 doc = self.fts_xml2document(arch)
-                self.env['ir.ui.view.fts'].create({'document': doc, 'lang': lang, 'view_id': id})
+                self.env['ir.ui.view.fts'].sudo().create({'document': doc, 'lang': lang, 'view_id': id})
         if record_ids:
             # Update FTS columns for both the specified views and their associated primaries
             record_ids = list(set(record_ids) | primary)

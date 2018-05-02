@@ -150,7 +150,7 @@ class reseller_register(http.Controller):
             try:
                 issue = request.env['project.issue'].sudo().browse(int(issue))
                 self.update_partner_info(issue, post)
-                return request.redirect('/reseller_register/thanks')
+                return request.redirect('/reseller_register/%s/thanks' %issue.id)
             except Exception as e:
                 _logger.error(str(e))
                 value = {}
@@ -241,7 +241,7 @@ class reseller_register(http.Controller):
                         validation['contact_email'] = 'has-error'
                         contact = request.env['res.partner'].sudo().browse([])
                         help_dic = self.get_help()
-                        help_dic['help_contact_email'] = _('This email is alreay exist. Choose another one!')
+                        help_dic['help_contact_email'] = _('This email is aldready exist. Choose another one!')
                         return request.website.render('website_reseller_register.contact_form', {
                             'issue': issue,
                             'contact': contact,
@@ -339,6 +339,6 @@ class reseller_register(http.Controller):
             _logger.exception(_('Cannot send mail to %s. Please check your mail server configuration.') % user.name)
             return _('Cannot send mail to %s. Please check your mail server configuration.') % user.name
 
-    @http.route(['/reseller_register/thanks'], type='http', auth='public', website=True)
-    def thanks_for_your_application(self, **post):
-        return request.website.render('website_reseller_register.thanks_for_your_application', {})
+    @http.route(['/reseller_register/<int:issue>/thanks'], type='http', auth='public', website=True)
+    def thanks_for_your_application(self, issue, **post):
+        return request.website.render('website_reseller_register.thanks_for_your_application', {'issue': request.env['project.issue'].browse(issue)})
