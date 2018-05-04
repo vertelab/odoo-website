@@ -40,7 +40,7 @@ class ir_ui_view(models.Model):
     def mc_delete_path(self,res_id):
         model_data = self.env['ir.model.data'].search([('model','=','ir.ui.view'),('res_id','=',res_id)],limit=1)
         if model_data and model_data.module == 'website':
-            for key in memcached.get_keys(path='/page/%s' % model_data.name):
+            for key in memcached.get_keys(path='/page/%s' % model_data.name, db=self._cr.dbname):
                 memcached.mc_delete(key) 
 
     @api.multi

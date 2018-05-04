@@ -17,7 +17,7 @@
             </xpath>
         </template>
 
-        <template id="website_theme_demo_page" inherit_id="website.layout" name="Website Theme Demo Page" customize_show="True" active="False" priority="100">
+        <template id="website_theme_demo_page" inherit_id="website.layout" name="Website Theme Demo Page" customize_show="True" active="False" priority="100" groups="base.group_website_publisher">
             <xpath expr="//ul[@class='dropdown-menu js_usermenu']/li[last()]" position="before">
                 <li><a href="/page/demo">Demo Page</a></li>
             </xpath>
