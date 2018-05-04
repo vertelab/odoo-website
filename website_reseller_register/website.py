@@ -150,6 +150,8 @@ class reseller_register(http.Controller):
             try:
                 issue = request.env['project.issue'].sudo().browse(int(issue))
                 self.update_partner_info(issue, post)
+                if post.get('new_contact'):
+                    return request.redirect('/reseller_register/%s/contact/new?token=%s' % (issue.id, issue.partner_id.token))
                 return request.redirect('/reseller_register/%s/thanks' %issue.id)
             except Exception as e:
                 _logger.error(str(e))
