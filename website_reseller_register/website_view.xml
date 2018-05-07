@@ -210,7 +210,10 @@
                                                 </tr>
                                                 <tr>
                                                     <td/>
+<!--
                                                     <td><a t-att-href="'/reseller_register/%s/contact/new?token=%s' % (issue.id, issue.partner_id.token)"><u>New Contact</u></a></td>
+-->
+                                                    <td><button name="new_contact" type="submit" class="btn btn-primary">New Contact</button></td>
                                                     <td/>
                                                     <td/>
                                                     <td/>

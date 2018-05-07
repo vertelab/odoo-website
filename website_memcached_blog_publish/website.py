@@ -46,7 +46,7 @@ class BlogPost(models.Model):
     @api.model
     def mc_delete_post(self,post):
         #~ _logger.error('mc_delete_post %s %s' % (memcached.get_keys(flush_type=post.blog_id.name.replace(u'å', 'a').replace(u'ä', 'a').replace(u'ö', 'o').replace(' ', '-')),post.blog_id.name.replace(u'å', 'a').replace(u'ä', 'a').replace(u'ö', 'o').replace(' ', '-')))
-        if post:
+        if post and post.blog_id:
             for key in memcached.get_keys(flush_type='blog-%s' % post.blog_id.name.replace(u'å', 'a').replace(u'ä', 'a').replace(u'ö', 'o').replace(' ', '-').lower()):
                 memcached.mc_delete(key) 
 
