@@ -55,6 +55,7 @@ class product_template(models.Model):
     def _get_fts_fields(self):
         return [
             {'name': 'name', 'weight': 'A'},
+            {'name': 'attribute_line_ids.value_ids.name', 'weight': 'A'},
             {'name': 'description_sale', 'weight': 'B'}]
 
     @api.one
@@ -86,6 +87,7 @@ class product_product(models.Model):
     def _get_fts_fields(self):
         return [
             {'name': 'name', 'weight': 'A', 'related': 'product_tmpl_id.name', 'related_table': 'product_template'},
+            {'name': 'attribute_value_ids.name', 'weight': 'A'},
             {'name': 'description_sale', 'weight': 'B'},
             {'name': 'default_code', 'weight': 'A'},
             {'name': 'ean13', 'weight': 'A'}]
