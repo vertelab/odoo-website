@@ -35,12 +35,12 @@ class reseller_register(http.Controller):
 
     # can be overrided with more company field
     def get_company_post(self, post):
-        value = {'name': post.get('company_name'), 'company_registry': post.get('company_registry')}
+        value = {'name': post.get('company_name'), 'vat': post.get('company_vat')}
         return value
 
     # can be overrided with more company field
     def company_fields(self):
-        return ['name']
+        return ['name', 'vat']
 
     # can be overrided with more company field
     def contact_fields(self):
@@ -101,7 +101,7 @@ class reseller_register(http.Controller):
     def get_help(self):
         help = {}
         help['help_company_name'] = _('')
-        help['help_company_registry'] = _('')
+        help['help_company_vat'] = _('')
         help['help_delivery_street'] = _('')
         help['help_delivery_street2'] = _('')
         help['help_delivery_zip'] = _('')
@@ -127,11 +127,33 @@ class reseller_register(http.Controller):
         help['help_contact_attachment'] = _('If you have more information or a diploma, you can attach it here. You can add more than one, but you have to save each one separate.')
         return help
 
-    @http.route(['/reseller_register/new', '/reseller_register/<int:issue>'], type='http', auth='public', website=True)
-    def reseller_register_new(self, issue=0, **post):
+    def set_issue_id(self, issue_id):
+        request.session['reseller_register_issue_id'] = issue_id
+    
+    def get_issue(self, issue_id, token):
+        """Fetch the specified issue, or the issue from the session. Check token if needed.
+        """
+        issue_id = issue_id or request.session.get('reseller_register_issue_id')
+        if not issue_id:
+            return
+        issue = request.env['project.issue'].sudo().browse(issue_id)
+        if issue_id == request.session.get('reseller_register_issue_id'):
+            return issue
+        elif issue.partner_id.check_token(token):
+            self.set_issue_id(issue.id)
+            return issue
+        return 
+
+    @http.route(['/reseller_register/new', '/reseller_register/<int:issue_id>', '/reseller_register/<int:issue_id>/<string:action>'], type='http', auth='public', website=True)
+    def reseller_register_new(self, issue_id=None, action=None, **post):
+        _logger.warn(post)
         validation = {}
         children = {}
         help = {}
+        issue = self.get_issue(issue_id, post.get('token'))
+        if issue_id and not issue:
+            # Token didn't match
+            return request.website.render('website.403', {})
         if not issue:
             partner = request.env['res.partner'].sudo().create({
                 'name': _('My Company'),
@@ -145,22 +167,22 @@ class reseller_register(http.Controller):
                 'partner_id': partner.id,
                 'project_id': request.env.ref('website_reseller_register.project_reseller_register').id
             })
+            self.set_issue_id(issue.id)
             return partner.redirect_token('/reseller_register/%s' %issue.id)
         elif request.httprequest.method == 'POST':
             try:
-                issue = request.env['project.issue'].sudo().browse(int(issue))
                 self.update_partner_info(issue, post)
-                if post.get('new_contact'):
-                    return request.redirect('/reseller_register/%s/contact/new?token=%s' % (issue.id, issue.partner_id.token))
+                if action == 'new_contact':
+                    return request.redirect('/reseller_register/%s/contact/new' % issue.id)
                 return request.redirect('/reseller_register/%s/thanks' %issue.id)
             except Exception as e:
                 _logger.error(str(e))
                 value = {}
                 if e[0] == 'ValidateError':
                     f = self.find_field_name(e[1])
-                    if f == 'vat':
-                        validation['company_company_registry'] = 'has-danger'
-                        help['help_company_registry'] = _('Control your organization number.')
+                    if f == 'company_vat':
+                        validation['company_vat'] = 'has-danger'
+                        help['help_company_vat'] = _('Control your organization number.')
                 value = {
                     'issue': issue,
                     'validation': validation,
@@ -170,9 +192,6 @@ class reseller_register(http.Controller):
                 }
                 return request.website.render('website_reseller_register.register_form', value)
         else:
-            issue = request.env['project.issue'].sudo().browse(int(issue))
-            if not issue.partner_id.check_token(post.get('token')):
-                return request.website.render('website.403', {})
             children = self.get_children(issue)
         help = self.get_help()
         value = {
@@ -204,10 +223,11 @@ class reseller_register(http.Controller):
     def find_field_name(self, s):
         return s[(s.index('Field(s) `')+len('Field(s) `')):s.index('` ')]
 
-    @http.route(['/reseller_register/<int:issue>/contact/new', '/reseller_register/<int:issue>/contact/<int:contact>'], type='http', auth='public', website=True)
-    def reseller_contact_new(self, issue=0, contact=0, **post):
-        issue = request.env['project.issue'].sudo().browse(issue)
-        if not issue.partner_id.check_token(post.get('token')):
+    @http.route(['/reseller_register/<int:issue_id>/contact/new', '/reseller_register/<int:issue_id>/contact/<int:contact>'], type='http', auth='public', website=True)
+    def reseller_contact_new(self, issue_id=None, contact=0, **post):
+        issue = self.get_issue(issue_id, post.get('token'))
+        if issue_id and not issue:
+            # Token didn't match
             return request.website.render('website.403', {})
         if contact > 0:
             contact = request.env['res.partner'].sudo().browse(contact)
@@ -282,9 +302,12 @@ class reseller_register(http.Controller):
             'validation': validation,
         })
 
-    @http.route(['/reseller_register/<int:issue>/contact/<int:contact>/delete'], type='http', auth='public', website=True)
-    def reseller_contact_delete(self, issue=0, contact=0, **post):
-        issue = request.env['project.issue'].sudo().browse(issue)
+    @http.route(['/reseller_register/<int:issue_id>/contact/<int:contact>/delete'], type='http', auth='public', website=True)
+    def reseller_contact_delete(self, issue_id=None, contact=0, **post):
+        issue = self.get_issue(issue_id, post.get('token'))
+        if issue_id and not issue:
+            # Token didn't match
+            return request.website.render('website.403', {})
         if contact > 0:
             contact = request.env['res.partner'].sudo().browse(contact)
             if not (contact in issue.partner_id.child_ids):
@@ -299,9 +322,12 @@ class reseller_register(http.Controller):
             validation[k] = 'has-success'
         return request.redirect('/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token))
 
-    @http.route(['/reseller_register/<int:issue>/attachment/<int:attachment>/delete'], type='http', auth='public', website=True)
-    def reseller_attachment_delete(self, issue=0, attachment=0, **post):
-        issue = request.env['project.issue'].sudo().browse(issue)
+    @http.route(['/reseller_register/<int:issue_id>/attachment/<int:attachment>/delete'], type='http', auth='public', website=True)
+    def reseller_attachment_delete(self, issue_id=None, attachment=0, **post):
+        issue = self.get_issue(issue_id, post.get('token'))
+        if issue_id and not issue:
+            # Token didn't match
+            return request.website.render('website.403', {})
         if attachment > 0:
             attachment = request.env['ir.attachment'].sudo().browse(attachment)
             if attachment.res_model == 'res.partner' and attachment.res_id != 0:
@@ -313,13 +339,17 @@ class reseller_register(http.Controller):
 
     @http.route(['/website_reseller_register_message_send'], type='json', auth="public", website=True)
     def website_reseller_register_message_send(self, issue_id, msg_body, **kw):
+        issue = self.get_issue(issue_id, kw.get('token'))
+        if issue_id and not issue:
+            # Token didn't match
+            return request.website.render('website.403', {})
         if msg_body != '':
             message = request.env['mail.message'].sudo().create({
                 'model': 'project.issue',
                 'res_id': int(issue_id),
                 'type': 'comment',
                 'body': msg_body,
-                'author_id': request.env.user.partner_id.id
+                'author_id': issue.partner_id.id
             })
             if message:
                 return True
@@ -341,6 +371,10 @@ class reseller_register(http.Controller):
             _logger.exception(_('Cannot send mail to %s. Please check your mail server configuration.') % user.name)
             return _('Cannot send mail to %s. Please check your mail server configuration.') % user.name
 
-    @http.route(['/reseller_register/<int:issue>/thanks'], type='http', auth='public', website=True)
-    def thanks_for_your_application(self, issue, **post):
-        return request.website.render('website_reseller_register.thanks_for_your_application', {'issue': request.env['project.issue'].browse(issue)})
+    @http.route(['/reseller_register/<int:issue_id>/thanks'], type='http', auth='public', website=True)
+    def thanks_for_your_application(self, issue_id=None, **post):
+        issue = self.get_issue(issue_id, post.get('token'))
+        if issue_id and not issue:
+            # Token didn't match
+            return request.website.render('website.403', {})
+        return request.website.render('website_reseller_register.thanks_for_your_application', {'issue': issue})

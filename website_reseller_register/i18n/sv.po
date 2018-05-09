@@ -77,7 +77,7 @@ msgstr "Stäng meddelande rutan"
 #. module: website_reseller_register
 #: view:website:website_reseller_register.register_form
 msgid "Company Information"
-msgstr "Bolags info"
+msgstr "Bolagsinformation"
 
 #. module: website_reseller_register
 #: view:website:website_reseller_register.register_form

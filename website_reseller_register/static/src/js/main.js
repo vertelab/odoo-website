@@ -24,6 +24,30 @@ $(document).ready(function(){
             $("#open_msgbox").removeClass('hidden');
         });
     });
+    
+    $(".oe_reseller_register_copy_address").change(function() {
+        // Copy values from one address type to another
+        self = $(this);
+        if(this.checked) {
+            var names = address_type = self.attr('name').split('_');
+            var address_type = names[0];
+            var copy_type = names[names.length - 1];
+            $('div#' + address_type).find('input').each(function (i, el){
+                if (el.name.substring(0, address_type.length + 1) == address_type + '_') {
+                    var name = copy_type + el.name.substring(address_type.length);
+                    el.value = $('input[name="' + name + '"]').attr('value');
+                }
+            });
+            $('div#' + address_type).find('select').each(function (i, el){
+                if (el.name.substring(0, address_type.length + 1) == address_type + '_') {
+                    var name = copy_type + el.name.substring(address_type.length);
+                    var value = $('select[name="' + name + '"]').find('option:selected').val();
+                    $(el).find('option[value="' + value + '"]').attr('selected', 'selected')
+                }
+            });
+        }
+    });
+
 });
 
 function RRpwReset(user_id, partner_id) {
@@ -34,3 +58,4 @@ function RRpwReset(user_id, partner_id) {
         window.alert(data);
     });
 }
+
