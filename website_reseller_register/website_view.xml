@@ -7,7 +7,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12 mt32 mb32">
-                            <form class="form-horizontal mt32" t-att-action="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)" method="post" enctype="multipart/form-data">
+                            <form class="form-horizontal mt32 form-navtabs-validation" t-att-action="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)" method="post" enctype="multipart/form-data">
                                 <h4 id="title_company" class="col-md-12">
                                     <strong>Company Information</strong>
                                 </h4>
@@ -18,11 +18,11 @@
                                         <small t-esc="help.get('help_company_name')" />
                                     </div>
                                 </div>
-                                <div id="company_org" t-att-class="'form-group %s' %validation.get('company_vat')">
+                                <div id="company_org" t-att-class="'form-group %s' %validation.get('company_company_registry')">
                                      <label class="col-md-3 col-sm-4 control-label" for="vat">Organization Number</label>
                                      <div class="col-md-7 col-sm-8">
-                                        <input type="text" class="form-control" name="company_vat" t-att-value="issue.partner_id.vat" placeholder="123456-7897" />
-                                        <small t-esc="help.get('help_company_vat')" />
+                                        <input type="text" class="form-control" name="company_company_registry" t-att-value="company_company_registry or issue.partner_id.company_registry" placeholder="123456-7897" pattern="[0-9]{6}-[0-9]{4}"/>
+                                        <small t-esc="help.get('help_company_company_registry')" />
                                     </div>
                                 </div>
                                 <div id="company_property_invoice_type" class="form-group">

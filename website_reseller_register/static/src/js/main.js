@@ -1,16 +1,31 @@
 $(document).ready(function(){
+    
+    $("form.form-navtabs-validation div.tab-pane input, form.form-navtabs-validation div.tab-pane select").on('invalid', function (e, data) {
+        // Switch to tab of invalid input or select
+        self = $(this);
+        tab = self.parents('div.tab-pane');
+        menu = $('ul.nav-tabs > li > a[href="#' + tab.attr('id') + '"]').parent('li');
+        self.parents('div.tab-content').find('div.tab-pane').removeClass('active');
+        tab.addClass('active');
+        tab.addClass('in');
+        menu.siblings('li').removeClass('active');
+        menu.addClass('active');
+    });
+    
     $("#open_msgbox").click(function(){
         $(this).closest('#message_box').find("#msgbox").removeClass('hidden');
         $(this).addClass('hidden');
         $(this).closest('#message_box').find("#close_msgbox").removeClass('hidden');
         $(this).closest('#message_box').find("#send_msgbox").removeClass('hidden');
     });
+    
     $("#close_msgbox").click(function(){
         $(this).closest('#message_box').find("#msgbox").addClass('hidden');
         $(this).closest('#message_box').find("#send_msgbox").addClass('hidden');
         $(this).addClass('hidden');
         $(this).closest('#message_box').find("#open_msgbox").removeClass('hidden');
     });
+    
     $("#send_msgbox").click(function(){
         var self = $(this);
         openerp.jsonRpc("/website_reseller_register_message_send", "call", {

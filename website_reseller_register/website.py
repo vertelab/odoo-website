@@ -21,6 +21,7 @@
 from openerp import models, fields, api, _
 from openerp.addons.web import http
 from openerp.http import request
+from openerp.exceptions import ValidationError
 import base64
 import sys
 import traceback
@@ -35,12 +36,12 @@ class reseller_register(http.Controller):
 
     # can be overrided with more company field
     def get_company_post(self, post):
-        value = {'name': post.get('company_name'), 'vat': post.get('company_vat')}
+        value = {'name': post.get('company_name'), 'company_registry': post.get('company_company_registry')}
         return value
 
     # can be overrided with more company field
     def company_fields(self):
-        return ['name', 'vat']
+        return ['name', 'company_registry']
 
     # can be overrided with more company field
     def contact_fields(self):
@@ -101,7 +102,7 @@ class reseller_register(http.Controller):
     def get_help(self):
         help = {}
         help['help_company_name'] = _('')
-        help['help_company_vat'] = _('')
+        help['help_company_company_registry'] = _('')
         help['help_delivery_street'] = _('')
         help['help_delivery_street2'] = _('')
         help['help_delivery_zip'] = _('')
@@ -136,7 +137,11 @@ class reseller_register(http.Controller):
         issue_id = issue_id or request.session.get('reseller_register_issue_id')
         if not issue_id:
             return
-        issue = request.env['project.issue'].sudo().browse(issue_id)
+        issue = request.env['project.issue'].sudo().search([('id', '=', issue_id)])
+        if not issue:
+            # Issue has probably been deleted
+            self.set_issue_id(None)
+            return
         if issue_id == request.session.get('reseller_register_issue_id'):
             return issue
         elif issue.partner_id.check_token(token):
@@ -149,11 +154,13 @@ class reseller_register(http.Controller):
         _logger.warn(post)
         validation = {}
         children = {}
-        help = {}
         issue = self.get_issue(issue_id, post.get('token'))
         if issue_id and not issue:
             # Token didn't match
             return request.website.render('website.403', {})
+        values = {
+            'help': self.get_help(),
+        }
         if not issue:
             partner = request.env['res.partner'].sudo().create({
                 'name': _('My Company'),
@@ -170,50 +177,44 @@ class reseller_register(http.Controller):
             self.set_issue_id(issue.id)
             return partner.redirect_token('/reseller_register/%s' %issue.id)
         elif request.httprequest.method == 'POST':
+            company_registry = issue.partner_id.company_registry
+            vat = issue.partner_id.vat
             try:
                 self.update_partner_info(issue, post)
                 if action == 'new_contact':
                     return request.redirect('/reseller_register/%s/contact/new' % issue.id)
                 return request.redirect('/reseller_register/%s/thanks' %issue.id)
-            except Exception as e:
-                _logger.error(str(e))
-                value = {}
-                if e[0] == 'ValidateError':
-                    f = self.find_field_name(e[1])
-                    if f == 'company_vat':
-                        validation['company_vat'] = 'has-danger'
-                        help['help_company_vat'] = _('Control your organization number.')
-                value = {
-                    'issue': issue,
-                    'validation': validation,
-                    'help': help,
-                    'country_selection': [(country['id'], country['name']) for country in request.env['res.country'].search_read([], ['name'])],
-                    'invoice_type_selection': [(invoice_type['id'], invoice_type['name']) for invoice_type in request.env['sale_journal.invoice.type'].sudo().search_read([], ['name'])],
-                }
-                return request.website.render('website_reseller_register.register_form', value)
+            except ValidationError as e:
+                if 'company registry' in e[1] or '`vat`' in e[1]:
+                    validation['company_company_registry'] = 'has-error'
+                    values['help']['help_company_company_registry'] = _('Check your organization number.')
+                    values['company_company_registry'] = post['company_company_registry']
+                    post['company_company_registry'] = company_registry
+                    try:
+                        issue.partner_id.vat = vat
+                        self.update_partner_info(issue, post)
+                    except Exception as e:
+                        _logger.warn(e)
         else:
             children = self.get_children(issue)
-        help = self.get_help()
-        value = {
+        values.update({
             'issue': issue,
-            'help': help,
             'validation': validation,
             'country_selection': [(country['id'], country['name']) for country in request.env['res.country'].search_read([], ['name'])],
             'invoice_type_selection': [(invoice_type['id'], invoice_type['name']) for invoice_type in request.env['sale_journal.invoice.type'].sudo().search_read([], ['name'])],
-        }
+        })
         if any(children):
             for k,v in children.items():
-                value[k] = v
-        return request.website.render('website_reseller_register.register_form', value)
+                values[k] = v
+        return request.website.render('website_reseller_register.register_form', values)
 
     # can be overrided
     def update_partner_info(self, issue, post):
-        if not issue.partner_id.check_token(post.get('token')):
-            return request.website.render('website.403', {})
+        values = self.get_company_post(post)
         if post.get('invoicetype'):
-            issue.partner_id.write({'property_invoice_type': int(post.get('invoicetype'))})
-        issue.partner_id.write({'website_short_description': post.get('website_short_description', '')})
-        issue.partner_id.write(self.get_company_post(post))
+            values['property_invoice_type'] = int(post.get('invoicetype'))
+        values['website_short_description'] = post.get('website_short_description', '')
+        issue.partner_id.write(values)
         children_dict = self.get_children_post(issue, post)
         children = children_dict['children']
         validation = children_dict['validations']
@@ -263,7 +264,7 @@ class reseller_register(http.Controller):
                         validation['contact_email'] = 'has-error'
                         contact = request.env['res.partner'].sudo().browse([])
                         help_dic = self.get_help()
-                        help_dic['help_contact_email'] = _('This email is aldready exist. Choose another one!')
+                        help_dic['help_contact_email'] = _('This email aldready exists. Choose another one!')
                         return request.website.render('website_reseller_register.contact_form', {
                             'issue': issue,
                             'contact': contact,
