@@ -502,7 +502,7 @@ $$ LANGUAGE plpgsql;""")
         """
         domain = domain or []
         domains = domains or {}
-        models = models or self.get_fts_models()
+        models = models or self._get_fts_models()
         results = []
         for model in models:
             res = self.env[model].fts_search(query, domain=domain + domains.get(model, []))
@@ -519,7 +519,7 @@ $$ LANGUAGE plpgsql;""")
 
     @api.model
     def fts_term_search(self, query, models=None, limit=25, domain=None, offset=0):
-        models = models or self.get_fts_models()
+        models = models or self._get_fts_models()
         domain = domain or []
         lang = self._context.get('lang')
         ps_lang, col_name = env['fts.model']._lang_o2pg(lang)
@@ -770,7 +770,7 @@ class WebsiteFullTextSearch(http.Controller):
             domains[model] = request.env[model].fts_get_default_suggestion_domain()
         result = request.env['fts.model'].fts_search_multi(search, [], res_model, limit, offset, domains)
         result_models = {}
-        for model in request.env['fts.model'].get_fts_models():
+        for model in request.env['fts.model']._get_fts_models():
             ids = []
             for res in result:
                 if res['model'] == model:
@@ -800,12 +800,8 @@ class fts_test(models.TransientModel):
     _description = 'FTS Test Wizard'
 
     @api.model
-    def get_fts_models(self):
-        return _fts_models[self._cr.dbname]
-
-    @api.model
     def _default_fts_model_ids(self):
-        for model in self.get_fts_models():
+        for model in self.env['fts.model']._get_fts_models():
             obj = self.env['fts.test.model'].search([('name', '=', model)])
             if not obj:
                 self.env['fts.test.model'].create({'name': model})
