@@ -61,7 +61,7 @@ class MemCachedController(http.Controller):
             'page_dict': res['page_dict'].items(),
             'page_len': '%.2f' %res['size'],
         }
-        return request.website.render('website_memcached.mcmeta_page', values)
+        return request.render('website_memcached.mcmeta_page', values)
 
     @http.route(['/mcflush','/mcflush/<string:flush_type>',], type='http', auth="user", website=True)
     def memcached_flush(self, flush_type='all',**post):
@@ -98,11 +98,10 @@ class MemCachedController(http.Controller):
         return memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s ' % path, '/mcpath/%s' % path, '/mcpath/delete?path=%s' % path)
 
     @http.route(['/mcclearpath',], type='http', auth="user", website=True)
-    # Example: /mcpath?path=/foo/bar
     def memcached_clear_path(self, path='all',**post):
         for key in memcached.get_keys(path=path):
             memcached.mc_delete(key)
-        return request.redirect(path, code=301)
+        return request.redirect(path, code=303)
 
     @http.route(['/mcstats',], type='http', auth="user", website=True)
     def memcached_stats(self, **post):

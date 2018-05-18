@@ -87,7 +87,13 @@ class CachedWebsite(Website):
         #~ '/website/image/<model>/<id>/<field>',
         #~ '/website/image/<model>/<id>/<field>/<int:max_width>x<int:max_height>'
         #~ ], auth="public", website=True, multilang=False)
-    @memcached.route(flush_type=lambda kw: 'page_image',binary=True, key=lambda k: '{db}{path}')
+    @memcached.route(
+        # route required for some mysterious reason.
+        [
+            '/website/image',
+            '/website/image/<model>/<id>/<field>',
+            '/website/image/<model>/<id>/<field>/<int:max_width>x<int:max_height>'
+        ], flush_type=lambda kw: 'page_image',binary=True, key=lambda k: '{db}{path}')
     def website_image(self, model, id, field, max_width=None, max_height=None):
         #~ raise Warning(model,id,field)
         return super(CachedWebsite, self).website_image(model, id, field, max_width, max_height)
@@ -102,21 +108,6 @@ class CachedWebsite(Website):
     #~ @memcached.route(flush_type='actions_server')
     #~ def actions_server(self, path_or_xml_id_or_id, **post):
         #~ return super(CachedWebsite, self).actions_server(path_or_xml_id_or_id, **post)
-
-
-class CachedBinary(odoo.addons.web.controllers.main.Binary):
-
-    #~ @http.route([
-        #~ '/web/binary/company_logo',
-        #~ '/logo',
-        #~ '/logo.png',
-    #~ ], type='http', auth="none", cors="*")
-    @memcached.route(flush_type=lambda kw: 'page_image',binary=True)
-    def company_logo(self, dbname=None, **kw):
-        return super(CachedBinary, self).company_logo(dbname, **kw)
-
-
-class CachedHome(odoo.addons.web.controllers.main.Home):
 
     #~ @http.route([
         #~ '/web/js/<xmlid>',
@@ -140,7 +131,12 @@ class CachedHome(odoo.addons.web.controllers.main.Home):
         #~ if 'website.assets_editor' in request.httprequest.path:
             #~ return super(CachedHome, self).js_bundle('website.assets_editor', version, **kw)
 
-    @memcached.route(flush_type=lambda kw: 'js_bundle',binary=True,cache_age=60*60*24*30,max_age=604800)
+    @memcached.route(
+        # route required for some mysterious reason.
+        [
+            '/web/js/<xmlid>',
+            '/web/js/<xmlid>/<version>',
+        ], flush_type=lambda kw: 'js_bundle',binary=True,cache_age=60*60*24*30,max_age=604800)
     def js_bundle(self, xmlid, version=None, **kw):
         return super(CachedHome, self).js_bundle(xmlid, version, **kw)
 
@@ -151,10 +147,26 @@ class CachedHome(odoo.addons.web.controllers.main.Home):
         #~ '/web/css/<xmlid>/<version>',
         #~ '/web/css.<int:page>/<xmlid>/<version>',
     #~ ], type='http', auth='public')
-    @memcached.route(flush_type=lambda kw: 'css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,key=lambda k: '{db}{xmlid}',content_type="text/css; charset=utf-8;")
-    #~ @memcached.route(flush_type='css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,key=lambda k: '{db}{xmlid}')
+    @memcached.route(
+        # route required for some mysterious reason.
+        route=[
+            '/web/css/<xmlid>',
+            '/web/css/<xmlid>/<version>',
+            '/web/css.<int:page>/<xmlid>/<version>',
+        ], flush_type=lambda kw: 'css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,key=lambda k: '{db}{xmlid}',content_type="text/css; charset=utf-8;")
     def css_bundle(self, xmlid, version=None, page=None, **kw):
         return super(CachedHome, self).css_bundle(xmlid, version, page, **kw)
+
+class CachedBinary(odoo.addons.web.controllers.main.Binary):
+
+    #~ @http.route([
+        #~ '/web/binary/company_logo',
+        #~ '/logo',
+        #~ '/logo.png',
+    #~ ], type='http', auth="none", cors="*")
+    @memcached.route(flush_type=lambda kw: 'page_image',binary=True)
+    def company_logo(self, dbname=None, **kw):
+        return super(CachedBinary, self).company_logo(dbname, **kw)
 
 class MemCachedController(http.Controller):
     @http.route(['/remove_cached_page',], type='json', auth="user", website=True)

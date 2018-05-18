@@ -222,7 +222,7 @@ def get_flush_page(keys, title, url='', delete_url=''):
             p.get('key_raw'),
             '<a href="/mcpage/%s/delete?url=%s" class="fa fa-trash-o"/>' %(key,url)
         ))
-    return request.website.render("website_memcached.memcached_page", {
+    return request.render("website_memcached.memcached_page", {
         'title': title,
         'header': [_('Key'),_('Path'),_('Module'),_('Flush Type'),_('Key Raw'),_('Cmd')],
         'rows': rows,
@@ -353,8 +353,8 @@ def route(route=None, **kw):
                                                     post='%s' % kw,
                                                     xmlid='%s' % kw.get('xmlid'),
                                                     version='%s' % kw.get('version'),
-                                                    publisher='1' if request.env.ref('base.group_website_publisher') in request.env.user.groups_id else '0',
-                                                    designer='1' if request.env.ref('base.group_website_designer') in request.env.user.groups_id else '0',
+                                                    publisher='1' if request.env.ref('website.group_website_publisher') in request.env.user.groups_id else '0',
+                                                    designer='1' if request.env.ref('website.group_website_designer') in request.env.user.groups_id else '0',
                                                     ).encode('latin-1')
                 #~ raise Warning(request.env['res.users'].browse(request.uid).group_ids)
                 key = str(MEMCACHED_HASH(key_raw))

@@ -31,66 +31,10 @@ class WebsiteSale(WebsiteSale):
 
     # '/shop'
     @memcached.route()
-    def shop(self, page=0, category=None, search='', **post):
+    def shop(self, page=0, category=None, search='', ppg=False, **post):
         return super(WebsiteSale, self).shop(page, category, search, **post)
 
     # '/shop/product/<model("product.template"):product>'
     @memcached.route()
     def product(self, product, category='', search='', **kwargs):
         return super(WebsiteSale, self).product(product, category, search, **kwargs)
-
-    # '/shop/product/comment/<int:product_template_id>'
-    @memcached.route()
-    def product_comment(self, product_template_id, **post):
-        return super(WebsiteSale, self).product_comment(product_template_id, **post)
-
-    # '/shop/pricelist'
-    @memcached.route()
-    def pricelist(self, promo, **post):
-        return super(WebsiteSale, self).pricelist(promo, **post)
-
-    # '/shop/cart'
-    @memcached.route()
-    def cart(self, **post):
-        return super(WebsiteSale, self).cart(**post)
-
-    # '/shop/cart/update'
-    @memcached.route()
-    def cart_update(self, product_id, add_qty=1, set_qty=0, **post):
-        return super(WebsiteSale, self).cart_update(product_id, add_qty, set_qty, **post)
-
-    # '/shop/checkout'
-    @memcached.route()
-    def checkout(self, **post):
-        return super(WebsiteSale, self).checkout(**post)
-
-    # '/shop/confirm_order'
-    @memcached.route()
-    def confirm_order(self, **post):
-        return super(WebsiteSale, self).confirm_order(**post)
-
-    # '/shop/payment'
-    @memcached.route()
-    def payment(self, **post):
-        return super(WebsiteSale, self).payment(**post)
-
-    # '/shop/payment/validate'
-    @memcached.route()
-    def payment_validate(self, transaction_id=None, sale_order_id=None, **post):
-        return super(WebsiteSale, self).payment_validate(transaction_id, sale_order_id, **post)
-
-    # '/shop/confirmation'
-    @memcached.route()
-    def payment_confirmation(self, **post):
-        return super(WebsiteSale, self).payment_confirmation(**post)
-
-    @http.route(['/website_sale_update_cart'], type='json', auth="public", website=True)
-    def website_sale_update_cart(self):
-        order = request.website.sale_get_order()
-        res = {'amount_total': '0.00', 'cart_quantity': '0'}
-        if order:
-            res['amount_total'] = "%.2f" %order.amount_total
-            res['cart_quantity'] = order.cart_quantity
-        if request.env.lang == 'sv_SE':
-            res['amount_total'] = res['amount_total'].replace('.', ',')
-        return res
