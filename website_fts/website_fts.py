@@ -522,7 +522,7 @@ $$ LANGUAGE plpgsql;""")
         models = models or self._get_fts_models()
         domain = domain or []
         lang = self._context.get('lang')
-        ps_lang, col_name = env['fts.model']._lang_o2pg(lang)
+        ps_lang, col_name = self.env['fts.model']._lang_o2pg(lang)
         _logger.debug('lang: %s, ps_lang: %s, col_name: %s' % (lang, ps_lang, col_name))
         query = self._fts_get_ts_query(query, ps_lang)
         expressions = []
