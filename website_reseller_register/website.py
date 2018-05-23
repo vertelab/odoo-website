@@ -134,7 +134,7 @@ class reseller_register(http.Controller):
     def get_issue(self, issue_id, token):
         """Fetch the specified issue, or the issue from the session. Check token if needed.
         """
-        issue_id = issue_id or request.session.get('reseller_register_issue_id')
+        issue_id = (issue_id and int(issue_id)) or request.session.get('reseller_register_issue_id')
         if not issue_id:
             return
         issue = request.env['project.issue'].sudo().search([('id', '=', issue_id)])
@@ -151,7 +151,6 @@ class reseller_register(http.Controller):
 
     @http.route(['/reseller_register/new', '/reseller_register/<int:issue_id>', '/reseller_register/<int:issue_id>/<string:action>'], type='http', auth='public', website=True)
     def reseller_register_new(self, issue_id=None, action=None, **post):
-        _logger.warn(post)
         validation = {}
         children = {}
         issue = self.get_issue(issue_id, post.get('token'))
@@ -276,6 +275,7 @@ class reseller_register(http.Controller):
                             'name': values.get('name'),
                             'login': values.get('email'),
                             'image': values.get('image'),
+                            'active': False,
                         })
                         user.partner_id.sudo().write({
                             'email': values.get('email'),
@@ -283,10 +283,6 @@ class reseller_register(http.Controller):
                             'mobile': values.get('mobile'),
                             'parent_id': values.get('parent_id'),
                         })
-                        try:
-                            user.action_reset_password()
-                        except:
-                            _logger.warn('Cannot send mail to %s. Please check your mail server configuration.' %user.name)
                     except Exception as e:
                         err = sys.exc_info()
                         error = ''.join(traceback.format_exception(err[0], err[1], err[2]))

@@ -67,7 +67,7 @@
                                         <div t-att-class="'form-group %s' %validation.get('delivery_street')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_street">Street</label>
                                             <div class="col-md-7 col-sm-8">
-                                                <input type="text" class="form-control" name="delivery_street" t-att-value="delivery.street if delivery else ''" placeholder="" required=""/>
+                                                <input type="text" class="form-control" name="delivery_street" t-att-value="delivery.street if delivery else ''" placeholder=""/>
                                                 <small t-esc="help.get('help_delivery_street')" />
                                             </div>
                                         </div>
@@ -81,21 +81,21 @@
                                         <div t-att-class="'form-group %s' %validation.get('delivery_zip')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_zip">Zip</label>
                                             <div class="col-md-7 col-sm-8">
-                                                <input type="text" class="form-control" name="delivery_zip" t-att-value="delivery.zip if delivery else ''" placeholder="" required=""/>
+                                                <input type="text" class="form-control" name="delivery_zip" t-att-value="delivery.zip if delivery else ''" placeholder=""/>
                                                 <small t-esc="help.get('help_delivery_zip')" />
                                             </div>
                                         </div>
                                         <div t-att-class="'form-group %s' %validation.get('delivery_city')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_city">City</label>
                                             <div class="col-md-7 col-sm-8">
-                                                <input type="text" class="form-control" name="delivery_city" t-att-value="delivery.city if delivery else ''" placeholder="" required=""/>
+                                                <input type="text" class="form-control" name="delivery_city" t-att-value="delivery.city if delivery else ''" placeholder=""/>
                                                 <small t-esc="help.get('help_delivery_city')" />
                                             </div>
                                         </div>
                                         <div t-att-class="'form-group %s' %validation.get('delivery_country_id')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_country_id">Country</label>
                                             <div class="col-md-7 col-sm-8">
-                                                <select class="form-control" name="delivery_country_id" required="">
+                                                <select class="form-control" name="delivery_country_id">
                                                     <option value="" t-att="{'selected': '1'} if (not delivery or not delivery.country_id) else {}" disabled="1">Choose country</option>
                                                     <t t-foreach="country_selection" t-as="country">
                                                         <option t-att-value="country[0]" t-att="{'selected': '1'} if country[0] == (delivery and delivery.country_id and delivery.country_id.id) else {}"><t t-esc="country[1]"/></option>
@@ -107,14 +107,14 @@
                                         <div t-att-class="'form-group %s' %validation.get('delivery_phone')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_phone">Phone</label>
                                             <div class="col-md-7 col-sm-8">
-                                                <input type="text" class="form-control" name="delivery_phone" t-att-value="delivery.phone if delivery else ''" placeholder="" required=""/>
+                                                <input type="text" class="form-control" name="delivery_phone" t-att-value="delivery.phone if delivery else ''" placeholder=""/>
                                                 <small t-esc="help.get('help_delivery_phone')" />
                                             </div>
                                         </div>
                                         <div t-att-class="'form-group %s' %validation.get('delivery_email')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_email">Email</label>
                                             <div class="col-md-7 col-sm-8">
-                                                <input type="email" class="form-control" name="delivery_email" t-att-value="delivery.email if delivery else ''" placeholder="" required=""/>
+                                                <input type="email" class="form-control" name="delivery_email" t-att-value="delivery.email if delivery else ''" placeholder=""/>
                                                 <small t-esc="help.get('help_delivery_wmail')" />
                                             </div>
                                         </div>
