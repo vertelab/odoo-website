@@ -42,6 +42,11 @@ msgstr ""
 
 #. module: website_reseller_register
 #: view:website:website_reseller_register.contact_form
+msgid "Attachments"
+msgstr ""
+
+#. module: website_reseller_register
+#: view:website:website_reseller_register.contact_form
 msgid "Back"
 msgstr ""
 
@@ -221,7 +226,7 @@ msgstr ""
 #. module: website_reseller_register
 #: code:addons/website_reseller_register/website.py:123
 #, python-format
-msgid "Please a picture of you. This makes it more personal."
+msgid "Please add a picture of you. This makes it more personal."
 msgstr ""
 
 #. module: website_reseller_register

@@ -44,6 +44,11 @@ msgstr "Bilaga"
 
 #. module: website_reseller_register
 #: view:website:website_reseller_register.contact_form
+msgid "Attachments"
+msgstr "Bilagor"
+
+#. module: website_reseller_register
+#: view:website:website_reseller_register.contact_form
 msgid "Back"
 msgstr "Tillbaka"
 
@@ -222,8 +227,8 @@ msgstr "Telefon"
 #. module: website_reseller_register
 #: code:addons/website_reseller_register/website.py:123
 #, python-format
-msgid "Please a picture of you. This makes it more personal."
-msgstr "Vänligen en bild av dig. Detta gör det mer personligt."
+msgid "Please add a picture of you. This makes it more personal."
+msgstr "Vänligen ladda upp en bild av dig själv. Detta gör det mer personligt."
 
 #. module: website_reseller_register
 #: code:addons/website_reseller_register/website.py:126
