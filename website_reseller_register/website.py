@@ -121,7 +121,7 @@ class reseller_register(http.Controller):
         help['help_contact_street2'] = _('')
         help['help_contact_zip'] = _('')
         help['help_contact_city'] = _('')
-        help['help_contact_image'] = _('Please a picture of you. This makes it more personal.')
+        help['help_contact_image'] = _('Please add a picture of yourself. This makes it more personal.')
         help['help_contact_mobile'] = _('Contatcs Cell')
         help['help_contact_phone'] = _('Contatcs phone')
         help['help_contact_email'] = _('Please add an email address')
@@ -243,14 +243,6 @@ class reseller_register(http.Controller):
             if post.get('image'):
                 image = post['image'].read()
                 values['image'] = base64.encodestring(image)
-            if post.get('attachment'):
-                attachment = request.env['ir.attachment'].sudo().create({
-                    'name': post['attachment'].filename,
-                    'res_model': 'res.partner',
-                    'res_id': contact.id,
-                    'datas': base64.encodestring(post['attachment'].read()),
-                    'datas_fname': post['attachment'].filename,
-                })
             values['parent_id'] = issue.partner_id.id
             # Validation and store
             for field in self.contact_fields():
@@ -277,18 +269,23 @@ class reseller_register(http.Controller):
                             'image': values.get('image'),
                             'active': False,
                         })
-                        user.partner_id.sudo().write({
-                            'email': values.get('email'),
-                            'phone': values.get('phone'),
-                            'mobile': values.get('mobile'),
-                            'parent_id': values.get('parent_id'),
-                        })
+                        contact = user.partner_id.sudo()
+                        contact.write(values)
+                        
                     except Exception as e:
                         err = sys.exc_info()
                         error = ''.join(traceback.format_exception(err[0], err[1], err[2]))
                         _logger.info('Cannot create user %s: %s' % (values.get('name'), error))
                 else:
                     contact.sudo().write(values)
+                if post.get('attachment'):
+                    attachment = request.env['ir.attachment'].sudo().create({
+                        'name': post['attachment'].filename,
+                        'res_model': 'res.partner',
+                        'res_id': contact.id,
+                        'datas': base64.encodestring(post['attachment'].read()),
+                        'datas_fname': post['attachment'].filename,
+                    })
                 return request.redirect('/reseller_register/%s?token=%s' %(issue.id, post.get('token')))
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
