@@ -191,7 +191,9 @@
                                                 <th>Cell</th>
                                                 <th>Email</th>
                                                 <th>Password Reset</th>
+<!--
                                                 <th/>
+-->
                                             </thead>
                                             <tbody>
                                                 <tr t-foreach="issue.partner_id.child_ids.filtered(lambda c: c.type == 'contact')" t-as="contact">
@@ -216,9 +218,11 @@
                                                             <a href="javascript:void(0);" class="fa fa-envelope-o fa-2x" t-att-onclick="'''RRpwReset(%s, %s);''' %(contact_user.id, contact.id)" />
                                                         </t>
                                                     </td>
+<!--
                                                     <td class="text-center">
                                                         <a t-att-href="'/reseller_register/%s/contact/%s/delete' % (issue.id,contact.id)" class="fa fa-trash-o fa-2x" />
                                                     </td>
+-->
                                                 </tr>
                                                 <tr>
                                                     <td/>
@@ -226,11 +230,13 @@
                                                     <td><a t-att-href="'/reseller_register/%s/contact/new?token=%s' % (issue.id, issue.partner_id.token)"><u>New Contact</u></a></td>
 -->
                                                     <td><button type="submit" class="btn btn-primary" t-att-formaction="'/reseller_register/%s/new_contact' % issue.id">New Contact</button></td>
-                                                    
+
                                                     <td/>
                                                     <td/>
                                                     <td/>
+<!--
                                                     <td/>
+-->
                                                 </tr>
                                             </tbody>
                                         </table>
