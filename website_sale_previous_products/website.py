@@ -28,7 +28,7 @@ _logger = logging.getLogger(__name__)
 
 class website(models.Model):
     _inherit = 'website'
-    
+
     qty_previous_products = fields.Integer(string='# Previous Products', default=10, help="The number of previous products to display in the webshop.")
 
     @api.multi
@@ -38,7 +38,7 @@ class website(models.Model):
         #~ return self.env['product.template'].browse(list(reversed(request.session.get('previous_product_ids', []))))[:10]
         return self.env['product.template'].search([('id', 'in', request.session.get('previous_product_ids', []))])
 
-    
+
     @api.multi
     def sale_add_previous_product(self, product_id):
         self.ensure_one()
