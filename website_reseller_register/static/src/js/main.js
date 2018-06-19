@@ -1,17 +1,4 @@
-$(document).ready(function(){
-    
-    $("form.form-navtabs-validation div.tab-pane input, form.form-navtabs-validation div.tab-pane select").on('invalid', function (e, data) {
-        // Switch to tab of invalid input or select
-        self = $(this);
-        tab = self.parents('div.tab-pane');
-        menu = $('ul.nav-tabs > li > a[href="#' + tab.attr('id') + '"]').parent('li');
-        self.parents('div.tab-content').find('div.tab-pane').removeClass('active');
-        tab.addClass('active');
-        tab.addClass('in');
-        menu.siblings('li').removeClass('active');
-        menu.addClass('active');
-    });
-    
+function loadResellerRegisterMessageBox() {
     $("#open_msgbox").click(function(){
         $(this).closest('#message_box').find("#msgbox").removeClass('hidden');
         $(this).addClass('hidden');
@@ -32,13 +19,30 @@ $(document).ready(function(){
             "issue_id": self.data('value'),
             "msg_body": self.closest("#message_box").find("#msgbox").val()
         }).done(function(data){
-            $("#message_box").load(location.href + " #message_box");
-            $("#msgbox").addClass('hidden');
-            $("#send_msgbox").addClass('hidden');
-            $("#close_msgbox").addClass('hidden');
-            $("#open_msgbox").removeClass('hidden');
+            $("#message_box").load(
+                location.href + " #message_box",
+                function(response, status, xhr) {
+                    loadResellerRegisterMessageBox();
+                });
         });
     });
+};
+
+$(document).ready(function(){
+    
+    $("form.form-navtabs-validation div.tab-pane input, form.form-navtabs-validation div.tab-pane select").on('invalid', function (e, data) {
+        // Switch to tab of invalid input or select
+        self = $(this);
+        tab = self.parents('div.tab-pane');
+        menu = $('ul.nav-tabs > li > a[href="#' + tab.attr('id') + '"]').parent('li');
+        self.parents('div.tab-content').find('div.tab-pane').removeClass('active');
+        tab.addClass('active');
+        tab.addClass('in');
+        menu.siblings('li').removeClass('active');
+        menu.addClass('active');
+    });
+    
+    loadResellerRegisterMessageBox();
     
     $(".oe_reseller_register_copy_address").change(function() {
         // Copy values from one address type to another
