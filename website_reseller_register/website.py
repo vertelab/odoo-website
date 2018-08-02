@@ -227,11 +227,12 @@ class reseller_register(http.Controller):
 
     @http.route(['/reseller_register/<int:issue_id>/contact/new', '/reseller_register/<int:issue_id>/contact/<int:contact>'], type='http', auth='public', website=True)
     def reseller_contact_new(self, issue_id=None, contact=0, **post):
+        help_dic = self.get_help()
         issue = self.get_issue(issue_id, post.get('token'))
         if issue_id and not issue:
             # Token didn't match
             return request.website.render('website.403', {})
-        if contact > 0:
+        if contact:
             contact = request.env['res.partner'].sudo().browse(contact)
             if not (contact in issue.partner_id.child_ids):
                 contact = request.env['res.partner'].sudo().browse([])
@@ -239,7 +240,9 @@ class reseller_register(http.Controller):
             contact = request.env['res.partner'].sudo().browse([])
 
         validation = {}
+        instruction_contact = ''
         if request.httprequest.method == 'POST':
+            instruction_contact = _('Any images or attachments you uploaded have not been saved. Please reupload them.')
             # Values
             values = {f: post['contact_%s' % f] for f in self.contact_fields() if post.get('contact_%s' % f) and f not in ['attachment','image']}
             if post.get('image'):
@@ -248,21 +251,27 @@ class reseller_register(http.Controller):
             values['parent_id'] = issue.partner_id.id
             # Validation and store
             for field in self.contact_fields():
-                validation['contact_%s' %field] = 'has-success'
-            if not values.get('contact_name'):
-                validation['contact_name'] = 'has-error'
-            if not 'has-error' in validation:
-                if not contact:
-                    if values.get('email') in request.env['res.users'].sudo().search([]).mapped('login'):
+                if field not in ['attachment','image']:
+                    validation['contact_%s' %field] = 'has-success'
+            # Check required fields
+            for field in ['name', 'email']:
+                if not values.get(field):
+                    validation['contact_%s' % field] = 'has-error'
+            if not 'has-error' in validation.values():
+                if contact:
+                    contact.sudo().write(values)
+                else:
+                    if request.env['res.users'].sudo().with_context(active_test = False).search([('login', '=', values.get('email'))]):
                         validation['contact_email'] = 'has-error'
                         contact = request.env['res.partner'].sudo().browse([])
-                        help_dic = self.get_help()
                         help_dic['help_contact_email'] = _('This email aldready exists. Choose another one!')
                         return request.website.render('website_reseller_register.contact_form', {
                             'issue': issue,
                             'contact': contact,
                             'help': help_dic,
                             'validation': validation,
+                            'instruction_contact': instruction_contact,
+                            'values': post,
                         })
                     try:
                         user = request.env['res.users'].sudo().with_context(no_reset_password=True).create({
@@ -278,24 +287,28 @@ class reseller_register(http.Controller):
                         err = sys.exc_info()
                         error = ''.join(traceback.format_exception(err[0], err[1], err[2]))
                         _logger.info('Cannot create user %s: %s' % (values.get('name'), error))
-                else:
-                    contact.sudo().write(values)
-                if post.get('attachment'):
-                    attachment = request.env['ir.attachment'].sudo().create({
-                        'name': post['attachment'].filename,
-                        'res_model': 'res.partner',
-                        'res_id': contact.id,
-                        'datas': base64.encodestring(post['attachment'].read()),
-                        'datas_fname': post['attachment'].filename,
-                    })
-                return request.redirect('/reseller_register/%s?token=%s' %(issue.id, post.get('token')))
+                        contact = None
+                        request.env.cr.rollback()
+                        instruction_contact = _('Something went wrong when creating the contact. Please try again and contact support of error persists. ') + instruction_contact
+                if contact:
+                    if post.get('attachment'):
+                        attachment = request.env['ir.attachment'].sudo().create({
+                            'name': post['attachment'].filename,
+                            'res_model': 'res.partner',
+                            'res_id': contact.id,
+                            'datas': base64.encodestring(post['attachment'].read()),
+                            'datas_fname': post['attachment'].filename,
+                        })
+                    return request.redirect('/reseller_register/%s?token=%s' %(issue.id, post.get('token')))
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
         return request.website.render('website_reseller_register.contact_form', {
             'issue': issue,
             'contact': contact,
-            'help': self.get_help(),
+            'help': help_dic,
             'validation': validation,
+            'instruction_contact': instruction_contact,
+            'values': post,
         })
 
     @http.route(['/reseller_register/<int:issue_id>/contact/<int:contact>/delete'], type='http', auth='public', website=True)

@@ -204,7 +204,7 @@
                                             <tbody>
                                                 <tr t-foreach="issue.partner_id.child_ids.filtered(lambda c: c.type == 'contact')" t-as="contact">
                                                     <td>
-                                                        <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="'%s' %(('data:image/png;base64,%s' %contact.image_small) if contact.image_small else '/web/static/src/img/placeholder.png')"/>
+                                                        <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="('data:image/png;base64,%s' % contact.image_small) if contact.image_small else '/base/static/src/img/avatar.png'"/>
                                                     </td>
                                                     <td>
                                                         <a t-att-href="'/reseller_register/%s/contact/%s?token=%s' %(issue.id, contact.id, issue.partner_id.token)"><span t-field="contact.name" /></a>
@@ -265,7 +265,7 @@
                                     <div t-foreach="issue.message_ids" t-as="message">
                                         <div class="container mt4 mb4 oe_dark">
                                             <div class="col-md-2 col-sm-2 col-xs-2">
-                                                <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="'data:image/png;base64,%s' %message.author_avatar" />
+                                                <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="('data:image/png;base64,%s' % message.author_avatar) if message.author_avatar else '/base/static/src/img/avatar.png'"/>
                                             </div>
                                             <div class="col-md-10 col-sm-10 col-xs-10">
                                                 <h4 t-esc="message.subject" />
@@ -299,9 +299,9 @@
                                 <h4 id="title_contact">
                                     <strong>Contact Infomation</strong>
                                 </h4>
-                                <p id="instruction_contact" />
+                                <p id="instruction_contact" t-esc="instruction_contact"/>
                                 <div class="contact_person">
-                                    <div t-attf-class="form-group #{validation.get('contact_image', '') and 'has-error'}">
+                                    <div t-att-class="'form-group %s' % validation.get('contact_image', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="name">Image</label>
                                         <div class="col-md-7 col-sm-8">
                                             <input type="file" name="image" placeholder="File to upload pdf/jpg/png" accept="image/jpeg,image/png" capture="camera" />
@@ -313,28 +313,28 @@
                                     <div t-att-class="'form-group %s' %validation.get('contact_name', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_name">Name</label>
                                         <div class="col-md-7 col-sm-8">
-                                            <input type="text" class="form-control" name="contact_name" t-att-value="contact.name if contact else ''" placeholder="Given and family name " required="1" />
+                                            <input type="text" class="form-control" name="contact_name" t-att-value="values.get('contact_name', contact.name if contact else '')" placeholder="Given and family name " required="1" />
                                             <small t-esc="help.get('help_contact_name')" />
                                         </div>
                                     </div>
                                     <div t-att-class="'form-group %s' %validation.get('contact_phone', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_phone">Phone</label>
                                         <div class="col-md-7 col-sm-8">
-                                            <input type="text" class="form-control" name="contact_phone" t-att-value="contact.phone if contact else ''" placeholder="0123-45 67 89" />
+                                            <input type="text" class="form-control" name="contact_phone" t-att-value="values.get('contact_phone', contact.phone if contact else '')" placeholder="0123-45 67 89" />
                                             <small t-esc="help.get('help_contact_phone')" />
                                         </div>
                                     </div>
                                     <div t-att-class="'form-group %s' %validation.get('contact_mobile', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_phone">Mobile</label>
                                         <div class="col-md-7 col-sm-8">
-                                            <input type="text" class="form-control" name="contact_mobile" t-att-value="contact.mobile if contact else ''" placeholder="0709-99 99 99" />
+                                            <input type="text" class="form-control" name="contact_mobile" t-att-value="values.get('contact_mobile', contact.mobile if contact else '')" placeholder="0709-99 99 99" />
                                             <small t-esc="help.get('help_contact_mobile')" />
                                         </div>
                                     </div>
                                     <div t-att-class="'form-group %s' %validation.get('contact_email', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_email">Email</label>
                                         <div class="col-md-7 col-sm-8">
-                                            <input type="email" class="form-control" name="contact_email" t-att-value="contact.email if contact else ''" placeholder="" required="1" />
+                                            <input type="email" class="form-control" name="contact_email" t-att-value="values.get('contact_email', contact.email if contact else '')" placeholder="" required="1" />
                                             <small t-esc="help.get('help_contact_email')" />
                                         </div>
                                     </div>
@@ -351,7 +351,7 @@
                                         <th />
                                     </thead>
                                     <tbody t-if="contact">
-                                        <tr t-foreach="request.env['ir.attachment'].search([('res_model','=','res.partner'),('res_id','=',contact.id)])" t-as="attachment">
+                                        <tr t-foreach="request.env['ir.attachment'].sudo().search([('res_model','=','res.partner'),('res_id','=',contact.id)])" t-as="attachment">
                                             <td>
                                                 <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="'/web/binary/image?model=ir.attachment&amp;field=datas&amp;id=%s' %attachment.id"/>
                                             </td>

@@ -25,6 +25,11 @@
     'category': '',
     'summary': "",
     'description': """
+        
+        When sending mail to a partner the mail has a link in the footer to the object
+        a) if there is no res.users created for this partner and portal_remove_mail_footer.portal is set to 0, if it is set to 1 no footer link is generated
+        b) if the partner already has a res.users footer will be sent if portal_remove_mail_footer.mail is set to 0, if it is set to 1 no footer link is generated
+        
 """,
     'author': 'Vertel AB',
     'license': 'AGPL-3',
