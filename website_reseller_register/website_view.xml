@@ -25,6 +25,12 @@
                                         <small t-esc="help.get('help_company_company_registry')" />
                                     </div>
                                 </div>
+                                <div id="company_website_short_description" t-att-class="'form-group'">
+                                    <label class="col-md-3 col-sm-4 control-label" for="website_short_description">Company Description</label>
+                                    <div class="col-md-7 col-sm-8">
+                                        <textarea type="text" class="form-control" name="website_short_description" rows="10" cols="70"></textarea>
+                                    </div>
+                                </div>
                                 <div id="company_property_invoice_type" class="form-group">
                                      <label class="col-md-3 col-sm-4 control-label" for="invoicetype">Invoice Type</label>
                                      <div class="col-md-7 col-sm-8">

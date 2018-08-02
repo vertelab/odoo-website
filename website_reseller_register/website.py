@@ -130,7 +130,7 @@ class reseller_register(http.Controller):
 
     def set_issue_id(self, issue_id):
         request.session['reseller_register_issue_id'] = issue_id
-    
+
     def get_issue(self, issue_id, token):
         """Fetch the specified issue, or the issue from the session. Check token if needed.
         """
@@ -147,7 +147,7 @@ class reseller_register(http.Controller):
         elif issue.partner_id.check_token(token):
             self.set_issue_id(issue.id)
             return issue
-        return 
+        return
 
     @http.route(['/reseller_register/new', '/reseller_register/<int:issue_id>', '/reseller_register/<int:issue_id>/<string:action>'], type='http', auth='public', website=True)
     def reseller_register_new(self, issue_id=None, action=None, **post):
@@ -210,6 +210,8 @@ class reseller_register(http.Controller):
     # can be overrided
     def update_partner_info(self, issue, post):
         values = self.get_company_post(post)
+        if post.get('website_short_description'):
+            values['website_short_description'].write({'website_short_description': post.get('website_short_description')})
         if post.get('invoicetype'):
             values['property_invoice_type'] = int(post.get('invoicetype'))
         values['website_short_description'] = post.get('website_short_description', '')
@@ -271,7 +273,7 @@ class reseller_register(http.Controller):
                         })
                         contact = user.partner_id.sudo()
                         contact.write(values)
-                        
+
                     except Exception as e:
                         err = sys.exc_info()
                         error = ''.join(traceback.format_exception(err[0], err[1], err[2]))
