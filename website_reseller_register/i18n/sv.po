@@ -167,6 +167,11 @@ msgstr "Fakturaadress"
 
 #. module: website_reseller_register
 #: view:website:website_reseller_register.register_form
+msgid "Company Description"
+msgstr "Företagsbeskrivning"
+
+#. module: website_reseller_register
+#: view:website:website_reseller_register.register_form
 msgid "Invoice Type"
 msgstr "Fakturatyper"
 
