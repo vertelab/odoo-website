@@ -124,6 +124,7 @@ class reseller_register(http.Controller):
         help['help_contact_image'] = _('Please add a picture of yourself. This makes it more personal.')
         help['help_contact_mobile'] = _('Contatcs Cell')
         help['help_contact_phone'] = _('Contatcs phone')
+        help['help_category_id'] = _('Labels')
         help['help_contact_email'] = _('Please add an email address')
         help['help_contact_attachment'] = _('If you have more information or a diploma, you can attach it here. You can add more than one, but you have to save each one separate.')
         return help
@@ -238,7 +239,6 @@ class reseller_register(http.Controller):
                 contact = request.env['res.partner'].sudo().browse([])
         else:
             contact = request.env['res.partner'].sudo().browse([])
-
         validation = {}
         instruction_contact = ''
         if request.httprequest.method == 'POST':
@@ -249,6 +249,10 @@ class reseller_register(http.Controller):
                 image = post['image'].read()
                 values['image'] = base64.encodestring(image)
             values['parent_id'] = issue.partner_id.id
+            category_id = []
+            for c in request.httprequest.form.getlist('category_id'):
+                category_id.append(int(c))
+            values['category_id'] = [(6, 0, category_id)]
             # Validation and store
             for field in self.contact_fields():
                 if field not in ['attachment','image']:
@@ -271,6 +275,7 @@ class reseller_register(http.Controller):
                             'help': help_dic,
                             'validation': validation,
                             'instruction_contact': instruction_contact,
+                            'res_partner_category_selection': [(category['id'], category['name']) for category in request.env['res.partner.category'].sudo().search_read([], ['name'])],
                             'values': post,
                         })
                     try:
@@ -308,6 +313,7 @@ class reseller_register(http.Controller):
             'help': help_dic,
             'validation': validation,
             'instruction_contact': instruction_contact,
+            'res_partner_category_selection': [(category['id'], category['name']) for category in request.env['res.partner.category'].sudo().search_read([], ['name'])],
             'values': post,
         })
 

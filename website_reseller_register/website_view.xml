@@ -317,6 +317,29 @@
                                             <small t-esc="help.get('help_contact_name')" />
                                         </div>
                                     </div>
+                                    <div t-att-class="'form-group %s' %validation.get('category_id', '')">
+                                        <label class="col-md-3 col-sm-4 control-label" for="category_id">Labels</label>
+                                        <div class="col-md-7 col-sm-8">
+                                            <t t-if="len(contact.category_id) &gt; 0">
+                                                <ul class="select2-choices">
+                                                    <t t-foreach="res_partner_category_selection" t-as="category">
+                                                        <t t-if="category[0] in contact.category_id.mapped('id')">
+                                                            <li class="select2-search-choice">
+                                                                <div><t t-esc="category[1]"/></div>
+                                                                <a href="#" class="select2-search-choice-close" tabindex="-1"></a>
+                                                            </li>
+                                                        </t>
+                                                    </t>
+                                                </ul>
+                                            </t>
+                                            <select name="category_id" class="form-control" multiple="multiple">
+                                                <t t-foreach="res_partner_category_selection" t-as="category">
+                                                    <option t-att-value="category[0]"><t t-esc="category[1]"/></option>
+                                                </t>
+                                            </select>
+                                            <small t-esc="help.get('help_category_id')" />
+                                        </div>
+                                    </div>
                                     <div t-att-class="'form-group %s' %validation.get('contact_phone', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_phone">Phone</label>
                                         <div class="col-md-7 col-sm-8">
