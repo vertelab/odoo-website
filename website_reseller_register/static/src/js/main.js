@@ -68,6 +68,7 @@ $(document).ready(function(){
     });
 
     $("select[name='category_id']").select2();
+
 });
 
 function RRpwReset(user_id, partner_id) {

@@ -101,16 +101,22 @@ msgid "Contact Infomation"
 msgstr "Kontakt info"
 
 #. module: website_reseller_register
-#: code:addons/website_reseller_register/website.py:124
+#: code:addons/website_reseller_register/website.py:125
 #, python-format
 msgid "Contatcs Cell"
 msgstr "Kontakts mobil"
 
 #. module: website_reseller_register
-#: code:addons/website_reseller_register/website.py:125
+#: code:addons/website_reseller_register/website.py:126
 #, python-format
 msgid "Contatcs phone"
 msgstr "Kontakts telefon"
+
+#. module: website_reseller_register
+#: code:addons/website_reseller_register/website.py:127
+#, python-format
+msgid "Labels"
+msgstr "Etiketter"
 
 #. module: website_reseller_register
 #: code:addons/website_reseller_register/website.py:161
@@ -159,6 +165,11 @@ msgstr "Om du har mer information eller ett diplom kan du bifoga det här. Du ka
 #: view:website:website_reseller_register.contact_form
 msgid "Image"
 msgstr "Bild"
+
+#. module: website_reseller_register
+#: view:website:website_reseller_register.contact_form
+msgid "Labels"
+msgstr "Etiketter"
 
 #. module: website_reseller_register
 #: view:website:website_reseller_register.register_form
