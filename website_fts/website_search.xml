@@ -19,13 +19,6 @@
                                             <button class="btn btn-default" data-dismiss="modal"><i class="glyphicon glyphicon-remove"/>
                                             </button>
                                         </div>
-                                        <script>
-                                            document.getElementsByName('search').addEventListener('keypress', function(event) {
-                                                if (event.keyCode == 13 &amp;&amp; $('.add-on').find('[name=search]').hasFocus()) {
-                                                    event.preventDefault();
-                                                }
-                                            });
-                                        </script>
                                     </div>
                                 </form>
                                 <div id="searchbox" class="open">
