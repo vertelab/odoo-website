@@ -49,7 +49,7 @@ _fts_models = {}
 class fts_model(models.AbstractModel):
     """
     Inherit this model to make a model searchable through the FTS.
-    
+
     All inheriting models need to define the fields that should be used to build the searchable document in _get_fts_fields().
     """
 
@@ -176,8 +176,8 @@ class fts_model(models.AbstractModel):
 
         """
         res = super(fts_model, self)._auto_init(cr, context)
-        
-        
+
+
         #~ cr.execute("SELECT res_id FROM ir_model_data WHERE module = 'base' and name = 'user_root';")
         #~ res = cr.dictfetchone()
         #~ user_id = res['res_id']
@@ -185,7 +185,7 @@ class fts_model(models.AbstractModel):
         #~ env = api.Environment(cr, user_id, context)
         #~ env[self._name]._init_fts_fields()
         #~ return res
-    
+
     #~ @api.model
     #~ def _init_fts_fields(self):
         #~ cr, context = self._cr, self._context
@@ -225,9 +225,9 @@ $$ LANGUAGE plpgsql;""")
                 self._fts_drop_obsolete_sql_stuff(cr, context)
                 trigger_name = 'upd%s' % col_name
                 func_name = '%s%s_trigger' % (self._table, col_name)
-                
+
                 cr.execute("DROP TRIGGER IF EXISTS %s ON %s;" % (trigger_name, self._table))
-                
+
                 # Create function that updates the new _fts_vector column.
                 cr.execute("DROP FUNCTION IF EXISTS %s();" % func_name)
                 # Declarations of extra variables the function needs
@@ -490,14 +490,14 @@ $$ LANGUAGE plpgsql;""")
     def fts_search_multi(self, query, domain=None, models=None, limit=0, offset=0, domains=None):
         """
         Perform an FTS search on the given models.
-        
+
         :param query: The search string.
         :param domain: An Odoo domain to be added to the search.
         :param models: A list of the models to search on.
         :param limit: The limit of the search.
         :param offset: The offset of the search.
         :param domains: A dict with extra domains to be added on a per model basis ({model: domain}).
-        
+
         :return: A list of dicts containing the search results, sorted by ts_rank ({'model': model name, 'id': record id, 'ts_rank': search result weight}).
         """
         domain = domain or []
@@ -546,7 +546,7 @@ $$ LANGUAGE plpgsql;""")
         results = self.env.cr.dictfetchall()
         _logger.debug(results)
         return results
-    
+
     @api.model
     def fts_term_search_browse(self, query, models=None, limit=25, domain=None, offset=0):
         results = self.fts_term_search(query, models=models, limit=limit, domain=domain, offset=offset)
@@ -782,7 +782,7 @@ class WebsiteFullTextSearch(http.Controller):
             result_list.append(result_models[record['model']].filtered(lambda r: r.id == record['id']))
         rl = []
         i = 0
-        while i < len(result_list) and len(rl) < limit: 
+        while i < len(result_list) and len(rl) < limit:
             res = result_list[i].fts_search_suggestion()
             if res:
                 rl.append(res)
@@ -856,7 +856,7 @@ class fts_test(models.TransientModel):
                         ('    <tr><td>N/A</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
                             self.search, r.name, r._model, r.id
                     )) for r in result] + rows[-2:])
-                    
+
             delta_t = datetime.now() - start
             rows = self.log.split('\n')
             self.log = '\n'.join(
@@ -881,4 +881,4 @@ class fts_test(models.TransientModel):
                 res += s
             inside_str = not inside_str
         return res
-        
+
