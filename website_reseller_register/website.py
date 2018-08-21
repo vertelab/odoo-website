@@ -25,6 +25,7 @@ from openerp.exceptions import ValidationError
 import base64
 import sys
 import traceback
+import re
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -34,24 +35,29 @@ PARTNER_FIELDS = ['name', 'street', 'street2', 'zip', 'city', 'country_id', 'pho
 
 class reseller_register(http.Controller):
 
-    # can be overrided with more company field
+    # can be overriden with more company fields
     def get_company_post(self, post):
-        value = {'name': post.get('company_name'), 'company_registry': post.get('company_company_registry')}
+        value = {'name': post.get('company_name'), 'vat': post.get('company_company_registry')}
+        # Check if vat is a swedish organization number
+        if value['vat']:
+            if re.search('^[0-9]{6}-[0-9]{4}$', value['vat']):
+                value['company_registry'] = value['vat']
+                del value['vat']
         return value
 
-    # can be overrided with more company field
+    # can be overriden with more company fields
     def company_fields(self):
         return ['name', 'company_registry']
 
-    # can be overrided with more company field
+    # can be overriden with more company fields
     def contact_fields(self):
         return ['name','phone','mobile','email','image','attachment']
 
-    # can be overrided with more address type
+    # can be overriden with more address types
     def get_address_type(self):
         return ['delivery', 'invoice', 'contact']
 
-    # can be overrided with more address type
+    # can be overriden with more address types
     def get_children_post(self, issue, post):
         address_type = self.get_address_type()
         children = {}
@@ -62,7 +68,7 @@ class reseller_register(http.Controller):
             validations.update(child['validation'])
         return {'children': children, 'validations': validations}
 
-    # can be overrided with more address type
+    # can be overriden with more address types
     def get_children(self, issue):
         address_type = self.get_address_type()
         children = {}
@@ -152,6 +158,7 @@ class reseller_register(http.Controller):
 
     @http.route(['/reseller_register/new', '/reseller_register/<int:issue_id>', '/reseller_register/<int:issue_id>/<string:action>'], type='http', auth='public', website=True)
     def reseller_register_new(self, issue_id=None, action=None, **post):
+        _logger.warn('\n\naction: %s\n' % action)
         validation = {}
         children = {}
         issue = self.get_issue(issue_id, post.get('token'))
@@ -191,8 +198,8 @@ class reseller_register(http.Controller):
                     values['company_company_registry'] = post['company_company_registry']
                     post['company_company_registry'] = company_registry
                     try:
-                        issue.partner_id.vat = vat
                         self.update_partner_info(issue, post)
+                        issue.partner_id.vat = vat
                     except Exception as e:
                         _logger.warn(e)
         else:
