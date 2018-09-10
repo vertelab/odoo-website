@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
     <data>
 
         <template id="website_theme_overlay_menu" inherit_id="website.layout" name="Website Theme Overlay Menu" customize_show="True" active="False" priority="99">
@@ -44,10 +44,10 @@
 
         <template id="website_theme_overlay_assets_frontend" inherit_id="website.assets_frontend" name="Website Theme Overlay Menu Assets Frontend">
             <xpath expr="." position="inside">
-                <link href="/website_theme_overlay_menu/static/src/css/main.css" rel="stylesheet" type="text/css" />
+                <link href="/website_theme_overlay_menu/static/src/css/main.less" rel="stylesheet" type="text/css" />
                 <script type="text/javascript" src="/website_theme_overlay_menu/static/src/js/main.js" />
             </xpath>
         </template>
 
     </data>
-</openerp>
+</odoo>
