@@ -1,0 +1,68 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#   * website_fts_product
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0-20171009\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-08-20 14:45+0000\n"
+"PO-Revision-Date: 2018-08-20 14:45+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: website_fts_product
+#: help:product.product,_fts_trigger:0
+#: help:product.public.category,_fts_trigger:0
+#: help:product.template,_fts_trigger:0
+msgid "Change this field to update FTS."
+msgstr "Change this field to update FTS."
+
+#. module: website_fts_product
+#: field:product.product,virtual_available_delay:0
+#: field:product.template,virtual_available_delay:0
+msgid "Delay"
+msgstr "Delay"
+
+#. module: website_fts_product
+#: help:product.product,virtual_available_delay:0
+#: help:product.template,virtual_available_delay:0
+msgid "Number of days before refill of stock"
+msgstr "Number of days before refill of stock"
+
+#. module: website_fts_product
+#: model:ir.model,name:website_fts_product.model_product_product
+msgid "Product"
+msgstr "Product"
+
+#. module: website_fts_product
+#: model:ir.model,name:website_fts_product.model_product_facet_line
+msgid "Product Facet Lines"
+msgstr "Product Facet Lines"
+
+#. module: website_fts_product
+#: model:ir.model,name:website_fts_product.model_product_template
+msgid "Product Template"
+msgstr "Product Template"
+
+#. module: website_fts_product
+#: model:ir.model,name:website_fts_product.model_product_public_category
+msgid "Public Category"
+msgstr "Publikkategori"
+
+#. module: website_fts_product
+#: view:website:website.layout
+msgid "Search suggestion"
+msgstr "Sökförslag"
+
+#. module: website_fts_product
+#: field:product.product,_fts_trigger:0
+#: field:product.public.category,_fts_trigger:0
+#: field:product.template,_fts_trigger:0
+msgid "Trigger FTS Update"
+msgstr "Trigger FTS Update"
+

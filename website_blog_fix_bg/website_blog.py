@@ -18,18 +18,24 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-
-from openerp import models, fields, api, _
+from openerp import http
+from openerp.http import request
+from openerp.addons.website_blog.controllers.main import WebsiteBlog
 
 import logging
 _logger = logging.getLogger(__name__)
 
-class document_file(models.Model):
-    _name = 'ir.attachment'
-    _inherit = ['ir.attachment', 'fts.model']
+class WebsiteBlog(WebsiteBlog):
 
-    # TODO: Not needed anymore?
-    group_ids = fields.Many2many(string='Groups', comodel_name='res.groups')
+    @http.route('/blogpost/change_background', type='json', auth="public", website=True)
+    def change_bg(self, post_id=0, image=None, **post):
+        if not post_id:
+            return False
+        import logging
+        if image:
+            image_split = image.split('/')
+            if len(image_split) > 3:
+                image = '/%s' % '/'.join(image_split[3:])
+        return request.registry['blog.post'].write(request.cr, request.uid, [int(post_id)], {'background_image': image}, request.context)
 
-    def _get_fts_fields(self):
-        return [{'name': 'index_content'}, {'name': 'name'}, {'name': 'description'}]
+

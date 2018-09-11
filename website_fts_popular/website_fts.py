@@ -27,44 +27,44 @@ from openerp.exceptions import Warning
 import logging
 _logger = logging.getLogger(__name__)
 
-class fts_fts(models.Model):
-    _inherit = 'fts.fts'
+class FtsModel(models.Model):
+    _inherit = 'fts.model'
 
-    nbr_searches = fields.Integer(string="#Searches",index=True)
-    last_search = fields.Datetime(string="Last search")
-    @api.one
-    @api.depends('last_search','nbr_searches')
-    def _last_week(self):
-        self.last_week = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)).days < 7 if self.last_search else None
-        self.last_month = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)).days < 31 if self.last_search else None
-        self.last_quarter = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)).days < 92 if self.last_search else None
-        self.last_halfyear = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)).days < 182 if self.last_search else None
-        self.last_year = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.last_search)).days < 365 if self.last_search else None
-    last_week = fields.Boolean(string="Last week",compute="_last_week",store=True)
-    last_month = fields.Boolean(string="Last month",compute="_last_week",store=True)
-    last_quarter = fields.Boolean(string="Last quarter",compute="_last_week",store=True)
-    last_halfyear = fields.Boolean(string="Last half year",compute="_last_week",store=True)
-    last_year = fields.Boolean(string="Last year",compute="_last_week",store=True)
+    #~ fts_nbr_searches = fields.Integer(string="#Searches",index=True)
+    #~ fts_last_search = fields.Datetime(string="Last search")
+    #~ @api.one
+    #~ @api.depends('fts_last_search','fts_nbr_searches')
+    #~ def _fts_last_week(self):
+        #~ self.fts_last_week = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.fts_last_search)).days < 7 if self.fts_last_search else None
+        #~ self.fts_last_month = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.fts_last_search)).days < 31 if self.fts_last_search else None
+        #~ self.fts_last_quarter = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.fts_last_search)).days < 92 if self.fts_last_search else None
+        #~ self.fts_last_halfyear = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.fts_last_search)).days < 182 if self.fts_last_search else None
+        #~ self.fts_last_year = (fields.Date.from_string(fields.Date.today()) - fields.Date.from_string(self.fts_last_search)).days < 365 if self.fts_last_search else None
+    #~ fts_last_week = fields.Boolean(string="Last week",compute="_fts_last_week",store=True)
+    #~ fts_last_month = fields.Boolean(string="Last month",compute="_fts_last_week",store=True)
+    #~ fts_last_quarter = fields.Boolean(string="Last quarter",compute="_fts_last_week",store=True)
+    #~ fts_last_halfyear = fields.Boolean(string="Last half year",compute="_fts_last_week",store=True)
+    #~ fts_last_year = fields.Boolean(string="Last year",compute="_fts_last_week",store=True)
 
     # TODO: Check why this method breaks te test search.
     #~ @api.model
-    #~ def term_search(self, word_list=[], facet=None, res_model=None, limit=5, offset=0):
-        #~ res = super(fts_fts, self).term_search(word_list, facet, res_model, limit, offset)
-        #~ for term in res['terms']:
-            #~ term.write({'nbr_searches': term.nbr_searches + 1, 'last_search': fields.Datetime.now()})
+    #~ def fts_term_search(self, query, models=None, limit=25, domain=None, offset=0):
+        #~ res = super(FtsModel, self).fts_term_search(query, models=models, limit=limit, domain=domain, offset=offset)
+        #~ _logger.warn(res)
         #~ return res
 
-class fts_popular(models.Model):
-    _name = 'fts.popular'
-    _order = "sequence,name"
+#~ class fts_popular(models.Model):
+    #~ _name = 'fts.popular'
+    #~ _order = "sequence,name"
 
-    name = fields.Char(string="Word")
-    sequence = fields.Integer()
-    fts_id = fields.Many2one(comodel_name="fts.fts", ondelete='cascade')
-    nbr_searches = fields.Integer(related="fts_id.nbr_searches")
-    last_search = fields.Datetime(related="fts_id.last_search")
-    count = fields.Integer(related="fts_id.count")
-    rank = fields.Integer(related="fts_id.rank")
-
+    #~ name = fields.Char(string="Word")
+    #~ sequence = fields.Integer()
+    #~ fts_id = fields.Many2one(comodel_name="fts.fts", ondelete='cascade')
+    #~ fts_nbr_searches = fields.Integer(related="fts_id.fts_nbr_searches")
+    #~ fts_last_search = fields.Datetime(related="fts_id.fts_last_search")
+    #~ count = fields.Integer(related="fts_id.count")
+    #~ rank = fields.Integer(related="fts_id.rank")
+    
+    
 
 

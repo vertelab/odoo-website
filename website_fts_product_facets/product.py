@@ -28,19 +28,11 @@ class product_facet_value(models.Model):
     _name = 'product.facet.value'
     _inherit = ['product.facet.value', 'fts.model']
 
-    _fts_fields = ['facet_id', 'product_tmpl_id']
-
     def _get_fts_fields(self):
         return [
             {'name': 'facet_id.name', 'weight': 'B'},
             {'name': 'name', 'weight': 'A'},
         ]
-    
-    _fts_trigger = fields.Boolean(string='Trigger FTS Update', help='Change this field to update FTS.', compute='_compute_fts_trigger', store=True)
-
-    @api.one
-    def _full_text_search_update(self):
-        pass
 
 class product_product(models.Model):
     _inherit = 'product.product'

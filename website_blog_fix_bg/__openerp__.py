@@ -20,24 +20,18 @@
 ##############################################################################
 
 {
-    'name': 'Portal Remove Mail Footer',
-    'version': '0.2',
+    'name': 'Blog - Fix Background Image',
+    'version': '1.0',
     'category': '',
-    'summary': "",
+    'summary': "Fixes link to blog background image.",
     'description': """
-        
-        When sending mail to a partner the mail has a link in the footer to the object
-        a) if there is no res.users created for this partner and portal_remove_mail_footer.portal is set to 0, if it is set to 1 no footer link is generated
-        b) if the partner already has a res.users footer will be sent if portal_remove_mail_footer.mail is set to 0, if it is set to 1 no footer link is generated
-        
+Blog background images are linked to with an absolute URL. This does not work if there are several possible domains leading to the web page. This module makes the image URLs relative.
 """,
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
-    'depends': ['portal'],
-    'data': [
-        'data.xml',
-    ],
+    'depends': ['website_blog'],
+    'data': [],
     'application': False,
     'installable': True,
 }

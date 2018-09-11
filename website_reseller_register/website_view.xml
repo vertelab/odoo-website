@@ -7,7 +7,8 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12 mt32 mb32">
-                            <form class="form-horizontal mt32" t-att-action="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)" method="post" enctype="multipart/form-data">
+                            <form class="form-horizontal mt32 form-navtabs-validation" t-att-action="'/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token)" method="post" enctype="multipart/form-data">
+                                <button type="submit" class="hidden">Submit</button>
                                 <h4 id="title_company" class="col-md-12">
                                     <strong>Company Information</strong>
                                 </h4>
@@ -19,10 +20,16 @@
                                     </div>
                                 </div>
                                 <div id="company_org" t-att-class="'form-group %s' %validation.get('company_company_registry')">
-                                     <label class="col-md-3 col-sm-4 control-label" for="company_registry">Organization Number</label>
+                                     <label class="col-md-3 col-sm-4 control-label" for="vat">Organization Number</label>
                                      <div class="col-md-7 col-sm-8">
-                                        <input type="text" class="form-control" name="company_registry" t-att-value="issue.partner_id.company_registry" placeholder="123456-7897" />
-                                        <small t-esc="help.get('help_company_registry')" />
+                                        <input type="text" class="form-control" name="company_company_registry" t-att-value="company_company_registry or issue.partner_id.company_registry or issue.partner_id.vat" placeholder="123456-7897" required="" />
+                                        <small t-esc="help.get('help_company_company_registry')" />
+                                    </div>
+                                </div>
+                                <div id="company_website_short_description" t-att-class="'form-group'">
+                                    <label class="col-md-3 col-sm-4 control-label" for="website_short_description">Company Description</label>
+                                    <div class="col-md-7 col-sm-8">
+                                        <textarea type="text" class="form-control" name="website_short_description" rows="10" cols="70"></textarea>
                                     </div>
                                 </div>
                                 <div id="company_property_invoice_type" class="form-group">
@@ -58,11 +65,16 @@
                                 <div class="tab-content">
                                     <div id="delivery" class="tab-pane fade in active">
                                         <p id="instruction_delivery" />
+                                        <div class="form-group checkbox">
+                                            <div class="col-md-7 col-md-offset-3 col-sm-8 col-sm-offset-4 mb32">
+                                                <label><input type="checkbox" class="oe_reseller_register_copy_address" name="delivery_copy_company"/>Same as company address</label>
+                                            </div>
+                                        </div>
                                         <t t-set="delivery" t-value="issue.partner_id.child_ids.filtered(lambda c: c.type == 'delivery')[0] if issue.partner_id.child_ids.filtered(lambda c: c.type == 'delivery') else None"/>
                                         <div t-att-class="'form-group %s' %validation.get('delivery_street')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_street">Street</label>
                                             <div class="col-md-7 col-sm-8">
-                                                <input type="text" class="form-control" name="delivery_street" t-att-value="delivery.street if delivery else ''" placeholder="" />
+                                                <input type="text" class="form-control" name="delivery_street" t-att-value="delivery.street if delivery else ''" placeholder=""/>
                                                 <small t-esc="help.get('help_delivery_street')" />
                                             </div>
                                         </div>
@@ -76,14 +88,14 @@
                                         <div t-att-class="'form-group %s' %validation.get('delivery_zip')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_zip">Zip</label>
                                             <div class="col-md-7 col-sm-8">
-                                                <input type="text" class="form-control" name="delivery_zip" t-att-value="delivery.zip if delivery else ''" placeholder="" />
+                                                <input type="text" class="form-control" name="delivery_zip" t-att-value="delivery.zip if delivery else ''" placeholder=""/>
                                                 <small t-esc="help.get('help_delivery_zip')" />
                                             </div>
                                         </div>
                                         <div t-att-class="'form-group %s' %validation.get('delivery_city')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_city">City</label>
                                             <div class="col-md-7 col-sm-8">
-                                                <input type="text" class="form-control" name="delivery_city" t-att-value="delivery.city if delivery else ''" placeholder="" />
+                                                <input type="text" class="form-control" name="delivery_city" t-att-value="delivery.city if delivery else ''" placeholder=""/>
                                                 <small t-esc="help.get('help_delivery_city')" />
                                             </div>
                                         </div>
@@ -91,6 +103,7 @@
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_country_id">Country</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <select class="form-control" name="delivery_country_id">
+                                                    <option value="" t-att="{'selected': '1'} if (not delivery or not delivery.country_id) else {}" disabled="1">Choose country</option>
                                                     <t t-foreach="country_selection" t-as="country">
                                                         <option t-att-value="country[0]" t-att="{'selected': '1'} if country[0] == (delivery and delivery.country_id and delivery.country_id.id) else {}"><t t-esc="country[1]"/></option>
                                                     </t>
@@ -101,20 +114,25 @@
                                         <div t-att-class="'form-group %s' %validation.get('delivery_phone')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_phone">Phone</label>
                                             <div class="col-md-7 col-sm-8">
-                                                <input type="text" class="form-control" name="delivery_phone" t-att-value="delivery.phone if delivery else ''" placeholder="" />
+                                                <input type="text" class="form-control" name="delivery_phone" t-att-value="delivery.phone if delivery else ''" placeholder=""/>
                                                 <small t-esc="help.get('help_delivery_phone')" />
                                             </div>
                                         </div>
                                         <div t-att-class="'form-group %s' %validation.get('delivery_email')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_email">Email</label>
                                             <div class="col-md-7 col-sm-8">
-                                                <input type="email" class="form-control" name="delivery_email" t-att-value="delivery.email if delivery else ''" placeholder="" />
+                                                <input type="email" class="form-control" name="delivery_email" t-att-value="delivery.email if delivery else ''" placeholder=""/>
                                                 <small t-esc="help.get('help_delivery_wmail')" />
                                             </div>
                                         </div>
                                     </div>
                                     <div id="invoice" class="tab-pane fade">
                                         <p id="instruction_invoice" />
+                                        <div class="form-group checkbox">
+                                            <div class="col-md-7 col-md-offset-3 col-sm-8 col-sm-offset-4 mb32">
+                                                <label><input type="checkbox" class="oe_reseller_register_copy_address" name="invoice_copy_delivery"/>Same as delivery address</label>
+                                            </div>
+                                        </div>
                                         <t t-set="invoice" t-value="issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice')[0] if issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice') else None"/>
                                         <div t-att-class="'form-group %s' %validation.get('invoice_street')">
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_street">Street</label>
@@ -148,6 +166,7 @@
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_country_id">Country</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <select class="form-control" name="invoice_country_id">
+                                                    <option value="" t-att="{'selected': '1'} if (not invoice or not invoice.country_id) else {}" disabled="1">Choose country</option>
                                                     <t t-foreach="country_selection" t-as="country">
                                                         <option t-att-value="country[0]" t-att="{'selected': '1'} if country[0] == (invoice and invoice.country_id and invoice.country_id.id) else {}"><t t-esc="country[1]"/></option>
                                                     </t>
@@ -179,12 +198,14 @@
                                                 <th>Cell</th>
                                                 <th>Email</th>
                                                 <th>Password Reset</th>
+<!--
                                                 <th/>
+-->
                                             </thead>
                                             <tbody>
                                                 <tr t-foreach="issue.partner_id.child_ids.filtered(lambda c: c.type == 'contact')" t-as="contact">
                                                     <td>
-                                                        <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="'%s' %(('data:image/png;base64,%s' %contact.image_small) if contact.image_small else '/web/static/src/img/placeholder.png')"/>
+                                                        <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="('data:image/png;base64,%s' % contact.image_small) if contact.image_small else '/base/static/src/img/avatar.png'"/>
                                                     </td>
                                                     <td>
                                                         <a t-att-href="'/reseller_register/%s/contact/%s?token=%s' %(issue.id, contact.id, issue.partner_id.token)"><span t-field="contact.name" /></a>
@@ -204,21 +225,25 @@
                                                             <a href="javascript:void(0);" class="fa fa-envelope-o fa-2x" t-att-onclick="'''RRpwReset(%s, %s);''' %(contact_user.id, contact.id)" />
                                                         </t>
                                                     </td>
+<!--
                                                     <td class="text-center">
                                                         <a t-att-href="'/reseller_register/%s/contact/%s/delete' % (issue.id,contact.id)" class="fa fa-trash-o fa-2x" />
                                                     </td>
+-->
                                                 </tr>
                                                 <tr>
                                                     <td/>
 <!--
                                                     <td><a t-att-href="'/reseller_register/%s/contact/new?token=%s' % (issue.id, issue.partner_id.token)"><u>New Contact</u></a></td>
 -->
-                                                    <td><button name="new_contact" type="submit" class="btn btn-primary">New Contact</button></td>
-                                                    
+                                                    <td><button type="submit" class="btn btn-primary" t-att-formaction="'/reseller_register/%s/new_contact' % issue.id">New Contact</button></td>
+
                                                     <td/>
                                                     <td/>
                                                     <td/>
+<!--
                                                     <td/>
+-->
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -241,7 +266,7 @@
                                     <div t-foreach="issue.message_ids" t-as="message">
                                         <div class="container mt4 mb4 oe_dark">
                                             <div class="col-md-2 col-sm-2 col-xs-2">
-                                                <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="'data:image/png;base64,%s' %message.author_avatar" />
+                                                <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="('data:image/png;base64,%s' % message.author_avatar) if message.author_avatar else '/base/static/src/img/avatar.png'"/>
                                             </div>
                                             <div class="col-md-10 col-sm-10 col-xs-10">
                                                 <h4 t-esc="message.subject" />
@@ -270,51 +295,73 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12 mt32 mb32">
-                            <form t-att-action="'/reseller_register/%s/contact/%s' %(issue.id,contact.id if contact else 'new')" method="post" enctype="multipart/form-data">
+                            <form class="form-horizontal" t-att-action="'/reseller_register/%s/contact/%s' %(issue.id,contact.id if contact else 'new')" method="post" enctype="multipart/form-data">
                                 <input name="token" t-att-value="issue.partner_id.token" type="hidden"/>
                                 <h4 id="title_contact">
                                     <strong>Contact Infomation</strong>
                                 </h4>
-                                <p id="instruction_contact" />
+                                <p id="instruction_contact" t-esc="instruction_contact"/>
                                 <div class="contact_person">
-                                    <div t-attf-class="form-group #{validation.get('contact_image') and 'has-error' or ''}">
-                                        <label for="name">Image</label>
-                                        <input type="file" name="image" placeholder="File to upload pdf/jpg/png" accept="image/jpeg,image/png" capture="camera" />
-                                        <p class="help-block">
-                                            <small t-esc="help.get('help_contact_image')" />
-                                        </p>
+                                    <div t-att-class="'form-group %s' % validation.get('contact_image', '')">
+                                        <label class="col-md-3 col-sm-4 control-label" for="name">Image</label>
+                                        <div class="col-md-7 col-sm-8">
+                                            <input type="file" name="image" placeholder="File to upload pdf/jpg/png" accept="image/jpeg,image/png" capture="camera" />
+                                            <p class="help-block">
+                                                <small t-esc="help.get('help_contact_image')" />
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div t-att-class="'form-group %s' %validation.get('contact_name')">
+                                    <div t-att-class="'form-group %s' %validation.get('contact_name', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_name">Name</label>
                                         <div class="col-md-7 col-sm-8">
-                                            <input type="text" class="form-control" name="contact_name" t-att-value="contact.name if contact else ''" placeholder="Given and family name " required="1" />
+                                            <input type="text" class="form-control" name="contact_name" t-att-value="values.get('contact_name', contact.name if contact else '')" placeholder="Given and family name " required="1" />
                                             <small t-esc="help.get('help_contact_name')" />
                                         </div>
                                     </div>
-                                    <div t-att-class="'form-group %s' %validation.get('contact_phone')">
+                                    <div t-att-class="'form-group %s' %validation.get('category_id', '')">
+                                        <label class="col-md-3 col-sm-4 control-label" for="category_id">Labels</label>
+                                        <div class="col-md-7 col-sm-8" id="contact-id" t-att-data-contact-id="contact.id if contact else '0'">
+<!--
+                                            <select name="category_id" class="form-control" multiple="multiple">
+                                                <t t-foreach="res_partner_category_selection" t-as="category">
+                                                    <option t-att-value="category[0]" t-att-selected="category[0] in contact.category_id.mapped('id')"><t t-esc="category[1]"/></option>
+                                                </t>
+                                            </select>
+-->
+                                            <t t-foreach="res_partner_category_selection" t-as="category">
+                                                <div class="checkbox">
+                                                    <label><input type="checkbox" t-att-name="'category_%s' %category[0]" t-att-value="category[0]" t-att-checked="category[0] in contact.category_id.mapped('id')"/><t t-esc="category[1]"/></label>
+                                                </div>
+                                            </t>
+<!--
+                                            <small t-esc="help.get('help_category_id')" />
+-->
+                                        </div>
+                                    </div>
+                                    <div t-att-class="'form-group %s' %validation.get('contact_phone', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_phone">Phone</label>
                                         <div class="col-md-7 col-sm-8">
-                                            <input type="text" class="form-control" name="contact_phone" t-att-value="contact.phone if contact else ''" placeholder="0123-45 67 89" />
+                                            <input type="text" class="form-control" name="contact_phone" t-att-value="values.get('contact_phone', contact.phone if contact else '')" placeholder="0123-45 67 89" />
                                             <small t-esc="help.get('help_contact_phone')" />
                                         </div>
                                     </div>
-                                    <div t-att-class="'form-group %s' %validation.get('contact_mobile')">
+                                    <div t-att-class="'form-group %s' %validation.get('contact_mobile', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_phone">Mobile</label>
                                         <div class="col-md-7 col-sm-8">
-                                            <input type="text" class="form-control" name="contact_mobile" t-att-value="contact.mobile if contact else ''" placeholder="0709-99 99 99" />
+                                            <input type="text" class="form-control" name="contact_mobile" t-att-value="values.get('contact_mobile', contact.mobile if contact else '')" placeholder="0709-99 99 99" />
                                             <small t-esc="help.get('help_contact_mobile')" />
                                         </div>
                                     </div>
-                                    <div t-att-class="'form-group %s' %validation.get('contact_email')">
+                                    <div t-att-class="'form-group %s' %validation.get('contact_email', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_email">Email</label>
                                         <div class="col-md-7 col-sm-8">
-                                            <input type="email" class="form-control" name="contact_email" t-att-value="contact.email if contact else ''" placeholder="" required="1" />
+                                            <input type="email" class="form-control" name="contact_email" t-att-value="values.get('contact_email', contact.email if contact else '')" placeholder="" required="1" />
                                             <small t-esc="help.get('help_contact_email')" />
                                         </div>
                                     </div>
                                 </div>
                                 <h4 id="title_attachment">
-                                    <strong>Attachment</strong>
+                                    <strong>Attachments</strong>
                                 </h4>
                                 <table class="table table-responsive table-striped table-bordered">
                                     <thead>
@@ -325,7 +372,7 @@
                                         <th />
                                     </thead>
                                     <tbody t-if="contact">
-                                        <tr t-foreach="request.env['ir.attachment'].search([('res_model','=','res.partner'),('res_id','=',contact.id)])" t-as="attachment">
+                                        <tr t-foreach="request.env['ir.attachment'].sudo().search([('res_model','=','res.partner'),('res_id','=',contact.id)])" t-as="attachment">
                                             <td>
                                                 <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="'/web/binary/image?model=ir.attachment&amp;field=datas&amp;id=%s' %attachment.id"/>
                                             </td>
@@ -345,11 +392,13 @@
                                     </tbody>
                                 </table>
                                 <div t-attf-class="form-group #{validation.get('image') and 'has-error' or ''}">
-                                    <label for="name">Attachment</label>
-                                    <input type="file" name="attachment" placeholder="File to upload pdf/jpg/png" accept="image/*,text/plain,application/pdf,application/vnd.ms-excel,app" capture="camera" />
-                                    <p class="help-block">
-                                        <small t-esc="help.get('help_contact_attachment')" />
-                                    </p>
+                                    <label class="col-md-3 col-sm-4 control-label" for="name">Attachment</label>
+                                    <div class="col-md-7 col-sm-8">
+                                        <input type="file" name="attachment" placeholder="File to upload pdf/jpg/png" accept="image/*,text/plain,application/pdf,application/vnd.ms-excel,app" capture="camera" />
+                                        <p class="help-block">
+                                            <small t-esc="help.get('help_contact_attachment')" />
+                                        </p>
+                                    </div>
                                 </div>
                                 <!-- contact person -->
                                 <div class="container">

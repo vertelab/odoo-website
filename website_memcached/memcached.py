@@ -156,6 +156,17 @@ def add_flush_type(db, name):
     else:
         flush_types[db] = set(name)
 
+def clean_text(text):
+    """Scrub away filthy characters that werkzeug doesn't like to get back in headers."""
+    res = ''
+    for c in text:
+        try:
+            c.encode('latin1')
+            res += c
+        except:
+            res += '?'
+    return res
+
 class website(models.Model):
     _inherit = 'website'
 
@@ -388,11 +399,11 @@ def route(route=None, **kw):
                 error = "MemcacheServerError %s " % e
                 _logger.warn(error)
             except MemcacheUnknownError as e:
-                error = "MemcacheUnknownError %s key: %s path: %s" % (e,key,request.httprequest.path)
-                _logger.warn(error)
+                error = clean_text(str(e))
+                _logger.warn("MemcacheUnknownError %s key: %s path: %s" % (eror, key, request.httprequest.path))
                 return werkzeug.wrappers.Response(status=500,headers=[
                         ('X-CacheKey',key),
-                        ('X-CacheError','MemcacheUnknownError %s' %e),
+                        ('X-CacheError','MemcacheUnknownError %s' %error),
                         ('X-CacheKeyRaw',key_raw),
                         ('Server','Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)),
                         ])
@@ -401,11 +412,13 @@ def route(route=None, **kw):
                 _logger.warn(error)
             except Exception as e:
                 err = sys.exc_info()
-                error = "Memcached Error %s key: %s path: %s %s" % (e,key,request.httprequest.path, ''.join(traceback.format_exception(err[0], err[1], err[2])))
-                _logger.warn(error)
+                # ~ error = "Memcached Error %s key: %s path: %s %s" % (e,key,request.httprequest.path, ''.join(traceback.format_exception(err[0], err[1], err[2])))
+                error = clean_text(''.join(traceback.format_exception(err[0], err[1], err[2])))
+                _logger.warn("Memcached Error %s key: %s path: %s" % (error, key, request.httprequest.path))
+                error = clean_text(str(e))
                 return werkzeug.wrappers.Response(status=500,headers=[
                         ('X-CacheKey',key),
-                        ('X-CacheError','Memcached Error %s' % e),
+                        ('X-CacheError','Memcached Error %s' % error),
                         ('X-CacheKeyRaw',key_raw),
                         ('Server','Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)),
                         ])

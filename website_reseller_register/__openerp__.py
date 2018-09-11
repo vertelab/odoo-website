@@ -30,7 +30,7 @@ A web form for public user to registe as reseller
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
-    'depends': ['website', 'project_issue', 'auth_signup', 'partner_token', 'sale_journal',],
+    'depends': ['website', 'project_issue', 'auth_signup', 'partner_token', 'sale_journal', 'website_partner'],
     'data': [
         'project_data.xml',
         'website_data.xml',
