@@ -22,8 +22,9 @@
                                     </div>
                                 </form>
                                 <div id="searchbox" class="open">
-                                    <ul class="dropdown-menu" style="width: 100%; margin: 0px; padding: 0px 15px 15px 15px;">
-                                    </ul>
+                                    <ul class="dropdown-menu" style="width: 100%; margin: 0px; padding: 0px 15px 15px 15px;"/>
+                                    <h4 class="title_suggestion">Search suggestion</h4>
+                                    <div class="result_suggestion"/>
                                 </div>
                             </div>
                             <div class="modal-footer hidden">
