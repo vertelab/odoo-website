@@ -324,7 +324,9 @@ def route(route=None, **kw):
     :param no_transform: No transformations or conversions should be made to the resource (for example do not transform png to jpeg)
     :param s_maxage:  Overrides max-age, but it only applies to shared caches / proxies and is ignored by a private cache
     :param content_type: set Content-Type
-
+    :param no-store and no-cache "no-cache" indicates that the returned response can't be used to satisfy a subsequent request to the same URL without first checking with the server if the response has changed. As a result, if a proper validation token (ETag) is present, no-cache incurs a roundtrip to validate the cached response, but can eliminate the download if the resource has not changed. By contrast, "no-store" is much simpler. It simply disallows the browser and all intermediate caches from storing any version of the returned response—for example, one containing private personal or banking data. Every time the user requests this asset, a request is sent to the server and a full response is downloaded.
+    :param immutable http://bitsup.blogspot.com/2016/05/cache-control-immutable.html
+    :param  must-revalidate and proxy-revalidate
     :
     """
     routing = kw.copy()
@@ -517,7 +519,7 @@ def route(route=None, **kw):
                 for k,v in page_dict['headers'].items():
                     #~ response.headers.add(k,v)
                     response.headers[k] = v
-            response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s, %s' % (max_age,s_maxage,','.join([keyword for keyword in [routing.get('private','public'),routing.get('no-store'),routing.get('immutable'),routing.get('no-transform'),'no-cache','must-revalidate','proxy-revalidate'] if keyword] )) # private: must not be stored by a shared cache.
+            response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s, %s' % (max_age,s_maxage,','.join([keyword for keyword in [routing.get('private','public'),routing.get('no-store'),routing.get('immutable'),routing.get('no-transform'),routing.get('no-cache'),routing.get('must-revalidate'),routing.get('proxy-revalidate')] if keyword] )) # private: must not be stored by a shared cache.
             response.headers['ETag'] = page_dict.get('ETag')
             response.headers['X-CacheKey'] = key
             response.headers['X-Cache'] = 'newly rendered' if page else 'from cache'
