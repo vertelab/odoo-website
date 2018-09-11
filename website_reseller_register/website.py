@@ -256,10 +256,17 @@ class reseller_register(http.Controller):
                 image = post['image'].read()
                 values['image'] = base64.encodestring(image)
             values['parent_id'] = issue.partner_id.id
-            category_id = []
-            for c in request.httprequest.form.getlist('category_id'):
-                category_id.append(int(c))
-            values['category_id'] = [(6, 0, category_id)]
+            # multi select
+            # ~ category_id = []
+            # ~ for c in request.httprequest.form.getlist('category_id'):
+                # ~ category_id.append(int(c))
+            # ~ values['category_id'] = [(6, 0, category_id)]
+            # multi checkbox
+            categ_list = []
+            for k in post.keys():
+                if k.split('_')[0] == 'category':
+                    categ_list.append(int(post.get(k)))
+            values['category_id'] = [(6, 0, categ_list)]
             # Validation and store
             for field in self.contact_fields():
                 if field not in ['attachment','image']:
@@ -282,7 +289,7 @@ class reseller_register(http.Controller):
                             'help': help_dic,
                             'validation': validation,
                             'instruction_contact': instruction_contact,
-                            'res_partner_category_selection': [(category['id'], category['name']) for category in request.env['res.partner.category'].sudo().search_read([], ['name'])],
+                            'res_partner_category_selection': [(category['id'], category['name']) for category in request.env['res.partner.category'].sudo().search_read([('id', 'in', [7, 16, 20, 29, 34, 35])], ['name'], order='name')],
                             'values': post,
                         })
                     try:
@@ -320,7 +327,7 @@ class reseller_register(http.Controller):
             'help': help_dic,
             'validation': validation,
             'instruction_contact': instruction_contact,
-            'res_partner_category_selection': [(category['id'], category['name']) for category in request.env['res.partner.category'].sudo().search_read([], ['name'])],
+            'res_partner_category_selection': [(category['id'], category['name']) for category in request.env['res.partner.category'].sudo().search_read([('id', 'in', [7, 16, 20, 29, 34, 35])], ['name'], order='name')],
             'values': post,
         })
 

@@ -321,12 +321,21 @@
                                     <div t-att-class="'form-group %s' %validation.get('category_id', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="category_id">Labels</label>
                                         <div class="col-md-7 col-sm-8" id="contact-id" t-att-data-contact-id="contact.id if contact else '0'">
+<!--
                                             <select name="category_id" class="form-control" multiple="multiple">
                                                 <t t-foreach="res_partner_category_selection" t-as="category">
                                                     <option t-att-value="category[0]" t-att-selected="category[0] in contact.category_id.mapped('id')"><t t-esc="category[1]"/></option>
                                                 </t>
                                             </select>
+-->
+                                            <t t-foreach="res_partner_category_selection" t-as="category">
+                                                <div class="checkbox">
+                                                    <label><input type="checkbox" t-att-name="'category_%s' %category[0]" t-att-value="category[0]" t-att-checked="category[0] in contact.category_id.mapped('id')"/><t t-esc="category[1]"/></label>
+                                                </div>
+                                            </t>
+<!--
                                             <small t-esc="help.get('help_category_id')" />
+-->
                                         </div>
                                     </div>
                                     <div t-att-class="'form-group %s' %validation.get('contact_phone', '')">
