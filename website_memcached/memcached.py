@@ -532,7 +532,7 @@ def route(route=None, **kw):
                 for k,v in page_dict['headers'].items():
                     #~ response.headers.add(k,v)
                     response.headers[k] = v
-            response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s, %s' % (max_age,s_maxage,','.join([keyword for keyword in [routing.get('private','public'),routing.get('no-store'),routing.get('immutable'),routing.get('no-transform'),routing.get('no-cache'),routing.get('must-revalidate'),routing.get('proxy-revalidate')] if keyword] )) # private: must not be stored by a shared cache.
+            response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s, %s' % (max_age, s_maxage, ','.join([keyword for keyword in [routing.get('private','public'), routing.get('no_store'), routing.get('immutable'), routing.get('no_transform'), routing.get('no_cache'), routing.get('must_revalidate'), routing.get('proxy_revalidate')] if keyword] )) # private: must not be stored by a shared cache.
             response.headers['ETag'] = page_dict.get('ETag')
             response.headers['X-CacheKey'] = key
             response.headers['X-Cache'] = 'newly rendered' if page else 'from cache'
