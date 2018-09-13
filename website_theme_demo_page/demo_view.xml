@@ -70,57 +70,55 @@
                     </ul>
                     <div class="tab-content">
                         <div id="snippet_structure" class="tab-pane active">
-                            <img src="/website/static/src/img/blocks/block_title.png" />
-                            <t t-call="website.s_cover" />
-                            <img src="/website/static/src/img/blocks/block_banner.png" />
-                            <t t-call="website.s_banner" />
-                            <img src="/website/static/src/img/blocks/block_text_image.png" />
-                            <t t-call="website.s_text_image" />
-                            <img src="/website/static/src/img/blocks/block_image_text.png" />
-                            <t t-call="website.s_image_text" />
-                            <img src="/website/static/src/img/blocks/block_jumbotron.png" />
-                            <t t-call="website.s_big_message" />
-                            <img src="/website/static/src/img/blocks/block_text_block.png" />
-                            <t t-call="website.s_text_block" />
-                            <img src="/website/static/src/img/blocks/block_features.png" />
+                            <img src="/website/static/src/img/blocks/block_title.png" /> Title
                             <t t-call="website.s_title" />
-                            <img src="/website/static/src/img/blocks/block_text_block.png" />
+                            <img src="/website/static/src/img/blocks/block_banner.png" /> Cover
+                            <t t-call="website.s_cover" />
+                            <img src="/website/static/src/img/blocks/block_text_image.png" /> Text-Image
+                            <t t-call="website.s_text_image" />
+                            <img src="/website/static/src/img/blocks/block_image_text.png" /> Image-Text
+                            <t t-call="website.s_image_text" />
+                            <img src="/website/static/src/img/blocks/block_jumbotron.png" /> Big message
+                            <t t-call="website.s_big_message" />
+                            <img src="/website/static/src/img/blocks/block_text_block.png" /> Text Block
+                            <t t-call="website.s_text_block" />
+                            <img src="/website/static/src/img/blocks/block_features.png" /> Features
                             <t t-call="website.s_features" />
-                            <img src="/website/static/src/img/blocks/block_big_picture.png" />
+                            <img src="/website/static/src/img/blocks/block_big_picture.png" /> Big Picture
                             <t t-call="website.s_big_picture" />
-                            <img src="/website/static/src/img/blocks/block_three_columns.png" />
+                            <img src="/website/static/src/img/blocks/block_three_columns.png" /> Three Columns
                             <t t-call="website.s_three_columns" />
-                            <img src="/website/static/src/img/blocks/block_banner.png" />
+                            <img src="/website/static/src/img/blocks/block_banner.png" /> Banner
                             <t t-call="website.s_banner" />
                         </div>
                         <div id="snippet_feature" class="tab-pane">
-                            <img src="/website/static/src/img/blocks/block_image_gallery.png" />
+                            <img src="/website/static/src/img/blocks/block_image_gallery.png" /> Image Gallery
                             <t t-call="website.s_image_gallery" />
-                            <img src="/website/static/src/img/blocks/block_comparison.png" />
+                            <img src="/website/static/src/img/blocks/block_comparison.png" /> Comparisons
                             <t t-call="website.s_comparisons" />
-                            <img src="/website/static/src/img/blocks/block_button.png" />
+                            <img src="/website/static/src/img/blocks/block_button.png" /> Call to Action
                             <t t-call="website.s_button" />
-                            <img src="/website/static/src/img/blocks/block_references.png" />
+                            <img src="/website/static/src/img/blocks/block_references.png" /> References
                             <t t-call="website.s_references" />
-                            <img src="/website/static/src/img/blocks/block_faq.png" />
+                            <img src="/website/static/src/img/blocks/block_faq.png" /> Accordion
                             <t t-call="website.s_faq_collapse" />
-                            <img src="/website/static/src/img/blocks/block_feature_grid.png" />
+                            <img src="/website/static/src/img/blocks/block_feature_grid.png" /> Feature Grid
                             <t t-call="website.s_feature_grid" />
                         </div>
                         <div id="snippet_effect" class="tab-pane">
-                            <img src="/website/static/src/img/blocks/block_parallax.png" />
+                            <img src="/website/static/src/img/blocks/block_parallax.png" /> Parallax
                             <t t-call="website.s_parallax" />
-                            <img src="/website/static/src/img/blocks/block_quotes_slider.png" />
+                            <img src="/website/static/src/img/blocks/block_quotes_slider.png" /> Parallax Slider
                             <t t-call="website.s_parallax_slider" />
                         </div>
                         <div id="snippet_content" class="tab-pane">
-                            <img src="/website/static/src/img/blocks/block_well.png" />
+                            <img src="/website/static/src/img/blocks/block_well.png" /> Well
                             <t t-call="website.s_well" />
-                            <img src="/website/static/src/img/blocks/block_panel.png" />
+                            <img src="/website/static/src/img/blocks/block_panel.png" /> Panel
                             <t t-call="website.s_panel" />
-                            <img src="/website/static/src/img/blocks/block_text_image.png" />
+                            <img src="/website/static/src/img/blocks/block_text_image.png" /> Image Floating
                             <t t-call="website.s_image_floating" />
-                            <img src="/website/static/src/img/blocks/block_share.png" />
+                            <img src="/website/static/src/img/blocks/block_share.png" /> Share
                             <t t-call="website.s_share" />
                         </div>
                         <div id="fonts" class="tab-pane">
