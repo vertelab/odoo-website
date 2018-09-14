@@ -460,7 +460,7 @@ def route(route=None, **kw):
                 controller_start = timer()
                 response = f(*args, **kw) # calls original controller
                 render_start = timer()
-                
+
                 if routing.get('content_type'):
                     response.headers['Content-Type'] = routing.get('content_type')
                     #~ if isinstance(response.headers,list) and isinstance(response.headers[0],tuple):

@@ -218,8 +218,6 @@ class reseller_register(http.Controller):
     # can be overrided
     def update_partner_info(self, issue, post):
         values = self.get_company_post(post)
-        if post.get('website_short_description'):
-            values['website_short_description'].write({'website_short_description': post.get('website_short_description')})
         if post.get('invoicetype'):
             values['property_invoice_type'] = int(post.get('invoicetype'))
         values['website_short_description'] = post.get('website_short_description', '')
