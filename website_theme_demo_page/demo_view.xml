@@ -70,55 +70,77 @@
                     </ul>
                     <div class="tab-content">
                         <div id="snippet_structure" class="tab-pane active">
-                            <img src="/website/static/src/img/blocks/block_title.png" /> Title
+                            <img src="/website/static/src/img/blocks/block_title.png" />
+                            Title
                             <t t-call="website.s_title" />
-                            <img src="/website/static/src/img/blocks/block_banner.png" /> Cover
+                            <img src="/website/static/src/img/blocks/block_banner.png" />
+                            Cover
                             <t t-call="website.s_cover" />
-                            <img src="/website/static/src/img/blocks/block_text_image.png" /> Text-Image
+                            <img src="/website/static/src/img/blocks/block_text_image.png" />
+                            Text-Image
                             <t t-call="website.s_text_image" />
-                            <img src="/website/static/src/img/blocks/block_image_text.png" /> Image-Text
+                            <img src="/website/static/src/img/blocks/block_image_text.png" />
+                            Image-Text
                             <t t-call="website.s_image_text" />
-                            <img src="/website/static/src/img/blocks/block_jumbotron.png" /> Big message
+                            <img src="/website/static/src/img/blocks/block_jumbotron.png" />
+                            Big message
                             <t t-call="website.s_big_message" />
-                            <img src="/website/static/src/img/blocks/block_text_block.png" /> Text Block
+                            <img src="/website/static/src/img/blocks/block_text_block.png" />
+                            Text Block
                             <t t-call="website.s_text_block" />
-                            <img src="/website/static/src/img/blocks/block_features.png" /> Features
+                            <img src="/website/static/src/img/blocks/block_features.png" />
+                            Features
                             <t t-call="website.s_features" />
-                            <img src="/website/static/src/img/blocks/block_big_picture.png" /> Big Picture
+                            <img src="/website/static/src/img/blocks/block_big_picture.png" />
+                            Big Picture
                             <t t-call="website.s_big_picture" />
-                            <img src="/website/static/src/img/blocks/block_three_columns.png" /> Three Columns
+                            <img src="/website/static/src/img/blocks/block_three_columns.png" />
+                            Three Columns
                             <t t-call="website.s_three_columns" />
-                            <img src="/website/static/src/img/blocks/block_banner.png" /> Banner
+                            <img src="/website/static/src/img/blocks/block_banner.png" />
+                            Banner
                             <t t-call="website.s_banner" />
                         </div>
                         <div id="snippet_feature" class="tab-pane">
-                            <img src="/website/static/src/img/blocks/block_image_gallery.png" /> Image Gallery
+                            <img src="/website/static/src/img/blocks/block_image_gallery.png" />
+                            Image Gallery
                             <t t-call="website.s_image_gallery" />
-                            <img src="/website/static/src/img/blocks/block_comparison.png" /> Comparisons
+                            <img src="/website/static/src/img/blocks/block_comparison.png" />
+                            Comparisons
                             <t t-call="website.s_comparisons" />
-                            <img src="/website/static/src/img/blocks/block_button.png" /> Call to Action
+                            <img src="/website/static/src/img/blocks/block_button.png" />
+                            Call to Action
                             <t t-call="website.s_button" />
-                            <img src="/website/static/src/img/blocks/block_references.png" /> References
+                            <img src="/website/static/src/img/blocks/block_references.png" />
+                            References
                             <t t-call="website.s_references" />
-                            <img src="/website/static/src/img/blocks/block_faq.png" /> Accordion
+                            <img src="/website/static/src/img/blocks/block_faq.png" />
+                            Accordion
                             <t t-call="website.s_faq_collapse" />
-                            <img src="/website/static/src/img/blocks/block_feature_grid.png" /> Feature Grid
+                            <img src="/website/static/src/img/blocks/block_feature_grid.png" />
+                            Feature Grid
                             <t t-call="website.s_feature_grid" />
                         </div>
                         <div id="snippet_effect" class="tab-pane">
-                            <img src="/website/static/src/img/blocks/block_parallax.png" /> Parallax
+                            <img src="/website/static/src/img/blocks/block_parallax.png" />
+                            Parallax
                             <t t-call="website.s_parallax" />
-                            <img src="/website/static/src/img/blocks/block_quotes_slider.png" /> Parallax Slider
+                            <img src="/website/static/src/img/blocks/block_quotes_slider.png" />
+                            Parallax Slider
                             <t t-call="website.s_parallax_slider" />
                         </div>
                         <div id="snippet_content" class="tab-pane">
-                            <img src="/website/static/src/img/blocks/block_well.png" /> Well
+                            <img src="/website/static/src/img/blocks/block_well.png" />
+                            Well
                             <t t-call="website.s_well" />
-                            <img src="/website/static/src/img/blocks/block_panel.png" /> Panel
+                            <img src="/website/static/src/img/blocks/block_panel.png" />
+                            Panel
                             <t t-call="website.s_panel" />
-                            <img src="/website/static/src/img/blocks/block_text_image.png" /> Image Floating
+                            <img src="/website/static/src/img/blocks/block_text_image.png" />
+                            Image Floating
                             <t t-call="website.s_image_floating" />
-                            <img src="/website/static/src/img/blocks/block_share.png" /> Share
+                            <img src="/website/static/src/img/blocks/block_share.png" />
+                            Share
                             <t t-call="website.s_share" />
                         </div>
                         <div id="fonts" class="tab-pane">
@@ -235,248 +257,130 @@
                                     </div>
                                 </div>
                             </section>
-                            <div class="note-color btn-group">
-                                <div class="btn-group">
-                                    <div class="note-palette-title">Background Color</div>
-                                    <div class="note-color-reset" data-event="backColor" data-value="inherit" title="Transparent">Set transparent</div>
-                                    <div class="note-color-palette" data-target-event="backColor">
-                                        <h6>Theme colors</h6>
-                                        <div class="note-color-row mb8">
-                                            <button data-color="alpha" class="note-color-btn bg-alpha" data-event="backColor" data-value="bg-alpha" data-original-title="" title="" />
-                                            <button data-color="beta" class="note-color-btn bg-beta" data-event="backColor" data-value="bg-beta" data-original-title="" title="" />
-                                            <button data-color="gamma" class="note-color-btn bg-gamma" data-event="backColor" data-value="bg-gamma" data-original-title="" title="" />
-                                            <button data-color="delta" class="note-color-btn bg-delta" data-event="backColor" data-value="bg-delta" data-original-title="" title="" />
-                                            <button data-color="epsilon" class="note-color-btn bg-epsilon" data-event="backColor" data-value="bg-epsilon" data-original-title="" title="" />
-                                        </div>
-                                        <div class="note-color-row mb8">
-                                            <button data-color="white" class="note-color-btn bg-white" data-event="backColor" data-value="bg-white" data-original-title="" title="" />
-                                            <button data-color="gray-lighter" class="note-color-btn bg-gray-lighter" data-event="backColor" data-value="bg-gray-lighter" data-original-title="" title="" />
-                                            <button data-color="gray-light" class="note-color-btn bg-gray-light" data-event="backColor" data-value="bg-gray-light" data-original-title="" title="" />
-                                            <button data-color="gray" class="note-color-btn bg-gray" data-event="backColor" data-value="bg-gray" data-original-title="" title="" />
-                                            <button data-color="gray-dark" class="note-color-btn bg-gray-dark" data-event="backColor" data-value="bg-gray-dark" data-original-title="" title="" />
-                                            <button data-color="gray-darker" class="note-color-btn bg-gray-darker" data-event="backColor" data-value="bg-gray-darker" data-original-title="" title="" />
-                                            <button data-color="black" class="note-color-btn bg-black" data-event="backColor" data-value="bg-black" data-original-title="" title="" />
-                                        </div>
-                                        <div class="note-color-row mb8">
-                                            <button data-color="primary" class="note-color-btn bg-primary" data-event="backColor" data-value="bg-primary" data-original-title="" title="" />
-                                            <button data-color="success" class="note-color-btn bg-success" data-event="backColor" data-value="bg-success" data-original-title="" title="" />
-                                            <button data-color="info" class="note-color-btn bg-info" data-event="backColor" data-value="bg-info" data-original-title="" title="" />
-                                            <button data-color="warning" class="note-color-btn bg-warning" data-event="backColor" data-value="bg-warning" data-original-title="" title="" />
-                                            <button data-color="danger" class="note-color-btn bg-danger" data-event="backColor" data-value="bg-danger" data-original-title="" title="" />
-                                        </div>
-                                        <div class="note-color-row mb8">
-                                            <button class="o_btn_transparent note-color-btn bg-undefined" data-event="backColor" data-value="bg-undefined" data-original-title="" title="" />
-                                            <button data-color="black-25" class="note-color-btn bg-black-25" data-event="backColor" data-value="bg-black-25" data-original-title="" title="" />
-                                            <button data-color="black-50" class="note-color-btn bg-black-50" data-event="backColor" data-value="bg-black-50" data-original-title="" title="" />
-                                            <button data-color="black-75" class="note-color-btn bg-black-75" data-event="backColor" data-value="bg-black-75" data-original-title="" title="" />
-                                            <button data-color="white-25" class="note-color-btn bg-white-25" data-event="backColor" data-value="bg-white-25" data-original-title="" title="" />
-                                            <button data-color="white-50" class="note-color-btn bg-white-50" data-event="backColor" data-value="bg-white-50" data-original-title="" title="" />
-                                            <button data-color="white-75" class="note-color-btn bg-white-75" data-event="backColor" data-value="bg-white-75" data-original-title="" title="" />
-                                        </div>
-                                        <h6>Common colors</h6>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#000000;" data-event="backColor" data-value="#000000" title="" data-toggle="button" tabindex="-1" data-original-title="#000000" />
-                                            <button type="button" class="note-color-btn" style="background-color:#424242;" data-event="backColor" data-value="#424242" title="" data-toggle="button" tabindex="-1" data-original-title="#424242" />
-                                            <button type="button" class="note-color-btn" style="background-color:#636363;" data-event="backColor" data-value="#636363" title="" data-toggle="button" tabindex="-1" data-original-title="#636363" />
-                                            <button type="button" class="note-color-btn" style="background-color:#9C9C94;" data-event="backColor" data-value="#9C9C94" title="" data-toggle="button" tabindex="-1" data-original-title="#9C9C94" />
-                                            <button type="button" class="note-color-btn" style="background-color:#CEC6CE;" data-event="backColor" data-value="#CEC6CE" title="" data-toggle="button" tabindex="-1" data-original-title="#CEC6CE" />
-                                            <button type="button" class="note-color-btn" style="background-color:#EFEFEF;" data-event="backColor" data-value="#EFEFEF" title="" data-toggle="button" tabindex="-1" data-original-title="#EFEFEF" />
-                                            <button type="button" class="note-color-btn" style="background-color:#F7F7F7;" data-event="backColor" data-value="#F7F7F7" title="" data-toggle="button" tabindex="-1" data-original-title="#F7F7F7" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFFFFF;" data-event="backColor" data-value="#FFFFFF" title="" data-toggle="button" tabindex="-1" data-original-title="#FFFFFF" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#FF0000;" data-event="backColor" data-value="#FF0000" title="" data-toggle="button" tabindex="-1" data-original-title="#FF0000" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FF9C00;" data-event="backColor" data-value="#FF9C00" title="" data-toggle="button" tabindex="-1" data-original-title="#FF9C00" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFFF00;" data-event="backColor" data-value="#FFFF00" title="" data-toggle="button" tabindex="-1" data-original-title="#FFFF00" />
-                                            <button type="button" class="note-color-btn" style="background-color:#00FF00;" data-event="backColor" data-value="#00FF00" title="" data-toggle="button" tabindex="-1" data-original-title="#00FF00" />
-                                            <button type="button" class="note-color-btn" style="background-color:#00FFFF;" data-event="backColor" data-value="#00FFFF" title="" data-toggle="button" tabindex="-1" data-original-title="#00FFFF" />
-                                            <button type="button" class="note-color-btn" style="background-color:#0000FF;" data-event="backColor" data-value="#0000FF" title="" data-toggle="button" tabindex="-1" data-original-title="#0000FF" />
-                                            <button type="button" class="note-color-btn" style="background-color:#9C00FF;" data-event="backColor" data-value="#9C00FF" title="" data-toggle="button" tabindex="-1" data-original-title="#9C00FF" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FF00FF;" data-event="backColor" data-value="#FF00FF" title="" data-toggle="button" tabindex="-1" data-original-title="#FF00FF" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#F7C6CE;" data-event="backColor" data-value="#F7C6CE" title="" data-toggle="button" tabindex="-1" data-original-title="#F7C6CE" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFE7CE;" data-event="backColor" data-value="#FFE7CE" title="" data-toggle="button" tabindex="-1" data-original-title="#FFE7CE" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFEFC6;" data-event="backColor" data-value="#FFEFC6" title="" data-toggle="button" tabindex="-1" data-original-title="#FFEFC6" />
-                                            <button type="button" class="note-color-btn" style="background-color:#D6EFD6;" data-event="backColor" data-value="#D6EFD6" title="" data-toggle="button" tabindex="-1" data-original-title="#D6EFD6" />
-                                            <button type="button" class="note-color-btn" style="background-color:#CEDEE7;" data-event="backColor" data-value="#CEDEE7" title="" data-toggle="button" tabindex="-1" data-original-title="#CEDEE7" />
-                                            <button type="button" class="note-color-btn" style="background-color:#CEE7F7;" data-event="backColor" data-value="#CEE7F7" title="" data-toggle="button" tabindex="-1" data-original-title="#CEE7F7" />
-                                            <button type="button" class="note-color-btn" style="background-color:#D6D6E7;" data-event="backColor" data-value="#D6D6E7" title="" data-toggle="button" tabindex="-1" data-original-title="#D6D6E7" />
-                                            <button type="button" class="note-color-btn" style="background-color:#E7D6DE;" data-event="backColor" data-value="#E7D6DE" title="" data-toggle="button" tabindex="-1" data-original-title="#E7D6DE" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#E79C9C;" data-event="backColor" data-value="#E79C9C" title="" data-toggle="button" tabindex="-1" data-original-title="#E79C9C" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFC69C;" data-event="backColor" data-value="#FFC69C" title="" data-toggle="button" tabindex="-1" data-original-title="#FFC69C" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFE79C;" data-event="backColor" data-value="#FFE79C" title="" data-toggle="button" tabindex="-1" data-original-title="#FFE79C" />
-                                            <button type="button" class="note-color-btn" style="background-color:#B5D6A5;" data-event="backColor" data-value="#B5D6A5" title="" data-toggle="button" tabindex="-1" data-original-title="#B5D6A5" />
-                                            <button type="button" class="note-color-btn" style="background-color:#A5C6CE;" data-event="backColor" data-value="#A5C6CE" title="" data-toggle="button" tabindex="-1" data-original-title="#A5C6CE" />
-                                            <button type="button" class="note-color-btn" style="background-color:#9CC6EF;" data-event="backColor" data-value="#9CC6EF" title="" data-toggle="button" tabindex="-1" data-original-title="#9CC6EF" />
-                                            <button type="button" class="note-color-btn" style="background-color:#B5A5D6;" data-event="backColor" data-value="#B5A5D6" title="" data-toggle="button" tabindex="-1" data-original-title="#B5A5D6" />
-                                            <button type="button" class="note-color-btn" style="background-color:#D6A5BD;" data-event="backColor" data-value="#D6A5BD" title="" data-toggle="button" tabindex="-1" data-original-title="#D6A5BD" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#E76363;" data-event="backColor" data-value="#E76363" title="" data-toggle="button" tabindex="-1" data-original-title="#E76363" />
-                                            <button type="button" class="note-color-btn" style="background-color:#F7AD6B;" data-event="backColor" data-value="#F7AD6B" title="" data-toggle="button" tabindex="-1" data-original-title="#F7AD6B" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFD663;" data-event="backColor" data-value="#FFD663" title="" data-toggle="button" tabindex="-1" data-original-title="#FFD663" />
-                                            <button type="button" class="note-color-btn" style="background-color:#94BD7B;" data-event="backColor" data-value="#94BD7B" title="" data-toggle="button" tabindex="-1" data-original-title="#94BD7B" />
-                                            <button type="button" class="note-color-btn" style="background-color:#73A5AD;" data-event="backColor" data-value="#73A5AD" title="" data-toggle="button" tabindex="-1" data-original-title="#73A5AD" />
-                                            <button type="button" class="note-color-btn" style="background-color:#6BADDE;" data-event="backColor" data-value="#6BADDE" title="" data-toggle="button" tabindex="-1" data-original-title="#6BADDE" />
-                                            <button type="button" class="note-color-btn" style="background-color:#8C7BC6;" data-event="backColor" data-value="#8C7BC6" title="" data-toggle="button" tabindex="-1" data-original-title="#8C7BC6" />
-                                            <button type="button" class="note-color-btn" style="background-color:#C67BA5;" data-event="backColor" data-value="#C67BA5" title="" data-toggle="button" tabindex="-1" data-original-title="#C67BA5" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#CE0000;" data-event="backColor" data-value="#CE0000" title="" data-toggle="button" tabindex="-1" data-original-title="#CE0000" />
-                                            <button type="button" class="note-color-btn" style="background-color:#E79439;" data-event="backColor" data-value="#E79439" title="" data-toggle="button" tabindex="-1" data-original-title="#E79439" />
-                                            <button type="button" class="note-color-btn" style="background-color:#EFC631;" data-event="backColor" data-value="#EFC631" title="" data-toggle="button" tabindex="-1" data-original-title="#EFC631" />
-                                            <button type="button" class="note-color-btn" style="background-color:#6BA54A;" data-event="backColor" data-value="#6BA54A" title="" data-toggle="button" tabindex="-1" data-original-title="#6BA54A" />
-                                            <button type="button" class="note-color-btn" style="background-color:#4A7B8C;" data-event="backColor" data-value="#4A7B8C" title="" data-toggle="button" tabindex="-1" data-original-title="#4A7B8C" />
-                                            <button type="button" class="note-color-btn" style="background-color:#3984C6;" data-event="backColor" data-value="#3984C6" title="" data-toggle="button" tabindex="-1" data-original-title="#3984C6" />
-                                            <button type="button" class="note-color-btn" style="background-color:#634AA5;" data-event="backColor" data-value="#634AA5" title="" data-toggle="button" tabindex="-1" data-original-title="#634AA5" />
-                                            <button type="button" class="note-color-btn" style="background-color:#A54A7B;" data-event="backColor" data-value="#A54A7B" title="" data-toggle="button" tabindex="-1" data-original-title="#A54A7B" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#9C0000;" data-event="backColor" data-value="#9C0000" title="" data-toggle="button" tabindex="-1" data-original-title="#9C0000" />
-                                            <button type="button" class="note-color-btn" style="background-color:#B56308;" data-event="backColor" data-value="#B56308" title="" data-toggle="button" tabindex="-1" data-original-title="#B56308" />
-                                            <button type="button" class="note-color-btn" style="background-color:#BD9400;" data-event="backColor" data-value="#BD9400" title="" data-toggle="button" tabindex="-1" data-original-title="#BD9400" />
-                                            <button type="button" class="note-color-btn" style="background-color:#397B21;" data-event="backColor" data-value="#397B21" title="" data-toggle="button" tabindex="-1" data-original-title="#397B21" />
-                                            <button type="button" class="note-color-btn" style="background-color:#104A5A;" data-event="backColor" data-value="#104A5A" title="" data-toggle="button" tabindex="-1" data-original-title="#104A5A" />
-                                            <button type="button" class="note-color-btn" style="background-color:#085294;" data-event="backColor" data-value="#085294" title="" data-toggle="button" tabindex="-1" data-original-title="#085294" />
-                                            <button type="button" class="note-color-btn" style="background-color:#311873;" data-event="backColor" data-value="#311873" title="" data-toggle="button" tabindex="-1" data-original-title="#311873" />
-                                            <button type="button" class="note-color-btn" style="background-color:#731842;" data-event="backColor" data-value="#731842" title="" data-toggle="button" tabindex="-1" data-original-title="#731842" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#630000;" data-event="backColor" data-value="#630000" title="" data-toggle="button" tabindex="-1" data-original-title="#630000" />
-                                            <button type="button" class="note-color-btn" style="background-color:#7B3900;" data-event="backColor" data-value="#7B3900" title="" data-toggle="button" tabindex="-1" data-original-title="#7B3900" />
-                                            <button type="button" class="note-color-btn" style="background-color:#846300;" data-event="backColor" data-value="#846300" title="" data-toggle="button" tabindex="-1" data-original-title="#846300" />
-                                            <button type="button" class="note-color-btn" style="background-color:#295218;" data-event="backColor" data-value="#295218" title="" data-toggle="button" tabindex="-1" data-original-title="#295218" />
-                                            <button type="button" class="note-color-btn" style="background-color:#083139;" data-event="backColor" data-value="#083139" title="" data-toggle="button" tabindex="-1" data-original-title="#083139" />
-                                            <button type="button" class="note-color-btn" style="background-color:#003163;" data-event="backColor" data-value="#003163" title="" data-toggle="button" tabindex="-1" data-original-title="#003163" />
-                                            <button type="button" class="note-color-btn" style="background-color:#21104A;" data-event="backColor" data-value="#21104A" title="" data-toggle="button" tabindex="-1" data-original-title="#21104A" />
-                                            <button type="button" class="note-color-btn" style="background-color:#4A1031;" data-event="backColor" data-value="#4A1031" title="" data-toggle="button" tabindex="-1" data-original-title="#4A1031" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="btn-group">
-                                    <div class="note-palette-title">Font Color</div>
-                                    <div class="note-color-reset" data-event="foreColor" data-value="inherit" title="Reset">Reset to default</div>
-                                    <div class="note-color-palette" data-target-event="foreColor">
-                                        <h6>Theme colors</h6>
-                                        <div class="note-color-row mb8">
-                                            <button data-color="alpha" class="note-color-btn bg-alpha" data-event="foreColor" data-value="text-alpha" data-original-title="" title="" />
-                                            <button data-color="beta" class="note-color-btn bg-beta" data-event="foreColor" data-value="text-beta" data-original-title="" title="" />
-                                            <button data-color="gamma" class="note-color-btn bg-gamma" data-event="foreColor" data-value="text-gamma" data-original-title="" title="" />
-                                            <button data-color="delta" class="note-color-btn bg-delta" data-event="foreColor" data-value="text-delta" data-original-title="" title="" />
-                                            <button data-color="epsilon" class="note-color-btn bg-epsilon" data-event="foreColor" data-value="text-epsilon" data-original-title="" title="" />
-                                        </div>
-                                        <div class="note-color-row mb8">
-                                            <button data-color="white" class="note-color-btn bg-white" data-event="foreColor" data-value="text-white" data-original-title="" title="" />
-                                            <button data-color="gray-lighter" class="note-color-btn bg-gray-lighter" data-event="foreColor" data-value="text-gray-lighter" data-original-title="" title="" />
-                                            <button data-color="gray-light" class="note-color-btn bg-gray-light" data-event="foreColor" data-value="text-gray-light" data-original-title="" title="" />
-                                            <button data-color="gray" class="note-color-btn bg-gray" data-event="foreColor" data-value="text-gray" data-original-title="" title="" />
-                                            <button data-color="gray-dark" class="note-color-btn bg-gray-dark" data-event="foreColor" data-value="text-gray-dark" data-original-title="" title="" />
-                                            <button data-color="gray-darker" class="note-color-btn bg-gray-darker" data-event="foreColor" data-value="text-gray-darker" data-original-title="" title="" />
-                                            <button data-color="black" class="note-color-btn bg-black" data-event="foreColor" data-value="text-black" data-original-title="" title="" />
-                                        </div>
-                                        <div class="note-color-row mb8">
-                                            <button data-color="primary" class="note-color-btn bg-primary" data-event="foreColor" data-value="text-primary" data-original-title="" title="" />
-                                            <button data-color="success" class="note-color-btn bg-success" data-event="foreColor" data-value="text-success" data-original-title="" title="" />
-                                            <button data-color="info" class="note-color-btn bg-info" data-event="foreColor" data-value="text-info" data-original-title="" title="" />
-                                            <button data-color="warning" class="note-color-btn bg-warning" data-event="foreColor" data-value="text-warning" data-original-title="" title="" />
-                                            <button data-color="danger" class="note-color-btn bg-danger" data-event="foreColor" data-value="text-danger" data-original-title="" title="" />
-                                        </div>
-                                        <div class="note-color-row mb8">
-                                            <button class="o_btn_transparent note-color-btn bg-undefined" data-event="foreColor" data-value="text-undefined" data-original-title="" title="" />
-                                            <button data-color="black-25" class="note-color-btn bg-black-25" data-event="foreColor" data-value="text-black-25" data-original-title="" title="" />
-                                            <button data-color="black-50" class="note-color-btn bg-black-50" data-event="foreColor" data-value="text-black-50" data-original-title="" title="" />
-                                            <button data-color="black-75" class="note-color-btn bg-black-75" data-event="foreColor" data-value="text-black-75" data-original-title="" title="" />
-                                            <button data-color="white-25" class="note-color-btn bg-white-25" data-event="foreColor" data-value="text-white-25" data-original-title="" title="" />
-                                            <button data-color="white-50" class="note-color-btn bg-white-50" data-event="foreColor" data-value="text-white-50" data-original-title="" title="" />
-                                            <button data-color="white-75" class="note-color-btn bg-white-75" data-event="foreColor" data-value="text-white-75" data-original-title="" title="" />
-                                        </div>
-                                        <h6>Common colors</h6>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#000000;" data-event="foreColor" data-value="#000000" title="" data-toggle="button" tabindex="-1" data-original-title="#000000" />
-                                            <button type="button" class="note-color-btn" style="background-color:#424242;" data-event="foreColor" data-value="#424242" title="" data-toggle="button" tabindex="-1" data-original-title="#424242" />
-                                            <button type="button" class="note-color-btn" style="background-color:#636363;" data-event="foreColor" data-value="#636363" title="" data-toggle="button" tabindex="-1" data-original-title="#636363" />
-                                            <button type="button" class="note-color-btn" style="background-color:#9C9C94;" data-event="foreColor" data-value="#9C9C94" title="" data-toggle="button" tabindex="-1" data-original-title="#9C9C94" />
-                                            <button type="button" class="note-color-btn" style="background-color:#CEC6CE;" data-event="foreColor" data-value="#CEC6CE" title="" data-toggle="button" tabindex="-1" data-original-title="#CEC6CE" />
-                                            <button type="button" class="note-color-btn" style="background-color:#EFEFEF;" data-event="foreColor" data-value="#EFEFEF" title="" data-toggle="button" tabindex="-1" data-original-title="#EFEFEF" />
-                                            <button type="button" class="note-color-btn" style="background-color:#F7F7F7;" data-event="foreColor" data-value="#F7F7F7" title="" data-toggle="button" tabindex="-1" data-original-title="#F7F7F7" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFFFFF;" data-event="foreColor" data-value="#FFFFFF" title="" data-toggle="button" tabindex="-1" data-original-title="#FFFFFF" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#FF0000;" data-event="foreColor" data-value="#FF0000" title="" data-toggle="button" tabindex="-1" data-original-title="#FF0000" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FF9C00;" data-event="foreColor" data-value="#FF9C00" title="" data-toggle="button" tabindex="-1" data-original-title="#FF9C00" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFFF00;" data-event="foreColor" data-value="#FFFF00" title="" data-toggle="button" tabindex="-1" data-original-title="#FFFF00" />
-                                            <button type="button" class="note-color-btn" style="background-color:#00FF00;" data-event="foreColor" data-value="#00FF00" title="" data-toggle="button" tabindex="-1" data-original-title="#00FF00" />
-                                            <button type="button" class="note-color-btn" style="background-color:#00FFFF;" data-event="foreColor" data-value="#00FFFF" title="" data-toggle="button" tabindex="-1" data-original-title="#00FFFF" />
-                                            <button type="button" class="note-color-btn" style="background-color:#0000FF;" data-event="foreColor" data-value="#0000FF" title="" data-toggle="button" tabindex="-1" data-original-title="#0000FF" />
-                                            <button type="button" class="note-color-btn" style="background-color:#9C00FF;" data-event="foreColor" data-value="#9C00FF" title="" data-toggle="button" tabindex="-1" data-original-title="#9C00FF" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FF00FF;" data-event="foreColor" data-value="#FF00FF" title="" data-toggle="button" tabindex="-1" data-original-title="#FF00FF" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#F7C6CE;" data-event="foreColor" data-value="#F7C6CE" title="" data-toggle="button" tabindex="-1" data-original-title="#F7C6CE" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFE7CE;" data-event="foreColor" data-value="#FFE7CE" title="" data-toggle="button" tabindex="-1" data-original-title="#FFE7CE" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFEFC6;" data-event="foreColor" data-value="#FFEFC6" title="" data-toggle="button" tabindex="-1" data-original-title="#FFEFC6" />
-                                            <button type="button" class="note-color-btn" style="background-color:#D6EFD6;" data-event="foreColor" data-value="#D6EFD6" title="" data-toggle="button" tabindex="-1" data-original-title="#D6EFD6" />
-                                            <button type="button" class="note-color-btn" style="background-color:#CEDEE7;" data-event="foreColor" data-value="#CEDEE7" title="" data-toggle="button" tabindex="-1" data-original-title="#CEDEE7" />
-                                            <button type="button" class="note-color-btn" style="background-color:#CEE7F7;" data-event="foreColor" data-value="#CEE7F7" title="" data-toggle="button" tabindex="-1" data-original-title="#CEE7F7" />
-                                            <button type="button" class="note-color-btn" style="background-color:#D6D6E7;" data-event="foreColor" data-value="#D6D6E7" title="" data-toggle="button" tabindex="-1" data-original-title="#D6D6E7" />
-                                            <button type="button" class="note-color-btn" style="background-color:#E7D6DE;" data-event="foreColor" data-value="#E7D6DE" title="" data-toggle="button" tabindex="-1" data-original-title="#E7D6DE" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#E79C9C;" data-event="foreColor" data-value="#E79C9C" title="" data-toggle="button" tabindex="-1" data-original-title="#E79C9C" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFC69C;" data-event="foreColor" data-value="#FFC69C" title="" data-toggle="button" tabindex="-1" data-original-title="#FFC69C" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFE79C;" data-event="foreColor" data-value="#FFE79C" title="" data-toggle="button" tabindex="-1" data-original-title="#FFE79C" />
-                                            <button type="button" class="note-color-btn" style="background-color:#B5D6A5;" data-event="foreColor" data-value="#B5D6A5" title="" data-toggle="button" tabindex="-1" data-original-title="#B5D6A5" />
-                                            <button type="button" class="note-color-btn" style="background-color:#A5C6CE;" data-event="foreColor" data-value="#A5C6CE" title="" data-toggle="button" tabindex="-1" data-original-title="#A5C6CE" />
-                                            <button type="button" class="note-color-btn" style="background-color:#9CC6EF;" data-event="foreColor" data-value="#9CC6EF" title="" data-toggle="button" tabindex="-1" data-original-title="#9CC6EF" />
-                                            <button type="button" class="note-color-btn" style="background-color:#B5A5D6;" data-event="foreColor" data-value="#B5A5D6" title="" data-toggle="button" tabindex="-1" data-original-title="#B5A5D6" />
-                                            <button type="button" class="note-color-btn" style="background-color:#D6A5BD;" data-event="foreColor" data-value="#D6A5BD" title="" data-toggle="button" tabindex="-1" data-original-title="#D6A5BD" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#E76363;" data-event="foreColor" data-value="#E76363" title="" data-toggle="button" tabindex="-1" data-original-title="#E76363" />
-                                            <button type="button" class="note-color-btn" style="background-color:#F7AD6B;" data-event="foreColor" data-value="#F7AD6B" title="" data-toggle="button" tabindex="-1" data-original-title="#F7AD6B" />
-                                            <button type="button" class="note-color-btn" style="background-color:#FFD663;" data-event="foreColor" data-value="#FFD663" title="" data-toggle="button" tabindex="-1" data-original-title="#FFD663" />
-                                            <button type="button" class="note-color-btn" style="background-color:#94BD7B;" data-event="foreColor" data-value="#94BD7B" title="" data-toggle="button" tabindex="-1" data-original-title="#94BD7B" />
-                                            <button type="button" class="note-color-btn" style="background-color:#73A5AD;" data-event="foreColor" data-value="#73A5AD" title="" data-toggle="button" tabindex="-1" data-original-title="#73A5AD" />
-                                            <button type="button" class="note-color-btn" style="background-color:#6BADDE;" data-event="foreColor" data-value="#6BADDE" title="" data-toggle="button" tabindex="-1" data-original-title="#6BADDE" />
-                                            <button type="button" class="note-color-btn" style="background-color:#8C7BC6;" data-event="foreColor" data-value="#8C7BC6" title="" data-toggle="button" tabindex="-1" data-original-title="#8C7BC6" />
-                                            <button type="button" class="note-color-btn" style="background-color:#C67BA5;" data-event="foreColor" data-value="#C67BA5" title="" data-toggle="button" tabindex="-1" data-original-title="#C67BA5" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#CE0000;" data-event="foreColor" data-value="#CE0000" title="" data-toggle="button" tabindex="-1" data-original-title="#CE0000" />
-                                            <button type="button" class="note-color-btn" style="background-color:#E79439;" data-event="foreColor" data-value="#E79439" title="" data-toggle="button" tabindex="-1" data-original-title="#E79439" />
-                                            <button type="button" class="note-color-btn" style="background-color:#EFC631;" data-event="foreColor" data-value="#EFC631" title="" data-toggle="button" tabindex="-1" data-original-title="#EFC631" />
-                                            <button type="button" class="note-color-btn" style="background-color:#6BA54A;" data-event="foreColor" data-value="#6BA54A" title="" data-toggle="button" tabindex="-1" data-original-title="#6BA54A" />
-                                            <button type="button" class="note-color-btn" style="background-color:#4A7B8C;" data-event="foreColor" data-value="#4A7B8C" title="" data-toggle="button" tabindex="-1" data-original-title="#4A7B8C" />
-                                            <button type="button" class="note-color-btn" style="background-color:#3984C6;" data-event="foreColor" data-value="#3984C6" title="" data-toggle="button" tabindex="-1" data-original-title="#3984C6" />
-                                            <button type="button" class="note-color-btn" style="background-color:#634AA5;" data-event="foreColor" data-value="#634AA5" title="" data-toggle="button" tabindex="-1" data-original-title="#634AA5" />
-                                            <button type="button" class="note-color-btn" style="background-color:#A54A7B;" data-event="foreColor" data-value="#A54A7B" title="" data-toggle="button" tabindex="-1" data-original-title="#A54A7B" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#9C0000;" data-event="foreColor" data-value="#9C0000" title="" data-toggle="button" tabindex="-1" data-original-title="#9C0000" />
-                                            <button type="button" class="note-color-btn" style="background-color:#B56308;" data-event="foreColor" data-value="#B56308" title="" data-toggle="button" tabindex="-1" data-original-title="#B56308" />
-                                            <button type="button" class="note-color-btn" style="background-color:#BD9400;" data-event="foreColor" data-value="#BD9400" title="" data-toggle="button" tabindex="-1" data-original-title="#BD9400" />
-                                            <button type="button" class="note-color-btn" style="background-color:#397B21;" data-event="foreColor" data-value="#397B21" title="" data-toggle="button" tabindex="-1" data-original-title="#397B21" />
-                                            <button type="button" class="note-color-btn" style="background-color:#104A5A;" data-event="foreColor" data-value="#104A5A" title="" data-toggle="button" tabindex="-1" data-original-title="#104A5A" />
-                                            <button type="button" class="note-color-btn" style="background-color:#085294;" data-event="foreColor" data-value="#085294" title="" data-toggle="button" tabindex="-1" data-original-title="#085294" />
-                                            <button type="button" class="note-color-btn" style="background-color:#311873;" data-event="foreColor" data-value="#311873" title="" data-toggle="button" tabindex="-1" data-original-title="#311873" />
-                                            <button type="button" class="note-color-btn" style="background-color:#731842;" data-event="foreColor" data-value="#731842" title="" data-toggle="button" tabindex="-1" data-original-title="#731842" />
-                                        </div>
-                                        <div class="note-color-row">
-                                            <button type="button" class="note-color-btn" style="background-color:#630000;" data-event="foreColor" data-value="#630000" title="" data-toggle="button" tabindex="-1" data-original-title="#630000" />
-                                            <button type="button" class="note-color-btn" style="background-color:#7B3900;" data-event="foreColor" data-value="#7B3900" title="" data-toggle="button" tabindex="-1" data-original-title="#7B3900" />
-                                            <button type="button" class="note-color-btn" style="background-color:#846300;" data-event="foreColor" data-value="#846300" title="" data-toggle="button" tabindex="-1" data-original-title="#846300" />
-                                            <button type="button" class="note-color-btn" style="background-color:#295218;" data-event="foreColor" data-value="#295218" title="" data-toggle="button" tabindex="-1" data-original-title="#295218" />
-                                            <button type="button" class="note-color-btn" style="background-color:#083139;" data-event="foreColor" data-value="#083139" title="" data-toggle="button" tabindex="-1" data-original-title="#083139" />
-                                            <button type="button" class="note-color-btn" style="background-color:#003163;" data-event="foreColor" data-value="#003163" title="" data-toggle="button" tabindex="-1" data-original-title="#003163" />
-                                            <button type="button" class="note-color-btn" style="background-color:#21104A;" data-event="foreColor" data-value="#21104A" title="" data-toggle="button" tabindex="-1" data-original-title="#21104A" />
-                                            <button type="button" class="note-color-btn" style="background-color:#4A1031;" data-event="foreColor" data-value="#4A1031" title="" data-toggle="button" tabindex="-1" data-original-title="#4A1031" />
+                            <section>
+                                <div class="container mt16 mb16">
+                                    <div id="color_panel" class="note-color btn-group col-md-12">
+                                        <div class="btn-group col-md-12 mt16 mb16">
+                                            <div class="note-palette-title">Color Panel</div>
+                                            <div class="note-color-palette" data-target-event="backColor">
+                                                <h6>Theme colors</h6>
+                                                <div class="note-color-row mb8">
+                                                    <button data-color="alpha" class="note-color-btn bg-alpha" data-event="backColor" data-value="bg-alpha" data-original-title="" title="bg-alpha" />
+                                                    <button data-color="beta" class="note-color-btn bg-beta" data-event="backColor" data-value="bg-beta" data-original-title="" title="bg-beta" />
+                                                    <button data-color="gamma" class="note-color-btn bg-gamma" data-event="backColor" data-value="bg-gamma" data-original-title="" title="bg-gamma" />
+                                                    <button data-color="delta" class="note-color-btn bg-delta" data-event="backColor" data-value="bg-delta" data-original-title="" title="bg-delta" />
+                                                    <button data-color="epsilon" class="note-color-btn bg-epsilon" data-event="backColor" data-value="bg-epsilon" data-original-title="" title="bg-epsilon" />
+                                                </div>
+                                                <div class="note-color-row mb8">
+                                                    <button data-color="white" class="note-color-btn bg-white" data-event="backColor" data-value="bg-white" data-original-title="" title="bg-white" />
+                                                    <button data-color="gray-lighter" class="note-color-btn bg-gray-lighter" data-event="backColor" data-value="bg-gray-lighter" data-original-title="" title="bg-gray-lighter" />
+                                                    <button data-color="gray-light" class="note-color-btn bg-gray-light" data-event="backColor" data-value="bg-gray-light" data-original-title="" title="bg-gray-light" />
+                                                    <button data-color="gray" class="note-color-btn bg-gray" data-event="backColor" data-value="bg-gray" data-original-title="" title="bg-gray" />
+                                                    <button data-color="gray-dark" class="note-color-btn bg-gray-dark" data-event="backColor" data-value="bg-gray-dark" data-original-title="" title="bg-gray-dark" />
+                                                    <button data-color="gray-darker" class="note-color-btn bg-gray-darker" data-event="backColor" data-value="bg-gray-darker" data-original-title="" title="bg-gray-darker" />
+                                                    <button data-color="black" class="note-color-btn bg-black" data-event="backColor" data-value="bg-black" data-original-title="" title="bg-black" />
+                                                </div>
+                                                <div class="note-color-row mb8">
+                                                    <button data-color="primary" class="note-color-btn bg-primary" data-event="backColor" data-value="bg-primary" data-original-title="" title="bg-primary" />
+                                                    <button data-color="success" class="note-color-btn bg-success" data-event="backColor" data-value="bg-success" data-original-title="" title="bg-success" />
+                                                    <button data-color="info" class="note-color-btn bg-info" data-event="backColor" data-value="bg-info" data-original-title="" title="bg-info" />
+                                                    <button data-color="warning" class="note-color-btn bg-warning" data-event="backColor" data-value="bg-warning" data-original-title="" title="bg-warning" />
+                                                    <button data-color="danger" class="note-color-btn bg-danger" data-event="backColor" data-value="bg-danger" data-original-title="" title="bg-danger" />
+                                                </div>
+                                                <div class="note-color-row transparent_bg">
+                                                    <button data-color="black-25" class="note-color-btn bg-black-25" data-event="backColor" data-value="bg-black-25" data-original-title="" title="bg-black-25" />
+                                                    <button data-color="black-50" class="note-color-btn bg-black-50" data-event="backColor" data-value="bg-black-50" data-original-title="" title="bg-black-50" />
+                                                    <button data-color="black-75" class="note-color-btn bg-black-75" data-event="backColor" data-value="bg-black-75" data-original-title="" title="bg-black-75" />
+                                                    <button data-color="white-25" class="note-color-btn bg-white-25" data-event="backColor" data-value="bg-white-25" data-original-title="" title="bg-white-25" />
+                                                    <button data-color="white-50" class="note-color-btn bg-white-50" data-event="backColor" data-value="bg-white-50" data-original-title="" title="bg-white-50" />
+                                                    <button data-color="white-75" class="note-color-btn bg-white-75" data-event="backColor" data-value="bg-white-75" data-original-title="" title="bg-white-75" />
+                                                </div>
+                                                <h6>Common colors</h6>
+                                                <div class="note-color-row">
+                                                    <button type="button" class="note-color-btn" style="background-color:#000000;" data-event="backColor" data-value="#000000" title="#000000" data-toggle="button" tabindex="-1" data-original-title="#000000" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#424242;" data-event="backColor" data-value="#424242" title="#424242" data-toggle="button" tabindex="-1" data-original-title="#424242" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#636363;" data-event="backColor" data-value="#636363" title="#636363" data-toggle="button" tabindex="-1" data-original-title="#636363" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#9C9C94;" data-event="backColor" data-value="#9C9C94" title="#9C9C94" data-toggle="button" tabindex="-1" data-original-title="#9C9C94" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#CEC6CE;" data-event="backColor" data-value="#CEC6CE" title="#CEC6CE" data-toggle="button" tabindex="-1" data-original-title="#CEC6CE" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#EFEFEF;" data-event="backColor" data-value="#EFEFEF" title="#EFEFEF" data-toggle="button" tabindex="-1" data-original-title="#EFEFEF" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#F7F7F7;" data-event="backColor" data-value="#F7F7F7" title="#F7F7F7" data-toggle="button" tabindex="-1" data-original-title="#F7F7F7" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#FFFFFF;" data-event="backColor" data-value="#FFFFFF" title="#FFFFFF" data-toggle="button" tabindex="-1" data-original-title="#FFFFFF" />
+                                                </div>
+                                                <div class="note-color-row">
+                                                    <button type="button" class="note-color-btn" style="background-color:#FF0000;" data-event="backColor" data-value="#FF0000" title="#FF0000" data-toggle="button" tabindex="-1" data-original-title="#FF0000" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#FF9C00;" data-event="backColor" data-value="#FF9C00" title="#FF9C00" data-toggle="button" tabindex="-1" data-original-title="#FF9C00" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#FFFF00;" data-event="backColor" data-value="#FFFF00" title="#FFFF00" data-toggle="button" tabindex="-1" data-original-title="#FFFF00" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#00FF00;" data-event="backColor" data-value="#00FF00" title="#00FF00" data-toggle="button" tabindex="-1" data-original-title="#00FF00" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#00FFFF;" data-event="backColor" data-value="#00FFFF" title="#00FFFF" data-toggle="button" tabindex="-1" data-original-title="#00FFFF" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#0000FF;" data-event="backColor" data-value="#0000FF" title="#0000FF" data-toggle="button" tabindex="-1" data-original-title="#0000FF" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#9C00FF;" data-event="backColor" data-value="#9C00FF" title="#9C00FF" data-toggle="button" tabindex="-1" data-original-title="#9C00FF" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#FF00FF;" data-event="backColor" data-value="#FF00FF" title="#FF00FF" data-toggle="button" tabindex="-1" data-original-title="#FF00FF" />
+                                                </div>
+                                                <div class="note-color-row">
+                                                    <button type="button" class="note-color-btn" style="background-color:#F7C6CE;" data-event="backColor" data-value="#F7C6CE" title="#F7C6CE" data-toggle="button" tabindex="-1" data-original-title="#F7C6CE" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#FFE7CE;" data-event="backColor" data-value="#FFE7CE" title="#FFE7CE" data-toggle="button" tabindex="-1" data-original-title="#FFE7CE" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#FFEFC6;" data-event="backColor" data-value="#FFEFC6" title="#FFEFC6" data-toggle="button" tabindex="-1" data-original-title="#FFEFC6" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#D6EFD6;" data-event="backColor" data-value="#D6EFD6" title="#D6EFD6" data-toggle="button" tabindex="-1" data-original-title="#D6EFD6" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#CEDEE7;" data-event="backColor" data-value="#CEDEE7" title="#CEDEE7" data-toggle="button" tabindex="-1" data-original-title="#CEDEE7" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#CEE7F7;" data-event="backColor" data-value="#CEE7F7" title="#CEE7F7" data-toggle="button" tabindex="-1" data-original-title="#CEE7F7" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#D6D6E7;" data-event="backColor" data-value="#D6D6E7" title="#D6D6E7" data-toggle="button" tabindex="-1" data-original-title="#D6D6E7" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#E7D6DE;" data-event="backColor" data-value="#E7D6DE" title="#E7D6DE" data-toggle="button" tabindex="-1" data-original-title="#E7D6DE" />
+                                                </div>
+                                                <div class="note-color-row">
+                                                    <button type="button" class="note-color-btn" style="background-color:#E79C9C;" data-event="backColor" data-value="#E79C9C" title="#E79C9C" data-toggle="button" tabindex="-1" data-original-title="#E79C9C" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#FFC69C;" data-event="backColor" data-value="#FFC69C" title="#FFC69C" data-toggle="button" tabindex="-1" data-original-title="#FFC69C" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#FFE79C;" data-event="backColor" data-value="#FFE79C" title="#FFE79C" data-toggle="button" tabindex="-1" data-original-title="#FFE79C" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#B5D6A5;" data-event="backColor" data-value="#B5D6A5" title="#B5D6A5" data-toggle="button" tabindex="-1" data-original-title="#B5D6A5" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#A5C6CE;" data-event="backColor" data-value="#A5C6CE" title="#A5C6CE" data-toggle="button" tabindex="-1" data-original-title="#A5C6CE" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#9CC6EF;" data-event="backColor" data-value="#9CC6EF" title="#9CC6EF" data-toggle="button" tabindex="-1" data-original-title="#9CC6EF" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#B5A5D6;" data-event="backColor" data-value="#B5A5D6" title="#B5A5D6" data-toggle="button" tabindex="-1" data-original-title="#B5A5D6" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#D6A5BD;" data-event="backColor" data-value="#D6A5BD" title="#D6A5BD" data-toggle="button" tabindex="-1" data-original-title="#D6A5BD" />
+                                                </div>
+                                                <div class="note-color-row">
+                                                    <button type="button" class="note-color-btn" style="background-color:#E76363;" data-event="backColor" data-value="#E76363" title="#E76363" data-toggle="button" tabindex="-1" data-original-title="#E76363" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#F7AD6B;" data-event="backColor" data-value="#F7AD6B" title="#F7AD6B" data-toggle="button" tabindex="-1" data-original-title="#F7AD6B" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#FFD663;" data-event="backColor" data-value="#FFD663" title="#FFD663" data-toggle="button" tabindex="-1" data-original-title="#FFD663" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#94BD7B;" data-event="backColor" data-value="#94BD7B" title="#94BD7B" data-toggle="button" tabindex="-1" data-original-title="#94BD7B" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#73A5AD;" data-event="backColor" data-value="#73A5AD" title="#73A5AD" data-toggle="button" tabindex="-1" data-original-title="#73A5AD" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#6BADDE;" data-event="backColor" data-value="#6BADDE" title="#6BADDE" data-toggle="button" tabindex="-1" data-original-title="#6BADDE" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#8C7BC6;" data-event="backColor" data-value="#8C7BC6" title="#8C7BC6" data-toggle="button" tabindex="-1" data-original-title="#8C7BC6" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#C67BA5;" data-event="backColor" data-value="#C67BA5" title="#C67BA5" data-toggle="button" tabindex="-1" data-original-title="#C67BA5" />
+                                                </div>
+                                                <div class="note-color-row">
+                                                    <button type="button" class="note-color-btn" style="background-color:#CE0000;" data-event="backColor" data-value="#CE0000" title="#CE0000" data-toggle="button" tabindex="-1" data-original-title="#CE0000" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#E79439;" data-event="backColor" data-value="#E79439" title="#E79439" data-toggle="button" tabindex="-1" data-original-title="#E79439" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#EFC631;" data-event="backColor" data-value="#EFC631" title="#EFC631" data-toggle="button" tabindex="-1" data-original-title="#EFC631" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#6BA54A;" data-event="backColor" data-value="#6BA54A" title="#6BA54A" data-toggle="button" tabindex="-1" data-original-title="#6BA54A" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#4A7B8C;" data-event="backColor" data-value="#4A7B8C" title="#4A7B8C" data-toggle="button" tabindex="-1" data-original-title="#4A7B8C" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#3984C6;" data-event="backColor" data-value="#3984C6" title="#3984C6" data-toggle="button" tabindex="-1" data-original-title="#3984C6" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#634AA5;" data-event="backColor" data-value="#634AA5" title="#634AA5" data-toggle="button" tabindex="-1" data-original-title="#634AA5" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#A54A7B;" data-event="backColor" data-value="#A54A7B" title="#A54A7B" data-toggle="button" tabindex="-1" data-original-title="#A54A7B" />
+                                                </div>
+                                                <div class="note-color-row">
+                                                    <button type="button" class="note-color-btn" style="background-color:#9C0000;" data-event="backColor" data-value="#9C0000" title="#9C0000" data-toggle="button" tabindex="-1" data-original-title="#9C0000" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#B56308;" data-event="backColor" data-value="#B56308" title="#B56308" data-toggle="button" tabindex="-1" data-original-title="#B56308" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#BD9400;" data-event="backColor" data-value="#BD9400" title="#BD9400" data-toggle="button" tabindex="-1" data-original-title="#BD9400" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#397B21;" data-event="backColor" data-value="#397B21" title="#397B21" data-toggle="button" tabindex="-1" data-original-title="#397B21" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#104A5A;" data-event="backColor" data-value="#104A5A" title="#104A5A" data-toggle="button" tabindex="-1" data-original-title="#104A5A" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#085294;" data-event="backColor" data-value="#085294" title="#085294" data-toggle="button" tabindex="-1" data-original-title="#085294" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#311873;" data-event="backColor" data-value="#311873" title="#311873" data-toggle="button" tabindex="-1" data-original-title="#311873" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#731842;" data-event="backColor" data-value="#731842" title="#731842" data-toggle="button" tabindex="-1" data-original-title="#731842" />
+                                                </div>
+                                                <div class="note-color-row">
+                                                    <button type="button" class="note-color-btn" style="background-color:#630000;" data-event="backColor" data-value="#630000" title="#630000" data-toggle="button" tabindex="-1" data-original-title="#630000" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#7B3900;" data-event="backColor" data-value="#7B3900" title="#7B3900" data-toggle="button" tabindex="-1" data-original-title="#7B3900" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#846300;" data-event="backColor" data-value="#846300" title="#846300" data-toggle="button" tabindex="-1" data-original-title="#846300" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#295218;" data-event="backColor" data-value="#295218" title="#295218" data-toggle="button" tabindex="-1" data-original-title="#295218" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#083139;" data-event="backColor" data-value="#083139" title="#083139" data-toggle="button" tabindex="-1" data-original-title="#083139" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#003163;" data-event="backColor" data-value="#003163" title="#003163" data-toggle="button" tabindex="-1" data-original-title="#003163" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#21104A;" data-event="backColor" data-value="#21104A" title="#21104A" data-toggle="button" tabindex="-1" data-original-title="#21104A" />
+                                                    <button type="button" class="note-color-btn" style="background-color:#4A1031;" data-event="backColor" data-value="#4A1031" title="#4A1031" data-toggle="button" tabindex="-1" data-original-title="#4A1031" />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </section>
                         </div>
                         <div id="pictogram" class="tab-pane">
                             <section>
