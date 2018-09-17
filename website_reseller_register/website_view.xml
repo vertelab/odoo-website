@@ -12,18 +12,18 @@
                                 <h4 id="title_company" class="col-md-12">
                                     <strong>Company Information</strong>
                                 </h4>
-                                <div id="company_name" t-att-class="'form-group %s' %validation.get('company_name')">
+                                <div id="company_name" t-att-class="'form-group %s' %validation.get('company_name', '')">
                                     <label class="col-md-3 col-sm-4 control-label" for="company_name">Company Name</label>
                                     <div class="col-md-7 col-sm-8">
                                         <input type="text" class="form-control" name="company_name" t-att-value="issue.partner_id.name" placeholder="" />
-                                        <small t-esc="help.get('help_company_name')" />
+                                        <small t-esc="help.get('help_company_name', '')" />
                                     </div>
                                 </div>
-                                <div id="company_org" t-att-class="'form-group %s' %validation.get('company_company_registry')">
+                                <div id="company_org" t-att-class="'form-group %s' %validation.get('company_company_registry', '')">
                                      <label class="col-md-3 col-sm-4 control-label" for="vat">Organization Number</label>
                                      <div class="col-md-7 col-sm-8">
                                         <input type="text" class="form-control" name="company_company_registry" t-att-value="company_company_registry or issue.partner_id.company_registry or issue.partner_id.vat" placeholder="123456-7897" required="" />
-                                        <small t-esc="help.get('help_company_company_registry')" />
+                                        <small t-esc="help.get('help_company_company_registry', '')" />
                                     </div>
                                 </div>
                                 <div id="company_website_short_description" t-att-class="'form-group'">
@@ -71,35 +71,35 @@
                                             </div>
                                         </div>
                                         <t t-set="delivery" t-value="issue.partner_id.child_ids.filtered(lambda c: c.type == 'delivery')[0] if issue.partner_id.child_ids.filtered(lambda c: c.type == 'delivery') else None"/>
-                                        <div t-att-class="'form-group %s' %validation.get('delivery_street')">
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_street', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_street">Street</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="text" class="form-control" name="delivery_street" t-att-value="delivery.street if delivery else ''" placeholder=""/>
-                                                <small t-esc="help.get('help_delivery_street')" />
+                                                <small t-esc="help.get('help_delivery_street', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('delivery_street2')">
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_street2', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_street2">Street row 2</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="text" class="form-control" name="delivery_street2" t-att-value="delivery.street2 if delivery else ''" placeholder="" />
-                                                <small t-esc="help.get('help_delivery_street2')" />
+                                                <small t-esc="help.get('help_delivery_street2', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('delivery_zip')">
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_zip', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_zip">Zip</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="text" class="form-control" name="delivery_zip" t-att-value="delivery.zip if delivery else ''" placeholder=""/>
-                                                <small t-esc="help.get('help_delivery_zip')" />
+                                                <small t-esc="help.get('help_delivery_zip', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('delivery_city')">
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_city', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_city">City</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="text" class="form-control" name="delivery_city" t-att-value="delivery.city if delivery else ''" placeholder=""/>
-                                                <small t-esc="help.get('help_delivery_city')" />
+                                                <small t-esc="help.get('help_delivery_city', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('delivery_country_id')">
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_country_id', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_country_id">Country</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <select class="form-control" name="delivery_country_id">
@@ -108,21 +108,21 @@
                                                         <option t-att-value="country[0]" t-att="{'selected': '1'} if country[0] == (delivery and delivery.country_id and delivery.country_id.id) else {}"><t t-esc="country[1]"/></option>
                                                     </t>
                                                 </select>
-                                                <small t-esc="help.get('help_delivery_country')" />
+                                                <small t-esc="help.get('help_delivery_country', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('delivery_phone')">
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_phone', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_phone">Phone</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="text" class="form-control" name="delivery_phone" t-att-value="delivery.phone if delivery else ''" placeholder=""/>
-                                                <small t-esc="help.get('help_delivery_phone')" />
+                                                <small t-esc="help.get('help_delivery_phone', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('delivery_email')">
+                                        <div t-att-class="'form-group %s' %validation.get('delivery_email', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="delivery_email">Email</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="email" class="form-control" name="delivery_email" t-att-value="delivery.email if delivery else ''" placeholder=""/>
-                                                <small t-esc="help.get('help_delivery_wmail')" />
+                                                <small t-esc="help.get('help_delivery_wmail', '')" />
                                             </div>
                                         </div>
                                     </div>
@@ -134,35 +134,35 @@
                                             </div>
                                         </div>
                                         <t t-set="invoice" t-value="issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice')[0] if issue.partner_id.child_ids.filtered(lambda c: c.type == 'invoice') else None"/>
-                                        <div t-att-class="'form-group %s' %validation.get('invoice_street')">
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_street', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_street">Street</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="text" class="form-control" name="invoice_street" t-att-value="invoice.street if invoice else ''" placeholder="" />
-                                                <small t-esc="help.get('help_invoice_street')" />
+                                                <small t-esc="help.get('help_invoice_street', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('invoice_street2')">
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_street2', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_street2">Street row 2</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="text" class="form-control" name="invoice_street2" t-att-value="invoice.street2 if invoice else ''" placeholder="" />
-                                                <small t-esc="help.get('help_invoice_street2')" />
+                                                <small t-esc="help.get('help_invoice_street2', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('invoice_zip')">
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_zip', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_zip">Zip</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="text" class="form-control" name="invoice_zip" t-att-value="invoice.zip if invoice else ''" placeholder="" />
-                                                <small t-esc="help.get('help_invoice_zip')" />
+                                                <small t-esc="help.get('help_invoice_zip', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('invoice_city')">
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_city', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_city">City</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="text" class="form-control" name="invoice_city" t-att-value="invoice.city if invoice else ''" placeholder="" />
-                                                <small t-esc="help.get('help_invoice_city')" />
+                                                <small t-esc="help.get('help_invoice_city', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('invoice_country_id')">
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_country_id', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_country_id">Country</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <select class="form-control" name="invoice_country_id">
@@ -171,21 +171,21 @@
                                                         <option t-att-value="country[0]" t-att="{'selected': '1'} if country[0] == (invoice and invoice.country_id and invoice.country_id.id) else {}"><t t-esc="country[1]"/></option>
                                                     </t>
                                                 </select>
-                                                <small t-esc="help.get('help_invoice_country')" />
+                                                <small t-esc="help.get('help_invoice_country', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('invoice_phone')">
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_phone', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_phone">Phone</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="text" class="form-control" name="invoice_phone" t-att-value="invoice.phone if invoice else ''" placeholder="" />
-                                                <small t-esc="help.get('help_invoice_phone')" />
+                                                <small t-esc="help.get('help_invoice_phone', '')" />
                                             </div>
                                         </div>
-                                        <div t-att-class="'form-group %s' %validation.get('invoice_email')">
+                                        <div t-att-class="'form-group %s' %validation.get('invoice_email', '')">
                                             <label class="col-md-3 col-sm-4 control-label" for="invoice_email">Email</label>
                                             <div class="col-md-7 col-sm-8">
                                                 <input type="email" class="form-control" name="invoice_email" t-att-value="invoice.email if invoice else ''" placeholder="" />
-                                                <small t-esc="help.get('help_invoice_email')" />
+                                                <small t-esc="help.get('help_invoice_email', '')" />
                                             </div>
                                         </div>
                                     </div>
@@ -307,7 +307,7 @@
                                         <div class="col-md-7 col-sm-8">
                                             <input type="file" name="image" placeholder="File to upload pdf/jpg/png" accept="image/jpeg,image/png" capture="camera" />
                                             <p class="help-block">
-                                                <small t-esc="help.get('help_contact_image')" />
+                                                <small t-esc="help.get('help_contact_image', '')" />
                                             </p>
                                         </div>
                                     </div>
@@ -315,7 +315,7 @@
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_name">Name</label>
                                         <div class="col-md-7 col-sm-8">
                                             <input type="text" class="form-control" name="contact_name" t-att-value="values.get('contact_name', contact.name if contact else '')" placeholder="Given and family name " required="1" />
-                                            <small t-esc="help.get('help_contact_name')" />
+                                            <small t-esc="help.get('help_contact_name', '')" />
                                         </div>
                                     </div>
                                     <div t-att-class="'form-group %s' %validation.get('category_id', '')">
@@ -342,21 +342,21 @@
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_phone">Phone</label>
                                         <div class="col-md-7 col-sm-8">
                                             <input type="text" class="form-control" name="contact_phone" t-att-value="values.get('contact_phone', contact.phone if contact else '')" placeholder="0123-45 67 89" />
-                                            <small t-esc="help.get('help_contact_phone')" />
+                                            <small t-esc="help.get('help_contact_phone', '')" />
                                         </div>
                                     </div>
                                     <div t-att-class="'form-group %s' %validation.get('contact_mobile', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_phone">Mobile</label>
                                         <div class="col-md-7 col-sm-8">
                                             <input type="text" class="form-control" name="contact_mobile" t-att-value="values.get('contact_mobile', contact.mobile if contact else '')" placeholder="0709-99 99 99" />
-                                            <small t-esc="help.get('help_contact_mobile')" />
+                                            <small t-esc="help.get('help_contact_mobile', '')" />
                                         </div>
                                     </div>
                                     <div t-att-class="'form-group %s' %validation.get('contact_email', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="contact_email">Email</label>
                                         <div class="col-md-7 col-sm-8">
                                             <input type="email" class="form-control" name="contact_email" t-att-value="values.get('contact_email', contact.email if contact else '')" placeholder="" required="1" />
-                                            <small t-esc="help.get('help_contact_email')" />
+                                            <small t-esc="help.get('help_contact_email', '')" />
                                         </div>
                                     </div>
                                 </div>
@@ -396,7 +396,7 @@
                                     <div class="col-md-7 col-sm-8">
                                         <input type="file" name="attachment" placeholder="File to upload pdf/jpg/png" accept="image/*,text/plain,application/pdf,application/vnd.ms-excel,app" capture="camera" />
                                         <p class="help-block">
-                                            <small t-esc="help.get('help_contact_attachment')" />
+                                            <small t-esc="help.get('help_contact_attachment', '')" />
                                         </p>
                                     </div>
                                 </div>
