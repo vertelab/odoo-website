@@ -19,7 +19,7 @@
 
         <template id="website_theme_demo_page" inherit_id="website.layout" name="Website Theme Demo Page" customize_show="True" active="False" priority="100" groups="base.group_website_publisher">
             <xpath expr="//ul[@class='dropdown-menu js_usermenu']/li[last()]" position="before">
-                <li><a href="/page/demo">Demo Page</a></li>
+                <li groups="base.group_website_publisher"><a href="/page/demo">Demo Page</a></li>
             </xpath>
         </template>
 
@@ -46,7 +46,7 @@
             </t>
         </template>
 
-        <template id="demo_page_template" inherit_id="website.snippets">
+        <template id="demo_page_template" inherit_id="website.snippets" groups="base.group_website_publisher">
             <xpath expr="//ul[@class='nav navbar-nav nav-tabs']" position="replace">
                 <t t-if="demo_page">
                     <ul class="nav navbar-nav nav-tabs nav-justified">
