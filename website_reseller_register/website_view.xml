@@ -305,7 +305,11 @@
                                     <div t-att-class="'form-group %s' % validation.get('contact_image', '')">
                                         <label class="col-md-3 col-sm-4 control-label" for="name">Image</label>
                                         <div class="col-md-7 col-sm-8">
-                                            <input type="file" name="image" placeholder="File to upload pdf/jpg/png" accept="image/jpeg,image/png" capture="camera" />
+                                            <t t-if="not values.get('image') and contact and contact.image"><img id="contact_img" t-att-src="'/website/image/res.partner/%s/image/300x300' %contact.id" style="max-width: 200px;"/></t>
+                                            <t t-if="values.get('image')"><img id="contact_img" t-att-src="'data:image/gif;base64,%s' % values['image']" style="max-width: 200px;"/></t>
+                                            <i id="remove_img_contact" class="fa fa-trash-o fa-2x" t-att-data-partner_id="contact.id"><input name="remove_img_contact" class="hidden" value="0"/></i>
+                                            <input class="img-input-preview" data-preview-image="#contact_img" type="file" name="image" placeholder="File to upload pdf/jpg/png" accept="image/jpeg,image/png" capture="camera"/>
+                                            <input type="hidden" name="image_b64" placeholder="File to upload pdf/jpg/png" t-att-value="values.get('image', '')"/>
                                             <p class="help-block">
                                                 <small t-esc="help.get('help_contact_image', '')" />
                                             </p>
@@ -418,6 +422,7 @@
         </template>
         <template id="assets_frontend" inherit_id="website.assets_frontend" name="Website Reseller Register Assets Frontend">
             <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/website_reseller_register/static/src/css/main.css" t-ignore="true"/>
                 <script src="/website_reseller_register/static/src/js/main.js" type="text/javascript" />
             </xpath>
         </template>

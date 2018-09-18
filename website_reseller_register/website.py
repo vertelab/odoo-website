@@ -253,6 +253,8 @@ class reseller_register(http.Controller):
             if post.get('image'):
                 image = post['image'].read()
                 values['image'] = base64.encodestring(image)
+            elif post.get('image_b64'):
+                values['image'] = post.get('image_b64')
             values['parent_id'] = issue.partner_id.id
             # multi select
             # ~ category_id = []
@@ -348,6 +350,14 @@ class reseller_register(http.Controller):
         for k in self.contact_fields():
             validation[k] = 'has-success'
         return request.redirect('/reseller_register/%s?token=%s' %(issue.id, issue.partner_id.token))
+
+    @http.route(['/reseller_register/contact/remove_img_contact'], type='json', auth="public", website=True)
+    def reseller_contact_remove_img(self, partner_id='0', **kw):
+        partner = request.env['res.partner'].browse(int(partner_id))
+        if partner:
+            partner.write({'top_image': None})
+            return True
+        return False
 
     @http.route(['/reseller_register/<int:issue_id>/attachment/<int:attachment>/delete'], type='http', auth='public', website=True)
     def reseller_attachment_delete(self, issue_id=None, attachment=0, **post):

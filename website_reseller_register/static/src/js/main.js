@@ -67,6 +67,19 @@ $(document).ready(function(){
         }
     });
 
+    $("i#remove_img_contact").click(function(){
+        var self = $(this);
+        openerp.jsonRpc("/reseller_register/contact/remove_img_contact", "call", {
+            'partner_id': self.data("partner_id")
+        }).done(function(data){
+            if (data) {
+                $("img#contact_img").attr("src", "");
+                self.find("input#contact_img").val('1');
+                self.addClass("hidden");
+            }
+        });
+    });
+
     $("select[name='category_id']").select2();
 
 });
