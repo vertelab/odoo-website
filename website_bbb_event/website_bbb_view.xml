@@ -7,10 +7,10 @@
           <field name="model">event.event</field>
           <field name="inherit_id" ref="event.view_event_form"/>
           <field name="arch" type="xml">
-      	      <header position="inside">
+      	      <field name="state" position="before">
                   <button string="Start Meeting" name="action_start_meeting" attrs="{'invisible':[('meeting_id','=',False)]}" type="object" class="oe_highlight" groups="website_bbb.group_bbb_user"/>
                   <button string="Invite to Meeting" name="action_invite_to_meeting" attrs="{'invisible':[('meeting_id','=',False)]}" type="object" groups="website_bbb.group_bbb_user"/>
-              </header>
+              </field>
               <group position="inside">
                   <group position="inside">
                       <field name="meeting_id" groups="website_bbb.group_bbb_user"/>
