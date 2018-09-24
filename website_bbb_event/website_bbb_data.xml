@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <openerp>
-<data noupdate="0">
+<data noupdate="1">
     
     <record id="email_template_participant_invite" model="email.template">
         <field name="name">Big Blue Button Invite - Event</field>
@@ -20,7 +20,7 @@
     
     <p>When the meeting has started, you can join it by following this link:</p>
     
-    <a href="${object_id.event_id.meeting_id.invite(object.partner_id.name)}">${object_id.event_id.meeting_id.invite(object.partner_id.name)}</a>
+    <a href="${object.env.context.get('join_url')}">${object.env.context.get('join_url')}</a>
     
 </div>
             ]]></field>
