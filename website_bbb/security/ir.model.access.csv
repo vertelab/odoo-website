@@ -1,0 +1,6 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+bbb_server_admin,BBB Server Admin,model_bbb_server,group_bbb_admin,1,1,1,1
+bbb_meeting_admin,BBB Meeting Admin,model_bbb_meeting,group_bbb_admin,1,1,1,1
+bbb_server_user,BBB Server User,model_bbb_server,group_bbb_user,1,0,0,0
+bbb_meeting_user,BBB Meeting User,model_bbb_meeting,group_bbb_user,1,1,1,1
+

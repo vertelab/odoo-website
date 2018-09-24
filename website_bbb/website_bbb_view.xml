@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<openerp>
+  <data>
+    
+    <record id="bbb_server_form" model="ir.ui.view">
+          <field name="name">BBB Server Form</field>
+          <field name="model">bbb.server</field>
+          <field name="arch" type="xml">
+      	      <form>
+      	          <group>
+      	              <field name="name"/>
+      	              <field name="url" />
+      	              <field name="secret" groups="website_bbb.group_bbb_admin" />
+      	          </group>
+      	      </form>
+      	  </field>
+      </record>
+
+      <record id="bbb_server_tree" model="ir.ui.view">
+          <field name="name">BBB Server Tree</field>
+          <field name="model">bbb.server</field>
+          <field name="arch" type="xml">     
+      	      <tree>
+                    <field name="name"/>
+                    <field name="url" />
+                    <field name="secret" groups="website_bbb.group_bbb_admin" />
+      	      </tree>
+      	  </field>
+      </record>
+
+      <record id="bbb_server_action" model="ir.actions.act_window">
+          <field name="name">BBB Server Action</field>
+          <field name="res_model">bbb.server</field>
+      	  <field name="view_type">form</field>
+      	  <field name="view_mode">tree,form</field>
+      	  <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Add a Big Blue Button Server</p>
+          </field>
+      </record>      
+    
+    <record id="bbb_meeting_form" model="ir.ui.view">
+          <field name="name">BBB Meeting Form</field>
+          <field name="model">bbb.meeting</field>
+          <field name="arch" type="xml">
+      	      <form>
+                  <header>
+                    <button name="action_start_meeting" string="Start Meeting" type="object"/>
+                    <button name="action_join" string="Join Meeting" type="object"/>
+                  </header>
+      	          <group>
+      	              <field name="name"/>
+      	              <field name="welcome"/>
+      	              <field name="mod_password"/>
+      	              <field name="password"/>
+      	              <field name="bbbid"/>
+      	              <field name="server_id"/>
+      	          </group>
+      	      </form>
+      	  </field>
+      </record>
+
+      <record id="bbb_meeting_tree" model="ir.ui.view">
+          <field name="name">BBB Meeting Tree</field>
+          <field name="model">bbb.meeting</field>
+          <field name="arch" type="xml">     
+      	      <tree>
+                <field name="name"/>
+                <field name="bbbid"/>
+                <field name="server_id"/>
+      	      </tree>
+      	  </field>
+      </record>
+
+      <record id="bbb_meeting_action" model="ir.actions.act_window">
+          <field name="name">BBB Meeting Action</field>
+          <field name="res_model">bbb.meeting</field>
+      	  <field name="view_type">form</field>
+      	  <field name="view_mode">tree,form</field>
+      </record>      
+
+    <menuitem id="bbb_menu" name="Big Blue Button" parent="base.menu_administration" sequence="5"/>
+    <menuitem id="bbb_server_menu" name="Servers" parent="bbb_menu" action="bbb_server_action" sequence="10"/>
+    <menuitem id="bbb_meeting_menu" name="Meetings" parent="bbb_menu" action="bbb_meeting_action" sequence="20"/>
+    
+    <record id="bbb_join_meeting_form" model="ir.ui.view">
+          <field name="name">BBB Join Meeting Form</field>
+          <field name="model">bbb.join.wizard</field>
+          <field name="arch" type="xml">
+      	      <form>
+      	          <group>
+      	              <field name="name"/>
+      	              <field name="meeting_id"/>
+                      <button name="action_join" string="Join Meeting" type="object"/>
+      	          </group>
+      	      </form>
+      	  </field>
+      </record>
+    
+  </data>
+</openerp>
