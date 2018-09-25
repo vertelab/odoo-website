@@ -46,7 +46,7 @@ class EventEvent(models.Model):
         participants = self.registration_ids.mapped('_participant_ids').filtered(lambda p: p.state not in ['cancel'])
         no_email = participants.mapped('partner_id').filtered(lambda p: not p.email)
         if no_email:
-            raise Warning(_("The following participants have no email: %s" % ', '.join([p.name for p in no_email])))
+            raise Warning(_("The following participants have no email: %s") % ', '.join([p.name for p in no_email]))
         if not participants:
             raise Warning(_("This event has no participants."))
         template = self.env.ref('website_bbb_event.email_template_participant_invite')

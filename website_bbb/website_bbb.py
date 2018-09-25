@@ -64,6 +64,9 @@ class BBBMeeting(models.Model):
 
     @api.multi
     def get_url(self, func, **params):
+        for p in params:
+            if type(params[p]) == unicode:
+                params[p] =  params[p].encode('utf-8')
         param_str = urllib.urlencode(params)
         checksum = self.get_checksum(func, param_str)
         param_str += '&checksum=%s'%  checksum

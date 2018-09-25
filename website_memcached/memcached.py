@@ -481,7 +481,6 @@ def route(route=None, **kw):
                 else:
                     page = ''.join(response.response)
                 page_dict = {
-                    'ETag':     '%s' % MEMCACHED_HASH(page),
                     'max-age':  max_age,
                     'cache-age':cache_age,
                     'private':  routing.get('private',False),
@@ -497,6 +496,8 @@ def route(route=None, **kw):
                     'flush_type': routing['flush_type'](kw).lower().replace(u'å', 'a').replace(u'ä', 'a').replace(u'ö', 'o').replace(' ', '-') if routing.get('flush_type', None) else "",
                     'headers': response.headers,
                     }
+                if routing.get('no_cache'):
+                    page_dict['ETag'] = '%s' % MEMCACHED_HASH(page)
                 mc_save(key, page_dict,cache_age)
                 if routing.get('flush_type'):
                     add_flush_type(request.cr.dbname, routing['flush_type'](kw))
@@ -539,7 +540,8 @@ def route(route=None, **kw):
                     #~ response.headers.add(k,v)
                     response.headers[k] = v
             response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s, %s' % (max_age, s_maxage, ','.join([keyword for keyword in ['no-store', 'immutable', 'no-transform', 'no-cache', 'must-revalidate', 'proxy-revalidate'] if routing.get(keyword.replace('-', '_'))] + [routing.get('private', 'public')])) # private: must not be stored by a shared cache.
-            response.headers['ETag'] = page_dict.get('ETag')
+            if page_dict.get('ETag'):
+                response.headers['ETag'] = page_dict.get('ETag')
             response.headers['X-CacheKey'] = key
             response.headers['X-Cache'] = 'newly rendered' if page else 'from cache'
             response.headers['X-CacheKeyRaw'] = key_raw

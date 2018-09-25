@@ -151,7 +151,9 @@ class CachedHome(openerp.addons.web.controllers.main.Home):
         #~ '/web/css/<xmlid>/<version>',
         #~ '/web/css.<int:page>/<xmlid>/<version>',
     #~ ], type='http', auth='public')
-    @memcached.route(flush_type=lambda kw: 'css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,key=lambda k: '{db}{xmlid}',content_type="text/css; charset=utf-8;")
+    @memcached.route(flush_type=lambda kw: 'css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,
+        key=lambda k: '{db}{xmlid}', content_type="text/css; charset=utf-8;",
+        no_cache=False, must_revalidate=False, proxy_revalidate=False)
     #~ @memcached.route(flush_type='css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,key=lambda k: '{db}{xmlid}')
     def css_bundle(self, xmlid, version=None, page=None, **kw):
         return super(CachedHome, self).css_bundle(xmlid, version, page, **kw)
