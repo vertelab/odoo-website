@@ -195,25 +195,29 @@ class website(models.Model):
     def memcache_flush_types(self):
         return list(flush_types[self.env.cr.dbname])
 
-def get_keys(flush_type=None,module=None,path=None, db=None):
+def get_keys(flush_type=None, module=None, path=None, db=None):
     items = MEMCACHED_CLIENT().stats('items')
     slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
     key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
     keys =  [key for sublist in key_lists for key in sublist.keys()]
-    #~ _logger.warn('KEYS: %s' %keys)
-    #~ _logger.warn('LEN: %s' %len(keys))
-
+    
     if flush_type:
-       keys = [key for key in keys if flush_type == 'all' or flush_type == mc_load(key).get('flush_type')]
+        if type(flush_type) != list:
+            flush_type = [flush_type]
+        keys = [key for key in keys if flush_type == 'all' or (mc_load(key).get('flush_type') in flush_type)]
     if module:
-       keys = [key for key in keys if module == 'all' or module == mc_load(key).get('module')]
+        if type(module) != list:
+            module = [module]
+        keys = [key for key in keys if module == 'all' or (mc_load(key).get('module') in module)]
     if path:
-       keys = [key for key in keys if path == 'all' or path == mc_load(key).get('path')]
+        if type(path) != list:
+            path = [path]
+        keys = [key for key in keys if path == 'all' or (mc_load(key).get('path') in path)]
     # Remove other databases
     if not db:
         db = request.env.cr.dbname
     keys = [key for key in keys if db == mc_load(key).get('db')]
-
+    
     return keys
 
 def get_flush_page(keys, title, url='', delete_url=''):
