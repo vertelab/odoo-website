@@ -2,12 +2,9 @@
 <openerp>
     <data>
         <!-- Custom Snippet CSS and javascript -->
-        <template id="snippet_image_css_and_js" inherit_id="website.layout" name="Snippet Image Custom CSS and JS">
-            <!-- Customize javascript -->
-            <xpath expr="//body" position="inside">
-            </xpath>
+        <template id="snippet_image_css_and_js" inherit_id="website.assets_frontend" name="Snippet Image Custom CSS and JS">
             <!-- Customize CSS -->
-            <xpath expr="//t[@t-call-assets='website.assets_frontend']" position="before">
+            <xpath expr="." position="inside">
                 <link href="/snippet_image/static/src/css/main.css" rel="stylesheet"/>
                 <link href="/snippet_image/static/src/css/image_block.css" rel="stylesheet"/>
                 <link href="/snippet_image/static/src/css/image_block_title.css" rel="stylesheet"/>
