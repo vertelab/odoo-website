@@ -43,7 +43,8 @@ class res_groups(models.Model):
 
     @api.one
     def _external_id(self):
-        self.external_id = self.env['ir.model.data'].search([('model', '=', self._name), ('res_id', '=', self.id)]).mapped('complete_name')[0]
+        ext = self.env['ir.model.data'].search([('model', '=', self._name), ('res_id', '=', self.id)]).mapped('complete_name')
+        self.external_id = ext[0] if ext else ''
     external_id = fields.Char(compute='_external_id')
 
 class website_page_groups(http.Controller):
