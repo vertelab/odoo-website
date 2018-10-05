@@ -20,7 +20,7 @@
 ##############################################################################
 
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning
+from openerp.exceptions import Warning, ValidationError
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -96,18 +96,11 @@ class BBBMeeting(models.Model):
 
     @api.multi
     def action_join(self):
-        wizard = self.env['bbb.join.wizard'].create({
-            'meeting_id': self.id
-        })
+        url = self.invite(self.env.user.name, True)
         return {
-            'name': _('Join Meeting'),
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'bbb.join.wizard',
-            'context': "{}",
-            'type': 'ir.actions.act_window',
+            'type': 'ir.actions.act_url',
+            'url':url,
             'target': 'new',
-            'res_id': wizard.id,
         }
 
     @api.multi
@@ -116,18 +109,79 @@ class BBBMeeting(models.Model):
             join_url = self.invite(partner.name, moderator)
             template.with_context(join_url=join_url).send_mail(partner.id, force_send=True, raise_exception=True)
 
-class BBBJoinWizard(models.TransientModel):
-    _name = 'bbb.join.wizard'
-    _description = 'Big Blue Button Join Wizard'
+    @api.multi
+    def action_invite_wizard(self):
+        wizard = self.env['bbb.invite.wizard'].create({
+            'meeting_id': self.id
+        })
+        return {
+            'name': _('Send Meeting Invites'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'bbb.invite.wizard',
+            'context': "{}",
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+            'res_id': wizard.id,
+        }
+
+class BBBInviteWizard(models.TransientModel):
+    _name = 'bbb.invite.wizard'
+    _description = 'Big Blue Button Invite Wizard'
     
     meeting_id = fields.Many2one(string='Meeting', comodel_name='bbb.meeting', required=True)
-    name = fields.Char('Name')
-    
+    invite_line_ids = fields.One2many(string='Invitations', comodel_name='bbb.invite.wizard.line', inverse_name='wizard_id')
+    message = fields.Char()
+
     @api.multi
-    def action_join(self):
-        url = self.meeting_id.invite(self.name, True)
-        return {
-            'type': 'ir.actions.act_url',
-            'url':url,
+    def action_invite(self):
+        action = {
+            'name': _('Send Meeting Invites'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'bbb.invite.wizard',
+            'context': "{}",
+            'type': 'ir.actions.act_window',
             'target': 'new',
+            'res_id': self.id,
         }
+        if not self.invite_line_ids:
+            self.message = _("No invitations specified.")
+            return action
+        no_email = []
+        for invitation in self.invite_line_ids:
+            if not invitation.email:
+                no_email.append(invitation.name)
+        _logger.warn(no_email)
+        if no_email:
+            self.message = _("The following participants have no email: %s") % ', '.join(no_email)
+            return action
+        template = self.env.ref('website_bbb.email_template_invite_wizard')
+        for invitation in self.invite_line_ids:
+            template.send_mail(invitation.id, force_send=True, raise_exception=True)
+        self.message = _("Emails sent.")
+        return action
+
+class BBBInviteWizardLine(models.TransientModel):
+    _name = 'bbb.invite.wizard.line'
+    _description = 'Big Blue Button Invitation'
+    
+    name = fields.Char(required=True)
+    email = fields.Char()
+    partner_id = fields.Many2one(string='Partner', comodel_name='res.partner')
+    wizard_id = fields.Many2one(string='Wizard', comodel_name='bbb.invite.wizard')
+    join_url = fields.Char(string='Invite Link')
+    moderator = fields.Boolean(string='Moderator')
+    
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        if self.partner_id:
+            self.name = self.partner_id.name
+            self.email = self.partner_id.email
+            self.join_url = self.wizard_id.meeting_id.invite(self.name)
+    
+    @api.onchange('name', 'moderator')
+    def onchange_name(self):
+        if self.name:
+            self.join_url = self.wizard_id.meeting_id.invite(self.name, self.moderator)
+    

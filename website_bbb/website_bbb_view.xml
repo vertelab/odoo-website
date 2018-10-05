@@ -46,6 +46,7 @@
                   <header>
                     <button name="action_start_meeting" string="Start Meeting" type="object"/>
                     <button name="action_join" string="Join Meeting" type="object"/>
+                    <button name="action_invite_wizard" string="Invite Participants" type="object"/>
                   </header>
       	          <group>
       	              <field name="name"/>
@@ -82,16 +83,26 @@
     <menuitem id="bbb_server_menu" name="Servers" parent="bbb_menu" action="bbb_server_action" sequence="10"/>
     <menuitem id="bbb_meeting_menu" name="Meetings" parent="bbb_menu" action="bbb_meeting_action" sequence="20"/>
     
-    <record id="bbb_join_meeting_form" model="ir.ui.view">
+    <record id="bbb_invite_meeting_wizard_form" model="ir.ui.view">
           <field name="name">BBB Join Meeting Form</field>
-          <field name="model">bbb.join.wizard</field>
+          <field name="model">bbb.invite.wizard</field>
           <field name="arch" type="xml">
       	      <form>
       	          <group>
-      	              <field name="name"/>
       	              <field name="meeting_id"/>
-                      <button name="action_join" string="Join Meeting" type="object"/>
       	          </group>
+                  <label for="invite_line_ids"/>
+                  <field name="invite_line_ids">
+                      <tree editable="1">
+                          <field name="moderator"/>
+                          <field name="partner_id"/>
+                          <field name="name"/>
+                          <field name="email"/>
+                          <field name="join_url"/>
+                      </tree>
+                  </field>
+                  <button name="action_invite" string="Send Invitations" type="object"/>
+                  <field name="message"/>
       	      </form>
       	  </field>
       </record>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<openerp>
+<data noupdate="0">
+    
+    <record id="email_template_invite_wizard" model="email.template">
+        <field name="name">Big Blue Button Invite</field>
+        <field name="email_from">${(object.env.user.email or '')|safe}</field>
+        <field name="subject">Invite to ${object.wizard_id.meeting_id.name|safe}</field>
+        <field name="partner_to">${((object.partner_id and object.partner_id.email and object.partner_id.email == object.email) and object.partner_id.id or False)|safe}</field>
+        <field name="email_to">${(not (object.partner_id and object.partner_id.email and object.partner_id.email == object.email) and object.email or False)|safe}</field>
+        <field name="model_id" ref="website_bbb.model_bbb_invite_wizard_line"/>
+        <field name="auto_delete" eval="True"/>
+        <field name="lang">${object.partner_id.lang|safe}</field>
+        <field name="user_signature" eval="True"/>
+        <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); ">
+
+    <p>Hello ${object.name},</p>
+    
+    <p>You are invited to participate in an online meeting regarding ${object.wizard_id.meeting_id.name}.
+    
+    <p>You can join the meeting by following this link:</p>
+    
+    <a href="${objectjoin_url}">${object.join_url}</a>
+    
+</div>
+            ]]></field>
+    </record>
+    
+</data>
+</openerp>
