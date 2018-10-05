@@ -196,27 +196,41 @@ class website(models.Model):
         return list(flush_types[self.env.cr.dbname])
 
 def get_keys(flush_type=None, module=None, path=None, db=None):
+    if not db:
+        db = request.env.cr.dbname
     items = MEMCACHED_CLIENT().stats('items')
     slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
     key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
     keys =  [key for sublist in key_lists for key in sublist.keys()]
-    
-    if flush_type:
-        if type(flush_type) != list:
-            flush_type = [flush_type]
-        keys = [key for key in keys if flush_type == 'all' or (mc_load(key).get('flush_type') in flush_type)]
-    if module:
-        if type(module) != list:
-            module = [module]
-        keys = [key for key in keys if module == 'all' or (mc_load(key).get('module') in module)]
-    if path:
-        if type(path) != list:
-            path = [path]
-        keys = [key for key in keys if path == 'all' or (mc_load(key).get('path') in path)]
-    # Remove other databases
-    if not db:
-        db = request.env.cr.dbname
-    keys = [key for key in keys if db == mc_load(key).get('db')]
+    i = 0
+    while i < len(keys):
+        key = mc_load(keys[i])
+        # Remove other databases
+        if key.get('db') != db:
+            del keys[i]
+            continue
+        # Filter on flush type
+        if flush_type and flush_type != 'all':
+            if type(flush_type) != list:
+                flush_type = [flush_type]
+            if key.get('flush_type') not in flush_type:
+                del keys[i]
+                continue
+        # Filter on module
+        if module and module != 'all':
+            if type(module) != list:
+                module = [module]
+            if key.get('module') not in module:
+                del keys[i]
+                continue
+        # Filter on path
+        if path and path != 'all':
+            if type(path) != list:
+                path = [path]
+            if key.get('path') not in path:
+                del keys[i]
+                continue
+        i += 1
     
     return keys
 
