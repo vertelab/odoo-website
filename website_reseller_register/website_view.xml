@@ -307,7 +307,9 @@
                                         <div class="col-md-7 col-sm-8">
                                             <t t-if="not values.get('image') and contact and contact.image"><img id="contact_img" t-att-src="'/website/image/res.partner/%s/image/300x300' %contact.id" style="max-width: 200px;"/></t>
                                             <t t-if="values.get('image')"><img id="contact_img" t-att-src="'data:image/gif;base64,%s' % values['image']" style="max-width: 200px;"/></t>
-                                            <i id="remove_img_contact" t-att-class="'fa fa-trash-o fa-2x %s' %('hidden' if not contact.image else '')" t-att-data-partner_id="contact.id"><input name="remove_img_contact" class="hidden" value="0"/></i>
+                                            <t t-if="contact">
+                                                <i id="remove_img_contact" t-att-class="'fa fa-trash-o fa-2x %s' %('hidden' if not contact.image else '')" t-att-data-partner_id="contact.id"><input name="remove_img_contact" class="hidden" value="0"/></i>
+                                            </t>
                                             <input class="img-input-preview" data-preview-image="#contact_img" type="file" name="image" placeholder="File to upload pdf/jpg/png" accept="image/jpeg,image/png" capture="camera"/>
                                             <input type="hidden" name="image_b64" placeholder="File to upload pdf/jpg/png" t-att-value="values.get('image', '')"/>
                                             <p class="help-block">
