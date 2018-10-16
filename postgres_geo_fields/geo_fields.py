@@ -56,50 +56,46 @@ class GeoFields(models.AbstractModel):
         for field in self._geo_fields:
             if field['name'] not in columns:
                 cr.execute('ALTER TABLE "%s" ADD COLUMN "%s" %s' % (self._table, field['name'], field['type']))
-    
+
     @api.model
     @api.returns('self', lambda value: value.id)
     def create(self, vals):
         res = super(GeoFields, self).create(vals)
-        geo_vals = {}
         for field in self._geo_fields:
             if field.get('compute') and hasattr(self, field['compute']):
                 present = False
                 for dependency in field.get('depends', []):
                     if dependency in vals:
                         present = True
-                    else:
-                        present = False
                         break
                 if present:
-                    geo_vals[field['name']] = getattr(self, field['compute'])(dict([(d, vals[d]) for d in field['depends']]))
-        if geo_vals:
-            query = 'UPDATE "%s" SET %s WHERE id IN %%s' % (self._table, ','.join([('"%s"=%%s' % f) for f in geo_vals]))
-            params = [str(geo_vals[f]) for f in geo_vals] + [tuple(res.ids)]
-            self.env.cr.execute(query, params)
+                    res._recompute_geofields(field)
         return res
 
     @api.multi
     def write(self, vals):
         res = super(GeoFields, self).write(vals)
-        geo_vals = {}
         for field in self._geo_fields:
             if field.get('compute') and hasattr(self, field['compute']):
                 present = False
                 for dependency in field.get('depends', []):
                     if dependency in vals:
                         present = True
-                    else:
-                        present = False
                         break
                 if present:
-                    geo_vals[field['name']] = getattr(self, field['compute'])(dict([(d, vals[d]) for d in field['depends']]))
-        if geo_vals:
-            query = 'UPDATE "%s" SET %s WHERE id IN %%s' % (self._table, ','.join([('"%s"=%%s' % f) for f in geo_vals]))
-            params = [str(geo_vals[f]) for f in geo_vals] + [tuple(self.ids)]
-            self.env.cr.execute(query, params)
+                    res._recompute_geofields(field)
         return res
-    
+
+    @api.one
+    def _recompute_geofields(self, field):
+        for f in self._geo_fields:
+            if f['name'] == field:
+                if f.get('compute') and hasattr(self, f['compute']):
+                    pos = getattr(self, f['compute'])()
+                    query = 'UPDATE "%s" SET "%s" = %%s WHERE id = %%s' % (self._table, field)
+                    params = [str(pos), self.id]
+                    self.env.cr.execute(query, params)
+
     @api.model
     def geo_search(self, field, position, limit):
         for f in self._geo_fields:
@@ -115,9 +111,14 @@ class GeoFields(models.AbstractModel):
                 return [v['id'] for v in values]
 
     @api.model
-    def geoip_search(self, field, ip, limit):
+    def geoip_search(self, field, ip, domain=None, limit=10):
+        domain = domain or []
         for f in self._geo_fields:
             if f['name'] == field:
+                query_obj = self._where_calc(domain)
+                self._apply_ir_rules(query_obj, 'read')
+                query_obj.where_clause.append('''"%s"."%s" IS NOT NULL''' % (self._table, field))
+                from_clause, where_clause, params = query_obj.get_sql()
                 #~ query = "SELECT id, (%s <@> %%s) FROM %s ORDER BY %s <-> %%s LIMIT %%s" % (field, self._table, field)
                 query = """with geoloc as
                             (
@@ -126,18 +127,19 @@ class GeoFields(models.AbstractModel):
                                    join blocks using(locid)
                              where iprange >>= %%s
                            )
-                SELECT id FROM %s WHERE %s IS NOT NULL ORDER BY %s <-> (select location from geoloc) LIMIT %%s
-                """ % (self._table, field, field)
+                SELECT id FROM %s WHERE %s ORDER BY %s <-> (select location from geoloc) LIMIT %%s
+                """ % (from_clause, where_clause, field)
                 #~ params = [str(position), str(position), limit]
-                params = [ip, limit]
+                params = [ip] + params + [limit]
                 _logger.warn(query)
                 _logger.warn(params)
                 self.env.cr.execute(query, params)
                 values = self.env.cr.dictfetchall()
                 return [v['id'] for v in values]
-    
+
     @api.model
     def geo_postal_search(self, field, country, postal_code, limit):
+        #TODO: rewrite domain as in geoip_search
         for f in self._geo_fields:
             if f['name'] == field:
                 #~ query = "SELECT id, (%s <@> %%s) FROM %s ORDER BY %s <-> %%s LIMIT %%s" % (field, self._table, field)
@@ -161,13 +163,9 @@ class GeoFields(models.AbstractModel):
 class ResPartner(models.Model):
     _name = 'res.partner'
     _inherit = ['res.partner', 'postgres.geo.fields']
-    
-    position_x = fields.Float('Longitude')
-    position_y = fields.Float('Latitude')
-    
-    _geo_fields = [{'name': 'position', 'type': 'point', 'depends': ['position_x', 'position_y'], 'compute': 'compute_position'}]
-    
+
+    _geo_fields = [{'name': 'position', 'type': 'point', 'depends': ['partner_longitude', 'partner_latitude'], 'compute': 'compute_position'}]
+
     @api.model
-    def compute_position(self, vals):
-        _logger.warn('Computing position. vals: %s' % vals)
-        return (vals['position_y'], vals['position_x'])
+    def compute_position(self):
+        return (self.partner_longitude, self.partner_latitude)
