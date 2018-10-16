@@ -69,7 +69,7 @@ class GeoFields(models.AbstractModel):
                         present = True
                         break
                 if present:
-                    res._recompute_geofields(field)
+                    self._recompute_geofields(field)
         return res
 
     @api.multi
@@ -83,7 +83,7 @@ class GeoFields(models.AbstractModel):
                         present = True
                         break
                 if present:
-                    res._recompute_geofields(field)
+                    self._recompute_geofields(field)
         return res
 
     @api.one
