@@ -15,9 +15,9 @@
             </div>
         </template>
         
-        <record id="contact_template" model="res.users">
-                <field name="name">Contact Template</field>
-                <field name="login">contacttemplate</field>
+        <record id="reseller_template" model="res.users">
+                <field name="name">Reseller Template</field>
+                <field name="login">resellertemplate</field>
                 <field name="active" eval="False"/>
                 <!-- Avoid auto-including this user in any default group, just like a typical portal member -->
                 <field name="groups_id" eval="[(6, 0,  [ref('base.group_portal')])]"/>
