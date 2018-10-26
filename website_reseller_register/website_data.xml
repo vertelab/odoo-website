@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data noupdate="1">
+        
         <template id="thanks_for_your_application" name="Thanks for your application">
             <div t-call="website.layout">
                 <div id="wrap" class="oe_structure oe_empty">
@@ -13,5 +14,14 @@
                 </div>
             </div>
         </template>
+        
+        <record id="contact_template" model="res.users">
+                <field name="name">Contact Template</field>
+                <field name="login">contacttemplate</field>
+                <field name="active" eval="False"/>
+                <!-- Avoid auto-including this user in any default group, just like a typical portal member -->
+                <field name="groups_id" eval="[(6, 0,  [ref('base.group_portal')])]"/>
+        </record>
+        
     </data>
 </openerp>

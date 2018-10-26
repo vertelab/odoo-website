@@ -293,11 +293,12 @@ class reseller_register(http.Controller):
                             'values': post,
                         })
                     try:
-                        user = request.env['res.users'].sudo().with_context(no_reset_password=True).create({
+                        template = request.env.ref('website_reseller_register.contact_template').sudo()
+                        user = template.with_context(no_reset_password=True).copy({
                             'name': values.get('name'),
                             'login': values.get('email'),
                             'image': values.get('image'),
-                            'active': False,
+                            'active': True,
                         })
                         contact = user.partner_id.sudo()
                         contact.write(values)
