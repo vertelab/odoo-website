@@ -298,7 +298,7 @@ class reseller_register(http.Controller):
                             'name': values.get('name'),
                             'login': values.get('email'),
                             'image': values.get('image'),
-                            'active': True,
+                            'active': False,
                         })
                         contact = user.partner_id.sudo()
                         contact.write(values)
