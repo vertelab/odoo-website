@@ -48,14 +48,32 @@
                     <button name="action_join" string="Join Meeting" type="object"/>
                     <button name="action_invite_wizard" string="Invite Participants" type="object"/>
                   </header>
-      	          <group>
-      	              <field name="name"/>
-      	              <field name="welcome"/>
-      	              <field name="mod_password"/>
-      	              <field name="password"/>
-      	              <field name="bbbid"/>
-      	              <field name="server_id"/>
-      	          </group>
+                  
+                  <sheet>
+                      <h1><field name="name"/></h1>
+                      <group>
+                          <field name="invite_link"/>
+                          <field name="welcome"/>
+                          <field name="mod_password"/>
+                          <field name="password"/>
+                          <field name="bbbid"/>
+                          <field name="server_id"/>
+                          <field name="calendar_event_id"/>
+                          <field name="start_datetime"/>
+                          <field name="stop_datetime"/>
+                      </group>
+                      <notebook>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Agenda">
+                            <field name="agenda"/>
+                        </page>
+                        <page string="Speakers">
+                            <field name="speaker_ids"/>
+                        </page>
+                      </notebook>
+                  </sheet>
       	      </form>
       	  </field>
       </record>
@@ -72,11 +90,22 @@
       	  </field>
       </record>
 
+      <record id="bbb_meeting_calendar" model="ir.ui.view">
+          <field name="name">BBB Meeting Tree</field>
+          <field name="model">bbb.meeting</field>
+          <field name="type">calendar</field>
+          <field name="arch" type="xml">     
+      	      <calendar color="speaker_id" date_start="start_datetime" date_stop="stop_datetime" string="Big Blue Button Meetings">
+                    <field name="name"/>
+                </calendar>
+      	  </field>
+      </record>
+
       <record id="bbb_meeting_action" model="ir.actions.act_window">
           <field name="name">BBB Meeting Action</field>
           <field name="res_model">bbb.meeting</field>
       	  <field name="view_type">form</field>
-      	  <field name="view_mode">tree,form</field>
+      	  <field name="view_mode">calendar,tree,form</field>
       </record>      
 
     <menuitem id="bbb_menu" name="Big Blue Button" parent="base.menu_administration" sequence="5"/>

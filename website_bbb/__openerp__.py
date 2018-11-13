@@ -28,11 +28,12 @@
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
-    'depends': ['base', 'email_template'],
+    'depends': ['base', 'email_template', 'website', 'calendar'],
     'data': [
         'security/bbb_security.xml',
         'security/ir.model.access.csv',
         'website_bbb_view.xml',
+        'website_bbb_templates.xml',
         'website_bbb_data.xml',
     ],
     'application': True,

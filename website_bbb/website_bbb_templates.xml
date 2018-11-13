@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <template id="meeting" name="BBB Meeting">
+            <t t-call="website.layout">
+                <div class="container">
+                    <t t-if="message">
+                        <h2 class="oe-bbb-warning" t-esc="message" />
+                    </t>
+                    <t t-if="meeting">
+                        <div class="col-sm-12 col-md-5">
+                            <h1 t-field="meeting.name" />
+                            <div t-field="meeting.description" />
+                            <t t-foreach="meeting.speaker_ids" t-as="speaker">
+                                <div class="oe-bbb-speaker">
+                                    <img t-att-src="'data:image/png;base64,%s' % speaker.image_medium"/>
+                                    <div>
+                                        <h2 t-esc="speaker.name" />
+                                        <t t-foreach="(speaker.comment or '').split('\n')" t-as="line">
+                                            <p t-esc="line" />
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                            <h2>Agenda</h2>
+                            <div t-field="meeting.agenda" />
+                        </div>
+                        <div class="col-md-1" />
+                        <div class="col-sm-12 col-md-6">
+                            <div class="oe-bbb-join-meeting pull-left" t-att-data-bbbid="bbbid">
+                                <h4>
+                                    <t t-esc="meeting.name" />
+                                </h4>
+                                <p t-att-class="'oe-bbb-meeting-closed%s' % (' hidden' if meeting_info else '')">This meeting has not started yet.</p>
+                                <p t-att-class="'oe-bbb-meeting-running%s' % (' hidden' if not meeting_info else '')">Join the meeting.</p>
+                                <form t-att-class="'oe-bbb-meeting-running%s' % (' hidden' if not meeting_info else '')" method="POST" t-att-action="'/website_bbb/meeting/%s/join' % meeting.bbbid">
+                                    <input type="text" id="username" required="" name="username" placeholder="Enter Your Name" size="29" class="field input-default" autofocus="" />
+                                    <input type="submit" value="Join" class="submit_btn button success large" />
+                                </form>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </template>
+        <template id="assets_frontend" inherit_id="website.assets_frontend">
+            <xpath expr="." position="inside">
+                <link href="/website_bbb/static/src/css/website_bbb.css" rel="stylesheet"/>
+                <script type="text/javascript" src="/website_bbb/static/src/js/website_bbb.js"/>
+            </xpath>
+        </template>
+    </data>
+</openerp>
