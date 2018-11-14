@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
 <data noupdate="0">
-    
+
     <record id="email_template_invite_wizard" model="email.template">
         <field name="name">Big Blue Button Invite</field>
         <field name="email_from">${(object.env.user.email or '')|safe}</field>
@@ -16,16 +16,73 @@
 <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); ">
 
     <p>Hello ${object.name},</p>
-    
+
     <p>You are invited to participate in an online meeting regarding ${object.wizard_id.meeting_id.name}.
-    
+
     <p>You can join the meeting by following this link:</p>
-    
+
     <a href="${objectjoin_url}">${object.join_url}</a>
-    
+
 </div>
             ]]></field>
     </record>
-    
+
 </data>
+
+    <data>
+        <record id="speaker_img" model="image.recipe">
+            <field name="name">Speaker Image</field>
+            <field name="image_format">jpeg</field>
+            <field name="description"></field>
+            <field name="recipe">if float(image.width)/float(image.height) &gt;= float(horizontal)/float(vertical):
+    if image.height &gt; int(height):
+        image.transform(resize='%sx&gt;' %int(float(height)*float(image.width)/float(image.height)))
+        image.crop(width=int(float(height)/float(vertical)*float(horizontal)), height=int(height), gravity='center')
+    else:
+        image.crop(width=int(float(image.height)/float(vertical)*float(horizontal)), height=image.height, gravity='center')
+        image.transform(resize='%sx&gt;' %int(float(height)*float(image.width)/float(image.height)))
+else:
+    if float(image.width) &gt; float(height)*float(horizontal)/float(vertical):
+        image.transform(resize='%sx&gt;' %int(float(height)*float(horizontal)/float(vertical)))
+        image.crop(width=int(float(height)*float(horizontal)/float(vertical)), height=int(height), gravity='center')
+    else:
+        image.transform(resize='%sx&gt;' %image.width)
+        image.crop(width=image.width, height=int(float(image.width)/float(horizontal)*float(vertical)), gravity='center')</field>
+        </record>
+        <record id="speaker_img_height_xs" model="image.recipe.param">
+            <field name="name">height</field>
+            <field name="value">128</field>
+            <field name="device_type">xs</field>
+            <field name="recipe_id" ref="website_bbb.speaker_img"/>
+        </record>
+        <record id="speaker_img_height_sm" model="image.recipe.param">
+            <field name="name">height</field>
+            <field name="value">128</field>
+            <field name="device_type">sm</field>
+            <field name="recipe_id" ref="website_bbb.speaker_img"/>
+        </record>
+        <record id="speaker_img_height_md" model="image.recipe.param">
+            <field name="name">height</field>
+            <field name="value">128</field>
+            <field name="device_type">md</field>
+            <field name="recipe_id" ref="website_bbb.speaker_img"/>
+        </record>
+        <record id="speaker_img_height_lg" model="image.recipe.param">
+            <field name="name">height</field>
+            <field name="value">128</field>
+            <field name="device_type">lg</field>
+            <field name="recipe_id" ref="website_bbb.speaker_img"/>
+        </record>
+        <record id="speaker_img_param_horizontal" model="image.recipe.param">
+            <field name="name">horizontal</field>
+            <field name="value">3</field>
+            <field name="recipe_id" ref="website_bbb.speaker_img"/>
+        </record>
+        <record id="speaker_img_param_vertical" model="image.recipe.param">
+            <field name="name">vertical</field>
+            <field name="value">4</field>
+            <field name="recipe_id" ref="website_bbb.speaker_img"/>
+        </record>
+    </data>
+
 </openerp>

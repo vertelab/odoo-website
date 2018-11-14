@@ -1,7 +1,7 @@
 .oe-bbb-join-meeting {
     background: #EDF4FB;
     padding: 60px;
-    margin: 60px;
+    margin: 48px;
     text-align: center;
     border: 1px solid rgba(0,0,0,0.1);
     -webkit-border-radius: 5px;
@@ -20,4 +20,11 @@
 
 .oe-bbb-warning {
     color: red;
+}
+
+@media (max-width: 768px) {
+    .oe-bbb-join-meeting {
+        padding: 10px;
+        margin: 0px 0px 15px 0px;
+    }
 }

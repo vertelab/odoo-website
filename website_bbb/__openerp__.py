@@ -28,7 +28,7 @@
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
-    'depends': ['base', 'email_template', 'website', 'calendar'],
+    'depends': ['base', 'email_template', 'website', 'calendar', 'website_imagemagick'],
     'data': [
         'security/bbb_security.xml',
         'security/ir.model.access.csv',
