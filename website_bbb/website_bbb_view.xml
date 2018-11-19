@@ -10,6 +10,7 @@
       	          <group>
       	              <field name="name"/>
       	              <field name="url" />
+      	              <field name="force_html5" />
       	              <field name="secret" groups="website_bbb.group_bbb_admin" />
       	          </group>
       	      </form>
@@ -53,6 +54,7 @@
                       <h1><field name="name"/></h1>
                       <group>
                           <field name="invite_link"/>
+                          <field name="force_html5"/>
                           <field name="welcome"/>
                           <field name="mod_password"/>
                           <field name="password"/>

@@ -80,6 +80,7 @@ class BBBServer(models.Model):
     name = fields.Char(string='Name', required=True)
     url = fields.Char(string='URL', required=True)
     secret = fields.Char(string='Secret', required=True)
+    force_html5 = fields.Boolean(string='Force HTML5', help="Default behaviour for this server is to force the HTML5 Client. Can be overriden on a meeting.")
     
 class BBBMeeting(models.Model):
     _name = 'bbb.meeting'
@@ -93,8 +94,9 @@ class BBBMeeting(models.Model):
 
     def _default_speaker_ids(self):
         return self.env.user.partner_id
-    
-    
+
+    def _default_force_html5(self):
+        return self.server_id and self.server_id.force_html5 or False
 
     name = fields.Char(string='Name', required=True)
     welcome = fields.Char(string='Welcome Message', required=True)
@@ -111,6 +113,7 @@ class BBBMeeting(models.Model):
     calendar_event_id = fields.Many2one(string='Calendar Event', comodel_name='calendar.event')
     start_datetime = fields.Datetime(related='calendar_event_id.start_datetime')
     stop_datetime = fields.Datetime(related='calendar_event_id.start_datetime')
+    force_html5 = fields.Boolean(string='Force HTML5', default=_default_force_html5, help="Checking this box will make the join links for this meeting force the HTML5 client.")
 
     @api.one
     def _compute_invite_link(self):
@@ -121,10 +124,16 @@ class BBBMeeting(models.Model):
     def _compute_speaker_id(self):
         self.speaker_id = self.speaker_ids and self.speaker_ids[0]
 
+    @api.one
+    @api.onchange('server_id')
+    def onchange_server_id(self):
+        if self.server_id:
+            self.force_html5 = self.server_id.force_html5
+
     @api.model
     def create(self, values):
         res = super(BBBMeeting, self).create(values)
-        if 'start_datetime' in values and 'stop_datetime' in values:
+        if values.get('start_datetime') and values.get('stop_datetime'):
             res.calendar_event_id = self.env['calendar.event'].create({
                 'name': res.name,
                 'allday': False,
@@ -207,7 +216,16 @@ class BBBMeeting(models.Model):
 
     @api.multi
     def invite(self, name, moderator=False):
-        return self.get_url('join', fullName=name, meetingID=self.bbbid, password=moderator and self.mod_password or self.password)
+        params = {
+            'fullName': name,
+            'meetingID': self.bbbid,
+            'password': (moderator and self.mod_password or self.password),
+        }
+        if self.force_html5:
+            params.update({
+                'joinViaHtml5': 'true',
+            })
+        return self.get_url('join', **params)
 
     @api.multi
     def action_join(self):
