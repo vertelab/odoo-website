@@ -11,6 +11,6 @@ $(document).ready(function () {
                     $('.oe-bbb-meeting-running').addClass('hidden');
                 }
             });
-        }, 6000);
+        }, 60000);
     }
 });
