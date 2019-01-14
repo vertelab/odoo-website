@@ -138,22 +138,35 @@ class GeoFields(models.AbstractModel):
                 return [v['id'] for v in values]
 
     @api.model
-    def geo_postal_search(self, field, country, postal_code, limit):
+    def geo_postal_search(self, field, country, postal_code, domain=None, distance=None, limit=10):
         #TODO: rewrite domain as in geoip_search
+        domain = domain or []
+        if distance:
+            # distance is in km
+            distance *= 0.008984726
         for f in self._geo_fields:
             if f['name'] == field:
+                query_obj = self._where_calc(domain)
+                self._apply_ir_rules(query_obj, 'read')
+                query_obj.where_clause.append('''"%s"."%s" IS NOT NULL''' % (self._table, field))
+                if distance:
+                    query_obj.where_clause.append('''"%s"."%s" <-> (select location from geoloc) < %%s''' % (self._table, field))
+                from_clause, where_clause, params = query_obj.get_sql()
+                if distance:
+                    params.append(distance)
                 #~ query = "SELECT id, (%s <@> %%s) FROM %s ORDER BY %s <-> %%s LIMIT %%s" % (field, self._table, field)
                 query = """with geoloc as
                             (
                             select location
                               from location l
-                                   join blocks using(locid)
                              where country=%%s AND postalcode=%%s
                            )
-                SELECT id FROM %s WHERE %s IS NOT NULL ORDER BY %s <-> (select location from geoloc) LIMIT %%s
-                """ % (self._table, field, field)
+                SELECT id FROM %s WHERE %s ORDER BY "%s"."%s" <-> (select location from geoloc) LIMIT %%s
+                """ % (from_clause, where_clause, self._table, field)
+                # ~ SELECT id FROM %s WHERE %s IS NOT NULL ORDER BY %s <-> (select location from geoloc) LIMIT %%s
+                # ~ """ % (self._table, field, field)
                 #~ params = [str(position), str(position), limit]
-                params = [country, postal_code, limit]
+                params = [country, postal_code] + params + [limit]
                 _logger.warn(query)
                 _logger.warn(params)
                 self.env.cr.execute(query, params)
