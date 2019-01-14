@@ -139,11 +139,8 @@ class GeoFields(models.AbstractModel):
 
     @api.model
     def geo_postal_search(self, field, country, postal_code, domain=None, distance=None, limit=10):
-        #TODO: rewrite domain as in geoip_search
+        # distance in degreed
         domain = domain or []
-        if distance:
-            # distance is in km
-            distance *= 0.008984726
         for f in self._geo_fields:
             if f['name'] == field:
                 query_obj = self._where_calc(domain)
