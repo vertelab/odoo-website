@@ -97,13 +97,23 @@ class GeoFields(models.AbstractModel):
                     self.env.cr.execute(query, params)
 
     @api.model
-    def geo_search(self, field, position, limit):
+    def geo_search(self, field, position, domain=None, distance=None, limit=10):
+        domain = domain or []
         for f in self._geo_fields:
             if f['name'] == field:
+                query_obj = self._where_calc(domain)
+                self._apply_ir_rules(query_obj, 'read')
+                query_obj.where_clause.append('''"%s"."%s" IS NOT NULL''' % (self._table, field))
+                if distance:
+                    query_obj.where_clause.append('''"%s"."%s" <-> %%s < %%s''' % (self._table, field))
+                from_clause, where_clause, params = query_obj.get_sql()
+                if distance:
+                    params.append(str(position))
+                    params.append(distance)
                 #~ query = "SELECT id, (%s <@> %%s) FROM %s ORDER BY %s <-> %%s LIMIT %%s" % (field, self._table, field)
-                query = "SELECT id FROM %s WHERE %s IS NOT NULL ORDER BY %s <-> %%s LIMIT %%s" % (self._table, field, field)
+                query = """SELECT id FROM %s WHERE %s IS NOT NULL ORDER BY "%s"."%s" <-> %%s LIMIT %%s""" % (from_clause, where_clause, self._table, field)
                 #~ params = [str(position), str(position), limit]
-                params = [str(position), limit]
+                params += [str(position), limit]
                 _logger.warn(query)
                 _logger.warn(params)
                 self.env.cr.execute(query, params)
