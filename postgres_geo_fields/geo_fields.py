@@ -21,7 +21,7 @@
 
 from openerp import models, fields, api, _
 from openerp import SUPERUSER_ID
-
+from openerp.http import request
 from openerp.osv import fields as old_fields
 
 import logging
@@ -123,6 +123,7 @@ class GeoFields(models.AbstractModel):
     @api.model
     def geoip_search(self, field, ip, domain=None, limit=10):
         domain = domain or []
+        _logger.warn(' domain: %s' %domain)
         for f in self._geo_fields:
             if f['name'] == field:
                 query_obj = self._where_calc(domain)
@@ -189,3 +190,33 @@ class ResPartner(models.Model):
     @api.model
     def compute_position(self):
         return (self.partner_longitude, self.partner_latitude)
+
+
+class GeoIpResolver(object):
+
+    def record_by_addr(self, ip):
+        res = None
+        try:
+            query = """select country, location
+                          from location l
+                               join blocks using(locid)
+                         where iprange >>= %s"""
+            request.env.cr.execute(query, [ip])
+            res = request.env.cr.dictfetchone()
+            if res:
+                res = {
+                    'ip': ip,
+                    'country_code': res['country'],
+                    'country_name': res['country'],
+                    'longitude': eval(res['location'])[0],
+                    'latitude': eval(res['location'])[1],
+                }
+        except:
+            res = None
+        return res
+
+
+class ir_http(models.AbstractModel):
+    _inherit = 'ir.http'
+
+    geo_ip_resolver = GeoIpResolver()
