@@ -57,6 +57,11 @@ class GeoFields(models.AbstractModel):
             if field['name'] not in columns:
                 cr.execute('ALTER TABLE "%s" ADD COLUMN "%s" %s' % (self._table, field['name'], field['type']))
 
+    @api.multi
+    def get_geo_field(self, field):
+        self.env.cr.execute('SELECT %s FROM %s WHERE id=%s' %(field, self._table, self.id))
+        return self.env.cr.dictfetchone()[field]
+
     @api.model
     @api.returns('self', lambda value: value.id)
     def create(self, vals):
@@ -111,7 +116,7 @@ class GeoFields(models.AbstractModel):
                     params.append(str(position))
                     params.append(distance)
                 #~ query = "SELECT id, (%s <@> %%s) FROM %s ORDER BY %s <-> %%s LIMIT %%s" % (field, self._table, field)
-                query = """SELECT id FROM %s WHERE %s IS NOT NULL ORDER BY "%s"."%s" <-> %%s LIMIT %%s""" % (from_clause, where_clause, self._table, field)
+                query = """SELECT id FROM %s WHERE %s ORDER BY "%s"."%s" <-> %%s LIMIT %%s""" % (from_clause, where_clause, self._table, field)
                 #~ params = [str(position), str(position), limit]
                 params += [str(position), limit]
                 _logger.warn(query)
