@@ -195,7 +195,7 @@ class website(models.Model):
     def memcache_flush_types(self):
         return list(flush_types[self.env.cr.dbname])
 
-def get_keys(flush_type=None, module=None, path=None, db=None):
+def get_keys(flush_type=None, module=None, path=None, db=None, status_code=None):
     if not db:
         db = request.env.cr.dbname
     items = MEMCACHED_CLIENT().stats('items')
@@ -228,6 +228,13 @@ def get_keys(flush_type=None, module=None, path=None, db=None):
             if type(path) != list:
                 path = [path]
             if key.get('path') not in path:
+                del keys[i]
+                continue
+        # Filter on status code
+        if status_code and status_code != 'all':
+            if type(status_code) != list:
+                status_code = [status_code]
+            if key.get('status_code') not in status_code:
                 del keys[i]
                 continue
         i += 1
@@ -516,6 +523,7 @@ def route(route=None, **kw):
                     }
                 if routing.get('no_cache'):
                     page_dict['ETag'] = '%s' % MEMCACHED_HASH(page)
+                # ~ _logger.warn('\n\npath: %s\nstatus_code: %s\nETag: %s\n' % (page_dict.get('path'), page_dict.get('status_code'), page_dict.get('ETag')))
                 mc_save(key, page_dict,cache_age)
                 if routing.get('flush_type'):
                     add_flush_type(request.cr.dbname, routing['flush_type'](kw))
