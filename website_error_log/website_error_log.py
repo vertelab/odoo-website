@@ -21,6 +21,7 @@
 
 import openerp
 from openerp import models, fields, api, _
+from openerp.exceptions import except_orm, AccessError
 import traceback
 from datetime import timedelta
 
@@ -29,7 +30,7 @@ _logger = logging.getLogger(__name__)
 
 class WebsiteErrorLog(models.Model):
     _name = 'website.error.log'
-    _order = 'time desc'
+    _order = 'create_date desc'
 
     name = fields.Char(string='Path', required=True)
     website_id = fields.Many2one(comodel_name='website', string='Website')
@@ -41,12 +42,17 @@ class WebsiteErrorLog(models.Model):
     qweb_node = fields.Text(string='Qweb Node')
     view_id = fields.Many2one(comodel_name='ir.ui.view', string='Qweb Template')
     user_id = fields.Many2one(comodel_name='res.users', string='User')
-    time = fields.Datetime(string='Time', required=True)
+    create_date = fields.Datetime(string='Time')
     age = fields.Float(string='Age', compute='get_age', search='search_age', help="Age in minutes")
+    referer = fields.Char(string='Referer')
+    access_error_model = fields.Char('Model', help="The model this AccessError concerns.")
+    access_error_operation = fields.Char('Operation', help="The operation this AccessError concerns (read/write/create/delete).")
+    exception_type = fields.Char(string='Exception Type')
+    session_data = fields.Text(string='Session Data')
 
     @api.one
     def get_age(self):
-        self.age = fields.Datetime.to_string(fields.Datetime.from_string(fields.Datetime.now()) - fields.Datetime.from_string(self.time))
+        self.age = fields.Datetime.to_string(fields.Datetime.from_string(fields.Datetime.now()) - fields.Datetime.from_string(self.create_date))
 
     @api.model
     def search_age(self, operator, value):
@@ -59,7 +65,7 @@ class WebsiteErrorLog(models.Model):
             operator = '>'
         elif operator == '<=':
             operator = '>='
-        return [('time', operator, value)]
+        return [('create_date', operator, value)]
 
     @api.model
     def log_error(self, request, response, code, values):
@@ -82,22 +88,60 @@ class WebsiteErrorLog(models.Model):
         exception = values.get('exception')
         if not exception and isinstance(response, Exception):
             exception = response
+        exception_message = exception and exception.message
         tb = values.get('traceback') or (exception and traceback.format_exc(exception)) or None
         qweb_exception = values.get('qweb_exception')
         qweb = qweb_exception and getattr(qweb_exception, 'qweb', {}) or {}
         template_id = qweb.get('template')
         if template_id:
             template_id = self.env['ir.model.data'].xmlid_to_res_id(template_id, False)
+            
+        # If there is a qweb exception, that one is more relevant when digging up exception information
+        if qweb_exception:
+            exception = qweb_exception
+        message = exception and exception.message
+        exception_type = False
+        if isinstance(exception, except_orm):
+            # Odoo exception. Get the details.
+            message = exception.value
+            exception_type = exception.name
+        if not exception_type and exception:
+            exception_type = str(type(exception)).split("'")
+            if len(exception_type) == 3:
+                exception_type = exception_type[1].split('.')[-1]
+            else:
+                exception_type = False
+        access_error_model = False
+        access_error_operation = False
+        if isinstance(exception, AccessError):
+            # Find out which model and operation this error concerns. Long and complicated to not cause a crash.
+            msg = message.split('\n')
+            msg = msg and msg[-1]
+            msg = msg.split(', ', 1)
+            if len(msg) == 2:
+                access_error_model, access_error_operation = [e.split(': ') for e in msg]
+                if len(access_error_model) == 2 and len(access_error_operation) == 2:
+                    access_error_model = access_error_model[1]
+                    access_error_operation = access_error_operation[1][:-1]
+                else:
+                    access_error_model = False
+                    access_error_operation = False
+        session_data = dict(request.session)
+        session_data.update({'password': 'REDACTED'})
         return {
             'name': request.httprequest.path,
             'website_id': website and website.id or False,
             'code': code,
-            'exception_message': exception and exception.message,
+            'exception_message': exception_message,
             'traceback': tb,
             'view_id': template_id,
             'qweb_message': qweb.get('message'),
             'qweb_expression': qweb.get('expression'),
-            'qweb_node': qweb_exception and qweb_exception.pretty_xml(),
+            'qweb_node': qweb_exception and qweb_exception.pretty_xml() or False,
             'user_id': request.env.uid,
-            'time': fields.Datetime.now(),
+            'referer': request.httprequest.referrer or False,
+            'access_error_model': access_error_model,
+            'access_error_operation': access_error_operation,
+            'exception_type': exception_type,
+            'session_data': str(session_data),
         }

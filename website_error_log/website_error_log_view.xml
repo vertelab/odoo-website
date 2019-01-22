@@ -10,13 +10,18 @@
                   <sheet>
                       <h3>[<field name="code" class="oe_inline"/>] <field name="name" class="oe_inline"/></h3>
                       <group>
-                          <field name="time"/>
+                          <field name="create_date"/>
                           <field name="user_id"/>
+                          <field name="referer"/>
+                          <field name="session_data"/>
                           <field name="website_id"/>
                           <field name="view_id"/>
                           <field name="qweb_message"/>
                           <field name="qweb_node"/>
                           <field name="qweb_expression"/>
+                          <field name="exception_type"/>
+                          <field name="access_error_model"/>
+                          <field name="access_error_operation"/>
                           <field name="exception_message"/>
                           <field name="traceback"/>
                       </group>
@@ -31,11 +36,14 @@
           <field name="model">website.error.log</field>
           <field name="arch" type="xml">     
       	      <tree>
-                <field name="time"/>
+                <field name="create_date"/>
                 <field name="code"/>
                 <field name="name"/>
                 <field name="user_id"/>
                 <field name="exception_message"/>
+                <field name="exception_type"/>
+                <field name="access_error_model"/>
+                <field name="access_error_operation"/>
       	      </tree>
       	  </field>
       </record>
@@ -45,7 +53,7 @@
           <field name="model">website.error.log</field>
           <field name="type">calendar</field>
           <field name="arch" type="xml">     
-      	      <calendar color="code" date_start="time" string="Website Error Log">
+      	      <calendar color="code" date_start="create_date" string="Website Error Log">
                   <field name="name"/>
                   <field name="user_id"/>
               </calendar>
@@ -62,9 +70,16 @@
                   <field name="code"/>
                   <field name="user_id"/>
                   <field name="exception_message"/>
+                  <field name="exception_type"/>
+                  <field name="access_error_model"/>
                   
+                  <filter string="400" name="code_400" domain="[('code', '=', 400)]"/>
+                  <filter string="403" name="code_403" domain="[('code', '=', 403)]"/>
                   <filter string="404" name="code_404" domain="[('code', '=', 404)]"/>
                   <filter string="500" name="code_500" domain="[('code', '=', 500)]"/>
+                  <filter string="403" name="code_403" domain="[('code', 'not in', (400, 403, 404, 500))]"/>
+                  <separator/>
+                  <filter string="AccessError" name="access_error" domain="[('exception_type', '=', 'AccessError')]"/>
                   <separator/>
                   <filter string="Past 1 h" name="1_hour" domain="[('age', '&lt;=', 60)]"/>
                   <filter string="Past 4 h" name="4_hours" domain="[('age', '&lt;=', 240)]"/>
@@ -73,10 +88,17 @@
                   <filter string="Past 3 days" name="3_days" domain="[('age', '&lt;=', 4320)]"/>
                   <filter string="Past week" name="7_days" domain="[('age', '&lt;=', 10080)]"/>
                   <filter string="Past month" name="30_days" domain="[('age', '&lt;=', 43200)]"/>
+                  <separator/>
+                  <filter string="Not employee" name="not_employee" domain="['|', ('user_id', '=', %(base.public_user)d), ('user_id.partner_id.parent_id', '!=', %(base.main_partner)d)]"/>
+                  <filter string="Employee" name="employee" domain="[('user_id', '!=', %(base.public_user)d), ('user_id.partner_id.parent_id', '=', %(base.main_partner)d)]"/>
                   
                   <group expand="0" string="Group By">
                       <filter string="Code" context="{'group_by': 'code'}"/>
                       <filter string="User" context="{'group_by': 'user_id'}"/>
+                      <filter string="User" context="{'group_by': 'path'}"/>
+                      <filter string="Referer" context="{'group_by': 'referer'}"/>
+                      <filter string="Type" context="{'group_by': 'exception_type'}"/>
+                      <filter string="Model" context="{'group_by': 'access_error_model'}"/>
                   </group>
               </search>
       	  </field>
