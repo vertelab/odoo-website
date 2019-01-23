@@ -28,6 +28,7 @@ import base64
 import math
 import sys
 import traceback
+from time import time
 
 import werkzeug.utils
 from werkzeug.http import http_date
@@ -269,8 +270,11 @@ def get_flush_page(keys, title, url='', delete_url=''):
 
     #~ return '<H1>%s</H1><table>%s</table>' % (title,
         #~ ''.join(['<tr><td><a href="/mcpage/%s/delete">%s (delete)</a></td><td></td><td></td></tr>' % (k,k,p.get('path'),p.get('module'),p.get('flush_type')) for key in keys for p,k in [memcached.MEMCACHED_CLIENT().get(key),key]])
-def mc_save(key, page_dict,cache_age):
-    MEMCACHED_CLIENT().set(key,page_dict,cache_age)
+def mc_save(key, page_dict, cache_age):
+    if cache_age and cache_age > 2592000:
+        # Will be read as a unix timestamp
+        cache_age = int(time()) + cache_age
+    MEMCACHED_CLIENT().set(key, page_dict, cache_age)
     #~ chunks = [page_dict['page'][i:1000*900] for i in range(int(math.ceil(len(page_dict['page']) / (1000.0*900))))]
     #~ for i,chunk in enumerate(chunks):
         #~ if i == 0:
@@ -518,7 +522,7 @@ def route(route=None, **kw):
                     'date':     http_date(),
                     'module':   f.__module__,
                     'status_code': response.status_code,
-                    'flush_type': routing['flush_type'](kw).lower().replace(u'å', 'a').replace(u'ä', 'a').replace(u'ö', 'o').replace(' ', '-') if routing.get('flush_type', None) else "",
+                    'flush_type': routing['flush_type'](kw).lower().encode('ascii', 'replace').replace(' ', '-') if routing.get('flush_type', None) else "",
                     'headers': response.headers,
                     }
                 if routing.get('no_cache'):
