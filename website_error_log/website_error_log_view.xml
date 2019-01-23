@@ -95,7 +95,7 @@
                   <group expand="0" string="Group By">
                       <filter string="Code" context="{'group_by': 'code'}"/>
                       <filter string="User" context="{'group_by': 'user_id'}"/>
-                      <filter string="User" context="{'group_by': 'path'}"/>
+                      <filter string="PAth" context="{'group_by': 'name'}"/>
                       <filter string="Referer" context="{'group_by': 'referer'}"/>
                       <filter string="Type" context="{'group_by': 'exception_type'}"/>
                       <filter string="Model" context="{'group_by': 'access_error_model'}"/>
