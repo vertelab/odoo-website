@@ -239,7 +239,7 @@ def get_keys(flush_type=None, module=None, path=None, db=None, status_code=None)
                 del keys[i]
                 continue
         i += 1
-    
+
     return keys
 
 def get_flush_page(keys, title, url='', delete_url=''):
@@ -548,7 +548,7 @@ def route(route=None, **kw):
                         ]
                     header += [(k,v) for k,v in page_dict.get('headers',[(None,None)])]
                     _logger.warn('returns 304 headers %s' % header)
-                    if page_dict.get('status_code') in ['301','302','307','308']:
+                    if page_dict.get('status_code') in [301, 302, 307, 308]:
                         return werkzeug.wrappers.Response(status=page_dict['status_code'],headers=header)
                     return werkzeug.wrappers.Response(status=304,headers=header)
             response = http.Response(base64.b64decode(page_dict.get('page'))) # always create a new response (drop response from controller)
@@ -581,7 +581,7 @@ def route(route=None, **kw):
             response.headers['X-CacheBlacklist'] = kw.get('blacklist','')
             response.headers['Date'] = page_dict.get('date',http_date())
             response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)
-            response.status_code = int(page_dict.get('status_code','200'))
+            response.status_code = page_dict.get('status_code', 200)
             return response
 
         response_wrap.routing = routing
