@@ -335,6 +335,7 @@ $$ LANGUAGE plpgsql;""")
                 #~ _logger.debug('many2many: %s' % res)
             else:
                 if field_obj.translate:
+                    _logger.warn('\n\n%s\n' % self._name)
                     res = "SELECT string_agg(name, ' ') INTO %s FROM (SELECT website_fts_translate_term('%s', obj.name, '%s', '%s', '%s', obj.id) as name FROM (SELECT id, %s %s) AS obj) AS result;" % (var_name, lang, model._name, field, model._table, field, res)
                 else:
                     res = "SELECT string_agg(name, ' ') INTO %s FROM (SELECT %s %s) AS result;" % (var_name, field, res)

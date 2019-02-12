@@ -23,6 +23,7 @@ from openerp import models, fields, api, _
 from openerp import SUPERUSER_ID
 from openerp.http import request
 from openerp.osv import fields as old_fields
+from openerp.api import Environment
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -206,8 +207,9 @@ class GeoIpResolver(object):
                           from location l
                                join blocks using(locid)
                          where iprange >>= %s"""
-            request.env.cr.execute(query, [ip])
-            res = request.env.cr.dictfetchone()
+            env = openerp.api.Environment(request.cr, request.uid, request.context)
+            env.cr.execute(query, [ip])
+            res = env.cr.dictfetchone()
             if res:
                 res = {
                     'ip': ip,

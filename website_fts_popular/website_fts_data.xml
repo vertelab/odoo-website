@@ -4,6 +4,7 @@
         
             
 
+<!--
     <record model="ir.actions.server" id="fts_popular_copy">
         <field name="name">Copy to popular</field>
         <field name="state">code</field>
@@ -27,6 +28,7 @@ for o in obj:
     <record model="ir.actions.server" id="fts_popular_copy">
         <field name="menu_ir_values_id" ref="fts_popular_copy_menu"/>
     </record>
+-->
 
 
     </data>
