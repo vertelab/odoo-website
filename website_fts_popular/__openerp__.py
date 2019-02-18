@@ -37,7 +37,7 @@ Financed by Dermanord AB
         'website_fts_view.xml',
         'website_fts_data.xml',
         'website_search.xml',
-        # ~ 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
     ],
     'application': False,
     'installable': True,
