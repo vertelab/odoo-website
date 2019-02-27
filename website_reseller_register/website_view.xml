@@ -22,7 +22,7 @@
                                 <div id="company_org" t-att-class="'form-group %s' %validation.get('company_company_registry', '')">
                                      <label class="col-md-3 col-sm-4 control-label" for="vat">Organization Number</label>
                                      <div class="col-md-7 col-sm-8">
-                                        <input type="text" class="form-control" name="company_company_registry" t-att-value="company_company_registry or issue.partner_id.company_registry or issue.partner_id.vat" placeholder="123456-7897" required="" />
+                                        <input type="text" class="form-control" name="company_company_registry" t-att-value="company_company_registry or issue.partner_id.company_registry or issue.partner_id.vat or issue.partner_id.vat_unchecked" placeholder="123456-7897" required="" />
                                         <small t-esc="help.get('help_company_company_registry', '')" />
                                     </div>
                                 </div>
@@ -430,5 +430,20 @@
                 <script src="/website_reseller_register/static/src/js/main.js" type="text/javascript" />
             </xpath>
         </template>
+        
+        <record id="view_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.vat.reseller_register.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base_vat.view_partner_form"/>
+            <field name="arch" type="xml">
+                <div name="vat_info" position="after">
+                    <label for="vat_unchecked"/>
+                    <div name="vat_unchecked_info">
+                        <field name="vat_unchecked" class="oe_inline"/>
+                        <button colspan="2" name="button_insert_vat" string="Insert valid VAT" type="object" icon="gtk-execute" class="oe_inline"/>
+                    </div>
+                </div>
+            </field>
+        </record>
     </data>
 </openerp>
