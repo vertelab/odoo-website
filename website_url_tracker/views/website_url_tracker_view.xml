@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="website_url_tracker_tree" model="ir.ui.view">
+            <field name="name">website.url.tracker.tree</field>
+            <field name="model">website.url.tracker</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree create="0">
+                    <field name="timestamp"/>
+                    <field name="user_id"/>
+                    <field name="partner_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_website_url_tracker_filter" model="ir.ui.view">
+            <field name="name">website.url.tracker.filter</field>
+            <field name="model">website.url.tracker</field>
+            <field name="arch" type="xml">
+                <search string="Search URL Tracker">
+                   <field name="timestamp"/>
+                   <field name="user_id"/>
+                   <field name="partner_id"/>
+                   <group expand="0" string="Group By">
+                       <filter string="Timestamp" context="{'group_by' : 'timestamp'}" />
+                       <filter string="User" context="{'group_by': 'user_id'}"/>
+                       <filter string="Partner" context="{'group_by': 'partner_id'}"/>
+                   </group>
+               </search>
+            </field>
+        </record>
+
+        <record id="act_website_url_tracker" model="ir.actions.act_window">
+            <field name="name">Website URL Tracker</field>
+            <field name="res_model">website.url.tracker</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="website_url_tracker_tree"/>
+            <field name="search_view_id" ref="view_website_url_tracker_filter"/>
+        </record>
+
+        <menuitem id="menu_website_url_tracker" name="Website URL Tracker" action="act_website_url_tracker" groups="base.group_website_publisher" sequence="20" parent="base.menu_config"/>
+
+    </data>
+</openerp>
