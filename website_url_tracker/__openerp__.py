@@ -27,7 +27,9 @@
     'description': """
 Catch visitor's infomation by using URL tracker
 ===============================================
-* define url like this: /goto/PARTNER_ID, controller will redirect to this partner's website url and create a trasaction in database with visitor info.
+* define url like this: /goto/PARTNER_ID/FIELDS_NAME, controller will redirect to this partner's website url and create a trasaction in database with visitor info.
+- PARTNER_ID: id for res.partner
+- FIELDS_NAME: fields that has website url
 """,
     'author': 'Vertel AB',
     'license': 'AGPL-3',
