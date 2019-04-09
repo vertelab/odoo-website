@@ -32,7 +32,7 @@ Catch visitor's infomation by using URL tracker
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
-    'depends': ['base'],
+    'depends': ['knowledge'],
     'data': [
         'views/website_url_tracker_view.xml',
         'security/ir.model.access.csv',
