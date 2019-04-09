@@ -35,6 +35,11 @@ class Main(http.Controller):
                 return getattr(partner, f)
             except:
                 return False
+        referer_url = request.httprequest.referrer
+        referer_base = referer = ''
+        if referer_url and len(referer_url.split('/')) > 2:
+            referer_base = referer_url.split('/')[-2]
+            referer = '/'.join(referer_url.split('/')[-2::1])
         partner = request.env['res.partner'].sudo().browse(partner_id)
         if partner:
             url = partner_url_field(partner, field)
@@ -43,6 +48,8 @@ class Main(http.Controller):
                     'timestamp': fields.Datetime.now(),
                     'user_id': request.env.user.id,
                     'partner_id': partner.id,
+                    'referer_base': referer_base,
+                    'referer': referer,
                 })
                 if 'http://' not in url:
                     if 'https://' not in url:

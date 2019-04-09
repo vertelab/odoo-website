@@ -12,6 +12,8 @@
                     <field name="timestamp"/>
                     <field name="user_id"/>
                     <field name="partner_id"/>
+                    <field name="referer_base"/>
+                    <field name="referer"/>
                 </tree>
             </field>
         </record>
@@ -24,10 +26,14 @@
                    <field name="timestamp"/>
                    <field name="user_id"/>
                    <field name="partner_id"/>
+                   <field name="referer_base"/>
+                   <field name="referer"/>
                    <group expand="0" string="Group By">
                        <filter string="Timestamp" context="{'group_by' : 'timestamp'}" />
                        <filter string="User" context="{'group_by': 'user_id'}"/>
                        <filter string="Partner" context="{'group_by': 'partner_id'}"/>
+                       <filter string="Referer Base" context="{'group_by': 'referer_base'}"/>
+                       <filter string="Referer" context="{'group_by': 'referer'}"/>
                    </group>
                </search>
             </field>
@@ -61,10 +67,14 @@
                    <field name="timestamp"/>
                    <field name="user_id"/>
                    <field name="partner_id"/>
+                   <field name="referer_base"/>
+                   <field name="referer"/>
                    <group expand="0" string="Group By">
                        <filter string="Month" context="{'group_by' : 'timestamp:month'}" />
                        <filter string="User" context="{'group_by': 'user_id'}"/>
                        <filter string="Partner" context="{'group_by': 'partner_id'}"/>
+                       <filter string="Referer Base" context="{'group_by': 'referer_base'}"/>
+                       <filter string="Referer" context="{'group_by': 'referer'}"/>
                    </group>
                </search>
             </field>
@@ -81,7 +91,7 @@
 
         <menuitem id="menu_tracker" name="Tracker" groups="base.group_user" sequence="100" parent="knowledge.menu_document"/>
         <menuitem id="menu_website_url_tracker" name="Website URL Tracker" action="act_website_url_tracker" groups="base.group_user" sequence="1" parent="website_url_tracker.menu_tracker"/>
-        <menuitem id="menu_website_url_tracker_analysis" name="Website URL Tracker Analysis" action="act_website_url_tracker_analysis" groups="base.group_user" sequence="2" parent="menu_tracker"/>
+        <menuitem id="menu_website_url_tracker_analysis" name="Tracker Analysis" action="act_website_url_tracker_analysis" groups="base.group_user" sequence="2" parent="menu_tracker"/>
 
     </data>
 </openerp>

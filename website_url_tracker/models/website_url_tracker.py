@@ -29,6 +29,8 @@ class website_url_tracker(models.Model):
     timestamp = fields.Datetime(string='Time Stamp')
     user_id = fields.Many2one(comodel_name='res.users', string='Visitor')
     partner_id = fields.Many2one(comodel_name='res.partner', string='Partner')
+    referer_base = fields.Char(string='Referer Base')
+    referer = fields.Char(string='Referer')
 
 
 class website_url_tracker_analysis(models.Model):
@@ -41,6 +43,8 @@ class website_url_tracker_analysis(models.Model):
     timestamp = fields.Datetime(string='Time Stamp', readonly=True)
     user_id = fields.Many2one(comodel_name='res.users', string='Visitor', readonly=True)
     partner_id = fields.Many2one(comodel_name='res.partner', string='Partner', readonly=True)
+    referer_base = fields.Char(string='Referer Base', readonly=True)
+    referer = fields.Char(string='Referer', readonly=True)
 
     def _select(self):
         select_str = """
@@ -48,7 +52,9 @@ class website_url_tracker_analysis(models.Model):
                     wut.id as wut_id,
                     wut.partner_id as partner_id,
                     wut.user_id as user_id,
-                    wut.timestamp as timestamp
+                    wut.timestamp as timestamp,
+                    wut.referer_base as referer_base,
+                    wut.referer as referer
         """
         return select_str
 
@@ -66,6 +72,8 @@ class website_url_tracker_analysis(models.Model):
                     wut.partner_id,
                     wut.user_id,
                     wut.timestamp,
+                    wut.referer_base,
+                    wut.referer,
                     wut.id
         """
         return group_by_str
