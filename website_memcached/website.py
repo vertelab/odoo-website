@@ -97,6 +97,18 @@ class MemCachedController(http.Controller):
             memcached.mc_delete(key)
         return memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s ' % path, '/mcpath/%s' % path, '/mcpath/delete?path=%s' % path)
 
+    @http.route(['/mcstatus','/mcstatus/<int:status_code>',], type='http', auth="user", website=True)
+    def memcached_status_code(self, status_code='all',**post):
+        return memcached.get_flush_page(memcached.get_keys(status_code=status_code), 'Cached Pages Status %s' % status_code, '/mcstatus/%s' % status_code, '/mcstatus/%s/delete' % status_code)
+        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type))
+
+    @http.route(['/mcstatus/all/delete', '/mcstatus/<int:status_code>/delete',], type='http', auth="user", website=True)
+    def memcached_status_code_delete(self, status_code='all',**post):
+        for key in memcached.get_keys(status_code=status_code):
+            memcached.mc_delete(key)
+        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type))
+        return memcached.get_flush_page(memcached.get_keys(status_code=status_code), 'Cached Pages Status %s' % status_code, '/mcstatus/%s' % status_code, '/mcstatus/%s/delete' % status_code)
+    
     @http.route(['/mcclearpath',], type='http', auth="user", website=True)
     # Example: /mcpath?path=/foo/bar
     def memcached_clear_path(self, path='all',**post):

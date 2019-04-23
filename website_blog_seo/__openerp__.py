@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2004-2016 Vertel AB (<http://vertel.se>).
+#    Copyright (C) 2018- Vertel AB (<http://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,20 +20,16 @@
 ##############################################################################
 
 {
-    'name': 'Select2 Search Field',
+    'name': 'Blog SEO',
     'version': '0.1',
-    'category': '',
-    'summary': "Adds a select2 search field.",
-    'description': """Due to a naming conflict all instances of select2 have been rebranded as select9.
-Manual can be found at https://select2.github.io/
-""",
+    'category': 'website',
+    'summary': "When posting a blog, also update SEO criterias.",
+    'description': """""",
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
-    'depends': ['website_sale'],
-    'data': [
-        'select2_template.xml',
-    ],
+    'depends': ['website_blog'],
+    'data': ['website_blog_view.xml','website_blog_data.xml'],
     'application': False,
     'installable': True,
 }

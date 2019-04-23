@@ -31,19 +31,14 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+
 PARTNER_FIELDS = ['name', 'street', 'street2', 'zip', 'city', 'country_id', 'phone', 'email']
 
 class reseller_register(http.Controller):
 
     # can be overriden with more company fields
     def get_company_post(self, post):
-        value = {'name': post.get('company_name'), 'vat': post.get('company_company_registry')}
-        # Check if vat is a swedish organization number
-        if value['vat']:
-            if re.search('^[0-9]{6}-[0-9]{4}$', value['vat']):
-                value['company_registry'] = value['vat']
-                del value['vat']
-        return value
+        return {'name': post.get('company_name'), 'vat_unchecked': post.get('company_company_registry')}
 
     # can be overriden with more company fields
     def company_fields(self):
@@ -218,8 +213,8 @@ class reseller_register(http.Controller):
     # can be overrided
     def update_partner_info(self, issue, post):
         values = self.get_company_post(post)
-        if post.get('invoicetype'):
-            values['property_invoice_type'] = int(post.get('invoicetype'))
+        # ~ if post.get('invoicetype'):
+            # ~ values['property_invoice_type'] = int(post.get('invoicetype'))
         values['website_short_description'] = post.get('website_short_description', '')
         issue.partner_id.write(values)
         children_dict = self.get_children_post(issue, post)

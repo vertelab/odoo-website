@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2004-2016 Vertel AB (<http://vertel.se>).
+#    Copyright (C) 2019- Vertel AB (<http://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,22 +20,25 @@
 ##############################################################################
 
 {
-    'name': 'Select2 Search Field',
-    'version': '0.1',
-    'category': '',
-    'summary': "Adds a select2 search field.",
-    'description': """Due to a naming conflict all instances of select2 have been rebranded as select9.
-Manual can be found at https://select2.github.io/
+    'name': 'Website URL Tracker',
+    'version': '1.0',
+    'category': 'Theme',
+    'summary': 'URL Tracker',
+    'description': """
+Catch visitor's infomation by using URL tracker
+===============================================
+* define url like this: /goto/PARTNER_ID/FIELDS_NAME, controller will redirect to this partner's website url and create a trasaction in database with visitor info.
+- PARTNER_ID: id for res.partner
+- FIELDS_NAME: fields that has website url
 """,
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
-    'depends': ['website_sale'],
+    'depends': ['knowledge'],
     'data': [
-        'select2_template.xml',
-    ],
+        'views/website_url_tracker_view.xml',
+        'security/ir.model.access.csv',
+],
     'application': False,
-    'installable': True,
 }
 
-# vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:
