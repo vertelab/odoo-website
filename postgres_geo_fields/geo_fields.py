@@ -21,9 +21,8 @@
 
 from openerp import models, fields, api, _
 from openerp import SUPERUSER_ID
-from openerp.http import request
+
 from openerp.osv import fields as old_fields
-from openerp.api import Environment
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -57,11 +56,6 @@ class GeoFields(models.AbstractModel):
         for field in self._geo_fields:
             if field['name'] not in columns:
                 cr.execute('ALTER TABLE "%s" ADD COLUMN "%s" %s' % (self._table, field['name'], field['type']))
-
-    @api.multi
-    def get_geo_field(self, field):
-        self.env.cr.execute('SELECT %s FROM %s WHERE id=%s' %(field, self._table, self.id))
-        return self.env.cr.dictfetchone()[field]
 
     @api.model
     @api.returns('self', lambda value: value.id)
@@ -103,23 +97,13 @@ class GeoFields(models.AbstractModel):
                     self.env.cr.execute(query, params)
 
     @api.model
-    def geo_search(self, field, position, domain=None, distance=None, limit=10):
-        domain = domain or []
+    def geo_search(self, field, position, limit):
         for f in self._geo_fields:
             if f['name'] == field:
-                query_obj = self._where_calc(domain)
-                self._apply_ir_rules(query_obj, 'read')
-                query_obj.where_clause.append('''"%s"."%s" IS NOT NULL''' % (self._table, field))
-                if distance:
-                    query_obj.where_clause.append('''"%s"."%s" <-> %%s < %%s''' % (self._table, field))
-                from_clause, where_clause, params = query_obj.get_sql()
-                if distance:
-                    params.append(str(position))
-                    params.append(distance)
                 #~ query = "SELECT id, (%s <@> %%s) FROM %s ORDER BY %s <-> %%s LIMIT %%s" % (field, self._table, field)
-                query = """SELECT id FROM %s WHERE %s ORDER BY "%s"."%s" <-> %%s LIMIT %%s""" % (from_clause, where_clause, self._table, field)
+                query = "SELECT id FROM %s WHERE %s IS NOT NULL ORDER BY %s <-> %%s LIMIT %%s" % (self._table, field, field)
                 #~ params = [str(position), str(position), limit]
-                params += [str(position), limit]
+                params = [str(position), limit]
                 _logger.warn(query)
                 _logger.warn(params)
                 self.env.cr.execute(query, params)
@@ -129,7 +113,6 @@ class GeoFields(models.AbstractModel):
     @api.model
     def geoip_search(self, field, ip, domain=None, limit=10):
         domain = domain or []
-        _logger.warn(' domain: %s' %domain)
         for f in self._geo_fields:
             if f['name'] == field:
                 query_obj = self._where_calc(domain)
@@ -155,32 +138,22 @@ class GeoFields(models.AbstractModel):
                 return [v['id'] for v in values]
 
     @api.model
-    def geo_postal_search(self, field, country, postal_code, domain=None, distance=None, limit=10):
-        # distance in degreed
-        domain = domain or []
+    def geo_postal_search(self, field, country, postal_code, limit):
+        #TODO: rewrite domain as in geoip_search
         for f in self._geo_fields:
             if f['name'] == field:
-                query_obj = self._where_calc(domain)
-                self._apply_ir_rules(query_obj, 'read')
-                query_obj.where_clause.append('''"%s"."%s" IS NOT NULL''' % (self._table, field))
-                if distance:
-                    query_obj.where_clause.append('''"%s"."%s" <-> (select location from geoloc) < %%s''' % (self._table, field))
-                from_clause, where_clause, params = query_obj.get_sql()
-                if distance:
-                    params.append(distance)
                 #~ query = "SELECT id, (%s <@> %%s) FROM %s ORDER BY %s <-> %%s LIMIT %%s" % (field, self._table, field)
                 query = """with geoloc as
                             (
                             select location
                               from location l
+                                   join blocks using(locid)
                              where country=%%s AND postalcode=%%s
                            )
-                SELECT id FROM %s WHERE %s ORDER BY "%s"."%s" <-> (select location from geoloc) LIMIT %%s
-                """ % (from_clause, where_clause, self._table, field)
-                # ~ SELECT id FROM %s WHERE %s IS NOT NULL ORDER BY %s <-> (select location from geoloc) LIMIT %%s
-                # ~ """ % (self._table, field, field)
+                SELECT id FROM %s WHERE %s IS NOT NULL ORDER BY %s <-> (select location from geoloc) LIMIT %%s
+                """ % (self._table, field, field)
                 #~ params = [str(position), str(position), limit]
-                params = [country, postal_code] + params + [limit]
+                params = [country, postal_code, limit]
                 _logger.warn(query)
                 _logger.warn(params)
                 self.env.cr.execute(query, params)
@@ -196,34 +169,3 @@ class ResPartner(models.Model):
     @api.model
     def compute_position(self):
         return (self.partner_longitude, self.partner_latitude)
-
-
-class GeoIpResolver(object):
-
-    def record_by_addr(self, ip):
-        res = None
-        try:
-            query = """select country, location
-                          from location l
-                               join blocks using(locid)
-                         where iprange >>= %s"""
-            env = openerp.api.Environment(request.cr, request.uid, request.context)
-            env.cr.execute(query, [ip])
-            res = env.cr.dictfetchone()
-            if res:
-                res = {
-                    'ip': ip,
-                    'country_code': res['country'],
-                    'country_name': res['country'],
-                    'longitude': eval(res['location'])[0],
-                    'latitude': eval(res['location'])[1],
-                }
-        except:
-            res = None
-        return res
-
-
-class ir_http(models.AbstractModel):
-    _inherit = 'ir.http'
-
-    geo_ip_resolver = GeoIpResolver()

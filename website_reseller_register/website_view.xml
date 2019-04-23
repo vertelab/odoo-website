@@ -32,7 +32,6 @@
                                         <textarea type="text" class="form-control" name="website_short_description" rows="10" cols="70"></textarea>
                                     </div>
                                 </div>
-<!--
                                 <div id="company_property_invoice_type" class="form-group">
                                      <label class="col-md-3 col-sm-4 control-label" for="invoicetype">Invoice Type</label>
                                      <div class="col-md-7 col-sm-8">
@@ -43,7 +42,6 @@
                                         </select>
                                     </div>
                                 </div>
--->
                                 <ul class="nav nav-tabs">
                                     <li id="nav_delivery" class="active">
                                         <a data-toggle="tab" href="#delivery" class="hidden-xs">Delivery Address</a>

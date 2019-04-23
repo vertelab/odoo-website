@@ -1,5 +1,0 @@
-id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
-website_error_log_publisher,Website Error Log - Publisher,model_website_error_log,base.group_website_publisher,1,0,0,0
-website_error_log_designer,Website Error Log - Designer,model_website_error_log,base.group_website_designer,1,0,0,1
-
-

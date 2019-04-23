@@ -24,15 +24,7 @@
                                 <span title="View all cached objects">All Objects</span>
                             </a>
                         </li>
-                        <li class="divider"/>
-                        <t t-foreach='(404, 500)' t-as='status_code'>
-                            <li groups="base.group_website_designer">
-                                <a t-att-href="'/mcstatus/%s' % status_code">
-                                    <span t-att-title="'View all cached objects with status code %s' % status_code" t-esc='status_code' />
-                                </a>
-                            </li>
-                        </t>
-                        <li class="divider"/>
+                        
                         <t t-foreach='website.flush_types()' t-as='ft'>
                             <li groups="base.group_website_designer">
                                 <a t-att-href="'/mcflush/%s' % ft">
