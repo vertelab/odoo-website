@@ -18,28 +18,20 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from openerp import models, fields, api, _
 
-import logging
-_logger = logging.getLogger(__name__)
+{
+    'name': 'Blog SEO',
+    'version': '0.1',
+    'category': 'website',
+    'summary': "When posting a blog, also update SEO criterias.",
+    'description': """""",
+    'author': 'Vertel AB',
+    'license': 'AGPL-3',
+    'website': 'http://www.vertel.se',
+    'depends': ['website_blog'],
+    'data': ['website_blog_view.xml','website_blog_data.xml'],
+    'application': False,
+    'installable': True,
+}
 
-
-class res_partner(models.Model):
-    _inherit = 'res.partner'
-    
-    # a new field to save vat number temporary. a button action to copy the data from vat_unchecked to vat
-    vat_unchecked = fields.Char(string = 'VAT Unchecked')
-
-    @api.one
-    def button_insert_vat(self):
-        self.vat_subjected = True
-        self.vat = self.vat_unchecked
-
-    @api.model
-    def remove_inactive_reseller(self):
-        partners = self.env['res.partner'].search([('active', '=', False), ('is_company', '=', True), ('name', '=', 'My Company'), ('child_ids', '=', False)])
-        issues = self.env['project.issue'].search([('stage_id', '=', self.env.ref('project.project_tt_analysis').id), ('partner_id', 'in', partners.mapped('id'))])
-        for i in issues:
-            i.unlink()
-        for p in partners:
-            p.unlink()
+# vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:
