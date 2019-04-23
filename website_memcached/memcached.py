@@ -195,7 +195,7 @@ class website(models.Model):
     def memcache_flush_types(self):
         return list(flush_types[self.env.cr.dbname])
 
-def get_keys(flush_type=None, module=None, path=None, db=None):
+def get_keys(flush_type=None, module=None, path=None, db=None, status_code=None,etag=None):
     if not db:
         db = request.env.cr.dbname
     items = MEMCACHED_CLIENT().stats('items')
@@ -214,6 +214,13 @@ def get_keys(flush_type=None, module=None, path=None, db=None):
             if type(flush_type) != list:
                 flush_type = [flush_type]
             if key.get('flush_type') not in flush_type:
+                del keys[i]
+                continue
+        # Filter on etag
+        if etag and etag != 'all':
+            if type(etag) != list:
+                etag = [etag]
+            if key.get('etag') not in etag:
                 del keys[i]
                 continue
         # Filter on module
@@ -263,6 +270,9 @@ def get_flush_page(keys, title, url='', delete_url=''):
     #~ return '<H1>%s</H1><table>%s</table>' % (title,
         #~ ''.join(['<tr><td><a href="/mcpage/%s/delete">%s (delete)</a></td><td></td><td></td></tr>' % (k,k,p.get('path'),p.get('module'),p.get('flush_type')) for key in keys for p,k in [memcached.MEMCACHED_CLIENT().get(key),key]])
 def mc_save(key, page_dict,cache_age):
+    if cache_age and cache_age > 2592000:  # 30-days
+        # Will be read as a unix timestamp
+        cache_age = int(time()) + cache_age
     MEMCACHED_CLIENT().set(key,page_dict,cache_age)
     #~ chunks = [page_dict['page'][i:1000*900] for i in range(int(math.ceil(len(page_dict['page']) / (1000.0*900))))]
     #~ for i,chunk in enumerate(chunks):
@@ -390,7 +400,7 @@ def route(route=None, **kw):
                                                     post='%s' % kw,
                                                     xmlid='%s' % kw.get('xmlid'),
                                                     version='%s' % kw.get('version'),
-                                                    is_user='1' if request.website.is_user() else '0',
+                                                    is_user='1' if (request.website and request.website.is_user()) else '0',
                                                     employee='1' if request.env.ref('base.group_user') in request.env.user.groups_id else '0',
                                                     publisher='1' if request.env.ref('base.group_website_publisher') in request.env.user.groups_id else '0',
                                                     designer='1' if request.env.ref('base.group_website_designer') in request.env.user.groups_id else '0',
