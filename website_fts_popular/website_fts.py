@@ -59,11 +59,11 @@ class fts_popular(models.Model):
 
     name = fields.Char(string="Word")
     sequence = fields.Integer()
-    # ~ fts_id = fields.Many2one(comodel_name="fts.fts", ondelete='cascade')
-    # ~ fts_nbr_searches = fields.Integer(related="fts_id.fts_nbr_searches")
-    # ~ fts_last_search = fields.Datetime(related="fts_id.fts_last_search")
-    # ~ count = fields.Integer(related="fts_id.count")
-    # ~ rank = fields.Integer(related="fts_id.rank")
+    fts_id = fields.Many2one(comodel_name="fts.fts", ondelete='cascade')
+    fts_nbr_searches = fields.Integer(related="fts_id.fts_nbr_searches")
+    fts_last_search = fields.Datetime(related="fts_id.fts_last_search")
+    count = fields.Integer(related="fts_id.count")
+    rank = fields.Integer(related="fts_id.rank")
     
     
 
