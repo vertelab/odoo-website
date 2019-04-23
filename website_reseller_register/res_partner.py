@@ -26,14 +26,6 @@ _logger = logging.getLogger(__name__)
 
 class res_partner(models.Model):
     _inherit = 'res.partner'
-    
-    # a new field to save vat number temporary. a button action to copy the data from vat_unchecked to vat
-    vat_unchecked = fields.Char(string = 'VAT Unchecked')
-
-    @api.one
-    def button_insert_vat(self):
-        self.vat_subjected = True
-        self.vat = self.vat_unchecked
 
     @api.model
     def remove_inactive_reseller(self):

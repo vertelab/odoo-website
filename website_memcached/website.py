@@ -63,11 +63,6 @@ class MemCachedController(http.Controller):
         }
         return request.website.render('website_memcached.mcmeta_page', values)
 
-
-    @http.route(['/mcetag','/mcetag/<string:etag>',], type='http', auth="user", website=True)
-    def memcached_etag(self, etag='all',**post):
-        return memcached.get_flush_page(memcached.get_keys(etag=etag), 'Cached Pages Etag %s' % etag, '/mcetag/%s' % etag, '/mcetag/%s/delete' % etag)
-
     @http.route(['/mcflush','/mcflush/<string:flush_type>',], type='http', auth="user", website=True)
     def memcached_flush(self, flush_type='all',**post):
         return memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type)
