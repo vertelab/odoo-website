@@ -28,6 +28,7 @@ import base64
 import math
 import sys
 import traceback
+from time import time
 
 import werkzeug.utils
 from werkzeug.http import http_date
@@ -195,7 +196,7 @@ class website(models.Model):
     def memcache_flush_types(self):
         return list(flush_types[self.env.cr.dbname])
 
-def get_keys(flush_type=None, module=None, path=None, db=None, status_code=None,etag=None):
+def get_keys(flush_type=None, module=None, path=None, db=None, status_code=None):
     if not db:
         db = request.env.cr.dbname
     items = MEMCACHED_CLIENT().stats('items')
@@ -216,13 +217,6 @@ def get_keys(flush_type=None, module=None, path=None, db=None, status_code=None,
             if key.get('flush_type') not in flush_type:
                 del keys[i]
                 continue
-        # Filter on etag
-        if etag and etag != 'all':
-            if type(etag) != list:
-                etag = [etag]
-            if key.get('etag') not in etag:
-                del keys[i]
-                continue
         # Filter on module
         if module and module != 'all':
             if type(module) != list:
@@ -237,8 +231,15 @@ def get_keys(flush_type=None, module=None, path=None, db=None, status_code=None,
             if key.get('path') not in path:
                 del keys[i]
                 continue
+        # Filter on status code
+        if status_code and status_code != 'all':
+            if type(status_code) != list:
+                status_code = [status_code]
+            if key.get('status_code') not in status_code:
+                del keys[i]
+                continue
         i += 1
-    
+
     return keys
 
 def get_flush_page(keys, title, url='', delete_url=''):
@@ -269,11 +270,11 @@ def get_flush_page(keys, title, url='', delete_url=''):
 
     #~ return '<H1>%s</H1><table>%s</table>' % (title,
         #~ ''.join(['<tr><td><a href="/mcpage/%s/delete">%s (delete)</a></td><td></td><td></td></tr>' % (k,k,p.get('path'),p.get('module'),p.get('flush_type')) for key in keys for p,k in [memcached.MEMCACHED_CLIENT().get(key),key]])
-def mc_save(key, page_dict,cache_age):
-    if cache_age and cache_age > 2592000:  # 30-days
+def mc_save(key, page_dict, cache_age):
+    if cache_age and cache_age > 2592000:
         # Will be read as a unix timestamp
         cache_age = int(time()) + cache_age
-    MEMCACHED_CLIENT().set(key,page_dict,cache_age)
+    MEMCACHED_CLIENT().set(key, page_dict, cache_age)
     #~ chunks = [page_dict['page'][i:1000*900] for i in range(int(math.ceil(len(page_dict['page']) / (1000.0*900))))]
     #~ for i,chunk in enumerate(chunks):
         #~ if i == 0:
@@ -400,8 +401,6 @@ def route(route=None, **kw):
                                                     post='%s' % kw,
                                                     xmlid='%s' % kw.get('xmlid'),
                                                     version='%s' % kw.get('version'),
-                                                    is_user='1' if (request.website and request.website.is_user()) else '0',
-                                                    employee='1' if request.env.ref('base.group_user') in request.env.user.groups_id else '0',
                                                     publisher='1' if request.env.ref('base.group_website_publisher') in request.env.user.groups_id else '0',
                                                     designer='1' if request.env.ref('base.group_website_designer') in request.env.user.groups_id else '0',
                                                     ).encode('latin-1')
@@ -523,11 +522,12 @@ def route(route=None, **kw):
                     'date':     http_date(),
                     'module':   f.__module__,
                     'status_code': response.status_code,
-                    'flush_type': routing['flush_type'](kw).lower().replace(u'å', 'a').replace(u'ä', 'a').replace(u'ö', 'o').replace(' ', '-') if routing.get('flush_type', None) else "",
+                    'flush_type': routing['flush_type'](kw).lower().encode('ascii', 'replace').replace(' ', '-') if routing.get('flush_type', None) else "",
                     'headers': response.headers,
                     }
                 if routing.get('no_cache'):
                     page_dict['ETag'] = '%s' % MEMCACHED_HASH(page)
+                # ~ _logger.warn('\n\npath: %s\nstatus_code: %s\nETag: %s\n' % (page_dict.get('path'), page_dict.get('status_code'), page_dict.get('ETag')))
                 mc_save(key, page_dict,cache_age)
                 if routing.get('flush_type'):
                     add_flush_type(request.cr.dbname, routing['flush_type'](kw))
@@ -548,7 +548,7 @@ def route(route=None, **kw):
                         ]
                     header += [(k,v) for k,v in page_dict.get('headers',[(None,None)])]
                     _logger.warn('returns 304 headers %s' % header)
-                    if page_dict.get('status_code') in ['301','302','307','308']:
+                    if page_dict.get('status_code') in [301, 302, 307, 308]:
                         return werkzeug.wrappers.Response(status=page_dict['status_code'],headers=header)
                     return werkzeug.wrappers.Response(status=304,headers=header)
             response = http.Response(base64.b64decode(page_dict.get('page'))) # always create a new response (drop response from controller)
@@ -581,7 +581,7 @@ def route(route=None, **kw):
             response.headers['X-CacheBlacklist'] = kw.get('blacklist','')
             response.headers['Date'] = page_dict.get('date',http_date())
             response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)
-            response.status_code = int(page_dict.get('status_code','200'))
+            response.status_code = page_dict.get('status_code', 200)
             return response
 
         response_wrap.routing = routing
