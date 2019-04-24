@@ -68,6 +68,10 @@ class MemCachedController(http.Controller):
         return memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type)
         #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type))
 
+    @http.route(['/mcetag','/mcetag/<string:etag>',], type='http', auth="user", website=True)
+    def memcached_etag(self, etag='all',**post):
+        return memcached.get_flush_page(memcached.get_keys(etag=etag), 'Cached Pages Etag %s' % etag, '/mcetag/%s' % etag, '/mcetag/%s/delete' % etag)
+
     @http.route(['/mcflush/<string:flush_type>/delete',], type='http', auth="user", website=True)
     def memcached_flush_delete(self, flush_type='all',**post):
         for key in memcached.get_keys(flush_type=flush_type):
