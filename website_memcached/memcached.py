@@ -102,41 +102,36 @@ def MEMCACHED_CLIENT():
             MEMCACHED__CLIENT__ = PooledClient(MEMCACHED_SERVER, serializer=serialize_pickle, deserializer=deserialize_pickle,no_delay=MEMCACHE_NODELAY,connect_timeout=MEMCACHE_CONNECT_TIMEOUT,timeout=MEMCACHE_TIMEOUT)
             MEMCACHED_VERSION = MEMCACHED__CLIENT__.version()
 
+       ## Retreive all flush_types per database
+
+            # https://www.tutorialspoint.com/memcached/memcached_stats_items.htm
+            # echo "stats items"|nc localhost 11211|grep number
+            #    STAT items:11:number 3
+            #    STAT items:12:number 3
+            #    STAT items:13:number 1
+            #    STAT items:14:number 19
+            #    STAT items:15:number 1212
+
             items = MEMCACHED__CLIENT__.stats('items')
-            slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED__CLIENT__.stats('items').items() if k.split(':')[2] == 'number' }
-            key_lists = [MEMCACHED__CLIENT__.stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
-            keys =  [key for sublist in key_lists for key in sublist.keys()]
+            slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED__CLIENT__.stats('items').items() if k.split(':')[2] == 'number' }  # slab -> limit
+            
+            # echo "stats cachedump 15 1212 "|nc localhost 11211  # slab limit
+            # ITEM 4092067750 [2231 b; 1561018218 s]
+            # ITEM 3699334878 [1974 b; 1560964179 s]
+            # ITEM 2768968127 [2071 b; 1560968016 s]
+            # ITEM 2482188247 [2126 b; 1561020033 s]
+            # ITEM 2293401784 [2086 b; 1560972986 s]
+
+            key_lists = [MEMCACHED__CLIENT__.stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]  # List of lists
+            keys =  [key for sublist in key_lists for key in sublist.keys()]  # [4092067750, 3699334878 ...]             flattended list
             for key in keys:
                 page = MEMCACHED__CLIENT__.get(key)
+                # echo "get 4092067750 "|nc localhost 11211  -> dict with data
+                
                 if page and page.get('db'):
                     if not flush_types.get(page['db'], None):
                         flush_types[page['db']] = set()
                     flush_types[page['db']].add(page.get('flush_type'))
-
-          #~ server: tuple(hostname, port)
-          #~ serializer: optional function, see notes in the class docs.
-          #~ deserializer: optional function, see notes in the class docs.
-          #~ connect_timeout: optional float, seconds to wait for a connection to
-            #~ the memcached server. Defaults to "forever" (uses the underlying
-            #~ default socket timeout, which can be very long).
-          #~ timeout: optional float, seconds to wait for send or recv calls on
-            #~ the socket connected to memcached. Defaults to "forever" (uses the
-            #~ underlying default socket timeout, which can be very long).
-          #~ no_delay: optional bool, set the TCP_NODELAY flag, which may help
-            #~ with performance in some cases. Defaults to False.
-          #~ ignore_exc: optional bool, True to cause the "get", "gets",
-            #~ "get_many" and "gets_many" calls to treat any errors as cache
-            #~ misses. Defaults to False.
-          #~ socket_module: socket module to use, e.g. gevent.socket. Defaults to
-            #~ the standard library's socket module.
-          #~ key_prefix: Prefix of key. You can use this as namespace. Defaults
-            #~ to b''.
-          #~ default_noreply: bool, the default value for 'noreply' as passed to
-            #~ store commands (except from cas, incr, and decr, which default to
-            #~ False).
-          #~ allow_unicode_keys: bool, support unicode (utf8) keys
-
-          #http://pymemcache.readthedocs.io/en/latest/getting_started.html
 
         except Exception as e:
             err = sys.exc_info()
