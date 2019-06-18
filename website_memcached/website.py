@@ -133,3 +133,31 @@ class MemCachedController(http.Controller):
 
         #~ view_stat = '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats().items()])
         #~ view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats('items').items()])
+        
+    @http.route(['/memcache/stats',], type='http', auth="user", website=True)
+    def memcache_statistics(self, **post):
+        slab_stats = request.website.memcache_get_stats('slabs')
+        slabs = {}
+        for key in slab_stats.keys():
+            key_s = key.split(':')
+            if len(key_s) > 1:
+                value = slab_stats[key]
+                key_name = key_s[1]
+                slab = int(key_s[0])
+                if slab not in slabs:
+                    slabs[slab] = {}
+                slabs[slab][key_name] = value
+                del slab_stats[key]
+        slab_stats['slabs'] = slabs
+        values = {
+            'stats': request.website.memcache_get_stats(),
+            'slabs': slab_stats,
+            'items': request.website.memcache_get_stats('items'),
+            'stats_desc': request.website.memcache_get_stats_desc(),
+            'slabs_desc': request.website.memcache_get_stats_desc('slabs'),
+            'items_desc': request.website.memcache_get_stats_desc('items'),
+            #'sizes': request.website.memcache_get_stats('sizes'), # disabled?
+            #'detail': request.website.memcache_get_stats('detail', 'dump'), # not sure how to use it. on|off|dump = error|error|empty
+            'sorted': sorted,
+        }
+        return request.website.render('website_memcached.statistics_page', values)

@@ -111,7 +111,7 @@ class CachedBinary(openerp.addons.web.controllers.main.Binary):
         #~ '/logo',
         #~ '/logo.png',
     #~ ], type='http', auth="none", cors="*")
-    @memcached.route(flush_type=lambda kw: 'page_image',binary=True)
+    @memcached.route(flush_type=lambda kw: 'page_image', binary=True)
     def company_logo(self, dbname=None, **kw):
         return super(CachedBinary, self).company_logo(dbname, **kw)
 

@@ -120,8 +120,8 @@ class GeoFields(models.AbstractModel):
                 query = """SELECT id FROM %s WHERE %s ORDER BY "%s"."%s" <-> %%s LIMIT %%s""" % (from_clause, where_clause, self._table, field)
                 #~ params = [str(position), str(position), limit]
                 params += [str(position), limit]
-                _logger.warn(query)
-                _logger.warn(params)
+                _logger.debug(query)
+                _logger.debug(params)
                 self.env.cr.execute(query, params)
                 values = self.env.cr.dictfetchall()
                 return [v['id'] for v in values]
@@ -129,7 +129,7 @@ class GeoFields(models.AbstractModel):
     @api.model
     def geoip_search(self, field, ip, domain=None, limit=10):
         domain = domain or []
-        _logger.warn(' domain: %s' %domain)
+        _logger.debug('domain: %s' %domain)
         for f in self._geo_fields:
             if f['name'] == field:
                 query_obj = self._where_calc(domain)
@@ -148,8 +148,8 @@ class GeoFields(models.AbstractModel):
                 """ % (from_clause, where_clause, field)
                 #~ params = [str(position), str(position), limit]
                 params = [ip] + params + [limit]
-                _logger.warn(query)
-                _logger.warn(params)
+                _logger.debug(query)
+                _logger.debug(params)
                 self.env.cr.execute(query, params)
                 values = self.env.cr.dictfetchall()
                 return [v['id'] for v in values]
@@ -181,8 +181,8 @@ class GeoFields(models.AbstractModel):
                 # ~ """ % (self._table, field, field)
                 #~ params = [str(position), str(position), limit]
                 params = [country, postal_code] + params + [limit]
-                _logger.warn(query)
-                _logger.warn(params)
+                _logger.debug(query)
+                _logger.debug(params)
                 self.env.cr.execute(query, params)
                 values = self.env.cr.dictfetchall()
                 return [v['id'] for v in values]

@@ -190,7 +190,188 @@ class website(models.Model):
     @api.model
     def memcache_flush_types(self):
         return list(flush_types[self.env.cr.dbname])
-
+    
+    @api.model
+    def memcache_get_stats(self, *args):
+        return MEMCACHED_CLIENT().stats(*args)
+    
+    @api.model
+    def memcache_get_stats_desc(self, *args):
+        standard = {'bytes': {'data_type': '64u',
+                               'description': 'Current number of bytes used by this server to store items.',
+                               'version': ''},
+                     'bytes_read': {'data_type': '64u',
+                                    'description': 'Total number of bytes read by this server from network.',
+                                    'version': ''},
+                     'bytes_written': {'data_type': '64u',
+                                       'description': 'Total number of bytes sent by this server to network.',
+                                       'version': ''},
+                     'cas_badvalue': {'data_type': '64u',
+                                      'description': 'Number of keys that have been compared and swapped, but the comparison (original) value did not match the supplied value.',
+                                      'version': '1.3.x'},
+                     'cas_hits': {'data_type': '64u',
+                                  'description': 'Number of keys that have been compared and swapped and found present.',
+                                  'version': '1.3.x'},
+                     'cas_misses': {'data_type': '64u',
+                                    'description': 'Number of items that have been compared and swapped and not found.',
+                                    'version': '1.3.x'},
+                     'cmd_get': {'data_type': '64u',
+                                 'description': 'Total number of retrieval requests (get operations).',
+                                 'version': ''},
+                     'cmd_set': {'data_type': '64u',
+                                 'description': 'Total number of storage requests (set operations).',
+                                 'version': ''},
+                     'conn_yields': {'data_type': '64u',
+                                     'description': 'Number of yields for connections (related to the -R option).',
+                                     'version': '1.4.0'},
+                     'connection_structures': {'data_type': '32u',
+                                               'description': 'Number of connection structures allocated by the server.',
+                                               'version': ''},
+                     'curr_connections': {'data_type': '32u',
+                                          'description': 'Current number of open connections.',
+                                          'version': ''},
+                     'curr_items': {'data_type': '32u',
+                                    'description': 'Current number of items stored by this instance.',
+                                    'version': ''},
+                     'decr_hits': {'data_type': '64u',
+                                   'description': 'Number of keys that have been decremented and found present.',
+                                   'version': '1.3.x'},
+                     'decr_misses': {'data_type': '64u',
+                                     'description': 'Number of items that have been decremented and not found.',
+                                     'version': '1.3.x'},
+                     'delete_hits': {'data_type': '64u',
+                                     'description': 'Number of keys that have been deleted and found present.',
+                                     'version': '1.3.x'},
+                     'delete_misses': {'data_type': '64u',
+                                       'description': 'Number of items that have been delete and not found.',
+                                       'version': '1.3.x'},
+                     'evictions': {'data_type': '64u',
+                                   'description': 'Number of valid items removed from cache to free memory for new items.',
+                                   'version': ''},
+                     'get_hits': {'data_type': '64u',
+                                  'description': 'Number of keys that have been requested and found present.',
+                                  'version': ''},
+                     'get_misses': {'data_type': '64u',
+                                    'description': 'Number of items that have been requested and not found.',
+                                    'version': ''},
+                     'incr_hits': {'data_type': '64u',
+                                   'description': 'Number of keys that have been incremented and found present.',
+                                   'version': '1.3.x'},
+                     'incr_misses': {'data_type': '64u',
+                                     'description': 'Number of items that have been incremented and not found.',
+                                     'version': '1.3.x'},
+                     'limit_maxbytes': {'data_type': '32u',
+                                        'description': 'Number of bytes this server is permitted to use for storage.',
+                                        'version': ''},
+                     'pid': {'data_type': '32u',
+                             'description': 'Process ID of the memcached instance.',
+                             'version': ''},
+                     'pointer_size': {'data_type': 'string',
+                                      'description': 'Size of pointers for this host specified in bits (32 or 64).',
+                                      'version': ''},
+                     'rusage_system': {'data_type': '32u:32u',
+                                       'description': 'Total system time for this instance (seconds:microseconds).',
+                                       'version': ''},
+                     'rusage_user': {'data_type': '32u:32u',
+                                     'description': 'Total user time for this instance (seconds:microseconds).',
+                                     'version': ''},
+                     'threads': {'data_type': '32u',
+                                 'description': 'Number of worker threads requested.',
+                                 'version': ''},
+                     'time': {'data_type': '32u',
+                              'description': 'Current time (as epoch).',
+                              'version': ''},
+                     'total_connections': {'data_type': '32u',
+                                           'description': 'Total number of connections opened since the server started running.',
+                                           'version': ''},
+                     'total_items': {'data_type': '32u',
+                                     'description': 'Total number of items stored during the life of this instance.',
+                                     'version': ''},
+                     'uptime': {'data_type': '32u',
+                                'description': 'Uptime (in seconds) for this memcached instance.',
+                                'version': ''},
+                     'version': {'data_type': 'string',
+                                 'description': 'Version string of this instance.',
+                                 'version': ''},}
+        slabs = {'cas_badval': {'data_type': '',
+                                'description': 'Number of CAS hits on this chunk where the existing value did not match',
+                                'version': '1.3.x'},
+                 'cas_hits': {'data_type': '',
+                              'description': 'Number of CAS hits to this chunk',
+                              'version': '1.3.x'},
+                 'chunk_size': {'data_type': '',
+                                'description': 'Space allocated to each chunk within this slab class.',
+                                'version': ''},
+                 'chunks_per_page': {'data_type': '',
+                                     'description': 'Number of chunks within a single page for this slab class.',
+                                     'version': ''},
+                 'cmd_set': {'data_type': '',
+                             'description': 'Number of set commands on this chunk',
+                             'version': '1.3.x'},
+                 'decr_hits': {'data_type': '',
+                               'description': 'Number of decrement hits to this chunk',
+                               'version': '1.3.x'},
+                 'delete_hits': {'data_type': '',
+                                 'description': 'Number of delete hits to this chunk',
+                                 'version': '1.3.x'},
+                 'free_chunks': {'data_type': '',
+                                 'description': 'Number of chunks not yet allocated to items.',
+                                 'version': ''},
+                 'free_chunks_end': {'data_type': '',
+                                     'description': 'Number of free chunks at the end of the last allocated page.',
+                                     'version': ''},
+                 'get_hits': {'data_type': '',
+                              'description': 'Number of get hits to this chunk',
+                              'version': '1.3.x'},
+                 'incr_hits': {'data_type': '',
+                               'description': 'Number of increment hits to this chunk',
+                               'version': '1.3.x'},
+                 'mem_requested': {'data_type': '',
+                                   'description': 'The true amount of memory of memory requested within this chunk',
+                                   'version': '1.4.1'},
+                 'total_chunks': {'data_type': '',
+                                  'description': 'Number of chunks allocated to the slab class.',
+                                  'version': ''},
+                 'total_pages': {'data_type': '',
+                                 'description': 'Number of pages allocated to this slab class.',
+                                 'version': ''},
+                 'used_chunks': {'data_type': '',
+                                 'description': 'Number of chunks allocated to an item..',
+                                 'version': ''},
+                 'active_slabs': {'data_type': '',
+                                 'description': 'Total number of slab classes allocated.',
+                                 'version': ''},
+                 'total_malloced': {'data_type': '',
+                                 'description': 'Total amount of memory allocated to slab pages.',
+                                 'version': ''},}
+        items = {'age': {'data_type': '',
+                         'description': 'The age of the oldest item within the slab class, in seconds.',
+                         'version': ''},
+                 'evicted': {'data_type': '',
+                             'description': 'The number of items evicted to make way for new entries.',
+                             'version': ''},
+                 'evicted_nonzero': {'data_type': '',
+                                     'description': 'The time of the last evicted non-zero entry',
+                                     'version': '1.4.0'},
+                 'evicted_time': {'data_type': '',
+                                  'description': 'The time of the last evicted entry',
+                                  'version': ''},
+                 'number': {'data_type': '',
+                            'description': 'The number of items currently stored in this slab class.',
+                            'version': ''},
+                 'outofmemory': {'data_type': '',
+                                 'description': 'The number of items for this slab class that have triggered an out of memory error (only value when the -M command line option is in effect).',
+                                 'version': ''},
+                 'tailrepairs': {'data_type': '',
+                                 'description': 'Number of times the entries for a particular ID need repairing',
+                                 'version': ''},}
+        if args:
+            if args[0] == 'items':
+                return items
+            elif args[0] == 'slabs':
+                return slabs
+        return standard
+    
 def get_keys(flush_type=None, module=None, path=None, db=None, status_code=None,etag=None):
     if not db:
         db = request.env.cr.dbname
@@ -388,7 +569,7 @@ def route(route=None, **kw):
             routing['routes'] = routes
         @functools.wraps(f)
         def response_wrap(*args, **kw):
-            #~ _logger.warn('\n\npath: %s\n' % request.httprequest.path)
+            # ~ _logger.warn('\n\npath: %s\n' % request.httprequest.path)
             if routing.get('key'): # Function that returns a raw string for key making
                 # Format {path}{session}{etc}
                 key_raw = routing['key'](kw).format(path=request.httprequest.path,
@@ -413,6 +594,7 @@ def route(route=None, **kw):
             else:
                 key_raw = ('%s,%s,%s' % (request.env.cr.dbname,request.httprequest.path,request.env.context)).encode('latin-1') # Default key
                 key = str(MEMCACHED_HASH(key_raw))
+                # ~ _logger.warn('\n\ndefault key_raw: %s\nkey: %s\n' % (key_raw, key))
 
 ############### Key is ready
 
@@ -495,6 +677,8 @@ def route(route=None, **kw):
             page = None
 
             if not page_dict:
+                # MISS. Render the page.
+                # ~ _logger.warn('\n\nMISS. Rendering the page.\n')
                 page_dict = {}
                 controller_start = timer()
                 response = f(*args, **kw) # calls original controller
@@ -513,6 +697,7 @@ def route(route=None, **kw):
                     page = response.render()
                 else:
                     page = ''.join(response.response)
+                flush_type = routing['flush_type'](kw).lower().encode('ascii', 'replace').replace(' ', '-') if routing.get('flush_type', None) else ""
                 page_dict = {
                     'max-age':  max_age,
                     'cache-age':cache_age,
@@ -526,35 +711,43 @@ def route(route=None, **kw):
                     'date':     http_date(),
                     'module':   f.__module__,
                     'status_code': response.status_code,
-                    'flush_type': routing['flush_type'](kw).lower().encode('ascii', 'replace').replace(' ', '-') if routing.get('flush_type', None) else "",
+                    'flush_type': flush_type,
                     'headers': response.headers,
                     }
                 if routing.get('no_cache'):
                     page_dict['ETag'] = '%s' % MEMCACHED_HASH(page)
                 # ~ _logger.warn('\n\npath: %s\nstatus_code: %s\nETag: %s\n' % (page_dict.get('path'), page_dict.get('status_code'), page_dict.get('ETag')))
-                mc_save(key, page_dict,cache_age)
-                if routing.get('flush_type'):
-                    add_flush_type(request.cr.dbname, routing['flush_type'](kw))
+                mc_save(key, page_dict, cache_age)
+                if flush_type:
+                    add_flush_type(request.cr.dbname, flush_type)
                 #~ raise Warning(f.__module__,f.__name__,route())
             else:
+                # HIT in cache. ETag not checked yet...
                 request_dict = {h[0]: h[1] for h in request.httprequest.headers}
                 #~ _logger.warn('Page Exists If-None-Match %s Etag %s' %(request_dict.get('If-None-Match'), page_dict.get('ETag')))
                 if request_dict.get('If-None-Match') and (request_dict.get('If-None-Match') == page_dict.get('ETag')):
+                    # HIT with correct ETag
                     header = [
                         ('X-CacheETag', page_dict.get('ETag')),
-                        ('X-CacheKey',key),
-                        ('X-Cache','newly rendered' if page else 'from cache'),
-                        ('X-CacheKeyRaw',key_raw),
-                        ('X-CacheController',page_dict.get('controller_time')),
-                        ('X-CacheRender',page_dict.get('render_time')),
-                        ('X-CacheCacheAge',cache_age),
-                        ('Server','Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)),
+                        ('X-CacheKey', key),
+                        ('X-Cache', 'from cache'),
+                        ('X-CacheKeyRaw', key_raw),
+                        ('X-CacheController', page_dict.get('controller_time')),
+                        ('X-CacheRender', page_dict.get('render_time')),
+                        ('X-CacheCacheAge', cache_age),
+                        ('Server', 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)),
                         ]
+                    # TODO: Do we need this? Odoo provides its own ETag for some files, which cause mixups.
+                    #       Might be that these headers are needed when downloading files in /web (we had some such problem earlier).
                     header += [(k,v) for k,v in page_dict.get('headers',[(None,None)])]
-                    _logger.warn('returns 304 headers %s' % header)
+                    # ~ _logger.warn('returns 304 headers %s' % header)
                     if page_dict.get('status_code') in [301, 302, 307, 308]:
+                        # ~ _logger.warn('\n\nHIT, but weird status_code: %s\n' % page_dict.get('status_code'))
                         return werkzeug.wrappers.Response(status=page_dict['status_code'],headers=header)
+                    # ~ _logger.warn('\n\nHIT. ETag matches: %s\n' % request_dict.get('If-None-Match'))
                     return werkzeug.wrappers.Response(status=304,headers=header)
+                # HIT, but ETag does not match.
+                # ~ _logger.warn('\n\nHIT. ETag did not match.\n')
             response = http.Response(base64.b64decode(page_dict.get('page'))) # always create a new response (drop response from controller)
 
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
@@ -569,10 +762,12 @@ def route(route=None, **kw):
                 #~ _logger.error('respnse headers list')
 
                 #~ response.headers = {h[0]: h[1] for h in response.headers}
+            # ~ _logger.warn('\n\nclean headers: %s\n' % response.headers)
             if page_dict.get('headers'):
                 for k,v in page_dict['headers'].items():
                     #~ response.headers.add(k,v)
                     response.headers[k] = v
+            # ~ _logger.warn('\n\ndirty headers: %s\n' % response.headers)
             response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s, %s' % (max_age, s_maxage, ','.join([keyword for keyword in ['no-store', 'immutable', 'no-transform', 'no-cache', 'must-revalidate', 'proxy-revalidate'] if routing.get(keyword.replace('-', '_'))] + [routing.get('private', 'public')])) # private: must not be stored by a shared cache.
             if page_dict.get('ETag'):
                 response.headers['ETag'] = page_dict.get('ETag')
@@ -586,6 +781,8 @@ def route(route=None, **kw):
             response.headers['Date'] = page_dict.get('date',http_date())
             response.headers['Server'] = 'Odoo %s Memcached %s' % (common.exp_version().get('server_version'), MEMCACHED_VERSION)
             response.status_code = page_dict.get('status_code', 200)
+            # ~ _logger.warn('\n\nfinal headers: %s\n' % response.headers)
+            # ~ _logger.warn('\n%s\n' % ''.join(traceback.format_stack()))
             return response
 
         response_wrap.routing = routing
