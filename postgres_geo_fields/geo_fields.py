@@ -207,7 +207,7 @@ class GeoIpResolver(object):
                           from location l
                                join blocks using(locid)
                          where iprange >>= %s"""
-            env = openerp.api.Environment(request.cr, request.uid, request.context)
+            env = api.Environment(request.cr, request.uid, request.context)
             env.cr.execute(query, [ip])
             res = env.cr.dictfetchone()
             if res:
