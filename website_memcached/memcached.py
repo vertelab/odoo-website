@@ -154,6 +154,7 @@ def add_flush_type(db, name):
 
 def clean_text(text):
     """Scrub away filthy characters that werkzeug doesn't like to get back in headers."""
+    # I remember writing this, but I can't remember why text.encode('latin1', 'replace') didn't work.
     res = ''
     for c in text:
         try:
@@ -588,11 +589,11 @@ def route(route=None, **kw):
                                                     employee='1' if request.env.ref('base.group_user') in request.env.user.groups_id else '0',
                                                     publisher='1' if request.env.ref('base.group_website_publisher') in request.env.user.groups_id else '0',
                                                     designer='1' if request.env.ref('base.group_website_designer') in request.env.user.groups_id else '0',
-                                                    ).encode('latin-1')
+                                                    ).encode('latin-1', 'replace')
                 #~ raise Warning(request.env['res.users'].browse(request.uid).group_ids)
                 key = str(MEMCACHED_HASH(key_raw))
             else:
-                key_raw = ('%s,%s,%s' % (request.env.cr.dbname,request.httprequest.path,request.env.context)).encode('latin-1') # Default key
+                key_raw = ('%s,%s,%s' % (request.env.cr.dbname,request.httprequest.path,request.env.context)).encode('latin-1', 'replace') # Default key
                 key = str(MEMCACHED_HASH(key_raw))
                 # ~ _logger.warn('\n\ndefault key_raw: %s\nkey: %s\n' % (key_raw, key))
 

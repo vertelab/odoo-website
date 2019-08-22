@@ -29,39 +29,38 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+class Event(models.Model):
+    _inherit = 'event.event'
+    
+    memcached_time = fields.Datetime(string='Memcached Timestamp', default=lambda *args, **kwargs: fields.Datetime.now(), help="Last modification relevant to memcached.")
+
 class event_registration(models.Model):
     _inherit = 'event.registration'
 
     @api.one
     def do_draft(self):
         super(event_registration, self).do_draft()
-        for key in memcached.get_keys(flush_type='event register %s' %self.event_id.name):
-            memcached.mc_delete(key)
+        self.event_id.memcached_time = fields.Datetime.now()
 
     @api.one
     def confirm_registration(self):
         super(event_registration, self).confirm_registration()
-        for key in memcached.get_keys(flush_type='event register %s' %self.event_id.name):
-            memcached.mc_delete(key)
+        self.event_id.memcached_time = fields.Datetime.now()
 
     @api.one
     def registration_open(self):
         super(event_registration, self).registration_open()
-        for key in memcached.get_keys(flush_type='event register %s' %self.event_id.name):
-            memcached.mc_delete(key)
+        self.event_id.memcached_time = fields.Datetime.now()
 
     @api.one
     def button_reg_close(self):
-        for key in memcached.get_keys(flush_type='event register %s' %self.event_id.name):
-            memcached.mc_delete(key)
         super(event_registration, self).button_reg_close()
+        self.event_id.memcached_time = fields.Datetime.now()
 
     @api.one
     def button_reg_cancel(self):
         super(event_registration, self).button_reg_cancel()
-        for key in memcached.get_keys(flush_type='event register %s' %self.event_id.name):
-            memcached.mc_delete(key)
-
+        self.event_id.memcached_time = fields.Datetime.now()
 
 class Website(models.Model):
     _inherit = 'website'
@@ -69,25 +68,29 @@ class Website(models.Model):
     def get_kw_event(self, kw):
         return kw['event'].name if kw.get('event', None) else ''
 
-
 class website_event(website_event):
 
     # '/event'
-    @memcached.route()
+    @memcached.route(key=lambda kw: '{db}/event{employee}{logged_in}{publisher}{designer}{lang}%s' % (request.env['event.event'].search_read([('website_published', '=', True), ('memcached_time', '!=', False)], ['memcached_time'], limit=1, order='memcached_time desc' ) or {'memcached_time': ''} )['memcached_time'])
     def events(self, page=1, **searches):
         return super(website_event, self).events(page, **searches)
 
     # '/event/<model("event.event"):event>/page/<path:page>'
-    @memcached.route(flush_type=lambda kw: 'event %s' %request.website.get_kw_event(kw))
+    @memcached.route(
+        flush_type=lambda kw: 'event %s' %request.website.get_kw_event(kw),
+        key=lambda kw: '{db}/event/%s/page/page{employee}{logged_in}{publisher}{designer}{lang}%s' % (kw.get('event') and (kw['event'].id, kw['event'].memcached_time or '') or ('', '')))
     def event_page(self, event, page, **post):
         return super(website_event, self).event_page(event, page, **post)
 
     # '/event/<model("event.event"):event>/register'
-    @memcached.route(flush_type=lambda kw: 'event register %s' %request.website.get_kw_event(kw))
+    @memcached.route(
+        flush_type=lambda kw: 'event register %s' %request.website.get_kw_event(kw),
+        key=lambda kw: '{db}/event/%s/register{employee}{logged_in}{publisher}{designer}{lang}%s' % (kw.get('event') and (kw['event'].id, kw['event'].memcached_time or '') or ('', '')))
     def event_register(self, event, **post):
         return super(website_event, self).event_register(event, **post)
 
     # '/event/get_country_event_list'
-    @memcached.route()
+    @memcached.route(
+        key=lambda kw: '{db}/event/get_country_event_list{employee}{logged_in}{publisher}{designer}{lang}%s' % (request.env['event.event'].search_read([('website_published', '=', True), ('memcached_time', '!=', False)], ['memcached_time'], limit=1, order='memcached_time desc' ) or {'memcached_time': ''} )['memcached_time'])
     def get_country_events(self, **post):
         return super(website_event, self).get_country_events(**post)
