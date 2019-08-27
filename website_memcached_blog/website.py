@@ -37,14 +37,22 @@ class Website(models.Model):
 
 
 class CachedBlog(WebsiteBlog):
+    memcached_time = fields.Datetime(string='Memcached Timestamp', default=lambda *args, **kwargs: fields.Datetime.now(), help="Last modification relevant to memcached.")
+
 
     #~ @http.route([
         #~ '/blog',
         #~ '/blog/page/<int:page>',
     #~ ], type='http', auth="public", website=True)
-    @memcached.route(flush_type=lambda kw: 'blog %s' %request.website.get_kw_blog(kw))
+
+    @memcached.route(flush_type=lambda kw: 'blog-list', key=lambda kw: '{db}/blog/page/%s{employee}{logged_in}{publisher}{designer}{lang}%s' % (kw.get('page', 1),
+        request.env['blog.blog'].search_read(
+            [('website_published', '=', True), ('memcached_time', '!=', False)],
+            ['memcached_time'], limit=1, order='memcached_time desc' ) or {'memcached_time': ''} )['memcached_time'])
+    
     def blogs(self, page=1, **post):
         return super(CachedBlog, self).blogs(page, **post)
+        
 
     #~ @http.route([
         #~ '/blog/<model("blog.blog"):blog>',
@@ -63,6 +71,8 @@ class CachedBlog(WebsiteBlog):
     @memcached.route(flush_type=lambda kw: 'blog %s' %request.website.get_kw_blog(kw))
     def blog_post(self, blog, blog_post, tag_id=None, page=1, enable_editor=None, **post):
         return super(CachedBlog, self).blog_post(blog, blog_post, tag_id, page, enable_editor, **post)
+        
+        
 
     #~ @http.route(['/blogpost/comment'], type='http', auth="public", website=True)
     #~ @memcached.route()
@@ -81,3 +91,23 @@ class CachedBlog(WebsiteBlog):
     #~ def memcached_flush_blog_all(self,**post):
         #~ memcached.MEMCACHED_CLIENT().delete(memcached.get_keys(flush_type='blog'))
         #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type='blog'),'Flush Blog','/mcflush/blog'))
+            
+class BlogPost(models.Model):
+    _inherit = 'blog.post'
+    memcached_time = fields.Datetime(string='Memcached Timestamp', default=lambda *args, **kwargs: fields.Datetime.now(), help="Last modification relevant to memcached.")
+
+
+    @api.one
+    def do_publish(self):
+        super(BlogPost, self).do_publish()
+        self.memcached_time = fields.Datetime.now()
+
+    @api.one
+    def do_unpublish(self):
+        super(BlogPost, self).do_unpublish()
+        self.memcached_time = fields.Datetime.now()
+    
+    @api.multi
+    def write(self, values):
+        values['memcached_time'] = fields.Datetime.now()
+        return super(BlogPost, self).write(values)
