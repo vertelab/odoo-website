@@ -69,26 +69,32 @@ class Website(models.Model):
         return kw['event'].name if kw.get('event', None) else ''
 
 class website_event(website_event):
-
+    
     # '/event'
-    @memcached.route(key=lambda kw: '{db}/event{employee}{logged_in}{publisher}{designer}{lang}%s' % (request.env['event.event'].search_read([('website_published', '=', True), ('memcached_time', '!=', False)], ['memcached_time'], limit=1, order='memcached_time desc' ) or {'memcached_time': ''} )['memcached_time'])
+    @memcached.route(
+        key=lambda kw: '{db}/event{employee}{logged_in}{publisher}{designer}{lang}%s' % (
+            request.env['event.event'].search_read(
+                [('website_published', '=', True), ('memcached_time', '!=', False)],
+                ['memcached_time'], limit=1, order='memcached_time desc'
+            ) or {'memcached_time': ''})['memcached_time']
+    )
     def events(self, page=1, **searches):
         return super(website_event, self).events(page, **searches)
-
+    
     # '/event/<model("event.event"):event>/page/<path:page>'
     @memcached.route(
         flush_type=lambda kw: 'event %s' %request.website.get_kw_event(kw),
         key=lambda kw: '{db}/event/%s/page/page{employee}{logged_in}{publisher}{designer}{lang}%s' % (kw.get('event') and (kw['event'].id, kw['event'].memcached_time or '') or ('', '')))
     def event_page(self, event, page, **post):
         return super(website_event, self).event_page(event, page, **post)
-
+    
     # '/event/<model("event.event"):event>/register'
     @memcached.route(
         flush_type=lambda kw: 'event register %s' %request.website.get_kw_event(kw),
         key=lambda kw: '{db}/event/%s/register{employee}{logged_in}{publisher}{designer}{lang}%s' % (kw.get('event') and (kw['event'].id, kw['event'].memcached_time or '') or ('', '')))
     def event_register(self, event, **post):
         return super(website_event, self).event_register(event, **post)
-
+    
     # '/event/get_country_event_list'
     @memcached.route(
         key=lambda kw: '{db}/event/get_country_event_list{employee}{logged_in}{publisher}{designer}{lang}%s' % (request.env['event.event'].search_read([('website_published', '=', True), ('memcached_time', '!=', False)], ['memcached_time'], limit=1, order='memcached_time desc' ) or {'memcached_time': ''} )['memcached_time'])

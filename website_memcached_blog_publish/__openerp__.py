@@ -20,7 +20,7 @@
 ##############################################################################
 
 {
-    'name': 'Website MemCached Blog',
+    'name': 'DEPRECATED! Website MemCached Blog',
     'version': '1.0',
     'category': 'other',
     'summary': 'website acceleration for blog using memcached',

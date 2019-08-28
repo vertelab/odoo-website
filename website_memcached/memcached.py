@@ -769,7 +769,7 @@ def route(route=None, **kw):
                     #~ response.headers.add(k,v)
                     response.headers[k] = v
             # ~ _logger.warn('\n\ndirty headers: %s\n' % response.headers)
-            response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s, %s' % (max_age, s_maxage, ','.join([keyword for keyword in ['no-store', 'immutable', 'no-transform', 'no-cache', 'must-revalidate', 'proxy-revalidate'] if routing.get(keyword.replace('-', '_'))] + [routing.get('private', 'public')])) # private: must not be stored by a shared cache.
+            response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s,%s' % (max_age, s_maxage, ','.join([keyword for keyword in ['no-store', 'immutable', 'no-transform', 'no-cache', 'must-revalidate', 'proxy-revalidate'] if routing.get(keyword.replace('-', '_'))] + [routing.get('private', 'public')])) # private: must not be stored by a shared cache.
             if page_dict.get('ETag'):
                 response.headers['ETag'] = page_dict.get('ETag')
             response.headers['X-CacheKey'] = key
