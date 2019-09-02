@@ -23,11 +23,9 @@ import openerp
 from openerp import http
 from openerp.addons.web.http import request
 from openerp.addons.website_memcached import memcached
-
-from openerp.addons.website.controllers.main import Website
-
+from openerp.addons.website.controllers.main import Website as WebsiteOld
 from openerp import models, fields, api, _
-
+import traceback
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -35,35 +33,93 @@ _logger = logging.getLogger(__name__)
 
 class ir_ui_view(models.Model):
     _inherit = 'ir.ui.view'
-
+    
+    memcached_time = fields.Datetime(string='Memcached Timestamp', default=lambda *args, **kwargs: fields.Datetime.now(), help="Last modification relevant to memcached.")
+    
     @api.model
-    def mc_delete_path(self,res_id):
-        model_data = self.env['ir.model.data'].search([('model','=','ir.ui.view'),('res_id','=',res_id)],limit=1)
-        if model_data and model_data.module == 'website':
-            for key in memcached.get_keys(path='/page/%s' % model_data.name, db=self._cr.dbname):
-                memcached.mc_delete(key) 
-
+    def memcached_update_timestamp(self, res_ids=None):
+        res_ids = res_ids or []
+        done = []
+        view_ids = res_ids
+        try:
+            while view_ids:
+                # ~ _logger.warn('done %s' % done)
+                # ~ _logger.warn('view_ids %s' % view_ids)
+                domain = [('model', '=', self._name), ('res_id', 'in', view_ids)]
+                # Find all xml_ids connected to these views
+                xml_ids = ['%s.%s' % (v['module'], v['name']) for v in self.env['ir.model.data'].sudo().search_read(domain, ['module', 'name'])]
+                # ~ _logger.warn('xml_ids %s' % xml_ids)
+                # Find any views that these views inherit from
+                domain = [('id', 'in', view_ids), ('inherit_id', '!=', False), ('id', 'not in', done)]
+                next_view_ids = [v['inherit_id'][0] for v in self.sudo().search_read(domain, ['inherit_id'])]
+                # ~ _logger.warn('next_view_ids %s' % next_view_ids)
+                done += view_ids
+                # Find any views that make t-call to these views
+                domain = []
+                for xml_id in xml_ids:
+                    domain.append(('arch', 'like', '%%t-call="%s"%%' % xml_id))
+                    domain.append(('arch', 'like', "%%t-call='%s'%%" % xml_id))
+                domain = ['|' for i in range(len(domain) - 1)] + domain
+                domain.append(('id', 'not in', done + next_view_ids))
+                # ~ _logger.warn('domain %s' % domain)
+                view_ids = next_view_ids + [v['id'] for v in self.sudo().search_read(domain, ['id'])]
+                # ~ _logger.warn('view_ids %s' % view_ids)
+        except Exception as e:
+            _logger.warn(traceback.format_exc(e))
+        # In case things get fucky above
+        done = done or res_ids
+        self.sudo().browse(done).with_context(memcached_no_update_timestamp=True).write({'memcached_time': fields.Datetime.now()})
+    
     @api.multi
     def write(self, values):
         res = super(ir_ui_view, self).write(values)
-        for o in self:
-            self.mc_delete_path(o.id)
-        return res 
+        if not self.env.context.get('memcached_no_update_timestamp'):
+            view_ids = self.filtered(lambda view: view.type == 'qweb')._ids
+            if view_ids:
+                self.memcached_update_timestamp(view_ids)
+        return res
 
 class ir_translation(models.Model):
     _inherit = 'ir.translation'
 
     @api.multi
     def write(self, vals):
+        res = super(ir_translation, self).write(vals)
+        self.memcached_translation_update()
+        return res
+    
+    @api.multi
+    def memcached_translation_update(self):
+        view_ids = []
         for trans in self:
             if trans.name == 'website':
-                self.env['ir.ui.view'].mc_delete_path(trans.res_id)
-        return super(ir_translation, self).write(vals)
-        
-class CachedWebsite(Website):
+                view_ids.append(trans.res_id)
+        if view_ids:
+            # ~ _logger.warn(view_ids)
+            self.env['ir.ui.view'].memcached_update_timestamp(view_ids)
+
+class Website(models.Model):
+    _inherit = 'website'
+    
+    @api.model
+    def memcached_get_page_timestamp(self, page):
+        time = ''
+        try:
+        # ~ if True:
+            model, view_id = request.env["ir.model.data"].get_object_reference('website', page)
+            time = request.env['ir.ui.view'].search_read([('id', '=', view_id)], ['memcached_time'])[0]['memcached_time']
+        except:
+            pass
+        return time
+
+class CachedWebsite(WebsiteOld):
 
     #~ @http.route('/page/<page:page>', type='http', auth="public", website=True)
-    @memcached.route(flush_type=lambda kw: 'page', key=lambda k: '{db}{path}{employee}{logged_in}{publisher}{designer}{lang}')
+    @memcached.route(
+        flush_type=lambda kw: 'page',
+        key=lambda kw: '{db},/page/%s,{employee},{logged_in},{publisher},{designer},{lang} %s' % (
+            kw.get('page') or '',
+            request.website.memcached_get_page_timestamp(kw.get('page'))))
     def page(self, page, **opt):
         return super(CachedWebsite, self).page(page, **opt)
 
@@ -111,7 +167,7 @@ class CachedBinary(openerp.addons.web.controllers.main.Binary):
         #~ '/logo',
         #~ '/logo.png',
     #~ ], type='http', auth="none", cors="*")
-    @memcached.route(flush_type=lambda kw: 'page_image',binary=True)
+    @memcached.route(flush_type=lambda kw: 'page_image', binary=True)
     def company_logo(self, dbname=None, **kw):
         return super(CachedBinary, self).company_logo(dbname, **kw)
 

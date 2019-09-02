@@ -83,6 +83,7 @@
                 </div>
             </t>
         </template>
+        
         <template id="mcmeta_page" name="Memcached Metadata Page">
             <t t-call="website.layout">
                 <div class="oe_structure">
@@ -119,5 +120,95 @@
                 </div>
             </t>
         </template>
+        
+        <template id="statistics_page" name="Memcached Statistics Page">
+            <t t-call="website.layout">
+                <div class="container">
+                    <div class="row">
+                        <h3 class="text-center">General</h3>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <th>Name</th>
+                                    <th>Value</th>
+                                    <th>Description</th>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="sorted(stats.keys())" t-as="key">
+                                        <t t-set="value" t-value="stats[key]"/>
+                                        <t t-set="desc" t-value="stats_desc.get(key, {}).get('description', '')"/>
+                                        <td t-esc="key"/>
+                                        <td t-esc="value"/>
+                                        <td t-esc="desc"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h3 class="text-center">Slabs</h3>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <th>Slab</th>
+                                    <th>Name</th>
+                                    <th>Value</th>
+                                    <th>Description</th>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="sorted(slabs.keys())" t-as="key">
+                                        <t t-if="key != 'slabs'">
+                                            <t t-set="value" t-value="slabs[key]"/>
+                                            <tr>
+                                                <td/>
+                                                <td t-esc="key"/>
+                                                <td t-esc="value"/>
+                                                <td t-esc="slabs_desc.get(key, {}).get('description', '')"/>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                    <t t-foreach="sorted(slabs['slabs'].keys())" t-as="slab">
+                                        <t t-set="slab_vals" t-value="slabs['slabs'][slab]"/>
+                                        <tr>
+                                            <th colspan="4" t-esc="'Slab %s' % slab"/>
+                                        </tr>
+                                        <tr t-foreach="sorted(slab_vals.keys())" t-as="key">
+                                            <td t-esc="slab"/>
+                                            <td t-esc="key"/>
+                                            <td t-esc="slab_vals[key]"/>
+                                            <td t-esc="slabs_desc.get(key, {}).get('description', '')"/>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h3 class="text-center">Items</h3>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <th>Chunk Size</th>
+                                    <th>Name</th>
+                                    <th>Value</th>
+                                    <th>Description</th>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="items" t-as="key">
+                                        <t t-set="value" t-value="items[key]"/>
+                                        <t t-set="desc" t-value="items_desc.get(key[2], {}).get('description', '')"/>
+                                        <td t-esc="key.split(':')[1]"/>
+                                        <td t-esc="key.split(':')[2]"/>
+                                        <td t-esc="value"/>
+                                        <td t-esc="desc"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        
     </data>
 </openerp>
