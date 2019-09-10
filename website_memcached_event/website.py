@@ -115,6 +115,6 @@ class website_event(website_event):
     
     # '/event/get_country_event_list'
     @memcached.route(
-        key=lambda kw: '{db}/event/get_country_event_list{employee}{logged_in}{publisher}{designer}{lang}%s' % (request.env['event.event'].search_read([('website_published', '=', True), ('memcached_time', '!=', False)], ['memcached_time'], limit=1, order='memcached_time desc' ) or {'memcached_time': ''} )['memcached_time'])
+        key=lambda kw: '{db}/event/get_country_event_list{employee}{logged_in}{publisher}{designer}{lang}%s' % (request.env['event.event'].search_read([('website_published', '=', True), ('memcached_time', '!=', False)], ['memcached_time'], limit=1, order='memcached_time desc' ) or [{'memcached_time': ''}] )[0]['memcached_time'])
     def get_country_events(self, **post):
         return super(website_event, self).get_country_events(**post)
