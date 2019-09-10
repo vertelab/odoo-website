@@ -85,11 +85,11 @@ class ir_translation(models.Model):
     @api.multi
     def write(self, vals):
         res = super(ir_translation, self).write(vals)
-        self.memcached_translation_update()
+        self.memcached_view_translation_update()
         return res
     
     @api.multi
-    def memcached_translation_update(self):
+    def memcached_view_translation_update(self):
         view_ids = []
         for trans in self:
             if trans.name == 'website':
