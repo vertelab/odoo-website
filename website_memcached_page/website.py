@@ -217,6 +217,5 @@ class CachedHome(openerp.addons.web.controllers.main.Home):
 class MemCachedController(http.Controller):
     @http.route(['/remove_cached_page',], type='json', auth="user", website=True)
     def remove_cached_page(self, url='',**kw):
-        for key in memcached.get_keys(flush_type='page', path=url):
-            memcached.mc_delete(key)
+        memcached.mc_delete(memcached.get_keys(flush_type='page', path=url))
         return 'deleted'

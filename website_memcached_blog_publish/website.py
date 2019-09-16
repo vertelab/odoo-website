@@ -31,30 +31,3 @@ _logger = logging.getLogger(__name__)
 
 # TODO: This module is deprecated. Delete it after uninstalling from all databases.
 
-# ~ class BlogPost(models.Model):
-    # ~ _inherit = 'blog.post'
-
-    # ~ @api.one
-    # ~ def do_publish(self):
-        # ~ super(BlogPost, self).do_publish()
-        # ~ self.mc_delete_post(self)
-
-    # ~ @api.one
-    # ~ def do_unpublish(self):
-        # ~ super(BlogPost, self).do_unpublish()
-        # ~ self.mc_delete_post(self)
-
-    # ~ @api.model
-    # ~ def mc_delete_post(self,post):
-        # ~ #~ _logger.error('mc_delete_post %s %s' % (memcached.get_keys(flush_type=post.blog_id.name.replace(u'å', 'a').replace(u'ä', 'a').replace(u'ö', 'o').replace(' ', '-')),post.blog_id.name.replace(u'å', 'a').replace(u'ä', 'a').replace(u'ö', 'o').replace(' ', '-')))
-        # ~ if post and post.blog_id:
-            # ~ for key in memcached.get_keys(flush_type='blog-%s' % post.blog_id.name.replace(u'å', 'a').replace(u'ä', 'a').replace(u'ö', 'o').replace(' ', '-').lower(), db=self.env.cr.dbname):
-                # ~ memcached.mc_delete(key)
-
-    # ~ @api.multi
-    # ~ def write(self, values):
-        # ~ res = super(BlogPost, self).write(values)
-        # ~ for o in self:
-            # ~ self.mc_delete_post(o)
-        # ~ return res
-

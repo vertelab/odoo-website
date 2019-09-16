@@ -488,7 +488,10 @@ def mc_load(key):
     return MEMCACHED_CLIENT().get(key) or {}
 
 def mc_delete(key):
-    MEMCACHED_CLIENT().delete(key)
+    if type(key) == list:
+        MEMCACHED_CLIENT().delete_many(key)
+    else:
+        MEMCACHED_CLIENT().delete(key)
     #~ i = 1
     #~ while True:
         #~ if not MEMCACHED_CLIENT().delete('%s-c%d' % (key,i)) or i > 10:
