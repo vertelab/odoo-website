@@ -53,31 +53,31 @@ class event_registration(models.Model):
     @api.one
     def do_draft(self):
         res = super(event_registration, self).do_draft()
-        self.event_id.memcached_time.memcached_update_timestamp()
+        self.event_id.memcached_time = fields.Datetime.now()
         return res
 
     @api.one
     def confirm_registration(self):
         res = super(event_registration, self).confirm_registration()
-        self.event_id.memcached_time.memcached_update_timestamp()
+        self.event_id.memcached_time = fields.Datetime.now()
         return res
 
     @api.one
     def registration_open(self):
         res = super(event_registration, self).registration_open()
-        self.event_id.memcached_time.memcached_update_timestamp()
+        self.event_id.memcached_time = fields.Datetime.now()
         return res
 
     @api.one
     def button_reg_close(self):
         res = super(event_registration, self).button_reg_close()
-        self.event_id.memcached_time.memcached_update_timestamp()
+        self.event_id.memcached_time = fields.Datetime.now()
         return res
 
     @api.one
     def button_reg_cancel(self):
         res = super(event_registration, self).button_reg_cancel()
-        self.event_id.memcached_time.memcached_update_timestamp()
+        self.event_id.memcached_time = fields.Datetime.now()
         return res
 
 class Website(models.Model):

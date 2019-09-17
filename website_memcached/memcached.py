@@ -373,58 +373,126 @@ class website(models.Model):
                 return slabs
         return standard
     
-def get_keys(flush_type=None, module=None, path=None, db=None, status_code=None,etag=None):
+def get_keys(db=None, match_any=False, **kwargs):
+    """Fetch all keys matching the given parameters.
+    
+    :param flush_type: Flush type(s) to filter on. String or list of strings.
+    :param module: Module(s) to filter on. String or list of strings.
+    :param path: Path(s) to filter on. String or list of strings.
+    :param db: Database to filter on. String. Will be set automagically from request.
+    :param status_code: Status code(s) to filter on. String or list of strings.
+    :param etag: ETag(s) to filter on. String or list of strings.
+    :param match_any: Match any of the given criterias (OR method). Otherwise must match all criterias (AND method).
+    """
     if not db:
         db = request.env.cr.dbname
+    # List the filter keys we will use
+    filter_fields = ('flush_type', 'module', 'path', 'status_code', 'etag')
+        
     items = MEMCACHED_CLIENT().stats('items')
     slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
     key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
     keys =  [key for sublist in key_lists for key in sublist.keys()]
     i = 0
+    # Check if we will perform any filtering and convert filter terms to lists
+    filter_active = False
+    for field in filter_fields:
+        value = kwargs.get(field)
+        if value and value != 'all':
+            filter_active = True
+            if type(value) != list:
+                kwargs[field] = [value]
+    
+    # Perform filtering on DB and potentially other fields
     while i < len(keys):
         key = mc_load(keys[i])
         # Remove other databases
         if key.get('db') != db:
             del keys[i]
             continue
-        # Filter on flush type
-        if flush_type and flush_type != 'all':
-            if type(flush_type) != list:
-                flush_type = [flush_type]
-            if key.get('flush_type') not in flush_type:
-                del keys[i]
-                continue
-        # Filter on etag
-        if etag and etag != 'all':
-            if type(etag) != list:
-                etag = [etag]
-            if key.get('etag') not in etag:
-                del keys[i]
-                continue
-        # Filter on module
-        if module and module != 'all':
-            if type(module) != list:
-                module = [module]
-            if key.get('module') not in module:
-                del keys[i]
-                continue
-        # Filter on path
-        if path and path != 'all':
-            if type(path) != list:
-                path = [path]
-            if key.get('path') not in path:
-                del keys[i]
-                continue
-        # Filter on status code
-        if status_code and status_code != 'all':
-            if type(status_code) != list:
-                status_code = [status_code]
-            if key.get('status_code') not in status_code:
+        
+        # Perform filtering if needed
+        if filter_active:
+            for field in filter_fields:
+                value = kwargs.get(field)
+                if value and value != 'all':
+                    # Use OR method
+                    if match_any:
+                        if key.get(field) in value:
+                            i += 1
+                            continue
+                    # Use AND method
+                    else:
+                        if key.get(field) not in value:
+                            del keys[i]
+                            continue
+            if match_any:
+                # OR method. No filters matched.
                 del keys[i]
                 continue
         i += 1
 
     return keys
+    
+            # ~ # Filter on flush type
+            # ~ if flush_type and flush_type != 'all':
+                # ~ if type(flush_type) != list:
+                    # ~ flush_type = [flush_type]
+                # ~ if match_any:
+                    # ~ if key.get('flush_type') in flush_type:
+                        # ~ continue
+                # ~ else:
+                    # ~ if key.get('flush_type') not in flush_type:
+                        # ~ del keys[i]
+                        # ~ continue
+            
+            # ~ # Filter on etag
+            # ~ if etag and etag != 'all':
+                # ~ if type(etag) != list:
+                    # ~ etag = [etag]
+                # ~ if match_any:
+                    # ~ if key.get('etag') in flush_type:
+                        # ~ continue
+                # ~ else:
+                    # ~ if key.get('etag') not in etag:
+                        # ~ del keys[i]
+                        # ~ continue
+            
+            # ~ # Filter on module
+            # ~ if module and module != 'all':
+                # ~ if type(module) != list:
+                    # ~ module = [module]
+                # ~ if match_any:
+                    # ~ if key.get('module') in flush_type:
+                        # ~ continue
+                # ~ else:
+                    # ~ if key.get('module') not in module:
+                        # ~ del keys[i]
+                        # ~ continue
+            
+            # ~ # Filter on path
+            # ~ if path and path != 'all':
+                # ~ if type(path) != list:
+                    # ~ path = [path]
+                # ~ if match_any:
+                    # ~ if key.get('path') in flush_type:
+                        # ~ continue
+                # ~ else:
+                    # ~ if key.get('path') not in path:
+                        # ~ del keys[i]
+                        # ~ continue
+            
+            # ~ # Filter on status code
+            # ~ if status_code and status_code != 'all':
+                # ~ if type(status_code) != list:
+                    # ~ status_code = [status_code]
+                # ~ if match_any:
+                    # ~ if key.get('status_code') in flush_type:
+                        # ~ continue
+                # ~ else:
+                    # ~ if key.get('status_code') not in status_code:
+                        # ~ del keys[i]
+                        # ~ continue
 
 def get_flush_page(keys, title, url='', delete_url=''):
     #~ html = '%s<H1>%s</H1><table style="width: 100%%;"><tr><th>Key</th><th>Path</th><th>Module</th><th>Flush_type</th><th>Key Raw</th><th>Cmd</th></tr>' % (('<a href="%s" style="float: right;">delete all</a>' % delete_url) if delete_url else '', title)
