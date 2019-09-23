@@ -383,17 +383,18 @@ def get_keys(db=None, match_any=False, **kwargs):
     :param status_code: Status code(s) to filter on. String or list of strings.
     :param etag: ETag(s) to filter on. String or list of strings.
     :param match_any: Match any of the given criterias (OR method). Otherwise must match all criterias (AND method).
+    :param load: Set to True to return mc_load result for all the keys. Will return a dict with key as keys and mc_load result as values.
     """
     if not db:
         db = request.env.cr.dbname
     # List the filter keys we will use
     filter_fields = ('flush_type', 'module', 'path', 'status_code', 'etag')
-        
+    load = kwargs.get('load')
     items = MEMCACHED_CLIENT().stats('items')
     slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
     key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
     keys =  [key for sublist in key_lists for key in sublist.keys()]
-    i = 0
+    
     # Check if we will perform any filtering and convert filter terms to lists
     filter_active = False
     for field in filter_fields:
@@ -403,12 +404,16 @@ def get_keys(db=None, match_any=False, **kwargs):
             if type(value) != list:
                 kwargs[field] = [value]
     
+    # Load all keys at once
+    data = mc_load(keys)
+    # Reform keylist. Keys could potentially have disappeared between then and now.
+    keys = data.keys()
     # Perform filtering on DB and potentially other fields
-    while i < len(keys):
-        key = mc_load(keys[i])
+    for k in keys:
+        key = data[k]
         # Remove other databases
         if key.get('db') != db:
-            del keys[i]
+            del data[k]
             continue
         
         # Perform filtering if needed
@@ -416,23 +421,24 @@ def get_keys(db=None, match_any=False, **kwargs):
             for field in filter_fields:
                 value = kwargs.get(field)
                 if value and value != 'all':
-                    # Use OR method
                     if match_any:
+                        # Use OR method
                         if key.get(field) in value:
-                            i += 1
+                            # One field matched. Save this key.
                             continue
-                    # Use AND method
+                    
                     else:
+                        # Use AND method
                         if key.get(field) not in value:
-                            del keys[i]
+                            # One field did not match. Delete this key.
+                            del data[k]
                             continue
             if match_any:
                 # OR method. No filters matched.
-                del keys[i]
-                continue
-        i += 1
-
-    return keys
+                del data[k]
+    if load:
+        return data
+    return data.keys()
     
             # ~ # Filter on flush type
             # ~ if flush_type and flush_type != 'all':
@@ -495,22 +501,23 @@ def get_keys(db=None, match_any=False, **kwargs):
                         # ~ continue
 
 def get_flush_page(keys, title, url='', delete_url=''):
-    #~ html = '%s<H1>%s</H1><table style="width: 100%%;"><tr><th>Key</th><th>Path</th><th>Module</th><th>Flush_type</th><th>Key Raw</th><th>Cmd</th></tr>' % (('<a href="%s" style="float: right;">delete all</a>' % delete_url) if delete_url else '', title)
-    #~ for key in keys:
-        #~ p = mc_load(key)
-        #~ html += '<tr><td><a href="/mcmeta/%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="/mcpage/%s/delete?url=%s">delete</a></td></tr>' % (key,key,p.get('path'),p.get('module'),p.get('flush_type'),p.get('key_raw'),key,url)
-    #~ html + '</table>'
-    rows = []
-    for key in keys:
-        p = mc_load(key)
+    def append_key(rows, key, p):
         rows.append((
             '<a href="/mcmeta/%s">%s</a>' %(key, key),
             '<a href="%s">%s</a>' %(p.get('path'), p.get('path')),
-            p.get('module').replace('openerp.addons.','').split('.')[0],
+            p.get('module', '').replace('openerp.addons.', '').split('.')[0],
             p.get('flush_type'),
             p.get('key_raw'),
-            '<a href="/mcpage/%s/delete?url=%s" class="fa fa-trash-o"/>' %(key,url)
+            '<a href="/mcpage/%s/delete?url=%s" class="fa fa-trash-o"/>' %(key, url)
         ))
+    rows = []
+    if type(keys) == dict:
+        for key, p in keys.iteritems():
+            append_key(rows, key, p)
+    else:
+        for key in keys:
+            append_key(rows, key, mc_load(key))
+    
     return request.website.render("website_memcached.memcached_page", {
         'title': title,
         'header': [_('Key'),_('Path'),_('Module'),_('Flush Type'),_('Key Raw'),_('Cmd')],
@@ -536,23 +543,12 @@ def mc_save(key, page_dict, cache_age):
             #~ MEMCACHED_CLIENT().set('%s-c%d' % (key,i),chunk,cache_age)
 
 def mc_load(key):
-    #~ global MEMCACHED_VERSION
-    #~ global MEMCACHED_SERVER
-    #~ c = Client(MEMCACHED_SERVER or eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost",11211)'), serializer=serialize_pickle, deserializer=deserialize_pickle,no_delay=True,connect_timeout=10,timeout=0.01)
-    #~ if not MEMCACHED_VERSION:
-        #~ MEMCACHED_VERSION = c.version()
-    #~ page_dict = c.get(key)
-    #~ c.quit()
-    #~ page_dict = MEMCACHED_CLIENT().get(key)
-    #~ if type(page_dict) != type({}):
-        #~ return {}
-    #~ i = 1
-    #~ while True:
-        #~ chunk = MEMCACHED_CLIENT().get('%s-c%d' % (key,i))
-        #~ if not chunk or i > 10:
-            #~ break
-        #~ page_dict['page'] += chunk
-        #~ i += 1
+    """Load data for the given key(s) from memcache.
+    :parameter key: The key(s) that should be loaded. str or list(str).
+    :returns: If one key was given, returns the value of that key. If more than one key was given, returns a dict with keys and key values.
+    """
+    if type(key) == list:
+        return MEMCACHED_CLIENT().get_many(key)
     return MEMCACHED_CLIENT().get(key) or {}
 
 def mc_delete(key):
