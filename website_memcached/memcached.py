@@ -70,7 +70,7 @@ try:
     MEMCACHED__CLIENT__ = False
     MEMCACHED_SERVER = False
     MEMCACHE_CONNECT_TIMEOUT = 10
-    MEMCACHE_TIMEOUT = 1
+    MEMCACHE_TIMEOUT = 5
     MEMCACHE_NODELAY = True
     MEMCACHED_VERSION = ''
     #~ MEMCACHED_CLIENT = Client(('localhost', 11211), serializer=serialize_pickle, deserializer=deserialize_pickle)
@@ -556,12 +556,6 @@ def mc_delete(key):
         MEMCACHED_CLIENT().delete_many(key)
     else:
         MEMCACHED_CLIENT().delete(key)
-    #~ i = 1
-    #~ while True:
-        #~ if not MEMCACHED_CLIENT().delete('%s-c%d' % (key,i)) or i > 10:
-            #~ break
-        #~ i += 1
-
 
 def mc_meta(key):
     page_dict = mc_load(key)
