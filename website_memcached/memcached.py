@@ -166,28 +166,29 @@ def clean_text(text):
 
 class website(models.Model):
     _inherit = 'website'
-
+    
     @api.model
     def flush_types(self):
-        if not any(flush_types):
-            flush_types[self.env.cr.dbname] = set()
-        return flush_types[self.env.cr.dbname]
-
+        db = self.env.cr.dbname
+        if db not in flush_types:
+            flush_types[db] = set()
+        return flush_types[db]
+    
     @api.model
     def memcache_get(self,key):
         return MEMCACHED_CLIENT().get(MEMCACHED_HASH(key))
-
+    
     @api.model
     def memcache_set(self,key,value):
         return MEMCACHED_CLIENT().set(MEMCACHED_HASH(key),value)
-
+    
     @api.model
     def memcache_page(self,key):
         rendered_page = MEMCACHED_CLIENT().get(key)
         if not rendered_page:
             pass
         return rendered_page
-
+    
     @api.model
     def memcache_flush_types(self):
         return list(flush_types[self.env.cr.dbname])
