@@ -65,60 +65,51 @@ class MemCachedController(http.Controller):
 
     @http.route(['/mcflush','/mcflush/<string:flush_type>',], type='http', auth="user", website=True)
     def memcached_flush(self, flush_type='all',**post):
-        return memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type)
-        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type))
+        return memcached.get_flush_page(memcached.get_keys(flush_type=flush_type, load=True), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type)
 
     @http.route(['/mcetag','/mcetag/<string:etag>',], type='http', auth="user", website=True)
     def memcached_etag(self, etag='all',**post):
-        return memcached.get_flush_page(memcached.get_keys(etag=etag), 'Cached Pages Etag %s' % etag, '/mcetag/%s' % etag, '/mcetag/%s/delete' % etag)
+        return memcached.get_flush_page(memcached.get_keys(etag=etag, load=True), 'Cached Pages Etag %s' % etag, '/mcetag/%s' % etag, '/mcetag/%s/delete' % etag)
 
     @http.route(['/mcflush/<string:flush_type>/delete',], type='http', auth="user", website=True)
     def memcached_flush_delete(self, flush_type='all',**post):
-        for key in memcached.get_keys(flush_type=flush_type):
-            memcached.mc_delete(key)
-        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type))
-        return memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type)
+        memcached.mc_delete(memcached.get_keys(flush_type=flush_type))
+        return werkzeug.utils.redirect('/mcflush/%s' % flush_type, 302)
 
     @http.route(['/mcmodule','/mcmodule/<string:module>',], type='http', auth="user", website=True)
     def memcached_module(self, module='all',**post):
-        return memcached.get_flush_page(memcached.get_keys(module=module), 'Cached Pages Model %s' % module, '/mcmodule/%s' % module, '/mcmodule/%s/delete' % module)
+        return memcached.get_flush_page(memcached.get_keys(module=module, load=True), 'Cached Pages Model %s' % module, '/mcmodule/%s' % module, '/mcmodule/%s/delete' % module)
 
     @http.route(['/mcmodule/<string:module>/delete',], type='http', auth="user", website=True)
     def memcached_module_delete(self, module='all',**post):
-        for key in memcached.get_keys(module=module):
-            memcached.mc_delete(key)
-        return memcached.get_flush_page(memcached.get_keys(module=module), 'Cached Pages Model %s ' % module, '/mcmodule/%s' % module, '/mcmodule/%s/delete' % module)
+        memcached.mc_delete(memcached.get_keys(module=module))
+        return werkzeug.utils.redirect('/mcmodule/%s' % module, 302)
 
     @http.route(['/mcpath',], type='http', auth="user", website=True)
     # Example: /mcpath?path=/foo/bar
     def memcached_path(self, path='all',**post):
-        return memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s' % path, '/mcpath?path=%s' % path, '/mcpath/delete?path=%s' % path)
+        return memcached.get_flush_page(memcached.get_keys(path=path, load=True), 'Cached Pages Path %s' % path, '/mcpath?path=%s' % path, '/mcpath/delete?path=%s' % path)
 
     @http.route(['/mcpath/delete',], type='http', auth="user", website=True)
     # Example: /mcpath/delete?path=/foo/bar
     def memcached_path_delete(self, path='all',**post):
-        for key in memcached.get_keys(path=path):
-            memcached.mc_delete(key)
-        return memcached.get_flush_page(memcached.get_keys(path=path), 'Cached Pages Path %s ' % path, '/mcpath/%s' % path, '/mcpath/delete?path=%s' % path)
+        memcached.mc_delete(memcached.get_keys(path=path))
+        return werkzeug.utils.redirect('/mcpath?path=%s' % path, 302)
 
     @http.route(['/mcstatus','/mcstatus/<int:status_code>',], type='http', auth="user", website=True)
     def memcached_status_code(self, status_code='all',**post):
-        return memcached.get_flush_page(memcached.get_keys(status_code=status_code), 'Cached Pages Status %s' % status_code, '/mcstatus/%s' % status_code, '/mcstatus/%s/delete' % status_code)
-        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type))
+        return memcached.get_flush_page(memcached.get_keys(status_code=status_code, load=True), 'Cached Pages Status %s' % status_code, '/mcstatus/%s' % status_code, '/mcstatus/%s/delete' % status_code)
 
     @http.route(['/mcstatus/all/delete', '/mcstatus/<int:status_code>/delete',], type='http', auth="user", website=True)
     def memcached_status_code_delete(self, status_code='all',**post):
-        for key in memcached.get_keys(status_code=status_code):
-            memcached.mc_delete(key)
-        #~ return http.Response(memcached.get_flush_page(memcached.get_keys(flush_type=flush_type), 'Cached Pages %s' % flush_type, '/mcflush/%s' % flush_type, '/mcflush/%s/delete' % flush_type))
-        return memcached.get_flush_page(memcached.get_keys(status_code=status_code), 'Cached Pages Status %s' % status_code, '/mcstatus/%s' % status_code, '/mcstatus/%s/delete' % status_code)
+        memcached.mc_delete(memcached.get_keys(status_code=status_code))
+        return werkzeug.utils.redirect('/mcstatus/%s' % status_code, 302)
     
     @http.route(['/mcclearpath',], type='http', auth="user", website=True)
     # Example: /mcpath?path=/foo/bar
     def memcached_clear_path(self, path='all',**post):
-        for key in memcached.get_keys(path=path):
-            memcached.mc_delete(key)
-        return request.redirect(path, code=301)
+        memcached.mc_delete(memcached.get_keys(path=path))
+        return request.redirect(path, code=302)
 
     @http.route(['/mcstats',], type='http', auth="user", website=True)
     def memcached_stats(self, **post):

@@ -70,7 +70,7 @@ try:
     MEMCACHED__CLIENT__ = False
     MEMCACHED_SERVER = False
     MEMCACHE_CONNECT_TIMEOUT = 10
-    MEMCACHE_TIMEOUT = 1
+    MEMCACHE_TIMEOUT = 5
     MEMCACHE_NODELAY = True
     MEMCACHED_VERSION = ''
     #~ MEMCACHED_CLIENT = Client(('localhost', 11211), serializer=serialize_pickle, deserializer=deserialize_pickle)
@@ -166,28 +166,29 @@ def clean_text(text):
 
 class website(models.Model):
     _inherit = 'website'
-
+    
     @api.model
     def flush_types(self):
-        if not any(flush_types):
-            flush_types[self.env.cr.dbname] = set()
-        return flush_types[self.env.cr.dbname]
-
+        db = self.env.cr.dbname
+        if db not in flush_types:
+            flush_types[db] = set()
+        return flush_types[db]
+    
     @api.model
     def memcache_get(self,key):
         return MEMCACHED_CLIENT().get(MEMCACHED_HASH(key))
-
+    
     @api.model
     def memcache_set(self,key,value):
         return MEMCACHED_CLIENT().set(MEMCACHED_HASH(key),value)
-
+    
     @api.model
     def memcache_page(self,key):
         rendered_page = MEMCACHED_CLIENT().get(key)
         if not rendered_page:
             pass
         return rendered_page
-
+    
     @api.model
     def memcache_flush_types(self):
         return list(flush_types[self.env.cr.dbname])
@@ -373,76 +374,151 @@ class website(models.Model):
                 return slabs
         return standard
     
-def get_keys(flush_type=None, module=None, path=None, db=None, status_code=None,etag=None):
+def get_keys(db=None, match_any=False, **kwargs):
+    """Fetch all keys matching the given parameters.
+    
+    :param flush_type: Flush type(s) to filter on. String or list of strings.
+    :param module: Module(s) to filter on. String or list of strings.
+    :param path: Path(s) to filter on. String or list of strings.
+    :param db: Database to filter on. String. Will be set automagically from request.
+    :param status_code: Status code(s) to filter on. String or list of strings.
+    :param etag: ETag(s) to filter on. String or list of strings.
+    :param match_any: Match any of the given criterias (OR method). Otherwise must match all criterias (AND method).
+    :param load: Set to True to return mc_load result for all the keys. Will return a dict with key as keys and mc_load result as values.
+    """
     if not db:
         db = request.env.cr.dbname
+    # List the filter keys we will use
+    filter_fields = ('flush_type', 'module', 'path', 'status_code', 'etag')
+    load = kwargs.get('load')
     items = MEMCACHED_CLIENT().stats('items')
     slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
     key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
     keys =  [key for sublist in key_lists for key in sublist.keys()]
-    i = 0
-    while i < len(keys):
-        key = mc_load(keys[i])
+    
+    # Check if we will perform any filtering and convert filter terms to lists
+    filter_active = False
+    for field in filter_fields:
+        value = kwargs.get(field)
+        if value and value != 'all':
+            filter_active = True
+            if type(value) != list:
+                kwargs[field] = [value]
+    
+    # Load all keys at once
+    data = mc_load(keys)
+    # Reform keylist. Keys could potentially have disappeared between then and now.
+    keys = data.keys()
+    # Perform filtering on DB and potentially other fields
+    for k in keys:
+        key = data[k]
         # Remove other databases
         if key.get('db') != db:
-            del keys[i]
+            del data[k]
             continue
-        # Filter on flush type
-        if flush_type and flush_type != 'all':
-            if type(flush_type) != list:
-                flush_type = [flush_type]
-            if key.get('flush_type') not in flush_type:
-                del keys[i]
-                continue
-        # Filter on etag
-        if etag and etag != 'all':
-            if type(etag) != list:
-                etag = [etag]
-            if key.get('etag') not in etag:
-                del keys[i]
-                continue
-        # Filter on module
-        if module and module != 'all':
-            if type(module) != list:
-                module = [module]
-            if key.get('module') not in module:
-                del keys[i]
-                continue
-        # Filter on path
-        if path and path != 'all':
-            if type(path) != list:
-                path = [path]
-            if key.get('path') not in path:
-                del keys[i]
-                continue
-        # Filter on status code
-        if status_code and status_code != 'all':
-            if type(status_code) != list:
-                status_code = [status_code]
-            if key.get('status_code') not in status_code:
-                del keys[i]
-                continue
-        i += 1
-
-    return keys
+        
+        # Perform filtering if needed
+        if filter_active:
+            for field in filter_fields:
+                value = kwargs.get(field)
+                if value and value != 'all':
+                    if match_any:
+                        # Use OR method
+                        if key.get(field) in value:
+                            # One field matched. Save this key.
+                            continue
+                    
+                    else:
+                        # Use AND method
+                        if key.get(field) not in value:
+                            # One field did not match. Delete this key.
+                            del data[k]
+                            continue
+            if match_any:
+                # OR method. No filters matched.
+                del data[k]
+    if load:
+        return data
+    return data.keys()
+    
+            # ~ # Filter on flush type
+            # ~ if flush_type and flush_type != 'all':
+                # ~ if type(flush_type) != list:
+                    # ~ flush_type = [flush_type]
+                # ~ if match_any:
+                    # ~ if key.get('flush_type') in flush_type:
+                        # ~ continue
+                # ~ else:
+                    # ~ if key.get('flush_type') not in flush_type:
+                        # ~ del keys[i]
+                        # ~ continue
+            
+            # ~ # Filter on etag
+            # ~ if etag and etag != 'all':
+                # ~ if type(etag) != list:
+                    # ~ etag = [etag]
+                # ~ if match_any:
+                    # ~ if key.get('etag') in flush_type:
+                        # ~ continue
+                # ~ else:
+                    # ~ if key.get('etag') not in etag:
+                        # ~ del keys[i]
+                        # ~ continue
+            
+            # ~ # Filter on module
+            # ~ if module and module != 'all':
+                # ~ if type(module) != list:
+                    # ~ module = [module]
+                # ~ if match_any:
+                    # ~ if key.get('module') in flush_type:
+                        # ~ continue
+                # ~ else:
+                    # ~ if key.get('module') not in module:
+                        # ~ del keys[i]
+                        # ~ continue
+            
+            # ~ # Filter on path
+            # ~ if path and path != 'all':
+                # ~ if type(path) != list:
+                    # ~ path = [path]
+                # ~ if match_any:
+                    # ~ if key.get('path') in flush_type:
+                        # ~ continue
+                # ~ else:
+                    # ~ if key.get('path') not in path:
+                        # ~ del keys[i]
+                        # ~ continue
+            
+            # ~ # Filter on status code
+            # ~ if status_code and status_code != 'all':
+                # ~ if type(status_code) != list:
+                    # ~ status_code = [status_code]
+                # ~ if match_any:
+                    # ~ if key.get('status_code') in flush_type:
+                        # ~ continue
+                # ~ else:
+                    # ~ if key.get('status_code') not in status_code:
+                        # ~ del keys[i]
+                        # ~ continue
 
 def get_flush_page(keys, title, url='', delete_url=''):
-    #~ html = '%s<H1>%s</H1><table style="width: 100%%;"><tr><th>Key</th><th>Path</th><th>Module</th><th>Flush_type</th><th>Key Raw</th><th>Cmd</th></tr>' % (('<a href="%s" style="float: right;">delete all</a>' % delete_url) if delete_url else '', title)
-    #~ for key in keys:
-        #~ p = mc_load(key)
-        #~ html += '<tr><td><a href="/mcmeta/%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="/mcpage/%s/delete?url=%s">delete</a></td></tr>' % (key,key,p.get('path'),p.get('module'),p.get('flush_type'),p.get('key_raw'),key,url)
-    #~ html + '</table>'
-    rows = []
-    for key in keys:
-        p = mc_load(key)
+    def append_key(rows, key, p):
         rows.append((
             '<a href="/mcmeta/%s">%s</a>' %(key, key),
             '<a href="%s">%s</a>' %(p.get('path'), p.get('path')),
-            p.get('module').replace('openerp.addons.','').split('.')[0],
+            p.get('module', '').replace('openerp.addons.', '').split('.')[0],
             p.get('flush_type'),
             p.get('key_raw'),
-            '<a href="/mcpage/%s/delete?url=%s" class="fa fa-trash-o"/>' %(key,url)
+            '<a href="/mcpage/%s/delete?url=%s" class="fa fa-trash-o"/>' %(key, url)
         ))
+    rows = []
+    if type(keys) == dict:
+        for key, p in keys.iteritems():
+            append_key(rows, key, p)
+    else:
+        for key in keys:
+            append_key(rows, key, mc_load(key))
+    
     return request.website.render("website_memcached.memcached_page", {
         'title': title,
         'header': [_('Key'),_('Path'),_('Module'),_('Flush Type'),_('Key Raw'),_('Cmd')],
@@ -468,33 +544,19 @@ def mc_save(key, page_dict, cache_age):
             #~ MEMCACHED_CLIENT().set('%s-c%d' % (key,i),chunk,cache_age)
 
 def mc_load(key):
-    #~ global MEMCACHED_VERSION
-    #~ global MEMCACHED_SERVER
-    #~ c = Client(MEMCACHED_SERVER or eval(request.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost",11211)'), serializer=serialize_pickle, deserializer=deserialize_pickle,no_delay=True,connect_timeout=10,timeout=0.01)
-    #~ if not MEMCACHED_VERSION:
-        #~ MEMCACHED_VERSION = c.version()
-    #~ page_dict = c.get(key)
-    #~ c.quit()
-    #~ page_dict = MEMCACHED_CLIENT().get(key)
-    #~ if type(page_dict) != type({}):
-        #~ return {}
-    #~ i = 1
-    #~ while True:
-        #~ chunk = MEMCACHED_CLIENT().get('%s-c%d' % (key,i))
-        #~ if not chunk or i > 10:
-            #~ break
-        #~ page_dict['page'] += chunk
-        #~ i += 1
+    """Load data for the given key(s) from memcache.
+    :parameter key: The key(s) that should be loaded. str or list(str).
+    :returns: If one key was given, returns the value of that key. If more than one key was given, returns a dict with keys and key values.
+    """
+    if type(key) == list:
+        return MEMCACHED_CLIENT().get_many(key)
     return MEMCACHED_CLIENT().get(key) or {}
 
 def mc_delete(key):
-    MEMCACHED_CLIENT().delete(key)
-    #~ i = 1
-    #~ while True:
-        #~ if not MEMCACHED_CLIENT().delete('%s-c%d' % (key,i)) or i > 10:
-            #~ break
-        #~ i += 1
-
+    if type(key) == list:
+        MEMCACHED_CLIENT().delete_many(key)
+    else:
+        MEMCACHED_CLIENT().delete(key)
 
 def mc_meta(key):
     page_dict = mc_load(key)
@@ -582,6 +644,7 @@ def route(route=None, **kw):
                                                     logged_in='1' if request.env.context.get('uid') > 0 else '0',
                                                     db=request.env.cr.dbname,
                                                     lang=request.env.context.get('lang'),
+                                                    country='%s' % request.env.user.partner_id.commercial_partner_id.country_id.code,
                                                     post='%s' % kw,
                                                     xmlid='%s' % kw.get('xmlid'),
                                                     version='%s' % kw.get('version'),
@@ -769,7 +832,7 @@ def route(route=None, **kw):
                     #~ response.headers.add(k,v)
                     response.headers[k] = v
             # ~ _logger.warn('\n\ndirty headers: %s\n' % response.headers)
-            response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s, %s' % (max_age, s_maxage, ','.join([keyword for keyword in ['no-store', 'immutable', 'no-transform', 'no-cache', 'must-revalidate', 'proxy-revalidate'] if routing.get(keyword.replace('-', '_'))] + [routing.get('private', 'public')])) # private: must not be stored by a shared cache.
+            response.headers['Cache-Control'] ='max-age=%s,s-maxage=%s,%s' % (max_age, s_maxage, ','.join([keyword for keyword in ['no-store', 'immutable', 'no-transform', 'no-cache', 'must-revalidate', 'proxy-revalidate'] if routing.get(keyword.replace('-', '_'))] + [routing.get('private', 'public')])) # private: must not be stored by a shared cache.
             if page_dict.get('ETag'):
                 response.headers['ETag'] = page_dict.get('ETag')
             response.headers['X-CacheKey'] = key
