@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <template id="website_theme_mega_menu" inherit_id="website.layout" name="Mega Menu">
+      <xpath expr="//ul[@id='top_menu']" position="before">
+        <li class="dropdown dropdown-large open" id="more_dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            Dropdown
+            <b class="caret" />
+          </a>
+          <ul class="dropdown-menu dropdown-menu-large row">
+            <li class="col-sm-6">
+              <ul>
+                <t t-set="current_menu" t-value="website.current_menu(request.httprequest.path)" />
+                <t t-set="current_submenu" t-value="website.current_submenu(request.httprequest.path)" />
+                
+                <t t-foreach="current_submenu.child_id" t-as="submenu">
+                  <li t-att-class="'hidden-xs %s' %('active' if submenu == current_menu else '')">
+                    <a t-att-href="submenu.url" style="padding: 5px 10px !important;">
+                      <h5 class="dn_uppercase">
+                        <t t-esc="submenu.name" />
+                      </h5>
+                    </a>
+                  </li>
+                  <li t-att-class="'hidden-lg hidden-md hidden-sm %s' %('active' if submenu == current_menu else '')">
+                    <a t-att-href="submenu.url" class="dn_header_nav_tab" style="padding: 5px 10px !important;">
+                      <h5 class="dn_uppercase">
+                        <t t-esc="submenu.name" />
+                      </h5>
+                    </a>
+                  </li>
+                </t>
+                <li class="dropdown-header">Sword of Truths</li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li class="divider" />
+                <li class="dropdown-header">Theme/Character</li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+              </ul>
+            </li>
+            <li class="col-sm-6">
+              <ul>
+                <li class="dropdown-header">by brand</li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li>
+                  <a href="#">Example</a>
+                </li>
+                <li class="divider" />
+                 <div class="oe_structure"/>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </xpath>
+    </template>
+    <template id="assets_frontend" inherit_id="website.assets_frontend" name="Website Theme Mega Frontend">
+      <xpath expr="." position="inside">
+        <link href="/website_theme_mega_menu/static/src/css/main.css" rel="stylesheet" type="text/css" />
+      </xpath>
+    </template>
+  </data>
+</openerp>
