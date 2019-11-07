@@ -4,6 +4,7 @@
     <template id="website_theme_mega_menu" inherit_id="website.layout" name="Mega Menu">
       <xpath expr="//body" position="before">
         <t t-set="dn_product_menu" t-value="request.env.ref('webshop_dermanord.menu_dn_shop')" />
+<!--         <t t-set="menu_homepage" t-value="request.env.ref('website.menu_homepage')" /> -->
       </xpath>
       <!--    <t t-set="filter_categories" t-value="request.env['product.public.category'].search([])" /> -->
       <xpath expr="//t[@t-call='website.submenu']" position="replace">
@@ -13,120 +14,46 @@
               Products
               <b class="caret" />
             </a>
-            <!--     <t t-esc="submenu.child_id"></t> -->
             <ul class="dropdown-menu mega-dropdown-menu row col-md-12">
-              <li class="col-sm-3">
-                <ul>
-                  <li>
-                    <a href="#">ERBJUDANDE</a>
-                  </li>
-                  <li>
-                    <a href="#">NYHETER</a>
-                  </li>
-                  <li>
-                    <a href="#">SET</a>
-                  </li>
-                  <li>
-                    <a href="#">RESEFÖRPACKNINGAR</a>
-                  </li>
-                   
-                </ul>
+              <t t-set="menu_item_id" t-value="request.env.ref('webshop_dermanord.menu_dn_shop')" />
+              <li class="col-sm-2">
+                <t t-foreach="menu_item_id.child_id" t-as="item">
+                  <ul>
+                    <a t-att-href="'/%s' % item.url">
+                    <h2 t-att-class="'page-items-mega megamenu-headline'">
+                      <t t-esc="item.name" />
+                    </h2>
+                  </a>
+                  </ul>
+                </t>
               </li>
-              <!--               <t t-set="categ_prod" t-value="request.env['product.public.category'].search('parent_id.name == product_public_category_4'])" /> -->
-              <!-- <t t-set="categ_prod" t-value="request.env['product.public.category'].search([('parent_id','=','')]).sorted(key=lambda cat: cat.sequence)" /> -->
-              <t t-set="categ_prod" t-value="request.env.ref('__export__.product_public_category_4')"/>
-              <!-- <t t-foreach="categ_prod.child_id" t-as="child"> -->
-              <li class="col-sm-3">
-               <h2>Ansikte</h2>
-               <t t-foreach="categ_prod.child_id" t-as="cat">
-                <ul>
-                  <li t-att-class="'megamenu-content' if cat.child_id else 'megamenu-headline'">
-                    <b><t t-esc="cat.name" /></b>
-                  </li>
-                </ul>
-              </t>
-            </li>
-
-
-            <t t-set="categ_prod2" t-value="request.env.ref('__export__.product_public_category_2')"/>
-            <!-- <t t-foreach="categ_prod.child_id" t-as="child"> -->
-            <li class="col-sm-3">
-             <h2>Hår</h2>
-             <t t-foreach="categ_prod2.child_id" t-as="cat2">
-              <ul>
-                <li t-att-class="'megamenu-content' if cat2.child_id else 'megamenu-headline'">
-                  <b><t t-esc="cat2.name" /></b>
+              <t t-foreach="website.get_mega_menu_categories()" t-as="categ">
+                <li class="col-sm-2">
+                  <a t-att-href="website.make_categ_link(categ)">
+                    <h2 class="megamenu-headline">
+                      <t t-esc="categ.name" />
+                    </h2>
+                  </a>
+                  <t t-foreach="categ.child_id" t-as="child">
+                    <ul>
+                      <a t-att-href="website.make_categ_link(child)">
+                        <p class="megamenu-content">
+                          <t t-esc="child.name" />
+                        </p>
+                      </a>
+                    </ul>
+                  </t>
                 </li>
-              </ul>
-            </t>
-          </li>
-
-          <t t-set="categ_prod3" t-value="request.env.ref('__export__.product_public_category_3')"/>
-          <!-- <t t-foreach="categ_prod.child_id" t-as="child"> -->
-          <li class="col-sm-3">
-           <li><h2>Kropp</h2></li>
-           <t t-foreach="categ_prod3.child_id" t-as="cat3">
-            <ul>
-              <li t-att-class="'megamenu-content' if cat3.child_id else 'megamenu-headline'">
-                <b><t t-esc="cat3.name" /></b>
-              </li>
-            </ul>
-          </t>
-        </li>
-
-
-        <t t-set="categ_prod4" t-value="request.env.ref('__export__.product_public_category_5')"/>
-        <!-- <t t-foreach="categ_prod.child_id" t-as="child"> -->
-        <li class="col-sm-3">
-         <h2>Sol</h2>
-         <t t-foreach="categ_prod4.child_id" t-as="cat4">
-          <ul>
-            <li t-att-class="'megamenu-content' if cat4.child_id else 'megamenu-headline'">
-              <b><t t-esc="cat4.name" /></b>
-            </li>
-          </ul>
-        </t>
-      </li>
-
-
-      <t t-set="categ_prod5" t-value="request.env.ref('__export__.product_public_category_6')"/>
-      <!-- <t t-foreach="categ_prod.child_id" t-as="child"> -->
-      <li class="col-sm-3">
-       <h2>Makeup</h2>
-       <t t-foreach="categ_prod5.child_id" t-as="cat5">
-        <ul>
-          <li t-att-class="'megamenu-content' if cat5.child_id else 'megamenu-headline'">
-            <b><t t-esc="cat5.name" /></b>
-          </li>
-        </ul>
-      </t>
-    </li>
-
-
-    <t t-set="categ_prod6" t-value="request.env.ref('__export__.product_public_category_6')"/>
-    <!-- <t t-foreach="categ_prod.child_id" t-as="child"> -->
-    <li class="col-sm-3">
-     <h2>Baby</h2>
-     <t t-foreach="categ_prod6.child_id" t-as="cat6">
-      <ul>
-        <li t-att-class="'megamenu-content' if cat6.child_id else 'megamenu-headline'">
-          <b><t t-esc="cat6.name" /></b>
-        </li>
-      </ul>
-    </t>
-  </li>
-   
-                  
-<!--                 </t>
-              </t> -->
+              </t>
             </ul>
           </li>
+
         </t>
-          <t t-if="submenu != dn_product_menu">
-            <t t-call="website.submenu" />
-          </t>
-  
+        <t t-if="submenu != dn_product_menu">
+          <t t-call="website.submenu" />
+        </t>
       </xpath>
+
     </template>
     <template id="assets_frontend" inherit_id="website.assets_frontend" name="Website Theme Mega Frontend">
       <xpath expr="." position="inside">
