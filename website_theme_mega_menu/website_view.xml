@@ -19,7 +19,7 @@
               <li class="col-sm-2">
                 <t t-foreach="menu_item_id.child_id" t-as="item">
                   <ul>
-                    <a t-att-href="'/%s' % item.url">
+                    <a t-att-href="'%s' % item.url">
                     <h2 t-att-class="'page-items-mega megamenu-headline'">
                       <t t-esc="item.name" />
                     </h2>

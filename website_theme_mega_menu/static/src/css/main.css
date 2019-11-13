@@ -130,8 +130,34 @@ p.megamenu-content {
 }
 }
 
+@media (min-width: 1500px){
+.mega-dropdown-menu .col-sm-2 {
+    max-width: 14.66666667%;
+}
+
+ul.mega-dropdown-menu {
+padding-left: 12%;
+}
+}
+
+@media (min-width: 1900px){
+.mega-dropdown-menu .col-sm-2 {
+    max-width: 12.66666667%;
+}
+
+ul.mega-dropdown-menu {
+padding-left: 20%;
+}
+
+}
 
 
+#top_menu a {
+    white-space: nowrap;
+    padding-top: 0px !important;
+    padding-bottom: 10px;
+
+}
 /*
 @media (max-width: 1108px){
 .col-sm-2 {
