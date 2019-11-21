@@ -114,7 +114,7 @@ p.megamenu-content{
 }
 
 li.megamenu-content#top_menu a{
-/*  text-transform: capitalize;*/
+  text-transform: capitalize;
 }
 
 p.megamenu-content {
@@ -154,7 +154,7 @@ ul.mega-dropdown-menu {
 
 @media (min-width: 768px){
 .mega-dropdown-menu .col-sm-2 {
-    max-width: 250px !important;
+    max-width: 270px !important;
 }
 }
 
