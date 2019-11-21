@@ -160,7 +160,7 @@ ul.mega-dropdown-menu {
 
 @media (max-width: 950px){
 .mega-dropdown-menu .col-sm-2 {
-    max-width: 200px !important;
+    max-width: 270px !important;
 }
 }
 
@@ -186,7 +186,7 @@ padding-right: 3%;
 
 @media (min-width: 1500px){
 .mega-dropdown-menu .col-sm-2 {
-     width: 250px !important;
+     width: 270px !important;
 }
 }
 
