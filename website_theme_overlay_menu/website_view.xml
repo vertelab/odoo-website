@@ -45,7 +45,7 @@
                       <a t-attf-href="/web/login">SIGN IN</a>
                     </li>
                     <li t-if="website.user_id != user_id">
-                      <span t-esc="user_id.name" />
+                      <a t-esc="user_id.name" />
                       <!--          <input type="checkbox" id="menu-p" name="menu-p" class="menu-checkbox" />
                            <label class="menu menu-toggle" t-att-for="menu-p"> -->
                       <!--   <a href="/web" role="menuitem">My Account</a> -->
@@ -77,7 +77,7 @@
                             </li>
                             <t t-if="website.user_id != user_id">
                               <div id="login-mobile">
-                                <span t-esc="user_id.name" />
+                                <a t-esc="user_id.name" />
                               </div>
                             </t>
                           </div>
@@ -108,7 +108,7 @@
                                 </li>
                                 <t t-if="website.user_id != user_id">
                                   <div id="login-mobile">
-                                    <span t-esc="user_id.name" />
+                                    <a t-esc="user_id.name" />
                                   </div>
                                 </t>
                               </div>
@@ -161,7 +161,7 @@
                               </li>
                               <t t-if="website.user_id != user_id">
                                 <div id="login-mobile">
-                                  <span t-esc="user_id.name" />
+                                  <a t-esc="user_id.name" />
                                 </div>
                               </t>
                             </div>
@@ -173,23 +173,28 @@
                       </t>
                     </t>
                   </t>
-                  <li groups="base.group_public" t-if="False">
-                    <a t-attf-href="/web/login">
-                      <b>Sign in</b>
-                    </a>
-                  </li>
-                  <li t-if="website.user_id != user_id">
-                    <b>
-                      <span t-esc="user_id.name" />
-                    </b>
-                    <input type="checkbox" id="menu-p" name="menu-p" class="menu-checkbox" />
-                    <label class="menu menu-toggle" t-att-for="menu-p">
+
+                  <label for="menu2" />
+                  <input type="checkbox" id="menu2" name="menu2" class="menu-checkbox" />
+                  <div class="menu">
+                    <!-- <label t-att-for="'menu-%s' % submenu.id" t-esc="submenu.name"/> -->
+                    <li groups="base.group_public" t-if="False">
+                      <div id="login-mobile">
+                        <a t-attf-href="/web/login">SIGN IN</a>
+                      </div>
+                    </li>
+                    <t t-if="website.user_id != user_id">
+                      <div id="login-mobile">
+                        <label for="menu2" >
+                        <a t-esc="user_id.name" />
+                      </label>
+                      </div>
+                    </t>
                       <a href="/web" role="menuitem">My Account</a>
-                    </label>
                     <li>
                       <a t-attf-href="/web/session/logout?redirect=/" role="menuitem">Logout</a>
                     </li>
-                  </li>
+                  </div>
                 </div>
               </ul>
             </div>
