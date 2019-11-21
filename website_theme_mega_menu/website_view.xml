@@ -5,6 +5,7 @@
       <xpath expr="//body" position="before">
         <t t-set="dn_product_menu" t-value="request.env.ref('webshop_dermanord.menu_dn_shop')" />
         <t t-set="menu_homepage" t-value="request.env.ref('website.menu_homepage')" />
+        <t t-set="footer_menu" t-value="request.env.ref('theme_dermanord.footer_menu')" />
       </xpath>
       <!--    <t t-set="filter_categories" t-value="request.env['product.public.category'].search([])" /> -->
       <xpath expr="//t[@t-call='website.submenu']" position="replace">

@@ -38,14 +38,14 @@
                 <!--   </div> -->
                 <div class="two-rows">
                   <div id="home-link-mobile">
-                    <a>HOME</a>
+                    <a t-attf-href="/">HOME</a>
                   </div>
                   <div id="login-mobile">
                     <li groups="base.group_public">
-                      <a t-attf-href="/web/login">Sign in</a>
+                      <a t-attf-href="/web/login">SIGN IN</a>
                     </li>
                     <li t-if="website.user_id != user_id">
-                      <span t-esc="user_id.name" />
+                      <a t-esc="user_id.name" />
                       <!--          <input type="checkbox" id="menu-p" name="menu-p" class="menu-checkbox" />
                            <label class="menu menu-toggle" t-att-for="menu-p"> -->
                       <!--   <a href="/web" role="menuitem">My Account</a> -->
@@ -57,119 +57,139 @@
                   </div>
                 </div>
                 <div class="mobile-slider-menu menu">
-                  <ul>
-                    <t t-foreach="website.menu_id.child_id" t-as="submenu">
-                      <!-- 
-                           <t t-call="website.submenu" /> -->
-                      <t t-if="submenu == dn_product_menu">
-                        <label for="menu-product">PRODUCTS</label>
-                        <input type="checkbox" id="menu-product" name="menu-product" class="menu-checkbox" />
-                        <div class="menu">
-                          <label class="menu-toggle" for="menu-product">
-                            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
-                            <div class="two-rows">
-                              <div id="home-link-mobile">
-                                <a>Back</a>
-                              </div>
-                              <div id="login-mobile">
-                                <a>SIGN IN</a>
-                              </div>
+                  <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                    <!-- 
+                         <t t-call="website.submenu" /> -->
+                    <t t-if="submenu == dn_product_menu">
+                      <label for="menu-product">PRODUCTS</label>
+                      <input type="checkbox" id="menu-product" name="menu-product" class="menu-checkbox" />
+                      <div class="menu">
+                        <label class="menu-toggle" for="menu-product">
+                          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
+                          <div class="two-rows">
+                            <div id="home-link-mobile">
+                              <a>BACK</a>
                             </div>
-                          </label>
-                          <t t-foreach="website.get_mega_menu_categories()" t-as="categ">
+                            <li groups="base.group_public">
+                              <div id="login-mobile">
+                                <a t-attf-href="/web/login">SIGN IN</a>
+                              </div>
+                            </li>
+                            <t t-if="website.user_id != user_id">
+                              <div id="login-mobile">
+                                <a t-esc="user_id.name" />
+                              </div>
+                            </t>
+                          </div>
+                        </label>
+                        <li>
+                          <a href="/webshop">Show all products</a>
+                        </li>
+                        <t t-foreach="website.get_mega_menu_categories()" t-as="categ">
+                          <div class="arror_right_icon">
                             <label t-att-for="'menu-c%s' % categ.id" t-esc="categ.name">
                               <!--                                   <a t-att-href="website.make_categ_link(categ)"> -->
                               <t t-esc="categ.name" />
                               <!--         </a> -->
                             </label>
-                            <input type="checkbox" t-att-id="'menu-c%s' % categ.id" t-att-name="'menu-c%s' % categ.id" class="menu-checkbox" />
-                            <div class="menu">
-                              <label class="menu-toggle" t-att-for="'menu-c%s' % categ.id">
-                                <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
-                                <div class="two-rows">
-                                  <div id="home-link-mobile">
-                                    <a>Back</a>
-                                  </div>
-                                  <div id="login-mobile">
-                                    <a>SIGN IN</a>
-                                  </div>
+                          </div>
+                          <input type="checkbox" t-att-id="'menu-c%s' % categ.id" t-att-name="'menu-c%s' % categ.id" class="menu-checkbox" />
+                          <div class="menu">
+                            <label class="menu-toggle" t-att-for="'menu-c%s' % categ.id">
+                              <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
+                              <div class="two-rows">
+                                <div id="home-link-mobile">
+                                  <a>BACK</a>
                                 </div>
-                              </label>
-                              <t t-foreach="categ.child_id" t-as="child">
-                                <ul>
-                                  <a t-att-href="website.make_categ_link(child)">
-                                    <label t-att-for="'menu-c%s' % child.id">
-                                      <t t-esc="child.name" />
-                                    </label>
-                                  </a>
-                                </ul>
+                                <li groups="base.group_public">
+                                  <div id="login-mobile">
+                                    <a t-attf-href="/web/login">SIGN IN</a>
+                                  </div>
+                                </li>
+                                <t t-if="website.user_id != user_id">
+                                  <div id="login-mobile">
+                                    <a t-esc="user_id.name" />
+                                  </div>
+                                </t>
+                              </div>
+                            </label>
+                            <li>
+                              <a t-att-href="website.make_categ_link(categ)">
+                                Show all
+                                <t t-esc="categ.name" />
+                              </a>
+                            </li>
+                            <t t-foreach="categ.child_id" t-as="child">
+                              <div class="arror_right_icon">
+                                <a t-att-href="website.make_categ_link(child)">
+                                  <li>
+                                    <t t-esc="child.name" />
+                                  </li>
+                                </a>
+                              </div>
+                            </t>
+                          </div>
+                        </t>
+                      </div>
+                    </t>
+                    <!-- <t t-if="submenu != dn_product_menu">
+                         <t t-call="website.submenu" />
+                         </t> -->
+                    <t t-if="submenu != dn_product_menu and submenu != menu_homepage and submenu != footer_menu">
+                      <t t-if="not submenu.child_id">
+                        <li class="no_dropdown">
+                          <a t-att-href="submenu.url" t-ignore="true">
+                            <span t-field="submenu.name" />
+                          </a>
+                        </li>
+                      </t>
+                      <t t-if="submenu.child_id" t-attf-class="">
+                        <label t-att-for="'menu-1%s' % submenu.id" t-esc="submenu.name" />
+                        <input type="checkbox" t-att-id="'menu-1%s' % submenu.id" t-att-name="'menu-1%s' % submenu.id" class="menu-checkbox" />
+                        <div class="menu">
+                          <!-- <label t-att-for="'menu-%s' % submenu.id" t-esc="submenu.name"/> -->
+                          <label class="menu-toggle" t-att-for="'menu-1%s' % submenu.id">
+                            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
+                            <div class="two-rows">
+                              <div id="home-link-mobile">
+                                <a>BACK</a>
+                              </div>
+                              <li groups="base.group_public">
+                                <div id="login-mobile">
+                                  <a t-attf-href="/web/login">SIGN IN</a>
+                                </div>
+                              </li>
+                              <t t-if="website.user_id != user_id">
+                                <div id="login-mobile">
+                                  <a t-esc="user_id.name" />
+                                </div>
                               </t>
                             </div>
+                          </label>
+                          <t t-foreach="submenu.child_id" t-as="submenu">
+                            <t t-call="website.submenu" />
                           </t>
                         </div>
                       </t>
-                      <!-- <t t-if="submenu != dn_product_menu">
-                           <t t-call="website.submenu" />
-                           </t> -->
-                      <t t-if="submenu != dn_product_menu and submenu != menu_homepage">
-                        <t t-if="not submenu.child_id">
-                          <li class="no_dropdown">
-                            <a t-att-href="submenu.url" t-ignore="true">
-                              <span t-field="submenu.name" />
-                            </a>
-                          </li>
-                        </t>
-                        <t t-if="submenu.child_id" t-attf-class="">
-                          <label t-att-for="'menu-%s' % submenu.id" t-esc="submenu.name" />
-                          <input type="checkbox" t-att-id="'menu-%s' % submenu.id" t-att-name="'menu-%s' % submenu.id" class="menu-checkbox" />
-                          <div class="menu">
-                            <!-- <label t-att-for="'menu-%s' % submenu.id" t-esc="submenu.name"/> -->
-                            <ul>
-                              <li>
-                                <label class="menu-toggle" t-att-for="'menu-%s' % submenu.id">
-                                  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
-                                  <div class="two-rows">
-                                    <div id="home-link-mobile">
-                                      <a>Back</a>
-                                    </div>
-                                    <div id="login-mobile">
-                                      <a>SIGN IN</a>
-                                    </div>
-                                  </div>
-                                </label>
-                                <t t-foreach="submenu.child_id" t-as="submenu">
-                                  <ul>
-                                    <li>
-                                      <label for="menu-pages">
-                                        <t t-call="website.submenu" />
-                                      </label>
-                                    </li>
-                                  </ul>
-                                </t>
-                              </li>
-                            </ul>
-                          </div>
-                        </t>
-                      </t>
                     </t>
-                    <li groups="base.group_public" t-if="False">
-                      <a t-attf-href="/web/login">
-                        <b>Sign in</b>
-                      </a>
+                  </t>
+                  <li groups="base.group_public" t-if="False">
+                    <a t-attf-href="/web/login">
+                      <b>Sign in</b>
+                    </a>
+                  </li>
+                  <li t-if="website.user_id != user_id">
+                    <b>
+                      <a t-esc="user_id.name" />
+                    </b>
+                    <input type="checkbox" id="menu-p" name="menu-p" class="menu-checkbox" />
+                    <label class="menu menu-toggle" t-att-for="menu-p">
+                      <a href="/web" role="menuitem">My Account</a>
+                    </label>
+                    <li>
+                      <a t-attf-href="/web/session/logout?redirect=/" role="menuitem">Logout</a>
                     </li>
-                    <li t-if="False and website.user_id != user_id">
-                      <label for="menu-p">
-                        <span t-esc="user_id.name" />
-                      </label>
-                      <input type="checkbox" id="menu-p" name="menu-p" class="menu-checkbox" />
-                      <label class="menu menu-toggle" t-att-for="menu-p">
-                        <a href="/web" role="menuitem">My Account</a>
-                      </label>
-                      <li>
-                        <a t-attf-href="/web/session/logout?redirect=/" role="menuitem">Logout</a>
-                      </li>
-                    </li>
-                  </ul>
+                  </li>
                 </div>
               </ul>
             </div>

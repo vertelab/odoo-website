@@ -34,7 +34,6 @@ body {
 }
 
 .overlay a {
-    padding: 8px;
     text-decoration: none;
     font-size: 20px !important;
     /*color: #999;*/
@@ -120,7 +119,6 @@ ul.dropdown-menu span{
 
 .dropdown-menu > li > a {
     display: block;
-    padding: 8px !important;
     clear: both;
     font-weight: normal;
     line-height: 1.42857143;
@@ -215,12 +213,19 @@ ul.dropdown-menu span{
   
 .mobile-slider-menu a{
     display: block;
-    line-height: 40px;
     text-decoration: none;
     color: #000;
-    padding-left:30px;
 }
 
+a.closebtn {
+    padding-top: 10px;
+    padding-left: 20px;
+}
+
+li.no_dropdown {
+    padding-left: 30px;
+    line-height: 50px;
+}
 .mobile-slider-menu label{
     padding-left:30px;
     line-height: 50px;
@@ -229,6 +234,16 @@ ul.dropdown-menu span{
     color: #000;
     border-bottom: 1px solid gray;
     }
+
+    .mobile-slider-menu li{
+    padding-left:30px;
+    line-height: 50px;
+    display: block;
+    text-decoration: none;
+    color: #000;
+    border-bottom: 1px solid gray;
+    }
+
 
     .mobile-slider-menuy a {
     border-bottom: 1px solid gray;
@@ -244,6 +259,10 @@ li.no_dropdown  {
 
  .mobile-slider-menu label{
         background: url(https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-arrow-right-b-128.png) 95% 50% / 16px 16px no-repeat;
+    }
+
+ .subpages_bg{
+        background: none;
     }
 
 /* hide inputs */          
@@ -262,7 +281,19 @@ li.no_dropdown  {
   width:100%;
 }
 
-    
+ul.dropdown-menu.mega-dropdown-menu.row.col-md-12 a:hover {
+    background-color: transparent;
+}
+
+.two-rows a {
+    padding: 5px;
+}
+
+label.menu-toggle {
+    padding-left: 0;
+    background: none;
+}
+  
 #info{
   display: table;
   background: rgba(0,0,0,0.4);
@@ -285,12 +316,10 @@ li.no_dropdown  {
       padding: 20px;
       margin: 10px;
       display: inline-block;      
-
-
     }
 
     label.menu-toggle{
         padding-left:0;
     }
-   
+
 
