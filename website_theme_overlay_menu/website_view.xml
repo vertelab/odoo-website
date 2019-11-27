@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
   <data>
+    <template id="website_theme_overlay_menu_home" name="Website Theme Overlay Menu Home">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
+      <div class="two-rows">
+        <t t-if="not om_for">
+          <div id="home-link-mobile">
+            <a href="/">HOME</a>
+          </div>
+        </t>
+        <t t-if="om_for">
+          <div id="home-link-mobile">
+            <label class="menu-toggle" t-att-for="om_for">BACK</label>
+          </div>
+        </t>
+        <div id="login-mobile">
+          <div groups="base.group_public">
+            <a t-attf-href="/web/login">SIGN IN</a>
+          </div>
+          <t t-if="website.user_id != user_id">
+            <div>
+              <label class="menu-toggle" for="menu-e">MY ACCOUNT</label>
+            </div>
+          </t>
+        </div>
+      </div>
+    </template>
     <template id="website_theme_overlay_menu" inherit_id="website.layout" name="Website Theme Overlay Menu" customize_show="True" active="False" priority="99">
       <xpath expr="//button[@data-target='.navbar-top-collapse']" position="replace">
         <span class="pull-right hidden-lg hidden-md hidden-sm" style="font-size:35px; cursor:pointer;" onclick="openNav()">&#9776;</span>
@@ -11,193 +36,133 @@
       <xpath expr="//body" position="inside">
         <t t-if="website">
           <div id="overlay_nav" class="overlay">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
-            <div class="overlay-content">
-              <ul style="list-style-type: none; padding: 0px;">
-                <!-- div class="row col-sm-12"> -->
-                <!--                  <div id="menu_div" class="col-xs-2">
-                     <button type="button" id="menu-btn" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
-                     <span class="sr-only">Toggle navigation</span>
-                     <span class="icon-bar" />
-                     <span class="icon-bar" />
-                     <span class="icon-bar" />
-                     </button>
-                     </div> -->
-                <!--               <div id="search_div" class="col-sm-2">
-                     <div class="">
-                     <a href="#" id="search-btn-modal" data-toggle="modal" data-target="#search_modal" style="color: #000;">
-                     <i class="fa fa-search fa-2x" />
-                     </a>
-                     </div>
-                     </div> -->
-                <!--  <div id="logo_div" class="col-sm-2">
-                     <a id="mobile_logo" class="navbar-brand logo text-right" href="/" style="width: 10%;">
-                     <img src="/website_logo.png" />
-                     </a>
-                     </div> -->
-                <!--   </div> -->
-                <div class="two-rows">
-                  <div id="home-link-mobile">
-                    <a t-attf-href="/">HOME</a>
-                  </div>
-                  <div id="login-mobile">
-                    <li groups="base.group_public">
-                      <a t-attf-href="/web/login">SIGN IN</a>
-                    </li>
-                    <li t-if="website.user_id != user_id">
-                      <a t-esc="user_id.name" />
-                      <!--          <input type="checkbox" id="menu-p" name="menu-p" class="menu-checkbox" />
-                           <label class="menu menu-toggle" t-att-for="menu-p"> -->
-                      <!--   <a href="/web" role="menuitem">My Account</a> -->
-                      <!--      </label> -->
-                      <!--     <li>
-                           <a t-attf-href="/web/session/logout?redirect=/" role="menuitem">Logout</a>
-                           </li> -->
-                    </li>
-                  </div>
-                </div>
-                <div class="mobile-slider-menu menu">
-                  <t t-foreach="website.menu_id.child_id" t-as="submenu">
-                    <!-- 
-                         <t t-call="website.submenu" /> -->
-                    <t t-if="submenu == dn_product_menu">
+            <!-- <ul style="list-style-type: none; padding: 0px;"> -->
+            <!-- <ul> -->
+            <div class="mobile-slider-menu menu">
+              <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home" />
+              <!-- </ul> -->
+              <!-- </div>
+                   <div class="mobile-slider-menu menu"> -->
+              <ul>
+                <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                  <t t-if="submenu == dn_product_menu">
+                    <li>
                       <label for="menu-product">PRODUCTS</label>
                       <input type="checkbox" id="menu-product" name="menu-product" class="menu-checkbox" />
                       <div class="menu">
-                        <label class="menu-toggle" for="menu-product">
-                          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
-                          <div class="two-rows">
-                            <div id="home-link-mobile">
-                              <a>BACK</a>
-                            </div>
-                            <li groups="base.group_public">
-                              <div id="login-mobile">
-                                <a t-attf-href="/web/login">SIGN IN</a>
-                              </div>
-                            </li>
-                            <t t-if="website.user_id != user_id">
-                              <div id="login-mobile">
-                                <a t-esc="user_id.name" />
-                              </div>
-                            </t>
-                          </div>
-                        </label>
-                        <li>
-                          <a href="/webshop">Show all products</a>
-                        </li>
+                        <!-- <label class="menu-toggle" for="menu-product"> -->
+                        <!--  <div class="two-rows">
+                             <div id="home-link-mobile">
+                             <a>BACK</a>
+                             </div>
+                             <div for="menu-e">
+                             <a>SIGN IN</a>
+                             </div>
+                             </div> -->
+                        <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
+                          <t t-set="om_for" t-value="'menu-product'" />
+                        </t>
+                        <!-- </label> -->
                         <t t-foreach="website.get_mega_menu_categories()" t-as="categ">
-                          <div class="arror_right_icon">
-                            <label t-att-for="'menu-c%s' % categ.id" t-esc="categ.name">
-                              <!--                                   <a t-att-href="website.make_categ_link(categ)"> -->
-                              <t t-esc="categ.name" />
-                              <!--         </a> -->
-                            </label>
-                          </div>
+                          <label t-att-for="'menu-c%s' % categ.id" t-esc="categ.name">
+                            <!--  
+                                 <a t-att-href="website.make_categ_link(categ)"> -->
+                            <t t-esc="categ.name" />
+                            <!--         </a> -->
+                          </label>
                           <input type="checkbox" t-att-id="'menu-c%s' % categ.id" t-att-name="'menu-c%s' % categ.id" class="menu-checkbox" />
                           <div class="menu">
-                            <label class="menu-toggle" t-att-for="'menu-c%s' % categ.id">
-                              <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
-                              <div class="two-rows">
-                                <div id="home-link-mobile">
-                                  <a>BACK</a>
-                                </div>
-                                <li groups="base.group_public">
-                                  <div id="login-mobile">
-                                    <a t-attf-href="/web/login">SIGN IN</a>
-                                  </div>
-                                </li>
-                                <t t-if="website.user_id != user_id">
-                                  <div id="login-mobile">
-                                    <a t-esc="user_id.name" />
-                                  </div>
-                                </t>
-                              </div>
-                            </label>
-                            <li>
-                              <a t-att-href="website.make_categ_link(categ)">
-                                Show all
-                                <t t-esc="categ.name" />
-                              </a>
-                            </li>
+                            <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
+                              <t t-set="om_for" t-value="'menu-c%s' % categ.id" />
+                            </t>
                             <t t-foreach="categ.child_id" t-as="child">
-                              <div class="arror_right_icon">
-                                <a t-att-href="website.make_categ_link(child)">
-                                  <li>
+                              <div class="product_children">
+                                <label t-att-for="'menu-c%s' % child.id">
+                                  <a t-att-href="website.make_categ_link(child)">
                                     <t t-esc="child.name" />
-                                  </li>
-                                </a>
+                                  </a>
+                                </label>
                               </div>
                             </t>
                           </div>
                         </t>
                       </div>
-                    </t>
-                    <!-- <t t-if="submenu != dn_product_menu">
-                         <t t-call="website.submenu" />
-                         </t> -->
-                    <t t-if="submenu != dn_product_menu and submenu != menu_homepage and submenu != footer_menu">
-                      <t t-if="not submenu.child_id">
-                        <li class="no_dropdown">
+                    </li>
+                  </t>
+                  <!-- <t t-if="submenu != dn_product_menu">
+                       <t t-call="website.submenu" />
+                       </t> -->
+                  <t t-if="submenu != dn_product_menu and submenu != menu_homepage">
+                    <t t-if="not submenu.child_id">
+                      <li class="no_dropdown">
+                        <label>
                           <a t-att-href="submenu.url" t-ignore="true">
                             <span t-field="submenu.name" />
                           </a>
-                        </li>
-                      </t>
-                      <t t-if="submenu.child_id" t-attf-class="">
-                        <label t-att-for="'menu-1%s' % submenu.id" t-esc="submenu.name" />
-                        <input type="checkbox" t-att-id="'menu-1%s' % submenu.id" t-att-name="'menu-1%s' % submenu.id" class="menu-checkbox" />
-                        <div class="menu">
+                        </label>
+                      </li>
+                    </t>
+                    <t t-if="submenu.child_id" t-attf-class="">
+                      <li>
+                        <label t-att-for="'menu-%s' % submenu.id" t-esc="submenu.name" />
+                        <input type="checkbox" t-att-id="'menu-%s' % submenu.id" t-att-name="'menu-%s' % submenu.id" class="menu-checkbox" />
+                        <div class="menu one_dropdown">
                           <!-- <label t-att-for="'menu-%s' % submenu.id" t-esc="submenu.name"/> -->
-                          <label class="menu-toggle" t-att-for="'menu-1%s' % submenu.id">
-                            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
-                            <div class="two-rows">
-                              <div id="home-link-mobile">
-                                <a>BACK</a>
-                              </div>
-                              <li groups="base.group_public">
-                                <div id="login-mobile">
-                                  <a t-attf-href="/web/login">SIGN IN</a>
-                                </div>
-                              </li>
-                              <t t-if="website.user_id != user_id">
-                                <div id="login-mobile">
-                                  <a t-esc="user_id.name" />
-                                </div>
-                              </t>
-                            </div>
-                          </label>
+                          <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
+                            <t t-set="om_for" t-value="'menu-%s' % submenu.id" />
+                          </t>
                           <t t-foreach="submenu.child_id" t-as="submenu">
-                            <t t-call="website.submenu" />
+                            <ul>
+                              <li>
+                                <label for="menu-pages">
+                                  <t t-call="website.submenu" />
+                                </label>
+                              </li>
+                            </ul>
                           </t>
                         </div>
-                      </t>
+                      </li>
                     </t>
                   </t>
-
-                  <label for="menu2" />
-                  <input type="checkbox" id="menu2" name="menu2" class="menu-checkbox" />
-                  <div class="menu">
-                    <!-- <label t-att-for="'menu-%s' % submenu.id" t-esc="submenu.name"/> -->
-                    <li groups="base.group_public" t-if="False">
-                      <div id="login-mobile">
-                        <a t-attf-href="/web/login">SIGN IN</a>
-                      </div>
-                    </li>
-                    <t t-if="website.user_id != user_id">
-                      <div id="login-mobile">
-                        <label for="menu2" >
-                        <a t-esc="user_id.name" />
-                      </label>
-                      </div>
-                    </t>
-                      <a href="/web" role="menuitem">My Account</a>
-                    <li>
-                      <a t-attf-href="/web/session/logout?redirect=/" role="menuitem">Logout</a>
-                    </li>
-                  </div>
-                </div>
+                </t>
+                <li groups="base.group_public" t-if="False">
+                  <a t-attf-href="/web/login">
+                    <b>Sign in</b>
+                  </a>
+                </li>
+                <li t-if="False and website.user_id != user_id">
+                  <label for="menu-p">
+                    <span t-esc="user_id.name" />
+                  </label>
+                  <input type="checkbox" id="menu-p" name="menu-p" class="menu-checkbox" />
+                  <label class="menu menu-toggle" t-att-for="menu-p">
+                    <a href="/web" role="menuitem">My Account</a>
+                  </label>
+                  <li>
+                    <a t-attf-href="/web/session/logout?redirect=/" role="menuitem">Logout</a>
+                  </li>
+                </li>
               </ul>
+              <input type="checkbox" id="menu-e" name="menu-e" class="menu-checkbox" />
+              <div class="menu">
+                <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
+                  <t t-set="om_for" t-value="'menu-e'" />
+                </t>
+                <div class="product_children">
+                  <label>
+                    <li>
+                      <a href="/web/">My Account</a>
+                    </li>
+                  </label>
+                  <label>
+                    <li>
+                      <a href="/web/session/logout?redirect=/">Logout</a>
+                    </li>
+                  </label>
+                </div>
+              </div>
             </div>
+            <!-- </ul> -->
           </div>
         </t>
       </xpath>

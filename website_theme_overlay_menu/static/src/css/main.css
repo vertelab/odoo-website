@@ -1,4 +1,4 @@
-﻿/*=============================================================
+/*=============================================================
                     Website Theme Overlay Menu
  ============================================================ */
 body {
@@ -34,13 +34,14 @@ body {
 }
 
 .overlay a {
+    padding: 8px;
     text-decoration: none;
-    font-size: 20px !important;
+    font-size: 18px !important;
     /*color: #999;*/
     display: block;
     transition: 0.4s;
   /*  padding-left: 30px;*/
-    font-weight: bold;
+
 }
 
 .overlay li {
@@ -52,28 +53,53 @@ body {
 */
 .two-rows{
     display:flex;
-    font-weight:bold;
+
 }
+
+#login-mobile label{
+  border:none;
+   font-weight:bold;
+   background: none;
+}
+
+
+#login-mobile a {
+    text-decoration: none;
+}
+
+#home-link-mobile label{
+border:none;
+ color:white; 
+
+}
+
 
 #home-link-mobile{
     background-color:black;
-    padding: 12px;
     width:50%;
     color:white;
-    font-weight: bold;
+    max-height: 60px;
+}
+
+#login-mobile li {
+    list-style-type: none;
+    text-decoration: none;
 }
 
 #home-link-mobile a{
-    padding-left: 20px;
-    font-weight: bold;
+    color:white;
+}
+
+#home-link-mobile a{
     color: white;
     text-decoration: none;
+    font-weight: bold;
 }
 #login-mobile{
     width:50%;
-    padding: 12px;
+
     background-color: #DADBDE;
-    font-weight: bold;
+    max-height: 60px;
 }
 
 #login-mobile a{
@@ -102,7 +128,7 @@ body {
 .overlay-content .dropdown-menu > li > a {
     color: #999;
     /* padding-left: 30px; */
-    border-top: 1;
+    border-bottom: 1;
     /* padding-top: 5px; */
 
     padding-left: 40px;
@@ -114,7 +140,6 @@ a#search-btn-modal, i.fa.fa-search.fa-2x {
 
 ul.dropdown-menu span{
     color: black;
-
 }
 
 .dropdown-menu > li > a {
@@ -178,11 +203,6 @@ ul.dropdown-menu span{
   padding: 0;
 }
 
-
-.mobile-slider-menu label{
-  cursor: pointer;
-    outline: none;
-}
     
 .mobile-slider-menu .menu{
   position: absolute;
@@ -213,57 +233,53 @@ ul.dropdown-menu span{
   
 .mobile-slider-menu a{
     display: block;
+    line-height: 40px;
     text-decoration: none;
     color: #000;
+    padding-left:30px;
+    font-weight: bold;
+   
 }
 
-a.closebtn {
-    padding-top: 10px;
-    padding-left: 20px;
-}
-
-li.no_dropdown {
-    padding-left: 30px;
-    line-height: 50px;
-}
 .mobile-slider-menu label{
+    background: url(https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-arrow-right-b-128.png) 95% 50% / 16px 16px no-repeat;
     padding-left:30px;
     line-height: 50px;
     display: block;
     text-decoration: none;
     color: #000;
     border-bottom: 1px solid gray;
+    cursor: pointer;
+    outline: none;
     }
 
     .mobile-slider-menu li{
-    padding-left:30px;
-    line-height: 50px;
-    display: block;
-    text-decoration: none;
-    color: #000;
-    border-bottom: 1px solid gray;
+      list-style-type: none
     }
 
+.no_dropdown label {
+    background: none;
+    padding: 0;
+  }
 
-    .mobile-slider-menuy a {
-    border-bottom: 1px solid gray;
-}
-
-li.no_dropdown  {
-    border-bottom: 1px solid gray;
-}
 
 .two-rows a{
-    line-height:20px;
+    border-bottom:none;
     }
 
- .mobile-slider-menu label{
-        background: url(https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-arrow-right-b-128.png) 95% 50% / 16px 16px no-repeat;
+.two-rows label{
+
+    border-bottom:none;
     }
 
- .subpages_bg{
-        background: none;
-    }
+    label.menu-toggle {
+    font-size: 18px;
+}
+
+    .no_dropdown a {
+    line-height: 32px;
+}
+
 
 /* hide inputs */          
 .menu-checkbox {
@@ -281,19 +297,7 @@ li.no_dropdown  {
   width:100%;
 }
 
-ul.dropdown-menu.mega-dropdown-menu.row.col-md-12 a:hover {
-    background-color: transparent;
-}
-
-.two-rows a {
-    padding: 5px;
-}
-
-label.menu-toggle {
-    padding-left: 0;
-    background: none;
-}
-  
+    
 #info{
   display: table;
   background: rgba(0,0,0,0.4);
@@ -316,10 +320,38 @@ label.menu-toggle {
       padding: 20px;
       margin: 10px;
       display: inline-block;      
+
     }
 
     label.menu-toggle{
-        padding-left:0;
+        padding-left:30px;
+        padding-top: 4px;
+        font-weight: bold;
+        background: none !important;
+    }
+        a.menu-toggle{
+        padding-left:30px;
     }
 
+    .product_children a{
+
+      padding-left: 0;
+    }
+
+     .subpages_bg{
+        background: none;
+    }
+
+    .product_children label {
+    background: none;
+}
+
+#account_mobile_link label{
+  font-weight: normal;
+}
+
+#normal_mobile{
+  font-weight:normal;
+}
+   
 
