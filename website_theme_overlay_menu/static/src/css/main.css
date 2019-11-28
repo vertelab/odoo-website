@@ -325,6 +325,10 @@ ul.dropdown-menu span{
 
     }
 
+    .show_all label{
+      padding-left: 0;
+    }
+
     label.menu-toggle{
         padding-left:30px;
         padding-top: 4px;
@@ -356,4 +360,10 @@ ul.dropdown-menu span{
   font-weight:normal;
 }
    
+
+ .show_all label {
+    padding: 0;
+    background: none;
+    font-weight: bold;
+}
 

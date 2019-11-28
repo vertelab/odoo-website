@@ -63,11 +63,18 @@
                           <t t-set="om_for" t-value="'menu-product'" />
                         </t>
                         <!-- </label> -->
+                        <div class="show_all">
+                          <label>
+                            <a href="/webshop">SHOW ALL PRODUCTS</a>
+                          </label>
+                        </div>
                         <t t-foreach="website.get_mega_menu_categories()" t-as="categ">
                           <label t-att-for="'menu-c%s' % categ.id" t-esc="categ.name">
                             <!--  
                                  <a t-att-href="website.make_categ_link(categ)"> -->
-                            <t t-esc="categ.name" />
+                            <a t-att-href="website.make_categ_link(categ)">
+                              <t t-esc="categ.name" />
+                            </a>
                             <!--         </a> -->
                           </label>
                           <input type="checkbox" t-att-id="'menu-c%s' % categ.id" t-att-name="'menu-c%s' % categ.id" class="menu-checkbox" />
@@ -75,6 +82,14 @@
                             <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
                               <t t-set="om_for" t-value="'menu-c%s' % categ.id" />
                             </t>
+                            <div class="show_all">
+                            <label>
+                              <a t-att-href="website.make_categ_link(categ)">
+                                SHOW ALL
+                                <t t-esc="categ.name" />
+                              </a>
+                            </label>
+                          </div>
                             <t t-foreach="categ.child_id" t-as="child">
                               <div class="product_children">
                                 <label t-att-for="'menu-c%s' % child.id">
