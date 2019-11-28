@@ -131,11 +131,9 @@
                   </a>
                 </li>
                 <li t-if="False and website.user_id != user_id">
-                  <div id="user_id.name">
                   <label for="menu-p">
                     <a t-esc="user_id.name" />
                   </label>
-                </div>
                   <input type="checkbox" id="menu-p" name="menu-p" class="menu-checkbox" />
                   <label class="menu menu-toggle" t-att-for="menu-p">
                     <a href="/web" role="menuitem">My Account</a>
