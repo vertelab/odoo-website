@@ -58,7 +58,7 @@ body {
 
 #login-mobile label{
   border:none;
-   font-weight:bold;
+
    background: none;
 }
 
@@ -108,6 +108,8 @@ border:none;
     font-weight: bold;
     text-decoration: none;
 }
+
+
     
 .overlay a:hover, .overlay> a:focus {
     color: #f1f1f1;
@@ -326,8 +328,8 @@ ul.dropdown-menu span{
     label.menu-toggle{
         padding-left:30px;
         padding-top: 4px;
-        font-weight: bold;
         background: none !important;
+        font-family: futura-pt-light, sans-serif;
     }
         a.menu-toggle{
         padding-left:30px;
