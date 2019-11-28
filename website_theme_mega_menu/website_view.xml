@@ -15,7 +15,9 @@
               Products
               <b class="caret" />
             </a>
+           
             <ul class="dropdown-menu mega-dropdown-menu row col-md-12">
+               <div class="column_item_pages">
               <t t-set="menu_item_id" t-value="request.env.ref('webshop_dermanord.menu_dn_shop')" />
               <li class="col-sm-2">
                 <t t-foreach="menu_item_id.child_id" t-as="item">
@@ -27,7 +29,10 @@
                   </a>
                   </ul>
                 </t>
+
               </li>
+            </div>
+
               <t t-foreach="website.get_mega_menu_categories()" t-as="categ">
                 <li class="col-sm-2">
                   <a t-att-href="website.make_categ_link(categ)">

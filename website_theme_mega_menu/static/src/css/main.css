@@ -172,6 +172,10 @@ ul.mega-dropdown-menu {
 }
 }
 
+.column_item_pages .col-sm-2{
+  min-height:1000px;
+}
+
 
 
 @media (min-width: 1600px){
