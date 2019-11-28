@@ -143,6 +143,10 @@ li, label {
 }
 
 .mega-dropdown-menu .col-sm-2 {
+    min-height: 250px;
+}
+
+.mega-dropdown-menu .col-sm-2 {
 
     height: 16.66666667%;
     min-width: 250px;
