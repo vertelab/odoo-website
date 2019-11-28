@@ -136,7 +136,7 @@ li, label {
 
 @media (max-width: 1000px){
 .mega-dropdown-menu .col-sm-2 {
-    width: 17.66666667;
+    min-width: 250px;
 }
 }
 
@@ -156,7 +156,7 @@ ul.mega-dropdown-menu {
 
 @media (min-width: 768px){
 .mega-dropdown-menu .col-sm-2 {
-    max-width: 270px !important;
+    max-width: 300px !important;
       min-height: 250px;
 }
 }
