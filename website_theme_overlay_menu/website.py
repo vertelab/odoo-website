@@ -26,3 +26,26 @@ from datetime import datetime
 from lxml import html
 import werkzeug
 
+from openerp.addons.website.models.website import slug
+
+class website(models.Model):
+    _inherit = "website"
+    
+    def get_mega_menu_categories(self):
+        children = self.env['product.public.category'].search([('parent_id', '=', None), ('website_published', '=', True)], order='sequence asc')
+        # _logger.warn('sandra %s' % children.mapped('name'))
+
+        return children 
+        
+            # self.env.ref('__export__.product_public_category_4'),
+            # self.env.ref('__export__.product_public_category_3'),
+            # self.env.ref('__export__.product_public_category_2'),
+            # self.env.ref('__export__.product_public_category_5'),
+            # self.env.ref('__export__.product_public_category_6'),
+
+
+        
+        
+    def make_categ_link(self, value):
+        return '/webshop/category/%s' %slug(value)
+        

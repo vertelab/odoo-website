@@ -3,7 +3,7 @@
     <data>
 
         <!-- remove Odoo advertisement -->
-        <template id="website.layout_footer_copyright" inherit_id="website.layout" name="Footer Copyright">
+<!--         <template id="website.layout_footer_copyright" inherit_id="website.layout" name="Footer Copyright">
             <xpath expr="//footer" position="inside">
                 <div class="container mt16 mb8 hidden">
                     <div class="pull-right" t-ignore="true" t-if="not editable">
@@ -15,7 +15,7 @@
                     </div>
                 </div>
             </xpath>
-        </template>
+        </template> -->
 
         <template id="website_theme_demo_page" inherit_id="website.layout" name="Website Theme Demo Page" customize_show="True" active="False" priority="100" groups="base.group_website_publisher">
             <xpath expr="//ul[@class='dropdown-menu js_usermenu']/li[last()]" position="before">
