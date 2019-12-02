@@ -160,7 +160,7 @@
                   </label>
                   <input type="checkbox" id="menu-p" name="menu-p" class="menu-checkbox" />
                   <label class="menu menu-toggle" t-att-for="menu-p">
-                    <a href="/web" role="menuitem">My Account</a>
+                    <a href="/" role="menuitem">My Account</a>
                   </label>
                   <li>
                     <a t-attf-href="/web/session/logout?redirect=/" role="menuitem">Logout</a>
@@ -172,12 +172,11 @@
                 <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
                   <t t-set="om_for" t-value="'menu-e'" />
                 </t>
-                <div class="product_children">
-                  <label>
+      
                     <li>
-                      <a href="/web/">My Account</a>
+                      <a href="/web">My Account</a>
                     </li>
-                  </label>
+                  <div class="product_children">
                   <label>
                     <li>
                       <a href="/web/session/logout?redirect=/">Logout</a>
