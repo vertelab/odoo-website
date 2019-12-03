@@ -175,7 +175,6 @@ padding-right: 3%;
 }
 
 
-
 /*@media (min-width: 950px) and (max-width: 1300px){
 .mega-dropdown-menu .col-sm-2 {
     min-width: 18.66666667%;
@@ -184,7 +183,7 @@ padding-right: 3%;
 }*/
 
 .mega-dropdown-menu .col-sm-2 {
-    min-height: 230px;
+    min-height: 270px;
 }
 
 .column_item_pages .col-sm-2{
@@ -194,7 +193,7 @@ padding-right: 3%;
 
 .scrollable-menu {
     height: auto;
-    max-height: 800px;
+    max-height: 700px;
     overflow-x: hidden;
 }
 
