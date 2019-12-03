@@ -235,6 +235,10 @@ ul.dropdown-menu.mega-dropdown-menu.row.col-md-12 a:hover {
 .mega-dropdown-menu a:hover {
     color: #839794;
 }
+
+.mega-dropdown-menu h2:hover {
+    color: #839794;
+}
 .mega-dropdown-menu a {
     padding-bottom: none;
 }
