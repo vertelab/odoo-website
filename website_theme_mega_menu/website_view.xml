@@ -16,17 +16,18 @@
               <b class="caret" />
             </a>
            
-            <ul class="dropdown-menu mega-dropdown-menu row col-md-12">
+            <ul class="dropdown-menu scrollable-menu mega-dropdown-menu row col-md-12">
                <div class="column_item_pages">
               <t t-set="menu_item_id" t-value="request.env.ref('webshop_dermanord.menu_dn_shop')" />
               <li class="col-sm-2">
                 <t t-foreach="menu_item_id.child_id" t-as="item">
                   <ul>
-                    <a t-att-href="'%s' % item.url">
-                    <h2 t-att-class="'page-items-mega megamenu-headline'">
-                      <t t-esc="item.name" />
-                    </h2>
-                  </a>
+                      <a t-att-href="'%s' % item.url">
+                       <h2 t-att-class="'page-items-mega megamenu-headline'">
+                       <t t-esc="item.name" />
+                     </h2>
+                      </a>
+                  
                   </ul>
                 </t>
 
@@ -35,11 +36,13 @@
 
               <t t-foreach="website.get_mega_menu_categories()" t-as="categ">
                 <li class="col-sm-2">
-                  <a t-att-href="website.make_categ_link(categ)">
-                    <h2 class="megamenu-headline">
+                    
+                      <a t-att-href="website.make_categ_link(categ)">
+                        <h2 class="megamenu-headline">
                       <t t-esc="categ.name" />
                     </h2>
-                  </a>
+                      </a>
+            
                   <t t-foreach="categ.child_id" t-as="child">
                     <ul>
                       <a t-att-href="website.make_categ_link(child)">
