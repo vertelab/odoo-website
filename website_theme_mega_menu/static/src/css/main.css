@@ -260,10 +260,16 @@ ul.item_ul {
     padding: 2px 0px 15px 40px;
   
 }}
+
+
 @media (max-width: 1100px){
  li.page_items_li.col-sm-2{
     min-height: 1000px;
   }
+
+  ul.dropdown-menu.scrollable-menu.mega-dropdown-menu.row.col-md-12 {
+    width: 100%;
+}
 }
 
 .page_items .col-md-2{
