@@ -12,63 +12,60 @@
         <t t-if="submenu == dn_product_menu">
           <li class="dropdown dropdown-large">
             <a href="/webshop" class="dropdown-toggle" data-toggle="dropdown">
-              Products
+              Produkter
               <b class="caret" />
             </a>
-           
-            <ul class="dropdown-menu scrollable-menu mega-dropdown-menu row col-md-12">
-               <div class="column_item_pages">
-              <t t-set="menu_item_id" t-value="request.env.ref('webshop_dermanord.menu_dn_shop')" />
-              <li class="col-sm-2">
-                <t t-foreach="menu_item_id.child_id" t-as="item">
-                  <ul>
+            <ul class="dropdown-menu scrollable-menu mega-dropdown-menu">
+              <ul class="page_items col-md-2">
+                <t t-set="menu_item_id" t-value="request.env.ref('webshop_dermanord.menu_dn_shop')" />
+                <li class="page_items_li col-sm-2">
+                  <t t-foreach="menu_item_id.child_id" t-as="item">
+                    <ul class="item_ul">
                       <a t-att-href="'%s' % item.url">
-                       <h2 t-att-class="'page-items-mega megamenu-headline'">
-                       <t t-esc="item.name" />
-                     </h2>
-                      </a>
-                  
-                  </ul>
-                </t>
-
-              </li>
-            </div>
-
-              <t t-foreach="website.get_mega_menu_categories()" t-as="categ">
-                <li class="col-sm-2">
-                    
-                      <a t-att-href="website.make_categ_link(categ)">
-                        <h2 class="megamenu-headline">
-                      <t t-esc="categ.name" />
-                    </h2>
-                      </a>
-            
-                  <t t-foreach="categ.child_id" t-as="child">
-                    <ul>
-                      <a t-att-href="website.make_categ_link(child)">
-                        <p class="megamenu-content">
-                          <t t-esc="child.name" />
-                        </p>
+                        <h2 t-att-class="'page-items-mega megamenu-headline'">
+                          <t t-esc="item.name" />
+                        </h2>
                       </a>
                     </ul>
                   </t>
                 </li>
-                <div class="clear"></div>
-
-              </t>
+              </ul>
+              <ul class="categories_mega row col-md-10">
+                <t t-foreach="website.get_mega_menu_categories()" t-as="categ">
+                  <li class="col-sm-2">
+                    <a t-att-href="website.make_categ_link(categ)">
+                      <h2 class="megamenu-headline">
+                        <t t-esc="categ.name" />
+                      </h2>
+                    </a>
+                    <t t-foreach="categ.child_id" t-as="child">
+                      <ul>
+                        <a t-att-href="website.make_categ_link(child)">
+                          <p class="megamenu-content">
+                            <t t-esc="child.name" />
+                          </p>
+                        </a>
+                      </ul>
+                    </t>
+                  </li>
+                </t>
+              </ul>
             </ul>
           </li>
-
         </t>
         <t t-if="submenu != dn_product_menu">
           <t t-call="website.submenu" />
         </t>
       </xpath>
-
     </template>
     <template id="assets_frontend" inherit_id="website.assets_frontend" name="Website Theme Mega Frontend">
       <xpath expr="." position="inside">
         <link href="/website_theme_mega_menu/static/src/css/main.css" rel="stylesheet" type="text/css" />
+      </xpath>
+    </template>
+    <template id="assets_edit" inherit_id="website.assets_editor" name="Website Theme Mega edit">
+      <xpath expr="." position="inside">
+        <link href="/website_theme_mega_menu/static/src/css/edit.css" rel="stylesheet" type="text/css" />
       </xpath>
     </template>
   </data>
