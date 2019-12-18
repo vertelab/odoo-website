@@ -300,12 +300,23 @@ ul.item_ul{
     border-bottom: 2px solid black;
 }
 
-}
-.campaigns_rows.row a {
-    color:#333;
-    font-size: 14px;
+div.campaigns_rows.row a{
+       color:#333;
+    font-size: 16px;
     font-family: Lato, sans-serif;
 }
+
+section.gift_rows .row a{
+      color:#333;  
+    font-size: 16px;
+    font-family: Lato, sans-serif;
+}
+
+.col-sm-5.col-sm-6.col-xs-5 a {
+    color:#333;  
+    font-size: 16px;
+    font-family: Lato, sans-serif;
+  }
 
 .campaigns_rows.row {
     padding-bottom: 1%;
@@ -335,13 +346,6 @@ section.gift_rows .row div:nth-child(2n+1) {
     background-color: #CCD7D8;
 }
 
-
-.gift_rows a {
-    color:#333;
-    font-size: 14px;
-    font-family: Lato, sans-serif;
-}
-
 .gift_section.col-sm-3 {
     padding: 2% 3% 2% 3%;
 }
@@ -354,3 +358,4 @@ border-bottom: 2px solid black;
     width: 100%;
     margin: auto;
 }
+
