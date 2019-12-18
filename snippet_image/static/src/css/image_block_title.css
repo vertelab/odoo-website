@@ -27,3 +27,38 @@
     opacity: 1;
 }
 
+#si_image_blocks_description .col-sm-4{
+    padding:0
+}
+
+.image_description_section .col-sm-4{
+    padding: 0;
+}
+
+.image_description_section .col-sm-8{
+    padding: 0;
+}
+
+.image_description_section .col-sm-5{
+    padding: 0;
+}
+
+.image_description_section .col-sm-7{
+    padding: 0;
+}
+
+
+
+
+.black_section_title{
+    background-color:black;
+    text-align: center;
+}
+
+.black_section_title h4{
+    color: white;
+    margin: 0;
+    padding: 10px;
+}
+
+

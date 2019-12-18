@@ -1,270 +1,426 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
-
-        <!-- Customize Snippets -->
-        <template id="custom_snippets" inherit_id="website.snippets" name="Custom Snippets">
-            <!-- Customize Structure -->
-            <xpath expr="//div[@id='snippet_structure']" position="inside">
-                <!--FADE SLIDER-->
-                <div id="si_fade_slide">
-                    <div class="oe_snippet_thumbnail">
-                        <img class="oe_snippet_thumbnail_img" src="/website/static/src/img/blocks/block_banner.png"/>
-                        <span class="oe_snippet_thumbnail_title">Banner Fade</span>
+  <data>
+    <!-- Customize Snippets -->
+    <template id="custom_snippets" inherit_id="website.snippets" name="Custom Snippets">
+      <!-- Customize Structure -->
+      <xpath expr="//div[@id='snippet_structure']" position="inside">
+        <!--FADE SLIDER-->
+        <div id="si_fade_slide">
+          <div class="oe_snippet_thumbnail">
+            <img class="oe_snippet_thumbnail_img" src="/website/static/src/img/blocks/block_banner.png" />
+            <span class="oe_snippet_thumbnail_title">Banner Fade</span>
+          </div>
+          <section class="oe_snippet_body">
+            <div class="carousel slide carousel-fade" data-ride="carousel" id="fade_carousel" style="overflow: hidden;">
+              <ol class="carousel-indicators">
+                <li class="active" data-slide-to="0" data-target="fade_carousel" />
+                <li data-slide-to="1" data-target="fade_carousel" />
+                <li data-slide-to="2" data-target="fade_carousel" />
+              </ol>
+              <div class="carousel-inner">
+                <div class="item active" style="">
+                  <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_field').id, request.env.ref('snippet_image.image_panorama').id)" style="position: relative;" />
+                  <div class="container" style="position: absolute; top: 20%; left: 20%;">
+                    <div class="row content">
+                      <div class="col-md-6 col-sm-12">
+                        <h2>Your Banner Title</h2>
+                        <h3>Click here to add text</h3>
+                        <p>
+                          <a class="btn btn-success btn-large" href="/page/website.contactus">Contact us</a>
+                        </p>
+                      </div>
                     </div>
-                    <section class="oe_snippet_body">
-                        <div class="carousel slide carousel-fade" data-ride="carousel" id="fade_carousel" style="overflow: hidden;">
-                            <ol class="carousel-indicators">
-                                <li class="active" data-slide-to="0" data-target="fade_carousel"/>
-                                <li data-slide-to="1" data-target="fade_carousel"/>
-                                <li data-slide-to="2" data-target="fade_carousel"/>
-                            </ol>
-                            <div class="carousel-inner">
-                                <div class="item active" style="">
-                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_field').id, request.env.ref('snippet_image.image_panorama').id)" style="position: relative;"/>
-                                     <div class="container" style="position: absolute; top: 20%; left: 20%;">
-                                        <div class="row content">
-                                            <div class="col-md-6 col-sm-12">
-                                                <h2>Your Banner Title</h2>
-                                                <h3>Click here to add text</h3>
-                                                <p>
-                                                    <a class="btn btn-success btn-large" href="/page/website.contactus">Contact us</a>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_island').id, request.env.ref('snippet_image.image_panorama').id)" style="position: relative;"/>
-                                    <div class="container" style="position: absolute; top: 20%; left: 20%;">
-                                        <div class="row content">
-                                            <div class="col-md-6 col-sm-12">
-                                                <h2>Your Banner Title</h2>
-                                                <h3>Click here to add text</h3>
-                                                <p>
-                                                    <a class="btn btn-success btn-large" href="/page/website.contactus">Contact us</a>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_panorama').id)" style="position: relative;"/>
-                                    <div class="container" style="position: absolute; top: 20%; left: 20%;">
-                                        <div class="row content">
-                                            <div class="col-md-6 col-sm-12">
-                                                <h2>Your Banner Title</h2>
-                                                <h3>Click here to add text</h3>
-                                                <p>
-                                                    <a class="btn btn-success btn-large" href="/page/website.contactus">Contact us</a>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a class="left carousel-control" data-slide="prev" href="#fade_carousel">
-                                <i class="fa fa-chevron-left"/>
-                            </a>
-                            <a class="right carousel-control" data-slide="next" href="#fade_carousel">
-                                <i class="fa fa-chevron-right"/>
-                            </a>
-                        </div>
-                    </section>
+                  </div>
                 </div>
-                <!--END OF FADE SLIDER-->
-
-                <!--BLUR BACKGROUND SLIDER-->
-                <div id="si_blurbg_slide">
-                    <div class="oe_snippet_thumbnail">
-                        <img class="oe_snippet_thumbnail_img" src="/website/static/src/img/blocks/block_banner.png"/>
-                        <span class="oe_snippet_thumbnail_title">Banner Blur Background</span>
+                <div class="item">
+                  <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_island').id, request.env.ref('snippet_image.image_panorama').id)" style="position: relative;" />
+                  <div class="container" style="position: absolute; top: 20%; left: 20%;">
+                    <div class="row content">
+                      <div class="col-md-6 col-sm-12">
+                        <h2>Your Banner Title</h2>
+                        <h3>Click here to add text</h3>
+                        <p>
+                          <a class="btn btn-success btn-large" href="/page/website.contactus">Contact us</a>
+                        </p>
+                      </div>
                     </div>
-                    <section class="oe_snippet_body">
-                        <div class="carousel slide carousel-blurbg" data-ride="carousel" id="blurbg_arousel" style="overflow: hidden;">
-                            <div class="carousel-inner">
-                                <div class="item active" style="">
-                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_field').id, request.env.ref('snippet_image.image_wide').id)" style="position: relative;"/>
-                                     <div class="container" style="position: absolute; top: 20%; width: 100%;">
-                                        <div class="row content text-center">
-                                            <div class="col-md-12 col-sm-12" style="color: #fff; font-size: 4em;">
-                                                <p><strong>Your Banner Title</strong></p>
-                                                <p><strong>Click here to add text</strong></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_island').id, request.env.ref('snippet_image.image_wide').id)" style="position: relative;"/>
-                                    <div class="container" style="position: absolute; top: 20%; width: 100%;">
-                                        <div class="row content text-center">
-                                            <div class="col-md-12 col-sm-12" style="color: #fff; font-size: 4em;">
-                                                <p><strong>Your Banner Title</strong></p>
-                                                <p><strong>Click here to add text</strong></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_wide').id)" style="position: relative;"/>
-                                    <div class="container" style="position: absolute; top: 20%; width: 100%;">
-                                        <div class="row content text-center">
-                                            <div class="col-md-12 col-sm-12" style="color: #fff; font-size: 4em;">
-                                                <p><strong>Your Banner Title</strong></p>
-                                                <p><strong>Click here to add text</strong></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a class="left carousel-control" data-slide="prev" href="#blurbg_arousel">
-                                <i class="fa fa-angle-left"/>
-                            </a>
-                            <a class="right carousel-control" data-slide="next" href="#blurbg_arousel">
-                                <i class="fa fa-angle-right"/>
-                            </a>
-                        </div>
-                    </section>
+                  </div>
                 </div>
-                <!--END OF BLUR BACKGROUND SLIDER-->
-
-                <!-- Notes Cubes -->
-                <div id="si_notes_cubes">
-                    <div class="oe_snippet_thumbnail">
-                        <img class="oe_snippet_thumbnail_img" src="/snippet_image/static/src/img/notes_cubes.png"/>
-                        <span class="oe_snippet_thumbnail_title">Notes Cubes</span>
+                <div class="item">
+                  <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_panorama').id)" style="position: relative;" />
+                  <div class="container" style="position: absolute; top: 20%; left: 20%;">
+                    <div class="row content">
+                      <div class="col-md-6 col-sm-12">
+                        <h2>Your Banner Title</h2>
+                        <h3>Click here to add text</h3>
+                        <p>
+                          <a class="btn btn-success btn-large" href="/page/website.contactus">Contact us</a>
+                        </p>
+                      </div>
                     </div>
-                    <section class="s_cubes oe_snippet_body">
-                        <div class="container-fluid">
-                            <div class="col-md-6 col-xs-12 col-sm-12 cube-big">
-                                <img t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_field').id, request.env.ref('snippet_image.image_normal').id)"/>
-                            </div>
-                            <div class="col-md-6 col-xs-12 col-sm-12 cube-big">
-                                <div class="col-md-6 col-sm-6 col-xs-12 cube-text">
-                                    <div class="cube-heading">
-                                        <h4 class="text-center">Lorem ipsum dolor sit amet</h4>
-                                        <p class="text-center">Lorem ipsum dolor sit amet, class pharetra id elit leo. Massa leo per orci ullamcorper egestas, in diam, fermentum phasellus elit praesent morbi.</p>
-                                        <a href="/"><p class="text-center">Read more...</p></a>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-12 cube-medium">
-                                    <img t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_normal').id)"/>
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-12 cube-medium">
-                                    <img t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_island').id, request.env.ref('snippet_image.image_normal').id)"/>
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-12 cube-text">
-                                    <div class="cube-heading">
-                                        <h4 class="text-center">Lorem ipsum dolor sit amet</h4>
-                                        <p class="text-center">Lorem ipsum dolor sit amet, class pharetra id elit leo. Massa leo per orci ullamcorper egestas, in diam, fermentum phasellus elit praesent morbi.</p>
-                                        <a href="/"><p class="text-center">Read more...</p></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div><!-- End of Notes Cubes -->
-
-                <!-- image blocks -->
-                <div id="si_image_blocks">
-                    <div class="oe_snippet_thumbnail">
-                        <img class="oe_snippet_thumbnail_img" src="/snippet_image/static/src/img/image_block.png"/>
-                        <span class="oe_snippet_thumbnail_title">Image Blocks</span>
+                  </div>
+                </div>
+              </div>
+              <a class="left carousel-control" data-slide="prev" href="#fade_carousel">
+                <i class="fa fa-chevron-left" />
+              </a>
+              <a class="right carousel-control" data-slide="next" href="#fade_carousel">
+                <i class="fa fa-chevron-right" />
+              </a>
+            </div>
+          </section>
+        </div>
+        <!--END OF FADE SLIDER-->
+        <!--BLUR BACKGROUND SLIDER-->
+        <div id="si_blurbg_slide">
+          <div class="oe_snippet_thumbnail">
+            <img class="oe_snippet_thumbnail_img" src="/website/static/src/img/blocks/block_banner.png" />
+            <span class="oe_snippet_thumbnail_title">Banner Blur Background</span>
+          </div>
+          <section class="oe_snippet_body">
+            <div class="carousel slide carousel-blurbg" data-ride="carousel" id="blurbg_arousel" style="overflow: hidden;">
+              <div class="carousel-inner">
+                <div class="item active" style="">
+                  <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_field').id, request.env.ref('snippet_image.image_wide').id)" style="position: relative;" />
+                  <div class="container" style="position: absolute; top: 20%; width: 100%;">
+                    <div class="row content text-center">
+                      <div class="col-md-12 col-sm-12" style="color: #fff; font-size: 4em;">
+                        <p>
+                          <strong>Your Banner Title</strong>
+                        </p>
+                        <p>
+                          <strong>Click here to add text</strong>
+                        </p>
+                      </div>
                     </div>
-                    <section class="oe_snippet_body">
-                        <div class="container mt32 mb32">
-                            <div class="row">
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <div class="image_block" style="background-image: url('/website/static/src/img/banner/flower_field.jpg');">
-                                        <a href="/" class="image_block_text">
-                                            <i class="fa fa-heart fa-2x">24</i>
-                                            <i class="fa fa-comment fa-2x">6</i>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <div class="image_block" style="background-image: url('/website/static/src/img/banner/wood.jpg');">
-                                        <a href="/" class="image_block_text">
-                                            <i class="fa fa-heart fa-2x">24</i>
-                                            <i class="fa fa-comment fa-2x">6</i>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <div class="image_block" style="background-image: url('/website/static/src/img/banner/greenfields.jpg');">
-                                        <a href="/" class="image_block_text">
-                                            <i class="fa fa-heart fa-2x">24</i>
-                                            <i class="fa fa-comment fa-2x">6</i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div><!-- End of image blocks -->
-
-                <!-- image blocks title -->
-                <div id="si_image_blocks_title">
-                    <div class="oe_snippet_thumbnail">
-                        <img class="oe_snippet_thumbnail_img" src="/snippet_image/static/src/img/image_block_title.png"/>
-                        <span class="oe_snippet_thumbnail_title">Image Blocks Title</span>
+                  </div>
+                </div>
+                <div class="item">
+                  <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_island').id, request.env.ref('snippet_image.image_wide').id)" style="position: relative;" />
+                  <div class="container" style="position: absolute; top: 20%; width: 100%;">
+                    <div class="row content text-center">
+                      <div class="col-md-12 col-sm-12" style="color: #fff; font-size: 4em;">
+                        <p>
+                          <strong>Your Banner Title</strong>
+                        </p>
+                        <p>
+                          <strong>Click here to add text</strong>
+                        </p>
+                      </div>
                     </div>
-                    <section class="oe_snippet_body">
-                        <div class="container image_block_title_section mt32 mb32">
-                            <div class="row">
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <div class="image_block_title" style="background-image: url('/website/static/src/img/banner/flower_field.jpg');">
-                                        <div class="image_block_title_field" style="background: #fff; right: 0px; bottom: 0px; width: 50%;">
-                                            <div class="image_block_title_text">
-                                                <h4 class="text-center"><strong>Title</strong></h4>
-                                                <p class="text-center">Some subtitle</p>
-                                                <a href="/"><p class="text-center">&gt; Read more</p></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <div class="image_block_title" style="background-image: url('/website/static/src/img/banner/wood.jpg');">
-                                        <div class="image_block_title_field" style="background: #fff; right: 0px; bottom: 0px; width: 50%;">
-                                            <div class="image_block_title_text">
-                                                <h4 class="text-center"><strong>Title</strong></h4>
-                                                <p class="text-center">Some subtitle</p>
-                                                <a href="/"><p class="text-center">&gt; Read more</p></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <div class="image_block_title" style="background-image: url('/website/static/src/img/banner/greenfields.jpg');">
-                                        <div class="image_block_title_field" style="background: #fff; right: 0px; bottom: 0px; width: 50%;">
-                                            <div class="image_block_title_text">
-                                                <h4 class="text-center"><strong>Title</strong></h4>
-                                                <p class="text-center">Some subtitle</p>
-                                                <a href="/"><p class="text-center">&gt; Read more</p></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div><!-- End of image blocks title-->
-
-            </xpath>
-
-            <!-- Customize Content -->
-            <xpath expr="//div[@id='snippet_content']" position="inside">
-
-            </xpath>
-
-            <!-- Customize Features -->
-            <xpath expr="//div[@id='snippet_feature']" position="inside">
-
-            </xpath>
-
-        </template>
-
-    </data>
+                  </div>
+                </div>
+                <div class="item">
+                  <img class="img-responsive" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_wide').id)" style="position: relative;" />
+                  <div class="container" style="position: absolute; top: 20%; width: 100%;">
+                    <div class="row content text-center">
+                      <div class="col-md-12 col-sm-12" style="color: #fff; font-size: 4em;">
+                        <p>
+                          <strong>Your Banner Title</strong>
+                        </p>
+                        <p>
+                          <strong>Click here to add text</strong>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <a class="left carousel-control" data-slide="prev" href="#blurbg_arousel">
+                <i class="fa fa-angle-left" />
+              </a>
+              <a class="right carousel-control" data-slide="next" href="#blurbg_arousel">
+                <i class="fa fa-angle-right" />
+              </a>
+            </div>
+          </section>
+        </div>
+        <!--END OF BLUR BACKGROUND SLIDER-->
+        <!-- Notes Cubes -->
+        <div id="si_notes_cubes">
+          <div class="oe_snippet_thumbnail">
+            <img class="oe_snippet_thumbnail_img" src="/snippet_image/static/src/img/notes_cubes.png" />
+            <span class="oe_snippet_thumbnail_title">Notes Cubes</span>
+          </div>
+          <section class="s_cubes oe_snippet_body">
+            <div class="container-fluid">
+              <div class="col-md-6 col-xs-12 col-sm-12 cube-big">
+                <img t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_field').id, request.env.ref('snippet_image.image_normal').id)" />
+              </div>
+              <div class="col-md-6 col-xs-12 col-sm-12 cube-big">
+                <div class="col-md-6 col-sm-6 col-xs-12 cube-text">
+                  <div class="cube-heading">
+                    <h4 class="text-center">Lorem ipsum dolor sit amet</h4>
+                    <p class="text-center">Lorem ipsum dolor sit amet, class pharetra id elit leo. Massa leo per orci ullamcorper egestas, in diam, fermentum phasellus elit praesent morbi.</p>
+                    <a href="/">
+                      <p class="text-center">Read more...</p>
+                    </a>
+                  </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12 cube-medium">
+                  <img t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_normal').id)" />
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12 cube-medium">
+                  <img t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_island').id, request.env.ref('snippet_image.image_normal').id)" />
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12 cube-text">
+                  <div class="cube-heading">
+                    <h4 class="text-center">Lorem ipsum dolor sit amet</h4>
+                    <p class="text-center">Lorem ipsum dolor sit amet, class pharetra id elit leo. Massa leo per orci ullamcorper egestas, in diam, fermentum phasellus elit praesent morbi.</p>
+                    <a href="/">
+                      <p class="text-center">Read more...</p>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <!-- End of Notes Cubes -->
+        <!-- image blocks -->
+        <div id="si_image_blocks">
+          <div class="oe_snippet_thumbnail">
+            <img class="oe_snippet_thumbnail_img" src="/snippet_image/static/src/img/image_block.png" />
+            <span class="oe_snippet_thumbnail_title">Image Blocks</span>
+          </div>
+          <section class="oe_snippet_body">
+            <div class="container mt32 mb32">
+              <div class="row">
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                  <div class="image_block" style="background-image: url('/website/static/src/img/banner/flower_field.jpg');">
+                    <a href="/" class="image_block_text">
+                      <i class="fa fa-heart fa-2x">24</i>
+                      <i class="fa fa-comment fa-2x">6</i>
+                    </a>
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                  <div class="image_block" style="background-image: url('/website/static/src/img/banner/wood.jpg');">
+                    <a href="/" class="image_block_text">
+                      <i class="fa fa-heart fa-2x">24</i>
+                      <i class="fa fa-comment fa-2x">6</i>
+                    </a>
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                  <div class="image_block" style="background-image: url('/website/static/src/img/banner/greenfields.jpg');">
+                    <a href="/" class="image_block_text">
+                      <i class="fa fa-heart fa-2x">24</i>
+                      <i class="fa fa-comment fa-2x">6</i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <!-- End of image blocks -->
+        <!-- image blocks title -->
+        <div id="si_image_blocks_title">
+          <div class="oe_snippet_thumbnail">
+            <img class="oe_snippet_thumbnail_img" src="/snippet_image/static/src/img/image_block_title.png" />
+            <span class="oe_snippet_thumbnail_title">Image Blocks Title</span>
+          </div>
+          <section class="oe_snippet_body">
+            <div class="container image_block_title_section mt32 mb32">
+              <div class="row">
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                  <div class="image_block_title" style="background-image: url('/website/static/src/img/banner/flower_field.jpg');">
+                    <div class="image_block_title_field" style="background: #fff; right: 0px; bottom: 0px; width: 50%;">
+                      <div class="image_block_title_text">
+                        <h4 class="text-center">
+                          <strong>Title</strong>
+                        </h4>
+                        <p class="text-center">Some subtitle</p>
+                        <a href="/">
+                          <p class="text-center">&gt; Read more</p>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                  <div class="image_block_title" style="background-image: url('/website/static/src/img/banner/wood.jpg');">
+                    <div class="image_block_title_field" style="background: #fff; right: 0px; bottom: 0px; width: 50%;">
+                      <div class="image_block_title_text">
+                        <h4 class="text-center">
+                          <strong>Title</strong>
+                        </h4>
+                        <p class="text-center">Some subtitle</p>
+                        <a href="/">
+                          <p class="text-center">&gt; Read more</p>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                  <div class="image_block_title" style="background-image: url('/website/static/src/img/banner/greenfields.jpg');">
+                    <div class="image_block_title_field" style="background: #fff; right: 0px; bottom: 0px; width: 50%;">
+                      <div class="image_block_title_text">
+                        <h4 class="text-center">
+                          <strong>Title</strong>
+                        </h4>
+                        <p class="text-center">Some subtitle</p>
+                        <a href="/">
+                          <p class="text-center">&gt; Read more</p>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <!-- End of image blocks title-->
+        <!-- image blocks description -->
+        <div id="si_image_blocks_description">
+          <div class="oe_snippet_thumbnail">
+            <img class="oe_snippet_thumbnail_img" src="/snippet_image/static/src/img/image_block_title.png" />
+            <span class="oe_snippet_thumbnail_title">Image Blocks Description</span>
+          </div>
+          <section class="oe_snippet_body">
+            <div class="container black_section_title">
+              <h4>AKTUELLT</h4>
+            </div>
+            <div class="container image_block_title_section image_description_section">
+              <div class="row">
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                  <img class="image_block_title" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_normal').id)">
+                    <div class="image_block_title_field" style="background: #fff; bottom: 0px; width: 100%;">
+                      <div class="image_block_title_text">
+                        <h4 class="text-center">
+                          <strong>COMPACT FONDATION IS BACK</strong>
+                        </h4>
+                        <p class="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.</p>
+                      </div>
+                    </div>
+                  </img>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                  <img class="image_block_title" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_normal').id)">
+                    <div class="image_block_title_field" style="background: #fff; bottom: 0px; width: 100%;">
+                      <div class="image_block_title_text">
+                        <h4 class="text-center">
+                          <strong>VI SKA UTBILDA OSS I XXXXX</strong>
+                        </h4>
+                        <p class="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</p>
+                      </div>
+                    </div>
+                  </img>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                  <img class="image_block_title" t-att-src="'/imagemagick/%s/id/%s' %(request.env.ref('snippet_image.default_image_volcano').id, request.env.ref('snippet_image.image_normal').id)">
+                    <div class="image_block_title_field" style="background: #fff; bottom: 0px; width: 100%;">
+                      <div class="image_block_title_text">
+                        <h4 class="text-center">
+                          <strong>BOOSTAD FRESHNER</strong>
+                        </h4>
+                        <p class="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</p>
+                      </div>
+                    </div>
+                  </img>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <!-- image blocks offers -->
+        <div id="si_image_blocks_offers">
+          <div class="oe_snippet_thumbnail">
+            <img class="oe_snippet_thumbnail_img" src="/snippet_image/static/src/img/image_block_title.png" />
+            <span class="oe_snippet_thumbnail_title">Image Blocks Current Offers</span>
+          </div>
+          <section class="oe_snippet_body">
+            <div class="container black_section_title">
+              <h4>ERBJUDANDE JUST NU</h4>
+            </div>
+            <div class="container image_block_title_section image_description_section">
+              <div class="row">
+                <div class="col-sm-7 col-xs-12">
+                  <section class="products_by_category" />
+                </div>
+                <div class="col-sm-5 col-xs-12">
+                  <div class="image_block_title" style="background-image: url('/website/static/src/img/banner/wood.jpg');">
+                    <div class="image_block_title_field" style="background: #fff; bottom: 0px; width: 100%;" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <!-- image blocks latets -->
+        <div id="si_image_blocks_offers">
+          <div class="oe_snippet_thumbnail">
+            <img class="oe_snippet_thumbnail_img" src="/snippet_image/static/src/img/image_block_title.png" />
+            <span class="oe_snippet_thumbnail_title">Image Blocks Latest News</span>
+          </div>
+          <section class="oe_snippet_body">
+            <div class="container black_section_title">
+              <h4>SENASTE NYTT</h4>
+            </div>
+            <div class="container image_block_title_section image_description_section">
+              <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                  <div class="image_block_title" style="background-image: url('/website/static/src/img/banner/flower_field.jpg');">
+                    <div class="image_block_title_field" style="background: #fff; bottom: 0px; width: 100%;" />
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                  <div class="image_block_title" style="background-image: url('/website/static/src/img/banner/wood.jpg');">
+                    <div class="image_block_title_field" style="background: #fff; bottom: 0px; width: 100%;" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </xpath>
+     <!--  <template id="product_snippet_options" inherit_id="website.snippet_options" name="Product Snippet Options">
+        <xpath expr="." position="inside"> -->
+          <!-- products by category -->
+          <!-- <div data-snippet-option-id="products_by_category" data-selector=".products_by_category">
+            <li class="dropdown-submenu">
+              <a tabindex="-1" href="#">Product by Category</a>
+              <t t-set="categories" t-value="request.env['product.template'].search([('categ_id', '!=', False)]).mapped('categ_id')" />
+              <ul class="dropdown-menu">
+                <t t-if="len(categories) &gt; 0">
+                  <t t-foreach="categories" t-as="category">
+                    <li>
+                      <a t-att-data-value="category.id" class="oe_products_by_category">
+                        <t t-esc="category.name" />
+                      </a>
+                    </li>
+                  </t>
+                </t>
+              </ul>
+            </li>
+            <li class="dropdown-submenu">
+              <a tabindex="-1" href="#">Columns</a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a data-value="3" class="oe_ps_col_change">Col-3</a>
+                </li>
+                <li>
+                  <a data-value="4" class="oe_ps_col_change">Col-4</a>
+                </li>
+                <li>
+                  <a data-value="6" class="oe_ps_col_change">Col-6</a>
+                </li>
+                <li>
+                  <a data-value="12" class="oe_ps_col_change">Col-12</a>
+                </li>
+              </ul>
+            </li>
+          </div> -->
+      <!--   </xpath>
+      </template> -->
+      <!-- Customize Content -->
+      <xpath expr="//div[@id='snippet_content']" position="inside" />
+      <!-- Customize Features -->
+      <xpath expr="//div[@id='snippet_feature']" position="inside" />
+    </template>
+  </data>
 </openerp>
-
-

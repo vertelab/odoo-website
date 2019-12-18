@@ -8,6 +8,7 @@
                 <link href="/snippet_image/static/src/css/main.css" rel="stylesheet"/>
                 <link href="/snippet_image/static/src/css/image_block.css" rel="stylesheet"/>
                 <link href="/snippet_image/static/src/css/image_block_title.css" rel="stylesheet"/>
+                <link href="/snippet_image/static/src/css/image_block_description.css" rel="stylesheet"/>
                 <link href="/snippet_image/static/src/css/round_hover_button.css" rel="stylesheet"/>
                 <link href="/snippet_image/static/src/css/cubes.css" rel="stylesheet"/>
                 <link href="/snippet_image/static/src/css/fade_slider.css" rel="stylesheet"/>
