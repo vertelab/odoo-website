@@ -147,7 +147,6 @@ li, label {
 
 .open > .dropdown-menu {
     display: block;
-    width: 100%;
 }
 
 @media (min-width: 980px){
@@ -271,6 +270,10 @@ ul.item_ul {
   ul.dropdown-menu.scrollable-menu.mega-dropdown-menu.row.col-md-12 {
     width: 100%;
 }
+
+ul.item_ul{
+  padding-left: 0;
+}
 }
 
 .page_items .col-md-2{
@@ -281,4 +284,73 @@ ul.item_ul {
 
 .clear{
      display:none;
+}
+
+
+/*.campaigns_rows.row .row:nth-child(odd)  {
+    background-color: #839794;
+}
+*/
+
+.campaigns_rows.row.col-md-8 {
+    margin: 2%;
+    }
+
+    .first_row {
+    border-bottom: 2px solid black;
+}
+
+}
+.campaigns_rows.row a {
+    color:#333;
+    font-size: 14px;
+    font-family: Lato, sans-serif;
+}
+
+.campaigns_rows.row {
+    padding-bottom: 1%;
+    padding-top: 1.5%;
+}
+
+
+.offers_table {
+    padding: 1.5% 3% 3% 3%;
+}
+
+.latest_mail.col-sm-6 {
+    height: 340px;
+    background-color: #CCD7D8;
+    padding: 3%;
+}
+
+section.all .container {
+    padding: 0;
+}
+
+section.rows .row:nth-child(odd) {
+    background-color: #F2F1EE;;
+}
+
+section.gift_rows .row div:nth-child(2n+1) {
+    background-color: #CCD7D8;
+}
+
+
+.gift_rows a {
+    color:#333;
+    font-size: 14px;
+    font-family: Lato, sans-serif;
+}
+
+.gift_section.col-sm-3 {
+    padding: 2% 3% 2% 3%;
+}
+
+.mail_first_line{
+border-bottom: 2px solid black;
+}
+
+.row.mail_first_line {
+    width: 100%;
+    margin: auto;
 }
