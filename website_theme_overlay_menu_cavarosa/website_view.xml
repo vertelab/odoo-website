@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <template id="website_theme_overlay_menu_home" name="Website Theme Overlay Menu Home">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
+      
+    </template>
+
+       
+    <template id="website_theme_overlay_menu_cavarosa" inherit_id="website.layout" name="Website Theme Overlay Menu cavarosa" customize_show="True" active="False" priority="99">
+      <xpath expr="//button[@data-target='.navbar-top-collapse']" position="replace">
+        <span class="pull-right hidden-lg hidden-md hidden-sm" style="font-size:35px; cursor:pointer;" onclick="openNav()">&#9776;</span>
+      </xpath>
+      <xpath expr="//div[@class='collapse navbar-collapse navbar-top-collapse']" position="attributes">
+        <attribute name="class">collapse navbar-collapse navbar-top-collapse hidden-xs</attribute>
+      </xpath>
+      <xpath expr="//body" position="inside">
+
+                <t t-if="website">
+                    <div id="overlay_nav" class="overlay">
+                        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
+                        <div class="overlay-content">
+                            <ul style="list-style-type: none; padding: 0px;">
+                                <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                                    <t t-call="website.submenu"/>
+                                </t>
+                                <li groups="base.group_public">
+                                    <a t-attf-href="/web/login">
+                                        <b>Sign in</b>
+                                    </a>
+                                </li>
+                                <li class="dropdown" t-ignore="true" t-if="website.user_id != user_id">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        <b>
+                                            <span t-esc="user_id.name"/>
+                                            <span class="caret"></span>
+                                        </b>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="/web" role="menuitem">My Account</a></li>
+                                        <li><a t-attf-href="/web/session/logout?redirect=/" role="menuitem">Logout</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                      </div>
+                    </t>
+
+     
+      </xpath>
+    </template>
+    <template id="website_theme_overlay_assets_frontend" inherit_id="website.assets_frontend" name="Website Theme Overlay Menu Assets Frontend">
+      <xpath expr="." position="inside">
+        <link href="/website_theme_overlay_menu_cavarosa/static/src/css/main.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="/website_theme_overlay_menu_cavarosa/static/src/js/main.js" />
+      </xpath>
+    </template>
+            <template id="js_extend" inherit_id="website.assets_frontend">
+            <xpath expr="." position="inside">
+                <script src="/website_page_groups/static/src/js/main.js"/>
+            </xpath>
+        </template>
+  </data>
+</openerp>
