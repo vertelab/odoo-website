@@ -12,7 +12,7 @@
         <t t-if="submenu == dn_product_menu">
           <li class="dropdown dropdown-large">
             <a href="/webshop" class="dropdown-toggle" data-toggle="dropdown">
-              Produkter
+              Products
               <b class="caret" />
             </a>
             <ul class="dropdown-menu scrollable-menu mega-dropdown-menu">
