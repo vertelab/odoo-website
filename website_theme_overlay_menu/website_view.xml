@@ -26,8 +26,7 @@
         </div>
       </div>
     </template>
-
-       <template id="website_theme_mega_menu" inherit_id="website.layout" name="Mega Menu">
+    <template id="website_theme_mega_menu" inherit_id="website.layout" name="Mega Menu">
       <xpath expr="//body" position="before">
         <t t-set="dn_product_menu" t-value="request.env.ref('webshop_dermanord.menu_dn_shop')" />
         <t t-set="menu_homepage" t-value="request.env.ref('website.menu_homepage')" />
@@ -42,7 +41,6 @@
         <attribute name="class">collapse navbar-collapse navbar-top-collapse hidden-xs</attribute>
       </xpath>
       <xpath expr="//body" position="inside">
-
         <t t-if="website">
           <div id="overlay_nav" class="overlay">
             <!-- <ul style="list-style-type: none; padding: 0px;"> -->
@@ -92,13 +90,13 @@
                               <t t-set="om_for" t-value="'menu-c%s' % categ.id" />
                             </t>
                             <div class="show_all">
-                            <label>
-                              <a t-att-href="website.make_categ_link(categ)">
-                                SHOW ALL
-                                <t t-esc="categ.name" />
-                              </a>
-                            </label>
-                          </div>
+                              <label>
+                                <a t-att-href="website.make_categ_link(categ)">
+                                  SHOW ALL
+                                  <t t-esc="categ.name" />
+                                </a>
+                              </label>
+                            </div>
                             <t t-foreach="categ.child_id" t-as="child">
                               <div class="product_children">
                                 <label t-att-for="'menu-c%s' % child.id">
@@ -172,20 +170,82 @@
                 <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
                   <t t-set="om_for" t-value="'menu-e'" />
                 </t>
-      
+                <li>
+                  <a href="/web">My Account</a>
+                </li>
+                <div class="product_children">
+                  <label>
                     <li>
-                      <a href="/web">My Account</a>
+                      <a href="/my/home/">Aktuellt</a>
                     </li>
-                  <div class="product_children">
+                  </label>
+                </div>
+                <div class="product_children">
+                  <label>
+                    <li>
+                      <a href="/my/salon">Min salong</a>
+                    </li>
+                  </label>
+                </div>
+                <div class="product_children">
+                  <label>
+                    <li>
+                      <a href="/my/orders">Mina beställningar</a>
+                    </li>
+                  </label>
+                </div>
+                <div class="product_children">
+                  <label>
+                    <li>
+                      <a href="/my/obsolete">Utgående produkter</a>
+                    </li>
+                  </label>
+                </div>
+                <div class="product_children">
+                  <label>
+                    <li>
+                      <a href="/my/buyinfo">Buyinfo</a>
+                    </li>
+                  </label>
+                </div>
+                <div class="product_children">
                   <label>
                     <li>
                       <a href="/web/session/logout?redirect=/">Logout</a>
                     </li>
                   </label>
                 </div>
+                <label for="my_children">MEDIA</label>
+                <input type="checkbox" id="my_children" name="my_children" class="menu-checkbox" />
+                <div class="menu">
+                  <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
+                    <t t-set="om_for" t-value="'my_children'" />
+                  </t>
+                  <div class="my_children">
+                    <label for="my_children">
+                      <label>
+                        <a href="/my/imagearchive">Bildarkiv</a>
+                      </label>
+                      <label>
+                        <a href="/my/pricelist">Prislistor</a>
+                      </label>
+                      <label>
+                        <a href="/my/news">Nyheter &amp; erbjudanden</a>
+                      </label>
+                      <label>
+                        <a href="/my/events">Event &amp; behandlingar</a>
+                      </label>
+                      <label>
+                      <a href="/my/compendium">Kompendium</a>
+                    </label>
+                      <label>
+                        <a href="/my/other">Övrigt</a>
+                      </label>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
-            <!-- </ul> -->
           </div>
         </t>
       </xpath>
