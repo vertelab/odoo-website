@@ -234,9 +234,10 @@ TODO: Activate me
                       <label>
                         <a href="/my/imagearchive">Bildarkiv</a>
                       </label>
+                      <!-- TODO: Activate
                       <label>
                         <a href="/my/pricelist">Prislistor</a>
-                      </label>
+                      </label> -->
                       <label>
                         <a href="/my/news">Nyheter &amp; erbjudanden</a>
                       </label>
