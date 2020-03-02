@@ -170,9 +170,13 @@
                 <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
                   <t t-set="om_for" t-value="'menu-e'" />
                 </t>
+<!--
                 <li>
                   <a href="/web">My Account</a>
                 </li>
+-->
+<!--
+TODO: Activate me
                 <div class="product_children">
                   <label>
                     <li>
@@ -180,6 +184,7 @@
                     </li>
                   </label>
                 </div>
+-->
                 <div class="product_children">
                   <label>
                     <li>
@@ -194,6 +199,8 @@
                     </li>
                   </label>
                 </div>
+<!--
+TODO: Activate me
                 <div class="product_children">
                   <label>
                     <li>
@@ -208,6 +215,7 @@
                     </li>
                   </label>
                 </div>
+-->
                 <div class="product_children">
                   <label>
                     <li>
