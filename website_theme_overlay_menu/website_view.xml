@@ -199,14 +199,14 @@ TODO: Activate me
                 <div class="product_children">
                   <label>
                     <li>
-                      <a href="/my/salon">Min salong</a>
+                      <a href="/my/salon">My Salon</a>
                     </li>
                   </label>
                 </div>
                 <div class="product_children">
                   <label>
                     <li>
-                      <a href="/my/orders">Mina beställningar</a>
+                      <a href="/my/orders">My Orders</a>
                     </li>
                   </label>
                 </div>
@@ -243,23 +243,23 @@ TODO: Activate me
                   <div class="my_children">
                     <label for="my_children">
                       <label>
-                        <a href="/my/imagearchive">Bildarkiv</a>
+                        <a href="/my/imagearchive">Image Bank</a>
                       </label>
                       <!-- TODO: Activate
                       <label>
                         <a href="/my/pricelist">Prislistor</a>
                       </label> -->
                       <label>
-                        <a href="/my/news">Nyheter &amp; erbjudanden</a>
+                        <a href="/my/news">News &amp; Offers</a>
                       </label>
                       <label>
-                        <a href="/my/events">Event &amp; behandlingar</a>
+                        <a href="/my/events">Events &amp; Treatments</a>
                       </label>
                       <label>
-                      <a href="/my/compendium">Kompendium</a>
+                      <a href="/my/compendium">Compendium</a>
                     </label>
                       <label>
-                        <a href="/my/other">Övrigt</a>
+                        <a href="/my/other">Miscellaneous</a>
                       </label>
                     </label>
                   </div>
