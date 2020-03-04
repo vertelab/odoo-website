@@ -359,3 +359,16 @@ border-bottom: 2px solid black;
     margin: auto;
 }
 
+/*.breadcrumb.dn_breadcrumb {
+    margin-top: 0px !important;
+}
+*/
+.navbar .navbar-default .navbar-static-top{
+  margin-top: 0px !important;
+}
+
+.navbar-header{
+    margin-top: 0px !important;
+
+}
+
