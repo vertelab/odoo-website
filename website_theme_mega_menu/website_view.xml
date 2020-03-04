@@ -10,7 +10,7 @@
       <!--    <t t-set="filter_categories" t-value="request.env['product.public.category'].search([])" /> -->
       <xpath expr="//t[@t-call='website.submenu']" position="replace">
         <t t-if="submenu == dn_product_menu">
-          <li class="dropdown dropdown-large">
+          <li t-att-id="'dn-website-menu-%s' % submenu.id" class="dropdown dropdown-large">
             <a href="/webshop" class="dropdown-toggle" data-toggle="dropdown">
               Products
               <b class="caret" />
