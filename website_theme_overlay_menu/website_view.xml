@@ -184,7 +184,18 @@ TODO: Activate me
                     </li>
                   </label>
                 </div>
--->
+              -->
+
+              <t t-if="website.portal_agent() == True">
+                <div class="product_children">
+                  <label>
+                    <li>
+                      <a href="/web">Agent Portal</a>
+                    </li>
+                  </label>
+                </div>
+              </t>
+
                 <div class="product_children">
                   <label>
                     <li>

@@ -42,10 +42,12 @@ class website(models.Model):
             # self.env.ref('__export__.product_public_category_2'),
             # self.env.ref('__export__.product_public_category_5'),
             # self.env.ref('__export__.product_public_category_6'),
-
-
-        
-        
+    
     def make_categ_link(self, value):
         return '/webshop/category/%s' %slug(value)
         
+  
+    def portal_agent(self):
+        agent = self.env.user.commercial_partner_id.agent
+        return agent
+    
