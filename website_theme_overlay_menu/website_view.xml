@@ -210,6 +210,13 @@ TODO: Activate me
                     </li>
                   </label>
                 </div>
+                <div class="product_children">
+                  <label>
+                    <li>
+                      <a href="/my/mail">Mail &amp; Subscribers</a>
+                    </li>
+                  </label>
+                </div>
 <!--
 TODO: Activate me
                 <div class="product_children">
