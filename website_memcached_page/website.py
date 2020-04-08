@@ -38,6 +38,7 @@ class ir_ui_view(models.Model):
     
     @api.model
     def memcached_update_timestamp(self, res_ids=None):
+        """Update the timestamp on the given views and all related views."""
         res_ids = res_ids or []
         done = []
         view_ids = res_ids
@@ -196,7 +197,11 @@ class CachedHome(openerp.addons.web.controllers.main.Home):
         #~ if 'website.assets_editor' in request.httprequest.path:
             #~ return super(CachedHome, self).js_bundle('website.assets_editor', version, **kw)
 
-    @memcached.route(flush_type=lambda kw: 'js_bundle',binary=True,cache_age=60*60*24*30,max_age=604800)
+    @memcached.route(
+        flush_type=lambda kw: 'js_bundle',
+        binary=True,
+        cache_age=60*60*24*30,
+        max_age=604800)
     def js_bundle(self, xmlid, version=None, **kw):
         return super(CachedHome, self).js_bundle(xmlid, version, **kw)
 
@@ -207,10 +212,12 @@ class CachedHome(openerp.addons.web.controllers.main.Home):
         #~ '/web/css/<xmlid>/<version>',
         #~ '/web/css.<int:page>/<xmlid>/<version>',
     #~ ], type='http', auth='public')
-    @memcached.route(flush_type=lambda kw: 'css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,
-        key=lambda k: '{db}{xmlid}', content_type="text/css; charset=utf-8;",
-        no_cache=False, must_revalidate=False, proxy_revalidate=False)
-    #~ @memcached.route(flush_type='css_bundle',binary=True,cache_age=60*60*24*30,max_age=604800,key=lambda k: '{db}{xmlid}')
+    @memcached.route(
+        flush_type=lambda kw: 'css_bundle',
+        binary=True,
+        cache_age=60*60*24*30,
+        max_age=604800,
+        content_type="text/css; charset=utf-8;")
     def css_bundle(self, xmlid, version=None, page=None, **kw):
         return super(CachedHome, self).css_bundle(xmlid, version, page, **kw)
 
