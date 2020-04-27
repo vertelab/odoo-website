@@ -213,6 +213,13 @@ TODO: Activate me
                 <div class="product_children">
                   <label>
                     <li>
+                      <a href="/my/credits">My Credit Invoice</a>
+                    </li>
+                  </label>
+                </div>
+                <div class="product_children">
+                  <label>
+                    <li>
                       <a href="/my/mail">Mail &amp; Subscribers</a>
                     </li>
                   </label>
