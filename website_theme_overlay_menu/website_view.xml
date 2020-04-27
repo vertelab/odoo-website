@@ -196,6 +196,8 @@ TODO: Activate me
                 </div>
               </t>
 
+
+
                 <div class="product_children">
                   <label>
                     <li>
@@ -217,6 +219,7 @@ TODO: Activate me
                     </li>
                   </label>
                 </div>
+              <t t-if="not request.env.user.has_group('webshop_dermanord.group_dn_sk')">
                 <div class="product_children">
                   <label>
                     <li>
@@ -224,6 +227,8 @@ TODO: Activate me
                     </li>
                   </label>
                 </div>
+              </t>
+
 <!--
 TODO: Activate me
                 <div class="product_children">
@@ -248,6 +253,7 @@ TODO: Activate me
                     </li>
                   </label>
                 </div>
+              <t t-if="not request.env.user.has_group('webshop_dermanord.group_dn_sk')">
                 <label for="my_children">MEDIA</label>
                 <input type="checkbox" id="my_children" name="my_children" class="menu-checkbox" />
                 <div class="menu">
@@ -278,6 +284,7 @@ TODO: Activate me
                     </label>
                   </div>
                 </div>
+              </t>
               </div>
             </div>
           </div>
