@@ -568,7 +568,7 @@ def mc_meta(key):
         #~ chunk = memcached.MEMCACHED_CLIENT().get('%s-c%d' % (key,i))
         #~ if not chunk or i > 10:
             #~ break
-        #~ chunks.append(chunk)
+        #~ chunks.append(chunk)    
         #~ i += 1
     return {'page_dict':page_dict,'size':len(page_dict.get('page','')) / 1024,'chunks':chunks}
 

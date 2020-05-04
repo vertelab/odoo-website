@@ -42,7 +42,7 @@ class CachedBlog(WebsiteBlog):
         #~ '/blog/page/<int:page>',
     #~ ], type='http', auth="public", website=True)
 
-    @memcached.route(
+    @memcached.route(      
         flush_type=lambda kw: 'blog-list',
         key=lambda kw: '{db},/blog/page/%s,{employee},{logged_in},{publisher},{designer},{lang} %s' % (
             kw.get('page', 1),

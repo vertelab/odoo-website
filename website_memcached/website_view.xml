@@ -17,7 +17,7 @@
                         <li groups="base.group_website_designer">
                             <a t-att-href="'/mcpath?path=%s' % request.httprequest.path">
                                 <span title="View all cached objects for this path">View This Path</span>
-                            </a>
+                            </a>           
                         </li>
                         <li groups="base.group_website_designer">
                             <a href="/mcflushall">
