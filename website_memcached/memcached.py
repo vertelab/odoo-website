@@ -147,10 +147,9 @@ def MEMCACHED_CLIENT():
 # https://lzone.de/cheat-sheet/memcached
 
 def add_flush_type(db, name):
-    if flush_types.get(db):
-        flush_types[db].add(name)
-    else:
-        flush_types[db] = set(name)
+    if not flush_types.get(db):
+        flush_types[db] = set()
+    flush_types[db].add(name)
 
 def clean_text(text):
     """Scrub away filthy characters that werkzeug doesn't like to get back in headers."""
@@ -558,6 +557,9 @@ def mc_delete(key):
     else:
         MEMCACHED_CLIENT().delete(key)
 
+def mc_flush_all():
+    MEMCACHED_CLIENT().flush_all()
+    
 def mc_meta(key):
     page_dict = mc_load(key)
     chunks = [page_dict.get('page','') if page_dict else '']
