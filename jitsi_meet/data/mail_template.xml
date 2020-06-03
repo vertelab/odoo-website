@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<openerp>
+    <!-- Mail template are declared in a NOUPDATE block
+         so users can freely customize/delete them -->
+    <data noupdate="1">
+        <!--Email template -->
+        <!-- <record id="email_template_edi_jitsi_meet" model="mail.template">
+            <field name="name">Jitsi Meet Invitation</field>
+            <field name="email_to">${object.name}</field>
+            <field name="subject">${object.meeting_name}</field>
+            <field name="model_id" ref="jitsi_meet.model_jitsi_meet_external_user"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <div><p>You have been invited to a meeting</p>
+                    <p>Please join us on ${object.date_formated} by clicking on the followin link: </p>
+                    <p>
+                        <a href="${object.meeting_url}">JOIN MEETING</a>
+                    </p>
+                    <p>Thank you,</p></div>
+            </field>
+        </record> -->
+    </data>
+</openerp>
