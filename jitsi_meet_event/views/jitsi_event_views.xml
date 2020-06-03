@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="event.view_jitsi_event_form">
+            <field name="name">view_event_form</field>
+            <field name="model">event.event</field>
+            <field name="inherit_id" ref="event.view_event_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group/group" position="inside">
+                        <field name="jitsi_id"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

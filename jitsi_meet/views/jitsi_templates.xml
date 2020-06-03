@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <template id="lobby" name="Lobby">
+            <script type="text/javascript" src="/jitsi_meet/static/src/js/jitsi.js" />
+            <t t-call="website.layout">
+                <div class="oe_structure"/>
+                <div id="event_info" class="container">
+                    <br />
+                    <center>
+                        <t t-foreach="participants" t-as="participant">
+                            <span t-if="participant.partner_id == user.partner_id and participant.state == 'open'">
+                                <h1>
+                                    <span t-field="participant.event_id"/>
+                                </h1>
+                            </span>
+                        </t>
+                    </center>
+                    <br />
+                </div>
+
+
+                <div id="partner_form" class="container">
+                    <div class="row">
+                        <div class="col-md-12 mt32 mb32">
+                            <t t-foreach="participants" t-as="participant">
+                                <span t-if="participant.partner_id == user.partner_id and participant.state == 'open'">
+                                    <t t-foreach="request.session.get('form_values').iteritems()" t-as="item">
+                                        <form class="form-horizontal mt32 form-navtabs-validation" method="post" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                <div>
+                                                    <label id="partner_name" class="col-md-3 col-sm-4 control-label" for="partner_name">Name</label>
+                                                    <div class="col-md-7 col-sm-8">
+                                                        <input id="partner_name" type="text" class="form-control" name="partner_name" t-att-value="participant.participant_name"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" action="jitsi_meet.url">
+                                                <div>
+                                                    <label class="col-md-3 col-sm-4 control-label" for="partner_email">Email</label>
+                                                    <div class="col-md-7 col-sm-8">
+                                                        <input id="partner_email" type="text" class="form-control" name="partner_email" t-att-value="user.email"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="container">
+                                                <div class="pull-right btn-group mt16 mb16">
+                                                    <button type="submit" class="btn btn-primary">Join</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </t>
+                                </span>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+                <div class="oe_structure oe_empty"/>
+            </t>
+        </template>
+
+
+    </data>
+</openerp>
