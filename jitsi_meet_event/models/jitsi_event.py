@@ -36,18 +36,52 @@ _logger = logging.getLogger(__name__)
     
 class Event(models.Model):
     _inherit = 'event.event'
-    jitsi_id = fields.Many2one(string='Jitsi Event')
-    token = fields.Char(string='Token',default=lambda t: t._get_token())
 
-    @api.model
-    def _get_token(self):
-        return  ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(32)])
+    jitsi_id = fields.Many2one(comodel_name='jitsi_meet.jitsi_meet', string='Jitsi Event')
+    
+    @api.multi
+    def create_jitsi(self):
+        self.jitsi_id = self.env["jitsi_meet.jitsi_meet"].create({
+            'name': self.name,
+            'date': self.date_begin,
+            'participants': self.user_id or self.env.user,
+        })
+        return self.jitsi_id
+    
+    @api.multi
+    def open_jitsi(self):
+        return {'name': 'JITSI MEET',
+                #'res_model': 'ir.actions.act_url', 
+                'type': 'ir.actions.act_url',
+                'target': 'new',
+                'url': self.jitsi_id.url,
+                }
+    
+    def delete_jitsi(self):
+        self.jitsi_id.unlink()
 
+class EventParticipant(models.Model):
+    _inherit = ['event.participant', 'jitsi_meet.model']
+    _name = 'event.participant'
+
+    jitsi_id = fields.Many2one(related='event_id.jitsi_id')
+
+    @api.multi
+    def get_jitsi_user_info(self):
+        self.ensure_one()
+        return {
+            'name': None,
+            'partner_id': None,
+            'user_id': None}
 
 class JitsiMeet(models.Model):
     _inherit = 'jitsi_meet.jitsi_meet'
 
-
+    @api.model
+    def get_jitsi_meeting_models(self):
+        res = super(JitsiMeet, self).get_jitsi_meeting_models()
+        res.append('event.participant')
+        return res
 
 class JitsiMeetExternalParticipant(models.Model):
     _inherit = 'jitsi_meet.external_user'

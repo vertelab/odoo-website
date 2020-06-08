@@ -58,7 +58,6 @@ class JitsiMeet(models.Model):
     url = fields.Char(string='URL to Meeting', compute='_compute_url')
     closed = fields.Boolean('Closed', default=False)
     current_user = fields.Many2one('res.users', compute='_get_current_user')
-    jitsi_id = fields.Char(string='ostbåge')
     
  
     @api.depends()
@@ -97,6 +96,18 @@ class JitsiMeet(models.Model):
             if r.hash and r.name:
                 r.url = config_url + r.hash
 
+    @api.model
+    def get_jitsi_meeting_models(self):
+        return []
+
+    @api.model
+    def find_meetings(self, token):
+        res = []
+        for model in self.get_jitsi_meeting_models():
+            meetings = self.env[model].get_jitsi_meetings(token)
+            if meetings:
+                res.append(meetings)
+        return res
 
 class JitsiMeetExternalParticipant(models.Model):
     _name = 'jitsi_meet.external_user'
@@ -126,15 +137,28 @@ class JitsiMeetExternalParticipant(models.Model):
             template = self.env.ref('jitsi_meet.email_template_edi_jitsi_meet')
             self.env['mail.template'].sudo().browse(template.id).send_mail(res.id)
             res.sudo().write({'mail_sent': True})
-
         return res
 
+    @api.multi
     def write(self, vals):
         if 'send_mail' in vals and vals.get('send_mail'):
             if not self.mail_sent:
                 template = self.env.ref('jitsi_meet.email_template_edi_jitsi_meet')
-                self.env['mail.template'].sudo().browse(template.id).send_mail(self.id)
+                template.send_mail(self.id)
                 vals.update({'mail_sent': True})
         return super(JitsiMeetExternalParticipant, self).write(vals)
 
+class JitsiMeetModel(models.AbstractModel):
+    _name = 'jitsi_meet.model'
 
+    jitsi_token = fields.Char(string='Jitsi Token')
+    jitsi_id = fields.Many2one(comodel_name='jitsi_meet.jitsi_meet', string='Jitsi Meeting')
+
+    @api.model
+    def get_jitsi_meetings(self, token):
+        return self.sudo().search([('jitsi_token', '=', token), ('jitsi_id', '!=', False)])
+    
+    @api.multi
+    def get_jitsi_user_info(self):
+        self.ensure_one()
+        return {'name': None, 'partner_id': None, 'user:id': None}

@@ -32,7 +32,7 @@
     "author": "Vertel AB",
     "website": "https://vertel.se",
     "depends": [
-        'jitsi_meet,
+        'jitsi_meet',
         'event_participant',
         ],
     "data": [

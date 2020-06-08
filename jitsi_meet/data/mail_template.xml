@@ -4,7 +4,7 @@
          so users can freely customize/delete them -->
     <data noupdate="1">
         <!--Email template -->
-        <!-- <record id="email_template_edi_jitsi_meet" model="mail.template">
+        <record id="email_template_edi_jitsi_meet" model="email.template">
             <field name="name">Jitsi Meet Invitation</field>
             <field name="email_to">${object.name}</field>
             <field name="subject">${object.meeting_name}</field>
@@ -18,6 +18,6 @@
                     </p>
                     <p>Thank you,</p></div>
             </field>
-        </record> -->
+        </record>
     </data>
 </openerp>
