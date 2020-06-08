@@ -43,9 +43,17 @@ class Blog(models.Model):
         """
         Return a search result for search_suggestion.
         """
-        return {
+        res = {
             'res_id': self.id,
             'model_record': self._name,
             'name': self.name_get()[0][1],
             'blog_id': self.blog_id.id,
+            'image_attachment_id': None,
         }
+        # Try to find background image attachment
+        if self.background_image and '/ir.attachment/' in self.background_image:
+            try:
+                res['image_attachment_id'] = int(self.background_image.split('/')[4].split('_')[0])
+            except:
+                pass
+        return res
