@@ -48,8 +48,9 @@ class Event(models.Model):
             'date_end': self.date_end,
             'participants': self.user_id or self.env.user,
             'url': self.website_url,
-            
+
         })
+        self.email_confirmation_id=self.env.ref('jitsi_meet_event.email_template_jitsi_event_invite').id
         return self.jitsi_id
     
     @api.multi

@@ -30,9 +30,9 @@
                         <field name="current_user" invisible="1"/>
                         <field name="create_uid" invisible="1"/>
                         <field name="closed" invisible="1"/>
-                        <button name="open" type="object" string="Join Meeting" class="oe_highlight" attrs="{'invisible':['|',('closed','=',True),('create_uid','=',False)]}"/>
-                        <button name="action_close_meeting" string="Close Meeting" type="object" groups="base.group_user" attrs="{'invisible':['|',('closed','=',True),('create_uid','=',False)]}"/>
-                        <button name="action_reopen_meeting" string="Reopen Meeting" type="object" groups="base.group_user" attrs="{'invisible':['|',('closed','!=',True),('create_uid','=',False)]}"/>
+                        <!-- <button name="open" type="object" string="Join Meeting" class="oe_highlight" attrs="{'invisible':['|',('closed','=',True),('create_uid','=',False)]}"/> -->
+                        <!-- <button name="action_close_meeting" string="Close Meeting" type="object" groups="base.group_user" attrs="{'invisible':['|',('closed','=',True),('create_uid','=',False)]}"/>
+                        <button name="action_reopen_meeting" string="Reopen Meeting" type="object" groups="base.group_user" attrs="{'invisible':['|',('closed','!=',True),('create_uid','=',False)]}"/> -->
                     </header>
                     <sheet>
                         <h1>

@@ -7,9 +7,9 @@
             <field name="inherit_id" ref="event.view_event_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='button_cancel']" position="after">
-                    <button name="create_jitsi" string="Create Jitsi Event" type="object" class="oe_highlight"/>
-                    <button name="open_jitsi" string="Open Jitsi Event" type="object" class="oe_highlight"/>
-                    <button name="delete_jitsi" string="Delete Jitsi Event" type="object"/>
+                    <button name="create_jitsi" string="Create Jitsi Event" type="object" attrs="{'invisible':[('jitsi_id','&gt;',0)]}"/>
+                    <button name="open_jitsi" string="Open Jitsi Event" type="object" attrs="{'invisible':[('jitsi_id','&lt;',1)]}" class="oe_highlight"/>
+                    <button name="delete_jitsi" string="Delete Jitsi Event" attrs="{'invisible':[('jitsi_id','&lt;',1)]}" type="object"/>
                 </xpath>
                 <xpath expr="//group/group" position="inside">
                     <field name="jitsi_id"/>
