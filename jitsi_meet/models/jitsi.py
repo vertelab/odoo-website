@@ -27,6 +27,7 @@ from random import choice
 import string
 import werkzeug
 import re
+from datetime import timedelta
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -51,13 +52,26 @@ class JitsiMeet(models.Model):
 
     name = fields.Char('Meeting Name', required=True)
     hash = fields.Char('Hash')
-    date = fields.Datetime('Date', required=True)
+    date = fields.Datetime('Start Date', required=True)
+    date_formated = fields.Char(string='Start Date', compute='_format_date')
+    date_end = fields.Datetime('End Date')
+    date_end_formated = fields.Char(string='End Date', compute='_format_date_end')
     date_delay = fields.Float('Duration', required=True, default=1.0)
-    participants = fields.Many2many('res.users', string='Participant', required=True, default=_get_default_participant)
-    external_participants = fields.One2many('jitsi_meet.external_user', 'meet', string='External Participant')
+    participants = fields.Many2many('res.users', string='Participants', required=True, default=_get_default_participant)
+    external_participants = fields.One2many('jitsi_meet.external_user', 'meet', string='External Participants')
     url = fields.Char(string='URL to Meeting', compute='_compute_url')
     closed = fields.Boolean('Closed', default=False)
     current_user = fields.Many2one('res.users', compute='_get_current_user')
+
+    def _format_date(self):
+        for part in self:
+            part.date_formated = fields.Datetime.from_string(
+                part.date).strftime('%Y-%m-%d, %H:%M')
+
+    def _format_date_end(self):
+        for part in self:
+            part.date_end_formated = fields.Datetime.from_string(
+                part.date_end).strftime('%Y-%m-%d, %H:%M')
     
  
     @api.depends()
@@ -118,16 +132,24 @@ class JitsiMeetExternalParticipant(models.Model):
     meet = fields.Many2one('jitsi_meet.jitsi_meet', string='Meeting')
     partner_id = fields.Many2one(related='meet.create_uid.partner_id')
     meeting_date = fields.Datetime(related='meet.date', string='Meeting Date')
+    meeting_date_end = fields.Datetime(related='meet.date_end', string='Meeting End Date')
     meeting_name = fields.Char(related='meet.name', string='Meeting Name')
     meeting_url = fields.Char(related='meet.url',string='Meeting URL')
     send_mail = fields.Boolean('Send Invitation', default=True)
     mail_sent = fields.Boolean('Invitation Sent', readonly=True, default=False)
     date_formated = fields.Char(compute='_format_date')
+    date_end_formated = fields.Char(compute='_format_date_end')
+    
 
     def _format_date(self):
         for part in self:
             part.date_formated = fields.Datetime.from_string(
                 part.meeting_date).strftime('%m/%d/%Y, %H:%M:%S')
+
+    def _format_date_end(self):
+        for part in self:
+            part.date_end_formated = fields.Datetime.from_string(
+                part.meeting_date_end).strftime('%m/%d/%Y, %H:%M:%S')
 
     @api.model
     def create(self, vals):
@@ -151,8 +173,35 @@ class JitsiMeetExternalParticipant(models.Model):
 class JitsiMeetModel(models.AbstractModel):
     _name = 'jitsi_meet.model'
 
-    jitsi_token = fields.Char(string='Jitsi Token')
+    jitsi_token = fields.Char(string='Jitsi Token', compute='create_jitsi_token', store=True)
     jitsi_id = fields.Many2one(comodel_name='jitsi_meet.jitsi_meet', string='Jitsi Meeting')
+    jitsi_state = fields.Selection(selection=[('planned', 'Planned'),('current','Current'), ('finished','Finished')], compute="compute_jitsi_state")
+
+
+
+    @api.one
+    def compute_jitsi_state(self):
+        state = 'planned'
+        now = fields.Datetime.from_string(fields.Datetime.now())
+        td = timedelta(minutes=int(self.env['ir.config_parameter'].sudo().get_param('jitsi_meet.timedelta', default='10')))
+        starttime = fields.Datetime.from_string(self.jitsi_id.date) - td
+        td2 = timedelta(
+            hours=int(self.jitsi_id.date_delay),
+            minutes=(int(self.jitsi_id.date_delay - int(self.jitsi_id.date_delay)) * 60))
+        endtime = fields.Datetime.from_string(self.jitsi_id.date) + td2
+        if now < starttime:
+            state = 'planned'
+        elif now > endtime:
+            state = 'finished'
+        else:
+            state = 'current'
+        self.jitsi_state = state
+
+    @api.one
+    @api.depends('jitsi_id')
+    def create_jitsi_token(self):
+        if self.jitsi_id and not self.jitsi_token:
+            self.jitsi_token = create_hash()
 
     @api.model
     def get_jitsi_meetings(self, token):

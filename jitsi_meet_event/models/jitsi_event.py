@@ -38,13 +38,17 @@ class Event(models.Model):
     _inherit = 'event.event'
 
     jitsi_id = fields.Many2one(comodel_name='jitsi_meet.jitsi_meet', string='Jitsi Event')
+
     
     @api.multi
     def create_jitsi(self):
         self.jitsi_id = self.env["jitsi_meet.jitsi_meet"].create({
             'name': self.name,
             'date': self.date_begin,
+            'date_end': self.date_end,
             'participants': self.user_id or self.env.user,
+            'url': self.website_url,
+            
         })
         return self.jitsi_id
     
@@ -57,6 +61,7 @@ class Event(models.Model):
                 'url': self.jitsi_id.url,
                 }
     
+    @api.multi
     def delete_jitsi(self):
         self.jitsi_id.unlink()
 
@@ -64,7 +69,7 @@ class EventParticipant(models.Model):
     _inherit = ['event.participant', 'jitsi_meet.model']
     _name = 'event.participant'
 
-    jitsi_id = fields.Many2one(related='event_id.jitsi_id')
+    jitsi_id = fields.Many2one(related='event_id.jitsi_id', store=True)
 
     @api.multi
     def get_jitsi_user_info(self):

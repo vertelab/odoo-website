@@ -10,6 +10,7 @@
                     <field name="name"/>
                     <field name="closed" invisible="1"/>
                     <field name="date"/>
+                    <field name="date_end"/>
                     <field name="date_delay" widget="float_time"/>
                     <field name="participants" widget="many2many_tags"/>
                     <field name="external_participants" widget="many2many_tags"/>
@@ -39,8 +40,9 @@
                         </h1>
                         <group name="info">
                             <group>
-                                <field name="date"/>
-                                <field name="date_delay" widget="float_time"/>
+                                <field name="date_formated"/>
+                                <field name="date_end_formated"/>
+                                <field name="date_delay" widget="float_time" attrs="{'invisible':True}"/>
                                 <field name="participants" widget="many2many_tags"/>
                                 <field name="url" string="Share Link"/>
                                 <field name="external_participants" context="{'default_meet': active_id}">

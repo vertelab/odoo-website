@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-
         <record model="ir.ui.view" id="event.view_jitsi_event_form">
             <field name="name">view_event_form</field>
             <field name="model">event.event</field>
             <field name="inherit_id" ref="event.view_event_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='button_cancel']" position="after">
-                    <!-- <button name="create_jitsi" string="Create Jitsi Event" type="object" class="oe_highlight"/> -->
-                    <button name="create_jitsi" string="Create Jitsi Event" attrs="{'invisible':[('jitsi_event','=',False)]}" type="object"/>
+                    <button name="create_jitsi" string="Create Jitsi Event" type="object" class="oe_highlight"/>
                     <button name="open_jitsi" string="Open Jitsi Event" type="object" class="oe_highlight"/>
                     <button name="delete_jitsi" string="Delete Jitsi Event" type="object"/>
+                </xpath>
+                <xpath expr="//group/group" position="inside">
+                    <field name="jitsi_id"/>
+                    <!-- <field name="jitsi_token"/> -->
                 </xpath>
             </field>
         </record>
