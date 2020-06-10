@@ -21,14 +21,16 @@
 
 {
     'name': 'Website Document Metadata',
-    'version': '0.1',
+    'version': '12.0.0.1',
     'category': 'website',
     'summary': "Manager document metadata in backend",
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website', 'document'],
-    'data': ['website_view.xml'],
+    'data': [
+        #'website_view.xml' #commented due to replacing default js rather than adding, due to version differences this may cause big problems, update js before even considering uncommenting this line
+        ],
     'application': False,
     'installable': True,
 }
