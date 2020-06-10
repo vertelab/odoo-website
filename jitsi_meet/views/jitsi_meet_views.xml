@@ -40,7 +40,9 @@
                         </h1>
                         <group name="info">
                             <group>
+                                <field name="date" attrs="{'invisible':True}"/>
                                 <field name="date_formated"/>
+                                <field name="date_end" attrs="{'invisible':True}"/>
                                 <field name="date_end_formated"/>
                                 <field name="date_delay" widget="float_time" attrs="{'invisible':True}"/>
                                 <field name="participants" widget="many2many_tags"/>
