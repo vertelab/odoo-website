@@ -35,7 +35,7 @@
                                         </div>
                                     </t>
                                     <t t-if="jitsi_record.jitsi_state == 'finished'">
-                                        <h2>The event was ended <span t-field="jitsi_record.jitsi_id.date_end"/>
+                                        <h2>The event ended <span t-field="jitsi_record.jitsi_id.date_end"/>
                                         </h2>
                                     </t>
                                 </span>

@@ -37,7 +37,7 @@
         ],
     "data": [
         'views/jitsi_event_views.xml',
-        'data/mail_template.xml',
+        # 'data/mail_template.xml',
     ],
     'installable': True,
     'auto_install': False,

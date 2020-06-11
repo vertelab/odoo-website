@@ -50,7 +50,9 @@ class Event(models.Model):
             'url': self.website_url,
 
         })
-        self.email_confirmation_id=self.env.ref('jitsi_meet_event.email_template_jitsi_event_invite').id
+        # jitsi email template sent to email confirmation
+        # self.email_confirmation_id=self.env.ref('jitsi_meet_event.email_template_jitsi_event_invite').id
+        
         return self.jitsi_id
     
     @api.multi
