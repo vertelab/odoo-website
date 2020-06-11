@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        <record model="ir.ui.view" id="event.view_jitsi_event_form">
+        <record model="ir.ui.view" id="view_jitsi_event_form">
             <field name="name">view_event_form</field>
             <field name="model">event.event</field>
             <field name="inherit_id" ref="event.view_event_form"/>
