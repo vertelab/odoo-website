@@ -29,13 +29,12 @@ _logger = logging.getLogger(__name__)
 
 class JitsiController(http.Controller):
 
-    @http.route(['/jitsi/lobby/<token>'], auth='public', type='http', website=True)
+    @http.route(['/jitsi/lobby', '/jitsi/lobby/<token>'], auth='public', type='http', website=True)
     def lobby(self, token=None, **post):
-        meetings = request.env['jitsi_meet.jitsi_meet'].sudo().find_meetings(token)
-        if not meetings:
-            return request.website.render('website.403')
+        participants = request.env['jitsi_meet.external_user'].sudo().find_jitsi_participants(token)
+
         values = {
-            'meetings': meetings,
+            'participants': participants,
         }
         return request.website.render('jitsi_meet.lobby', values)
 

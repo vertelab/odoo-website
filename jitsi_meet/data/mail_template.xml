@@ -6,6 +6,7 @@
         <!--Email template -->
         <record id="email_template_edi_jitsi_meet" model="email.template">
             <field name="name">Jitsi Meet Invitation</field>
+            <field name="email_from">$(object.partner_id.email)</field>
             <field name="email_to">${object.name}</field>
             <field name="subject">${object.meeting_name}</field>
             <field name="model_id" ref="jitsi_meet.model_jitsi_meet_external_user"/>

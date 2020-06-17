@@ -9,37 +9,34 @@
                     <div class="oe_structure oe_empty"/>
                     <br />
                     <center>
-                        <t t-foreach="meetings" t-as="jitsi_model">
-                            <t t-foreach="jitsi_model" t-as="jitsi_record">
-                                <t t-set="jitsi_user_info" t-value="jitsi_record.get_jitsi_user_info()"/>
-                                <span>
-                                    <h3>Lobby för evenemang</h3>
-                                    <h1>
-                                        <span t-field="jitsi_record.jitsi_id.name"/>
-                                    </h1>
-                                    <t t-if="jitsi_record.jitsi_state == 'planned'">
-                                        <h2>Starts: <span t-field="jitsi_record.jitsi_id.date_formated"/>
-                                        </h2>
-                                        <h2>Ends: <span t-field="jitsi_record.jitsi_id.date_end_formated"/>
-                                        </h2>
-                                        <div class="btn-group mt16 mb16">
-                                            <a t-att-href="jitsi_record.jitsi_id.url" type="button" class="btn btn-primary">join</a>
-                                        </div>
-                                    </t>
-                                    <t t-if="jitsi_record.jitsi_state == 'current'">
-                                        <h2>Ongoing</h2>
-                                        <h2>Ends: <span t-field="jitsi_record.jitsi_id.date_end"/>
-                                        </h2>
-                                        <div class="btn-group mt16 mb16">
-                                            <a t-att-href="jitsi_record.jitsi_id.url" type="button" class="btn btn-primary">join</a>
-                                        </div>
-                                    </t>
-                                    <t t-if="jitsi_record.jitsi_state == 'finished'">
-                                        <h2>The event ended <span t-field="jitsi_record.jitsi_id.date_end"/>
-                                        </h2>
-                                    </t>
-                                </span>
-                            </t>
+                        <h3>Lobby för evenemang</h3>
+                        <t t-if="not participants">
+                            Hittade inga evenemang.
+                        </t>
+                        <t t-foreach="participants" t-as="participant">
+                            <span>
+                                <h1>
+                                    <span t-field="participant.meet.name"/>
+                                </h1>
+                                <t t-if="participant.jitsi_state == 'planned'">
+                                    <h2>Starts: <span t-field="participant.meet.date_formated"/>
+                                    </h2>
+                                    <h2>Ends: <span t-field="participant.meet.date_end_formated"/>
+                                    </h2>
+                                </t>
+                                <t t-if="participant.jitsi_state == 'current'">
+                                    <h2>Ongoing</h2>
+                                    <h2>Ends: <span t-field="participant.meet.date_end"/>
+                                    </h2>
+                                    <div class="btn-group mt16 mb16">
+                                        <a t-att-href="participant.meet.url" type="button" class="btn btn-primary">join</a>
+                                    </div>
+                                </t>
+                                <t t-if="participant.jitsi_state == 'finished'">
+                                    <h2>The meeting ended <span t-field="participant.meet.date_end"/>
+                                    </h2>
+                                </t>
+                            </span>
                         </t>
                     </center>
                     <br />

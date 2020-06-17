@@ -24,8 +24,10 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='note']" position="after">
                     <group>
+<!--
                         <field name="jitsi_token"/>
-                        <field name="jitsi_id"/>
+-->
+                        <field name="jitsi_participant_id"/>
                     </group>
                 </xpath>
             </field>

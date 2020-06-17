@@ -40,6 +40,7 @@
                         </h1>
                         <group name="info">
                             <group>
+                                <field name="meeting_object"/>
                                 <field name="date" attrs="{'invisible':True}"/>
                                 <field name="date_formated"/>
                                 <field name="date_end" attrs="{'invisible':True}"/>
