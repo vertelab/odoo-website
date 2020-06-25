@@ -63,13 +63,15 @@
             </field>
         </record>
 
-        <!-- Action alerts -->
-        <act_window id="action_meeting" name="Jitsi Meeting" res_model="jitsi_meet.jitsi_meet" view_mode="tree,calendar,form" domain="[]" />
 
-        <menuitem name="Jitsi Meeting" id="menu_meeting" web_icon="jitsi_meet,static/description/web_cam.jpg" sequence="99" action="action_meeting" icon="STOCK_ZOOM_IN"/>
-        <record model='ir.ui.menu' id='menu_meeting'>
+        <!-- Action alerts -->
+
+        <act_window id="action_meeting" name="Jitsi meetings" res_model="jitsi_meet.jitsi_meet" view_mode="tree,calendar,form" domain="[]" />
+
+        <menuitem name="Jitsi" id="jitsi_menu" web_icon="jitsi_meet,static/description/web_cam.jpg" parent="base.menu_administration" sequence="5" icon="STOCK_ZOOM_IN"/>
+        <menuitem id="meeting_menu" name="Meetings" parent="jitsi_menu" action="action_meeting" sequence="20"/>
+        <record model='ir.ui.menu' id='jitsi_menu'>
             <field name="groups_id" eval="[(6,0,[ref('base.group_user')])]"/>
         </record>
-
     </data>
 </openerp>

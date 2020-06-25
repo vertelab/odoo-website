@@ -17,14 +17,14 @@
                 </xpath>
             </field>
         </record>
-        <record model="ir.ui.view" id="event_participant.view_jitsi_event_participant_form">
+        <record model="ir.ui.view" id="view_jitsi_event_participant_form">
             <field name="name">view_jitsi_event_form</field>
             <field name="model">event.participant</field>
             <field name="inherit_id" ref="event_participant.view_event_participant_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='note']" position="after">
                     <group>
-<!--
+                        <!--
                         <field name="jitsi_token"/>
 -->
                         <field name="jitsi_participant_id"/>
@@ -33,5 +33,15 @@
             </field>
         </record>
 
-    </data>
-</openerp>
+        <!-- Action alerts -->
+
+        <act_window id="action_meeting" name="Jitsi meetings" res_model="jitsi_meet.jitsi_meet" view_mode="tree,calendar,form" domain="[]" />
+
+        <menuitem name="Jitsi" id="jitsi_menu" web_icon="jitsi_meet,static/description/web_cam.jpg" parent="base.marketing_menu" sequence="120" icon="STOCK_ZOOM_IN"/>
+        <menuitem id="meeting_menu" name="Meetings" parent="jitsi_menu" action="action_meeting" sequence="20"/>
+        <record model='ir.ui.menu' id='jitsi_menu'>
+            <field name="groups_id" eval="[(6,0,[ref('base.group_user')])]"/>
+        </record>
+
+        </data>
+    </openerp>

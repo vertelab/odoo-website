@@ -131,7 +131,7 @@ class JitsiMeetExternalParticipant(models.Model):
 
     name = fields.Char('Email')
     meet = fields.Many2one('jitsi_meet.jitsi_meet', string='Meeting')
-    partner_id = fields.Many2one(related='meet.create_uid.partner_id') # Eh? What is the point of this?
+    partner_id = fields.Many2one(comodel_name='res.partner', string='Partner') # Eh? What is the point of this?
     meeting_date = fields.Datetime(related='meet.date', string='Meeting Date')
     meeting_date_end = fields.Datetime(related='meet.date_end', string='Meeting End Date')
     meeting_name = fields.Char(related='meet.name', string='Meeting Name')

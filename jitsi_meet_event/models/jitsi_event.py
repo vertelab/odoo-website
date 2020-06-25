@@ -81,6 +81,19 @@ class EventParticipant(models.Model):
     _inherit = ['event.participant', 'jitsi_meet.participant.model']
     _name = 'event.participant'
     
+    @api.model
+    def get_jitsi_participant_model_data(self):
+        """Fields to sync with Jitsi Participant."""
+        return {
+            'mail_template': 'jitsi_meet_event.email_template_jitsi_event_invite',
+            # Map fields on this model to Jitsi participant.
+            'field_map': {
+                # event       # jitsi     
+                'partner_id': 'partner_id'
+            },
+
+        }
+    
     @api.one
     def create_delete_jitsi_participant(self):
         """Create a jitsi participant from this event participant."""
@@ -91,14 +104,6 @@ class EventParticipant(models.Model):
                 'meet': self.event_id.jitsi_id.id,
                 'name': self.partner_id.email,
             })
-
-    @api.multi
-    def get_jitsi_user_info(self):
-        self.ensure_one()
-        return {
-            'name': self.partner_id.name,
-            'partner_id': self.partner_id,
-            'user_id': None}
 
 class JitsiMeet(models.Model):
     _inherit = 'jitsi_meet.jitsi_meet'
