@@ -779,6 +779,27 @@ class WebsiteFullTextSearch(http.Controller):
             if ids:
                 result_models[model] = request.env[model].browse(ids)
         result_list = []
+        
+        # Example
+        #result = [
+        #    {'model': 'product.product', 'id': 3},
+        #    {'model': 'product.category', 'id': 2},
+        #    {'model': 'product.product', 'id': 1},
+        #    {'model': 'product.product', 'id': 2},
+        #    {'model': 'product.category', 'id': 3},
+        #]
+        #result_models = {
+        #        'product.product': env['product.product'].browse([1, 2, 3]),
+        #        'product.category': env['product.category'].browse([2, 3])
+        #    }
+        #result_list = [
+        #    env['product.product'].browse([3]),
+        #    env['product.category'].browse([2]),
+        #    env['product.product'].browse([1]),
+        #    env['product.product'].browse([2]),
+        #    env['product.category'].browse([3])
+        #]
+        
         for record in result:
             result_list.append(result_models[record['model']].filtered(lambda r: r.id == record['id']))
         rl = []
