@@ -10,6 +10,7 @@
                     <field name="name"/>
                     <field name="closed" invisible="1"/>
                     <field name="date"/>
+                    <field name="date_end"/>
                     <field name="date_delay" widget="float_time"/>
                     <field name="participants" widget="many2many_tags"/>
                     <field name="external_participants" widget="many2many_tags"/>
@@ -29,9 +30,9 @@
                         <field name="current_user" invisible="1"/>
                         <field name="create_uid" invisible="1"/>
                         <field name="closed" invisible="1"/>
-                        <button name="open" type="object" string="Join Meeting" class="oe_highlight" attrs="{'invisible':['|',('closed','=',True),('create_uid','=',False)]}"/>
-                        <button name="action_close_meeting" string="Close Meeting" type="object" groups="base.group_user" attrs="{'invisible':['|',('closed','=',True),('create_uid','=',False)]}"/>
-                        <button name="action_reopen_meeting" string="Reopen Meeting" type="object" groups="base.group_user" attrs="{'invisible':['|',('closed','!=',True),('create_uid','=',False)]}"/>
+                        <!-- <button name="open" type="object" string="Join Meeting" class="oe_highlight" attrs="{'invisible':['|',('closed','=',True),('create_uid','=',False)]}"/> -->
+                        <!-- <button name="action_close_meeting" string="Close Meeting" type="object" groups="base.group_user" attrs="{'invisible':['|',('closed','=',True),('create_uid','=',False)]}"/>
+                        <button name="action_reopen_meeting" string="Reopen Meeting" type="object" groups="base.group_user" attrs="{'invisible':['|',('closed','!=',True),('create_uid','=',False)]}"/> -->
                     </header>
                     <sheet>
                         <h1>
@@ -39,8 +40,12 @@
                         </h1>
                         <group name="info">
                             <group>
-                                <field name="date"/>
-                                <field name="date_delay" widget="float_time"/>
+                                <field name="meeting_object"/>
+                                <field name="date" attrs="{'invisible':True}"/>
+                                <field name="date_formated"/>
+                                <field name="date_end" attrs="{'invisible':True}"/>
+                                <field name="date_end_formated"/>
+                                <field name="date_delay" widget="float_time" attrs="{'invisible':True}"/>
                                 <field name="participants" widget="many2many_tags"/>
                                 <field name="url" string="Share Link"/>
                                 <field name="external_participants" context="{'default_meet': active_id}">
@@ -58,13 +63,15 @@
             </field>
         </record>
 
-        <!-- Action alerts -->
-        <act_window id="action_meeting" name="Jitsi Meeting" res_model="jitsi_meet.jitsi_meet" view_mode="tree,calendar,form" domain="[]" />
 
-        <menuitem name="Jitsi Meeting" id="menu_meeting" web_icon="jitsi_meet,static/description/web_cam.jpg" sequence="99" action="action_meeting" icon="STOCK_ZOOM_IN"/>
-        <record model='ir.ui.menu' id='menu_meeting'>
+        <!-- Action alerts -->
+
+        <act_window id="action_meeting" name="Jitsi meetings" res_model="jitsi_meet.jitsi_meet" view_mode="tree,calendar,form" domain="[]" />
+
+        <menuitem name="Jitsi" id="jitsi_menu" web_icon="jitsi_meet,static/description/web_cam.jpg" parent="base.menu_administration" sequence="5" icon="STOCK_ZOOM_IN"/>
+        <menuitem id="meeting_menu" name="Meetings" parent="jitsi_menu" action="action_meeting" sequence="20"/>
+        <record model='ir.ui.menu' id='jitsi_menu'>
             <field name="groups_id" eval="[(6,0,[ref('base.group_user')])]"/>
         </record>
-
     </data>
 </openerp>

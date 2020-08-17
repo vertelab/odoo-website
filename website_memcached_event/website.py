@@ -109,7 +109,10 @@ class website_event(website_event):
     # '/event/<model("event.event"):event>/register'
     @memcached.route(
         flush_type=lambda kw: 'event register %s' %request.website.get_kw_event(kw),
-        key=lambda kw: '{db}/event/%s/register{employee}{logged_in}{publisher}{designer}{lang}%s' % (kw.get('event') and (kw['event'].id, kw['event'].memcached_time or '') or ('', '')))
+        key=lambda kw: '{db},/event/%s/register,{employee},{logged_in},{publisher},{designer},{lang},%s,%s' % (
+            kw.get('event') and kw['event'].id or '',
+            kw.get('event') and kw['event'].memcached_time or '',
+            request.env.user.property_product_pricelist.id))
     def event_register(self, event, **post):
         return super(website_event, self).event_register(event, **post)
     

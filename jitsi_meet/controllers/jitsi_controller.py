@@ -24,15 +24,17 @@ from openerp.exceptions import Warning, ValidationError
 from openerp import http
 from openerp.http import request
 
+import logging
+_logger = logging.getLogger(__name__)
+
 class JitsiController(http.Controller):
 
-    @http.route(['/jitsi/lobby/<token>'], auth='public', type='http', website=True)
-    def lobby(self, url, token, **post):
-        participant = request.env['event.participant'].search([('token', '=', token)])
-        if not participant:
-            return request.website.render('website.403')
+    @http.route(['/jitsi/lobby', '/jitsi/lobby/<token>'], auth='public', type='http', website=True)
+    def lobby(self, token=None, **post):
+        participants = request.env['jitsi_meet.external_user'].sudo().find_jitsi_participants(token)
+
         values = {
-            'partner': participant.partner_id,
+            'participants': participants,
         }
         return request.website.render('jitsi_meet.lobby', values)
 

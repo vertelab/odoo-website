@@ -32,11 +32,12 @@
     "author": "Vertel AB",
     "website": "https://vertel.se",
     "depends": [
-        'jitsi_meet,
+        'jitsi_meet',
         'event_participant',
         ],
     "data": [
         'views/jitsi_event_views.xml',
+        # 'data/mail_template.xml',
     ],
     'installable': True,
     'auto_install': False,

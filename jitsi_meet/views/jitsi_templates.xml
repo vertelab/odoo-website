@@ -6,59 +6,43 @@
             <t t-call="website.layout">
                 <div class="oe_structure"/>
                 <div id="event_info" class="container">
+                    <div class="oe_structure oe_empty"/>
                     <br />
                     <center>
+                        <h3>Lobby för evenemang</h3>
+                        <t t-if="not participants">
+                            Hittade inga evenemang.
+                        </t>
                         <t t-foreach="participants" t-as="participant">
-                            <span t-if="participant.partner_id == user.partner_id and participant.state == 'open'">
+                            <span>
                                 <h1>
-                                    <span t-field="participant.event_id"/>
+                                    <span t-field="participant.meet.name"/>
                                 </h1>
+                                <t t-if="participant.jitsi_state == 'planned'">
+                                    <h2>Starts: <span t-field="participant.meet.date_formated"/>
+                                    </h2>
+                                    <h2>Ends: <span t-field="participant.meet.date_end_formated"/>
+                                    </h2>
+                                </t>
+                                <t t-if="participant.jitsi_state == 'current'">
+                                    <h2>Ongoing</h2>
+                                    <h2>Ends: <span t-field="participant.meet.date_end"/>
+                                    </h2>
+                                    <div class="btn-group mt16 mb16">
+                                        <a t-att-href="participant.meet.url" type="button" class="btn btn-primary">join</a>
+                                    </div>
+                                </t>
+                                <t t-if="participant.jitsi_state == 'finished'">
+                                    <h2>The meeting ended <span t-field="participant.meet.date_end"/>
+                                    </h2>
+                                </t>
                             </span>
                         </t>
                     </center>
                     <br />
                 </div>
-
-
-                <div id="partner_form" class="container">
-                    <div class="row">
-                        <div class="col-md-12 mt32 mb32">
-                            <t t-foreach="participants" t-as="participant">
-                                <span t-if="participant.partner_id == user.partner_id and participant.state == 'open'">
-                                    <t t-foreach="request.session.get('form_values').iteritems()" t-as="item">
-                                        <form class="form-horizontal mt32 form-navtabs-validation" method="post" enctype="multipart/form-data">
-                                            <div class="form-group">
-                                                <div>
-                                                    <label id="partner_name" class="col-md-3 col-sm-4 control-label" for="partner_name">Name</label>
-                                                    <div class="col-md-7 col-sm-8">
-                                                        <input id="partner_name" type="text" class="form-control" name="partner_name" t-att-value="participant.participant_name"/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group" action="jitsi_meet.url">
-                                                <div>
-                                                    <label class="col-md-3 col-sm-4 control-label" for="partner_email">Email</label>
-                                                    <div class="col-md-7 col-sm-8">
-                                                        <input id="partner_email" type="text" class="form-control" name="partner_email" t-att-value="user.email"/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="container">
-                                                <div class="pull-right btn-group mt16 mb16">
-                                                    <button type="submit" class="btn btn-primary">Join</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </t>
-                                </span>
-                            </t>
-                        </div>
-                    </div>
-                </div>
                 <div class="oe_structure oe_empty"/>
             </t>
         </template>
-
-
     </data>
 </openerp>
