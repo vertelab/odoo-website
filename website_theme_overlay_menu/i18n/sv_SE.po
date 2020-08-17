@@ -92,6 +92,16 @@ msgstr "Mina Kreditfakturor"
 
 #. module: website_theme_overlay_menu
 #: view:website:website.layout
+msgid "News"
+msgstr "Aktuellt"
+
+#. module: website_theme_overlay_menu
+#: view:website:website.layout
+msgid "My Salon"
+msgstr "Min Salong"
+
+#. module: website_theme_overlay_menu
+#: view:website:website.layout
 msgid "My Salon"
 msgstr "Min Salong"
 

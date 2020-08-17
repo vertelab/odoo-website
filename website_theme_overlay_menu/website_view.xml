@@ -196,7 +196,13 @@ TODO: Activate me
                 </div>
               </t>
 
-
+                <div class="product_children">
+                  <label>
+                    <li>
+                      <a href="/my/home">News</a>
+                    </li>
+                  </label>
+                </div>
 
                 <div class="product_children">
                   <label>
