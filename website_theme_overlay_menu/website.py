@@ -31,6 +31,7 @@ from openerp.addons.website.models.website import slug
 class website(models.Model):
     _inherit = "website"
     
+    
     def get_mega_menu_categories(self):
         children = self.env['product.public.category'].search([('parent_id', '=', None), ('website_published', '=', True)], order='sequence asc')
         # _logger.warn('sandra %s' % children.mapped('name'))
@@ -50,4 +51,4 @@ class website(models.Model):
     def portal_agent(self):
         agent = self.env.user.commercial_partner_id.agent
         return agent
-    
+
