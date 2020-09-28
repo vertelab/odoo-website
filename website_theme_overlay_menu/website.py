@@ -51,4 +51,34 @@ class website(models.Model):
     def portal_agent(self):
         agent = self.env.user.commercial_partner_id.agent
         return agent
+        
+    # ~ def is_af(self):
+        # ~ af = self.env.user.commercial_partner_id
+        # ~ return af
+    
+    # ~ def is_consumer(self):
+        # ~ partner = request.env.user.partner_id.commercial_partner_id
+        # ~ sk  = self.env.ref('webshop_dermanord.group_dn_sk') 
+        # ~ if sk in partner.access_group_ids:
+            # ~ # Slutkonsument
+            # ~ return sk
+    
+        
+    
+    # ~ def not_consumer(self):
+        # ~ others = not self.env.ref('webshop_dermanord.group_dn_sk').id
+        # ~ return others
+        
+    def get_dn_groups(self):
+        groups = [g.id for g in request.env.user.commercial_partner_id.access_group_ids]
+        if self.env.ref('webshop_dermanord.group_dn_ht').id in groups: # Webbplatsbehörigheter / Hudterapeut
+            return u'hudterapeut'
+        elif self.env.ref('webshop_dermanord.group_dn_spa').id in groups: # Webbplatsbehörigheter / SPA-Terapeut
+            return u'SPA-terapeut'
+        elif self.env.ref('webshop_dermanord.group_dn_af').id in groups: # Webbplatsbehörigheter / Återförsäljare
+            return u'Återförsäljare'
+        elif self.env.ref('webshop_dermanord.group_dn_sk').id in groups: # Webbplatsbehörigheter / slutkonsument
+            return u'Slutkonsument'
+        else:
+            return u''
 

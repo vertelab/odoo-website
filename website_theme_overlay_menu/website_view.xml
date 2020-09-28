@@ -152,7 +152,7 @@
                     <b>Sign in</b>
                   </a>
                 </li>
-                <li t-if="False and website.user_id != user_id">
+                <li t-if="False and website.get_dn_groups().id != user_id">
                   <label for="menu-p">
                     <a t-esc="user_id.name" />
                   </label>

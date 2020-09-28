@@ -102,6 +102,20 @@ class ir_translation(models.Model):
 class Website(models.Model):
     _inherit = 'website'
     
+    
+    def get_dn_groups(self):
+        groups = [g.id for g in request.env.user.commercial_partner_id.access_group_ids]
+        if self.env.ref('webshop_dermanord.group_dn_ht').id in groups: # Webbplatsbehörigheter / Hudterapeut
+            return u'hudterapeut'
+        elif self.env.ref('webshop_dermanord.group_dn_spa').id in groups: # Webbplatsbehörigheter / SPA-Terapeut
+            return u'SPA-terapeut'
+        elif self.env.ref('webshop_dermanord.group_dn_af').id in groups: # Webbplatsbehörigheter / Återförsäljare
+            return u'Återförsäljare'
+        elif self.env.ref('webshop_dermanord.group_dn_sk').id in groups: # Webbplatsbehörigheter / slutkonsument
+            return u'Slutkonsument'
+        else:
+            return u''
+    
     @api.model
     def memcached_get_page_timestamp(self, page):
         time = ''
@@ -118,9 +132,9 @@ class CachedWebsite(WebsiteOld):
     #~ @http.route('/page/<page:page>', type='http', auth="public", website=True)
     @memcached.route(
         flush_type=lambda kw: 'page',
-        key=lambda kw: '{db},/page/%s,{employee},{logged_in},{publisher},{designer},{lang} %s' % (
+        key=lambda kw: '{db},/page/%s,{employee},{logged_in},{publisher},{designer},{lang} %s %s' % (
             kw.get('page') or '',
-            request.website.memcached_get_page_timestamp(kw.get('page'))))
+            request.website.memcached_get_page_timestamp(kw.get('page')), request.website.get_dn_groups()))
     def page(self, page, **opt):
         return super(CachedWebsite, self).page(page, **opt)
 
