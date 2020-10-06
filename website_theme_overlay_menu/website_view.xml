@@ -152,7 +152,7 @@
                     <b>Sign in</b>
                   </a>
                 </li>
-                <li t-if="False and website.user_id != user_id">
+                <li t-if="False and website.get_dn_groups().id != user_id">
                   <label for="menu-p">
                     <a t-esc="user_id.name" />
                   </label>
@@ -170,47 +170,55 @@
                 <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
                   <t t-set="om_for" t-value="'menu-e'" />
                 </t>
-<!--
-                <li>
-                  <a href="/web">My Account</a>
-                </li>
--->
-<!--
-TODO: Activate me
-                <div class="product_children">
-                  <label>
-                    <li>
-                      <a href="/my/home/">Aktuellt</a>
-                    </li>
-                  </label>
-                </div>
-              -->
-
-              <t t-if="website.portal_agent() == True">
-                <div class="product_children">
-                  <label>
-                    <li>
-                      <a href="/web">Agent Portal</a>
-                    </li>
-                  </label>
-                </div>
-              </t>
-
-                <div class="product_children">
-                  <label>
-                    <li>
-                      <a href="/my/home">News</a>
-                    </li>
-                  </label>
-                </div>
-
-                <div class="product_children">
-                  <label>
-                    <li>
-                      <a href="/my/salon">My Salon</a>
-                    </li>
-                  </label>
-                </div>
+                <!--
+                     <li>
+                     <a href="/web">My Account</a>
+                     </li>
+                -->
+                <!--
+                     TODO: Activate me
+                     <div class="product_children">
+                     <label>
+                     <li>
+                     <a href="/my/home/">Aktuellt</a>
+                     </li>
+                     </label>
+                     </div>
+                -->
+                <t t-if="website.portal_agent() == True">
+                  <div class="product_children">
+                    <label>
+                      <li>
+                        <a href="/web">Agent Portal</a>
+                      </li>
+                    </label>
+                  </div>
+                </t>
+                <t t-if="not request.env.user.has_group('webshop_dermanord.group_dn_sk')">
+                    <div class="product_children">
+                      <label>
+                        <li>
+                          <a href="/my/home">News</a>
+                        </li>
+                      </label>
+                    </div>
+                    <div class="product_children">
+                      <label>
+                        <li>
+                          <a href="/my/salon">My Salon</a>
+                        </li>
+                      </label>
+                    </div>
+                </t>
+                <t t-if="request.env.user.has_group('webshop_dermanord.group_dn_sk')">
+                    <div class="product_children">
+                      <label>
+                        <li>
+                          <a href="/my/salon">My Information</a>
+                        </li>
+                      </label>
+                    </div>
+                </t>
                 <div class="product_children">
                   <label>
                     <li>
@@ -225,6 +233,7 @@ TODO: Activate me
                     </li>
                   </label>
                 </div>
+
               <t t-if="not request.env.user.has_group('webshop_dermanord.group_dn_sk')">
                 <div class="product_children">
                   <label>
@@ -267,6 +276,7 @@ TODO: Activate me
                   </label>
                 </div>
 -->
+
                 <div class="product_children">
                   <label>
                     <li>
@@ -274,38 +284,38 @@ TODO: Activate me
                     </li>
                   </label>
                 </div>
-              <t t-if="not request.env.user.has_group('webshop_dermanord.group_dn_sk')">
-                <label for="my_children">MEDIA</label>
-                <input type="checkbox" id="my_children" name="my_children" class="menu-checkbox" />
-                <div class="menu">
-                  <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
-                    <t t-set="om_for" t-value="'my_children'" />
-                  </t>
-                  <div class="my_children">
-                    <label for="my_children">
-                      <label>
-                        <a href="/my/imagearchive">Image Bank</a>
+                <t t-if="not request.env.user.has_group('webshop_dermanord.group_dn_sk')">
+                  <label for="my_children">MEDIA</label>
+                  <input type="checkbox" id="my_children" name="my_children" class="menu-checkbox" />
+                  <div class="menu">
+                    <t t-call="website_theme_overlay_menu.website_theme_overlay_menu_home">
+                      <t t-set="om_for" t-value="'my_children'" />
+                    </t>
+                    <div class="my_children">
+                      <label for="my_children">
+                        <label>
+                          <a href="/my/imagearchive">Image Bank</a>
+                        </label>
+                        <!-- TODO: Activate
+                             <label>
+                             <a href="/my/pricelist">Prislistor</a>
+                             </label> -->
+                        <label>
+                          <a href="/my/news">News &amp; Offers</a>
+                        </label>
+                        <label>
+                          <a href="/my/events">Events &amp; Treatments</a>
+                        </label>
+                        <label>
+                          <a href="/my/compendium">Compendium</a>
+                        </label>
+                        <label>
+                          <a href="/my/other">Miscellaneous</a>
+                        </label>
                       </label>
-                      <!-- TODO: Activate
-                      <label>
-                        <a href="/my/pricelist">Prislistor</a>
-                      </label> -->
-                      <label>
-                        <a href="/my/news">News &amp; Offers</a>
-                      </label>
-                      <label>
-                        <a href="/my/events">Events &amp; Treatments</a>
-                      </label>
-                      <label>
-                      <a href="/my/compendium">Compendium</a>
-                    </label>
-                      <label>
-                        <a href="/my/other">Miscellaneous</a>
-                      </label>
-                    </label>
+                    </div>
                   </div>
-                </div>
-              </t>
+                </t>
               </div>
             </div>
           </div>
