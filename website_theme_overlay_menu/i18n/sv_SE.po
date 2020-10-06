@@ -52,6 +52,12 @@ msgstr "Bildarkiv"
 
 #. module: website_theme_overlay_menu
 #: view:website:website.layout
+msgid "My Reseller"
+msgstr "Min Återförsäljare"
+
+
+#. module: website_theme_overlay_menu
+#: view:website:website.layout
 msgid "Logout"
 msgstr "Logga ut"
 
