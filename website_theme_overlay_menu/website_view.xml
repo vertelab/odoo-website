@@ -248,7 +248,7 @@
                 <div class="product_children">
                 <label>
                    <t t-if="request.env.user.has_group('webshop_dermanord.group_dn_sk')">
-                    <t t-set="parent" t-value="request.env.user.partner_id.commercial_partner_id" />
+                    <t t-set="parent" t-value="request.env.user.agents[0]" />
                   
                     <li t-att-class="'active' if active_menu == 'my_reseller' else ''">
                       <a t-att-href="'/my/reseller/%s' % (parent.id)">My Reseller</a>
