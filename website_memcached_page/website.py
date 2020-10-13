@@ -115,6 +115,12 @@ class Website(models.Model):
             return u'Slutkonsument'
         else:
             return u''
+            
+    # ~ @http.route(['/my/reseller/<int:reseller_id>'], type='http', auth='user', website=True)
+    def reseller_info_update(self):
+        reseller_id = request.env.user.agents[0].id if len(request.env.user.agents) > 0 else ''
+        
+        return ('%s' %reseller_id)
     
     @api.model
     def memcached_get_page_timestamp(self, page):
@@ -132,9 +138,9 @@ class CachedWebsite(WebsiteOld):
     #~ @http.route('/page/<page:page>', type='http', auth="public", website=True)
     @memcached.route(
         flush_type=lambda kw: 'page',
-        key=lambda kw: '{db},/page/%s,{employee},{logged_in},{publisher},{designer},{lang} %s %s' % (
+        key=lambda kw: '{db},/page/%s,{employee},{logged_in},{publisher},{designer},{lang} %s %s %s' % (
             kw.get('page') or '',
-            request.website.memcached_get_page_timestamp(kw.get('page')), request.website.get_dn_groups()))
+            request.website.memcached_get_page_timestamp(kw.get('page')), request.website.get_dn_groups(),request.website.reseller_info_update()))
     def page(self, page, **opt):
         return super(CachedWebsite, self).page(page, **opt)
 
