@@ -20,7 +20,7 @@
 ##############################################################################
 
 {
-    'name': 'Website Reseller Register',
+    'name': 'Website Consumer Register',
     'version': '0.1',
     'category': 'website',
     'description': """

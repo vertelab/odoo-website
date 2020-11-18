@@ -19,17 +19,19 @@
                                         <small t-esc="help.get('help_consumer_name', '')" />
                                     </div>
                                 </div>
-                                <div t-att-class="'form-group %s' %validation.get('reseller_id', '')">
+                                <div id="reseller_id" t-att-class="'form-group %s' %validation.get('reseller_id', '')">
                                     <label class="col-md-3 col-sm-4 control-label" for="reseller_id">Reseller</label>
                                     <div class="col-md-7 col-sm-8">
-                                        <select class="form-control" name="reseller_id">
-                                            <option value="" t-att="{'selected': '1'} if (not reseller or not request.env['res.partner'].commercial_partner_id.search_read([('is_reseller','=',True)])) else {}" disabled="1">Choose Reseller</option>
-                                            <t t-foreach="reseller_selection" t-as="reseller">
-                                                <option t-att-value="reseller[0]" t-att="{'selected': '1'} if reseller[0] == (request.env['res.partner'].commercial_partner_id.search_read([('is_reseller','=',True)])) else {}"><t t-esc="reseller[1]"/></option>
+                                        <select class="form-control resller_select" name="reseller_id" >
+                                            <option value="" disabled="1" required="1" selected="1" >Choose Reseller</option>
+                                            <t t-foreach="issue.partner_id.search([('agent','=',True),('country_id','=',189)])" t-as="reseller" >
+                                                <option t-esc="reseller.name" />
                                             </t>
                                         </select>
                                     </div>
                                 </div>
+                                
+                            
                                 <ul class="nav nav-tabs">
                                     <li id="nav_delivery" class="active">
                                         <a data-toggle="tab" href="#delivery" class="hidden-xs">Delivery Address</a>
@@ -155,7 +157,15 @@
                                 </div>
                                 <div class="container">
                                     <div class="pull-right btn-group mt16 mb16">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <form class="oe_reset_password_form" role="form" method="post" t-if="not message">
+                                            <input type="hidden" name="redirect" t-att-value="redirect"/>
+                                            <input type="hidden" name="token" t-att-value="token"/>
+                                            <div class="clearfix oe_login_buttons">
+                                                <a t-attf-href="/web/login?{{ keep_query() }}" class="btn btn-link pull-right">Back to Login</a>
+                                                <button type="submit" class="btn btn-primary pull-left">Submit</button>
+                                            </div>
+
+                                        </form>
                                     </div>
                                 </div>
                                 <div id="message_box">
@@ -206,46 +216,27 @@
                                 </h4>
                                 <p id="instruction_contact" t-esc="instruction_contact"/>
                                 <div class="contact_person">
-                                    <div t-att-class="'form-group %s' % validation.get('contact_image', '')">
-                                        <label class="col-md-3 col-sm-4 control-label" for="name">Image</label>
+                                    <div t-att-class="'form-group %s' %validation.get('consume_name', '')">
+                                        <label class="col-md-3 col-sm-4 control-label" for="consume_name">Name</label>
                                         <div class="col-md-7 col-sm-8">
-                                            <t t-if="not values.get('image') and contact and contact.image"><img id="contact_img" t-att-src="'/website/image/res.partner/%s/image/300x300' %contact.id" style="max-width: 200px;"/></t>
-                                            <t t-if="values.get('image')"><img id="contact_img" t-att-src="'data:image/gif;base64,%s' % values['image']" style="max-width: 200px;"/></t>
-                                            <t t-if="contact">
-                                                <i id="remove_img_contact" t-att-class="'fa fa-trash-o fa-2x %s' %('hidden' if not contact.image else '')" t-att-data-partner_id="contact.id"><input name="remove_img_contact" class="hidden" value="0"/></i>
-                                            </t>
-                                            <input class="img-input-preview" data-preview-image="#contact_img" type="file" name="image" placeholder="File to upload pdf/jpg/png" accept="image/jpeg,image/png" capture="camera"/>
-                                            <input type="hidden" name="image_b64" placeholder="File to upload pdf/jpg/png" t-att-value="values.get('image', '')"/>
-                                            <p class="help-block">
-                                                <small t-esc="help.get('help_contact_image', '')" />
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div t-att-class="'form-group %s' %validation.get('contact_name', '')">
-                                        <label class="col-md-3 col-sm-4 control-label" for="contact_name">Name</label>
-                                        <div class="col-md-7 col-sm-8">
-                                            <input type="text" class="form-control" name="contact_name" t-att-value="values.get('contact_name', contact.name if contact else '')" placeholder="Given and family name " required="1" />
+                                            <input type="text" class="form-control" name="consume_name" t-att-value="values.get('consume_name', consume.name if consumer else '')" placeholder="Given and family name " required="1" />
                                             <small t-esc="help.get('help_contact_name', '')" />
                                         </div>
                                     </div>
-                                    <div t-att-class="'form-group %s' %validation.get('category_id', '')">
-                                        <label class="col-md-3 col-sm-4 control-label" for="category_id">Labels</label>
-                                        <div class="col-md-7 col-sm-8" id="contact-id" t-att-data-contact-id="contact.id if contact else '0'">
+                                    <div t-att-class="'form-group %s' %validation.get('reseller_id', '')">
+                                        <label class="col-md-3 col-sm-4 control-label" for="reseller_id">Reseller</label>
+                                        <div class="col-md-7 col-sm-8">
+                                            <select class="form-control resller_select" name="reseller_id" >
+                                                <option value="" disabled="1" hidden="1">Choose Reseller</option>
 <!--
-                                            <select name="category_id" class="form-control" multiple="multiple">
-                                                <t t-foreach="res_partner_category_selection" t-as="category">
-                                                    <option t-att-value="category[0]" t-att-selected="category[0] in contact.category_id.mapped('id')"><t t-esc="category[1]"/></option>
+                                                <t t-foreach="issue.partner_id.search([('agent','=',True),('country_id','=',189)])" t-as="reseller">
+                                                    <option t-esc="values.get('reseller_name', resller.name if reseller else '')" force_save="1"/>
                                                 </t>
-                                            </select>
 -->
-                                            <t t-foreach="res_partner_category_selection" t-as="category">
-                                                <div class="checkbox">
-                                                    <label><input type="checkbox" t-att-name="'category_%s' %category[0]" t-att-value="category[0]" t-att-checked="category[0] in contact.category_id.mapped('id')"/><t t-esc="category[1]"/></label>
-                                                </div>
-                                            </t>
-<!--
-                                            <small t-esc="help.get('help_category_id')" />
--->
+                                                <t t-foreach="issue.partner_id.search([('agent','=',True),('country_id','=',189)])" t-as="reseller" >
+                                                    <option t-att-value="reseller" t-att="{'selected': '1'} if reseller == issue.partner_id else {}" ><t t-esc="reseller.name" /></option>
+                                                </t>
+                                        </select>
                                         </div>
                                     </div>
                                     <div t-att-class="'form-group %s' %validation.get('contact_phone', '')">
@@ -270,46 +261,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h4 id="title_attachment">
-                                    <strong>Attachments</strong>
-                                </h4>
-                                <table class="table table-responsive table-striped table-bordered">
-                                    <thead>
-                                        <th />
-                                        <th>Name</th>
-                                        <th>Date</th>
-                                        <th>Type</th>
-                                        <th />
-                                    </thead>
-                                    <tbody t-if="contact">
-                                        <tr t-foreach="request.env['ir.attachment'].sudo().search([('res_model','=','res.partner'),('res_id','=',contact.id)])" t-as="attachment">
-                                            <td>
-                                                <img style="width: 32px; margin: 4px; border-radius: 2px;" t-att-src="'/web/binary/image?model=ir.attachment&amp;field=datas&amp;id=%s' %attachment.id"/>
-                                            </td>
-                                            <td>
-                                                <span t-field="attachment.name" />
-                                            </td>
-                                            <td>
-                                                <span t-field="attachment.write_date" />
-                                            </td>
-                                            <td>
-                                                <span t-field="attachment.mimetype" />
-                                            </td>
-                                            <td class="text-center">
-                                                <a t-att-href="'/consumer_register/%s/attachment/%s/delete' % (issue.id, attachment.id)" class="fa fa-trash-o fa-2x" />
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div t-attf-class="form-group #{validation.get('image') and 'has-error' or ''}">
-                                    <label class="col-md-3 col-sm-4 control-label" for="name">Attachment</label>
-                                    <div class="col-md-7 col-sm-8">
-                                        <input type="file" name="attachment" placeholder="File to upload pdf/jpg/png" accept="image/*,text/plain,application/pdf,application/vnd.ms-excel,app" capture="camera" />
-                                        <p class="help-block">
-                                            <small t-esc="help.get('help_contact_attachment', '')" />
-                                        </p>
-                                    </div>
-                                </div>
                                 <!-- contact person -->
                                 <div class="container">
                                     <div class="pull-right mt16 mb16">
@@ -332,6 +283,28 @@
                 <script src="/website_consumer_register/static/src/js/main.js" type="text/javascript" />
             </xpath>
         </template>
+<!--
+        <template id="consumer_register.contact_pw_reset" name="Reset password">
+            <t t-call="web.login_layout">
+                <div t-if="message">
+                    <p class="alert alert-success" t-if="message">
+                        <t t-esc="message"/>
+                    </p>
+                </div>
+
+                <form class="oe_reset_password_form" role="form" method="post" t-if="not message">
+                    <input type="hidden" name="redirect" t-att-value="redirect"/>
+                    <input type="hidden" name="token" t-att-value="token"/>
+                    <div class="clearfix oe_login_buttons">
+                        <a t-attf-href="/web/login?{{ keep_query() }}" class="btn btn-link pull-right">Back to Login</a>
+                        <button type="submit" class="btn btn-primary pull-left">Reset password</button>
+                    </div>
+
+                </form>
+
+            </t>
+        </template>
+-->
         
     </data>
 </openerp>

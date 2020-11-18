@@ -26,23 +26,39 @@ import base64
 import sys
 import traceback
 import re
+import openerp
+from openerp.addons.auth_signup.res_users import SignupError
+from openerp.addons.web.controllers.main import ensure_db
  
 import logging
 _logger = logging.getLogger(__name__)
 
-#TODO: connect right data to the selection part for resellers
 
-PARTNER_FIELDS = ['name', 'street', 'street2', 'zip', 'city', 'country_id', 'phone', 'email']
+
+PARTNER_FIELDS = ['name','agent_id', 'customer_no','street', 'street2', 'zip', 'city', 'country_id', 'phone', 'email']
 
 class consumer_register(http.Controller):
+    _name="consumer.register"
 
     # can be overriden with more consumer fields
     def get_consumer_post(self, post):
-        return {'name': post.get('consumer_name')}
+        _logger.warn('Haze post %s' %post)
+        return {'name': post.get('consumer_name'),
+        # ~ 'customer_no': contact.id,
+        'agent_id':post.get('reseller_id'),
+        'street':post.get('delivery_street'),
+        'street2':post.get('delivery_street2'),
+        'zip':post.get('delivery_zip'),
+        'city':post.get('delivery_city'),
+        'phone':post.get('delivery_phone'),
+        'email':post.get('delivery_email'),
+        }
+        
 
     # can be overriden with more consumer fields
     def consumer_fields(self):
-        return ['name']
+        # ~ _logger.warn('Haze consumer %s' %self.content)
+        return ['name','agent_id']
 
     # can be overriden with more consumer fields
     def contact_fields(self):
@@ -164,22 +180,36 @@ class consumer_register(http.Controller):
         }
         if not issue:
             partner = request.env['res.partner'].sudo().create({
-                'name': _('My Information'),
-                'active': False,
-                'property_invoice_type': None,
-                'website_short_description': None,
+                'name': _('Name'),
+                'active': True,
+                'customer':True,
+                # ~ 'agent_id': _('Reseller'),
+                # ~ 'property_invoice_type': None,
             })
+            # ~ user = request.env['res.users'].sudo().create({
+                # ~ 'name': _('Name'),
+                # ~ 'active': True,
+                # ~ 'login': post.get('delivery_email'),
+                # ~ 'customer':True,
+                # ~ 'agent_id': _('Reseller'),
+                # ~ 'property_invoice_type': None,
+            # ~ })
+            # ~ contact = request.env['res.users'].search([('partner_id', '=', contact.id)]).update({
+            # ~ 'webshop_dermanord.group_dn_sk':True,})
+            # ~ _logger.warn('Hazeuser %s' % user)
             issue = request.env['project.issue'].sudo().create({
                 'name': 'New Consumer Application',
                 'partner_id': partner.id,
                 'project_id': request.env.ref('website_consumer_register.project_consumer_register').id
             })
+            _logger.warn('Haze issue %s' %issue)
             self.set_issue_id(issue.id)
             return partner.redirect_token('/consumer_register/%s' %issue.id)
         elif request.httprequest.method == 'POST':
             try:
                 self.update_partner_info(issue, post)
                 if action == 'new_contact':
+                    _logger.warn('Haze post 2 %s' %post)
                     return request.redirect('/consumer_register/%s/contact/new' % issue.id)
                 return request.redirect('/consumer_register/%s/thanks' %issue.id)
             except ValidationError as e:
@@ -193,20 +223,23 @@ class consumer_register(http.Controller):
             'issue': issue,
             'validation': validation,
             'country_selection': [(country['id'], country['name']) for country in request.env['res.country'].search_read([], ['name'])],
-            'reseller_selection':[(reseller['id'], reseller['name']) for reseller in request.env['res.partner'].commercial_partner_id.search_read([('is_reseller','=',True)])],
+            'agent_id':[(reseller['id'], reseller['name']) for reseller in request.env['res.partner'].search([('agent','=',True)])],
             'invoice_type_selection': [(invoice_type['id'], invoice_type['name']) for invoice_type in request.env['sale_journal.invoice.type'].sudo().search_read([], ['name'])],
         })
+        _logger.warn('Haze values 3' % values)
         if any(children):
             for k,v in children.items():
                 values[k] = v
+        _logger.warn('Haze values 2' % values)
         return request.website.render('website_consumer_register.register_form', values)
 
     # can be overrided
     def update_partner_info(self, issue, post):
         values = self.get_consumer_post(post)
-        # ~ if post.get('invoicetype'):
-            # ~ values['property_invoice_type'] = int(post.get('invoicetype'))
-        values['website_short_description'] = post.get('website_short_description', '')
+        _logger.warn('Haze post 2 %s' %post)
+        _logger.warn('Haze Update %s' %values)
+        if post.get('invoicetype'):
+            values['property_invoice_type'] = int(post.get('invoicetype'))
         issue.partner_id.write(values)
         children_dict = self.get_children_post(issue, post)
         children = children_dict['children']
@@ -236,6 +269,7 @@ class consumer_register(http.Controller):
             instruction_contact = _('Any images or attachments you uploaded have not been saved. Please reupload them.')
             # Values
             values = {f: post['contact_%s' % f] for f in self.contact_fields() if post.get('contact_%s' % f) and f not in ['attachment','image']}
+            # ~ _logger.warn('Haze Values %s' %values)
             if post.get('image'):
                 image = post['image'].read()
                 values['image'] = base64.encodestring(image)
@@ -288,6 +322,7 @@ class consumer_register(http.Controller):
                         })
                         contact = user.partner_id.sudo()
                         contact.write(values)
+                        
 
                     except Exception as e:
                         err = sys.exc_info()
@@ -311,6 +346,8 @@ class consumer_register(http.Controller):
         return request.website.render('website_consumer_register.contact_form', {
             'issue': issue,
             'contact': contact,
+            'customer_no': issue_id,
+            'agent_id':reseller_id,
             'help': help_dic,
             'validation': validation,
             'instruction_contact': instruction_contact,
@@ -394,6 +431,7 @@ class consumer_register(http.Controller):
             error = ''.join(traceback.format_exception(err[0], err[1], err[2]))
             _logger.exception(_('Cannot send mail to %s. Please check your mail server configuration.') % user.name)
             return _('Cannot send mail to %s. Please check your mail server configuration.') % user.name
+        
 
     @http.route(['/consumer_register/<int:issue_id>/thanks'], type='http', auth='public', website=True)
     def thanks_for_your_application(self, issue_id=None, **post):
@@ -403,3 +441,45 @@ class consumer_register(http.Controller):
             return request.website.render('website.403', {})
         
         return request.website.render('website_consumer_register.thanks_for_your_application', {'issue': issue})
+
+    
+        
+# ~ class AuthSignupHome(openerp.addons.web.controllers.main.Home):
+    
+    # ~ @http.route(['/web/reset_password'], type='json', auth='public', website=True)
+    # ~ def web_auth_reset_password(self, *args, **kw):
+        # ~ qcontext = self.get_auth_signup_qcontext()
+
+        # ~ if not qcontext.get('token') and not qcontext.get('reset_password_enabled'):
+            # ~ raise werkzeug.exceptions.NotFound()
+
+        # ~ if 'error' not in qcontext and request.httprequest.method == 'POST':
+            # ~ try:
+                # ~ if qcontext.get('token'):
+                    # ~ self.do_signup(qcontext)
+                    # ~ return super(AuthSignupHome, self).web_login(*args, **kw)
+                # ~ else:
+                    # ~ login = qcontext.get('login')
+                    # ~ assert login, "No login provided."
+                    # ~ res_users = request.registry.get('res.users')
+                    # ~ res_users.reset_password(request.cr, openerp.SUPERUSER_ID, login)
+                    # ~ qcontext['message'] = _("An email has been sent with credentials to reset your password")
+            # ~ except SignupError:
+                # ~ qcontext['error'] = _("Could not reset your password")
+                # ~ _logger.exception('error when resetting password')
+            # ~ except Exception, e:
+                # ~ qcontext['error'] = e.message or e.name
+
+        # ~ return request.render('auth_signup.reset_password', qcontext)
+
+# ~ class Mail(models.Model):
+    # ~ _inherit = 'mail.mail'
+    
+    # ~ mail_sent = self.pool.get('email.template').send_mail(
+    # ~ cr,
+    # ~ self.pool.get('ir.model.data').get_object_reference(cr, uid, 'base', 'user_root')[1],
+    # ~ template_id,                        # purchase order model should be selected in email template form
+    # ~ self..id,           # record id
+    # ~ force_send=True,
+    # ~ context=ctx
+# ~ )
