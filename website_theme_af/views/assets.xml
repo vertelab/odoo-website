@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+
+        <template id="assets_common" name="AF Common Tema" inherit_id="web.assets_common">
+            <xpath expr=".">
+                <link rel="stylesheet" href="/af_website_tema/static/src/scss/web_style.scss"/>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

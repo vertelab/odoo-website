@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+
+        <template id="myproject_layout" name="Main layout" inherit_id="portal.frontend_layout">
+            <xpath expr="//footer" position="attributes">
+                <attribute name="class">footer-area</attribute>
+            </xpath>
+        </template>
+
+        <template id="website.language_selector">
+            <ul class="js_language_selector mb0 list-inline"
+                t-if="(request and request.is_frontend_multilang and len(languages) &gt; 1) or (website and (editable or translatable))">
+                <li class="list-inline-item">
+                    <div class="dropup">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="true">
+                            <span t-esc="list(filter(lambda lg : lg[0] == lang, languages))[0][1].split('/').pop()"/>
+                            <span class="caret ml4"/>
+                        </button>
+                        <div class="dropdown-menu" role="menu">
+                            <t t-foreach="languages" t-as="lg">
+                                <a t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang=lg[0])"
+                                   class="dropdown-item js_change_lang"
+                                   t-att-data-default-lang="(editable or translatable) and 'true' if website and lg[0] == website.default_lang_code else None"
+                                   t-att-data-lang="lg[0]">
+                                    <t t-esc="lg[1].split('/').pop()"/>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
+                </li>
+                <li groups="website.group_website_publisher" class="list-inline-item">
+                    <t t-set="url_return" t-value="quote_plus(url_for('', '[lang]') + '?' + keep_query())"/>
+                    <a t-attf-href="/web#action=base.action_view_base_language_install&amp;website_id=#{website.id if website else ''}&amp;url_return=#{url_return}">
+                        <i style="color:white" class="fa fa-plus-circle"/>
+                        <span style="color:white">Add a language...</span>
+                    </a>
+                </li>
+            </ul>
+        </template>
+
+
+        <template id="website.footer_custom" inherit_id="website.layout" name="Footer">
+            <xpath expr="//div[@id='footer']" position="replace">
+                <div id="footer" class="oe_structure oe_structure_solo" t-ignore="true" t-if="not no_footer">
+                    <section class="s_text_block pt16 pb8">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <h5>Our Products &amp; Services</h5>
+                                    <ul class="list-unstyled">
+                                        <li>
+                                            <a style="color:white" href="/">Home</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-4" id="connect">
+                                    <h5>Connect with us</h5>
+                                    <ul class="list-unstyled">
+                                        <li>
+                                            <a style="color:white" href="/contactus">Contact us</a>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-phone"/>
+                                            <span class="o_force_ltr" t-field="res_company.phone"/>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-envelope"/>
+                                            <span t-field="res_company.email"/>
+                                        </li>
+                                    </ul>
+                                    <p>
+                                        <a t-if="website.social_facebook" t-att-href="website.social_facebook"
+                                           class="btn btn-sm btn-link">
+                                            <i style="color:white" class="fa fa-2x fa-facebook-square"/>
+                                        </a>
+                                        <a t-if="website.social_twitter" t-att-href="website.social_twitter"
+                                           class="btn btn-sm btn-link">
+                                            <i style="color:white" class="fa fa-2x fa-twitter"/>
+                                        </a>
+                                        <a t-if="website.social_linkedin" t-att-href="website.social_linkedin"
+                                           class="btn btn-sm btn-link">
+                                            <i style="color:white" class="fa fa-2x fa-linkedin"/>
+                                        </a>
+                                        <a t-if="website.social_youtube" t-att-href="website.social_youtube"
+                                           class="btn btn-sm btn-link">
+                                            <i style="color:white" class="fa fa-2x fa-youtube-play"/>
+                                        </a>
+                                        <a t-if="website.social_googleplus" t-att-href="website.social_googleplus"
+                                           class="btn btn-sm btn-link" rel="publisher">
+                                            <i style="color:white" class="fa fa-2x fa-google-plus-square"/>
+                                        </a>
+                                        <a t-if="website.social_github" t-att-href="website.social_github"
+                                           class="btn btn-sm btn-link">
+                                            <i style="color:white" class="fa fa-2x fa-github"/>
+                                        </a>
+                                        <a t-if="website.social_instagram" t-att-href="website.social_instagram"
+                                           class="btn btn-sm btn-link">
+                                            <i style="color:white" class="fa fa-2x fa-instagram"/>
+                                        </a>
+                                    </p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <h5>
+                                        <span t-field="res_company.name"/>
+                                        <small>-
+                                            <a style="color:white" href="/aboutus">About us</a>
+                                        </small>
+                                    </h5>
+                                    <p>
+                                        We are a team of passionate people whose goal is to improve everyone's
+                                        life through disruptive products. We build great products to solve your
+                                        business problems.
+                                    </p>
+                                    <p>
+                                        Our products are designed for small to medium size companies willing to optimize
+                                        their performance.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>
