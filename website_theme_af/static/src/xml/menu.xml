@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+<t t-extend="AppsMenu">
+<t t-jquery="a[data-toggle='dropdown']" t-operation="replace">
+
+  <script>
+    var target = $("#toggler");
+    target.click(function(){
+      var current = $(this).attr("aria-expanded") === "true";
+      $(this).attr("aria-expanded", !current);
+    });
+  </script>
+
+  <a class="full" data-toggle="dropdown" data-display="static" href="#" aria-hidden="true">
+    <i class="fa fa-th-large"/><span> </span><span>Main Menu</span>
+    <div style="color: #82f;">ABCD</div>
+  </a>
+
+  <nav id="navigation" style="visibility: hidden;">
+    <button id="toggler" aria-expanded="false">Huvudmeny</button>
+    <ul>
+      <li role="menuitem"><a href="#">Hem</a></li>
+      <li role="menuitem"><a href="#">Administration</a></li>
+      <li role="menuitem"><a href="#">Avrop</a></li>
+      <li role="menuitem"><a href="#">Deltagare</a></li>
+      <li role="menuitem"><a href="#">Statistik</a></li>
+      <li role="menuitem"><a href="#">Meddelanden</a></li>
+      <li role="menuitem"><a href="#">Om tjänsten</a></li>
+    </ul>
+  </nav>
+
+  <!--
+  I have noticed that Odoo renders &nbsp; incorrectly.
+  So I used the SPAN tag with an empty character.
+  It seems also that it reacts to aria-hidden by ceasing the rendition.
+  So I used the aria attribute and style visibility.
+  Not sure why it happens in Odoo nor how to deal with it properly,
+  as the behavior does not follow the common HTML markup behavior.
+  Above, there are two segments, the first being the visual,
+  the second being the a11y one.
+  -->
+
+</t>
+</t>
+
+</templates>
