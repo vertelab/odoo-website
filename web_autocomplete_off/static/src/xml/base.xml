@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-extend="web.datepicker">
+        <t t-jquery="input.o_datepicker_input" t-operation="replace">
+            <input type="text" class="o_datepicker_input o_input datetimepicker-input" t-att-name="widget.name"
+                   t-att-placeholder="placeholder" t-attf-data-target="##{datepickerID}" autocomplete="off" />
+        </t>
+    </t>
+</templates>
