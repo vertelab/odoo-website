@@ -24,7 +24,7 @@
                                     <div class="col-md-7 col-sm-8">
                                         <select class="form-control resller_select" name="reseller_id" >
                                             <option value="" disabled="1" required="1" selected="1" >Choose Reseller</option>
-                                            <t t-foreach="issue.partner_id.search([('agent','=',True),('country_id','=',189)])" t-as="reseller" >
+                                            <t t-foreach="reseller_selection" t-as="reseller" >
                                                 <option t-esc="reseller.name" />
                                             </t>
                                         </select>
@@ -233,7 +233,10 @@
                                                     <option t-esc="values.get('reseller_name', resller.name if reseller else '')" force_save="1"/>
                                                 </t>
 -->
+<!--
                                                 <t t-foreach="issue.partner_id.search([('agent','=',True),('country_id','=',189)])" t-as="reseller" >
+-->
+                                                <t t-foreach="reseller_selection" t-as="reseller" >
                                                     <option t-att-value="reseller" t-att="{'selected': '1'} if reseller == issue.partner_id else {}" ><t t-esc="reseller.name" /></option>
                                                 </t>
                                         </select>
