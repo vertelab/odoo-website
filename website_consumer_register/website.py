@@ -50,7 +50,6 @@ class consumer_register(http.Controller):
         
     # can be overriden with more consumer fields
     def get_consumer_post(self, post):
-        _logger.warn('Haze post %s' %post)
         return {'name': post.get('consumer_name'),
         # ~ 'customer_no': contact.id,
         # ~ 'agents':post.get('reseller_id'),
@@ -67,7 +66,6 @@ class consumer_register(http.Controller):
 
     # can be overriden with more consumer fields
     def consumer_fields(self):
-        # ~ _logger.warn('Haze consumer %s' %self.content)
         return ['name','agents']
 
     # can be overriden with more consumer fields
@@ -178,58 +176,80 @@ class consumer_register(http.Controller):
     
     @http.route(['/consumer_register/new', '/consumer_register/<int:issue_id>', '/consumer_register/<int:issue_id>/<string:action>'], type='http', auth='public', website=True)
     def consumer_register_new(self, issue_id=None, action=None, **post):
-        _logger.warn('\n\naction: %s\n' % action)
         validation = {}
         children = {}
+        values = { 'help': self.get_help() }
         issue = self.get_issue(issue_id, post.get('token'))
+        
         if issue_id and not issue:
-            # Token didn't match
             return request.website.render('website.403', {})
-        values = {
-            'help': self.get_help(),
-        }
-        if not issue:
+        
+        if not issue_id:
             partner = request.env['res.partner'].sudo().create({
                 'name': _('Name'),
                 'active': True,
                 'customer': True,
-                'email':post.get('delivery_email'),
-                # ~ 'agents': [(6,0,request.env['res.partner'].sudo().browse(reseller_id))],
-                'agents': 'Skogsro Spa',
+                'email': post.get('delivery_email'),
+                # ~ 'agents': [(6, 0, request.env['res.partner'].sudo().browse(reseller_id))],
+                'agents': post.get('consume_name'),
                 # ~ 'property_invoice_type': None,
             })
-            _logger.debug('Haze partner %s' %partner)
-            user = request.env['portal.wizard'].action_apply()
-            # ~ partner.action_apply()
-            #TODO
-            # ~ user = request.env['portal.wizard.user']._create_user(post)
-            # ~ user.action_apply()
-            # ~ partner._send_email()
-            _logger.warn('Hazeuser %s' % user)
+            
             issue = request.env['project.issue'].sudo().create({
                 'name': 'New Consumer Application',
                 'partner_id': partner.id,
                 'project_id': request.env.ref('website_consumer_register.project_consumer_register').id,
                 'email_from': partner.email,
-                # ~ 'sudo_id': partner.id,
             })
-            _logger.warn('Haze issue %s' %issue)
             self.set_issue_id(issue.id)
+            
             return partner.redirect_token('/consumer_register/%s' %issue.id)
+           
         elif request.httprequest.method == 'POST':
+            reseller = request.env['res.partner'].sudo().search([('name', '=', post.get('reseller_id'))])
+
+            values = {
+                'name': post.get('consumer_name'),
+                'email': post.get('delivery_email'),
+                'login': ''.join(ch for ch in post.get('consumer_name').lower().replace(" ", "") if ch.isalnum()),
+                'reseller_id': reseller.id,
+                #'country_id': reseller.country_id.id,
+                #'agents': post.get('reseller_id'),
+                # ~ 'agents': [(6, 0, request.env['res.partner'].sudo().browse(reseller_id))],
+            }
+            
+            request.registry.get('ir.config_parameter').set_param(request.cr, openerp.SUPERUSER_ID, 'auth_signup.allow_uninvited', True)
+            
+            user_login = request.env['res.users'].sudo().signup(values)[1]
+            user = request.env['res.users'].sudo().search([('login', "=", user_login)])
+            _logger.warn('~ user %s' % user)
+            
+            group_dn_sk = request.env.ref('webshop_dermanord.group_dn_sk')
+            user.write({'groups_id': [(6, 0, [group_dn_sk.id])]})
+            
             try:
                 self.update_partner_info(issue, post)
                 if action == 'new_contact':
-                    _logger.warn('Haze post 2 %s' %post)
                     return request.redirect('/consumer_register/%s/contact/new' % issue.id)
-                return request.redirect('/consumer_register/%s/thanks' %issue.id)
+                
+                try:
+                    if not user:
+                        raise Warning(_("Contact '%s' has no user.") % partner_id)
+                    user.action_reset_password()
+                    return request.redirect('/consumer_register/%s/thanks' %issue.id)
+                except:
+                    err = sys.exc_info()
+                    error = ''.join(traceback.format_exception(err[0], err[1], err[2]))
+                    _logger.exception(_('ERROR: Cannot send mail to %s. Please check your mail server configuration.') % user.name)
+
             except ValidationError as e:
                 try:
                     self.update_partner_info(issue, post)
                 except Exception as e:
-                    _logger.warn(e)
+                    _logger.warn("~ %s" % e)
         else:
             children = self.get_children(issue)
+            
         values.update({
             'issue': issue,
             'validation': validation,
@@ -237,27 +257,30 @@ class consumer_register(http.Controller):
             'reseller_selection': [(reseller['id'], reseller['name']) for reseller in request.env['res.partner'].sudo().search([('agent','=',True),('country_id','=',189)])],
             # ~ 'agents':[(reseller['id'], reseller['name']) for reseller in request.env['res.partner'].search([('agent','=',True),('country_id','=',189)]).search_read([], ['name'])],
             'invoice_type_selection': [(invoice_type['id'], invoice_type['name']) for invoice_type in request.env['sale_journal.invoice.type'].sudo().search_read([], ['name'])],
-        })
-        _logger.warn('Haze values 3 %s' %values)
+            })
+            
         if any(children):
             for k,v in children.items():
                 values[k] = v
-        # ~ _logger.warn('Haze values 2 %s' %values)
-        return request.website.render('website_consumer_register.register_form', values)
+        
+        return request.website.render('website_consumer_register.register_form', values)            
 
     # can be overrided
     def update_partner_info(self, issue, post):
         values = self.get_consumer_post(post)
-        _logger.warn('Haze post 2 %s' %post)
-        _logger.warn('Haze Update %s' %values)
+        values.pop("login", None)
+        
         if post.get('invoicetype'):
             values['property_invoice_type'] = int(post.get('invoicetype'))
+        
         issue.partner_id.write(values)
         children_dict = self.get_children_post(issue, post)
         children = children_dict['children']
+        
         validation = children_dict['validations']
+        
         for field in self.consumer_fields():
-            validation['consumer_%s' %field] = 'has-success'
+            validation['consumer_%s' % field] = 'has-success'
 
     def find_field_name(self, s):
         return s[(s.index('Field(s) `')+len('Field(s) `')):s.index('` ')]
@@ -281,7 +304,7 @@ class consumer_register(http.Controller):
             instruction_contact = _('Any images or attachments you uploaded have not been saved. Please reupload them.')
             # Values
             values = {f: post['contact_%s' % f] for f in self.contact_fields() if post.get('contact_%s' % f) and f not in ['attachment','image']}
-            # ~ _logger.warn('Haze Values %s' %values)
+
             if post.get('image'):
                 image = post['image'].read()
                 values['image'] = base64.encodestring(image)
@@ -335,7 +358,6 @@ class consumer_register(http.Controller):
                         contact = user.partner_id.sudo()
                         contact.write(values)
                         
-
                     except Exception as e:
                         err = sys.exc_info()
                         error = ''.join(traceback.format_exception(err[0], err[1], err[2]))
@@ -355,7 +377,7 @@ class consumer_register(http.Controller):
                     return request.redirect('/consumer_register/%s?token=%s' %(issue.id, post.get('token')))
         else:
             issue = request.env['project.issue'].sudo().browse(int(issue))
-        _logger.debug('Haze %s' %reseller.name)
+
         return request.website.render('website_consumer_register.contact_form', {
             'issue': issue,
             'contact': contact,
@@ -445,7 +467,6 @@ class consumer_register(http.Controller):
             error = ''.join(traceback.format_exception(err[0], err[1], err[2]))
             _logger.exception(_('Cannot send mail to %s. Please check your mail server configuration.') % user.name)
             return _('Cannot send mail to %s. Please check your mail server configuration.') % user.name
-        
 
     @http.route(['/consumer_register/<int:issue_id>/thanks'], type='http', auth='public', website=True)
     def thanks_for_your_application(self, issue_id=None, **post):
@@ -453,7 +474,6 @@ class consumer_register(http.Controller):
         if issue_id and not issue:
             # Token didn't match
             return request.website.render('website.403', {})
-        
         return request.website.render('website_consumer_register.thanks_for_your_application', {'issue': issue})
 
 
