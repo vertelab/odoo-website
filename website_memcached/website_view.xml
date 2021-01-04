@@ -2,7 +2,7 @@
 <openerp>
     <data>
         <template id="memchached_menu" inherit_id="website.user_navbar" name="Memcached Menu">
-            <xpath expr="//ul[@id='oe_systray']/li" position="after">
+            <xpath expr="//ul[@id='oe_applications']" position="after">
                 <li class="dropdown" groups="base.group_website_publisher">
                     <a id="memcached-menu-button" class="dropdown-toggle" data-toggle="dropdown" href="#">
                         Memcached

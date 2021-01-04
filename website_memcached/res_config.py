@@ -18,10 +18,10 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from openerp import models, fields, api, _
+from odoo import models, fields, api, _
 
 class website_config_settings(models.TransientModel):
-    _inherit = 'website.config.settings'
+    _inherit = 'res.config.settings'
 
     memcached_db = fields.Char(string='Memcached Databases', default='[("localhost", 11211)]', help="A list of memcached databases  [('server',<port>),...]")
 
@@ -29,6 +29,7 @@ class website_config_settings(models.TransientModel):
     def get_default_memcached_db(self, fields):
         return {'memcached_db': self.env['ir.config_parameter'].get_param('website_memcached.memcached_db') or '("localhost", 11211)'}
 
-    @api.one
+    #@api.one
     def set_memcached_db(self):
+        self.ensure_one()
         self.env['ir.config_parameter'].set_param('website_memcached.memcached_db', self.memcached_db)

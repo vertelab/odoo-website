@@ -19,20 +19,17 @@
 #
 ##############################################################################
 
+from odoo import http
+from odoo.http import request
+from odoo.addons.website_memcached import memcached
 
-from openerp import http
-from openerp.addons.web.http import request
-from openerp.addons.website_memcached import memcached
 import werkzeug
-
 import base64
 
 import logging
 _logger = logging.getLogger(__name__)
 
-
 class MemCachedController(http.Controller):
-
     def memcached_check_group(self, user=None):
         """Check if the logged in user is allowed to administrate the cache."""
         user = user or request.env.user
@@ -59,11 +56,7 @@ class MemCachedController(http.Controller):
     def memcached_meta(self, key='',**post):
         self.memcached_check_group()
         res = memcached.mc_meta(key)
-        #~ view_meta = '<h2>Metadata</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in res['page_dict'].items() if not k == 'page'])
-        #~ view_meta += 'Page Len : %.2f Kb<br>'  % res['size']
-        #~ view_meta += 'Chunks   : %s<br>' % ', '.join([len(c) for c in res['chunks']])
-        #~ view_meta += 'Chunks   : %s<br>' % res['chunks']
-        #~ return http.Response('<h1>Key <a href="/mcpage/%s">%s</a></h1>%s' % (key,key,view_meta))
+
         values = {
             'url': '/mcpage/%s' %key,
             'key': key,
@@ -149,9 +142,6 @@ class MemCachedController(http.Controller):
         '<h2>Key Lists</h2>%s' % key_lists +
         '<h2>Keys</h2>%s' % [key for sublist in key_lists for key in sublist.keys()])
 
-        #~ view_stat = '<h1>Memcached Stat</h1><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats().items()])
-        #~ view_items = '<h2>Items</h2><table>%s</table>' % ''.join(['<tr><td>%s</td><td>%s</td></tr>' % (k,v) for k,v in MEMCACHED_CLIENT().stats('items').items()])
-        
     @http.route(['/memcache/stats',], type='http', auth="user", website=True)
     def memcache_statistics(self, **post):
         self.memcached_check_group()
@@ -175,8 +165,6 @@ class MemCachedController(http.Controller):
             'stats_desc': request.website.memcache_get_stats_desc(),
             'slabs_desc': request.website.memcache_get_stats_desc('slabs'),
             'items_desc': request.website.memcache_get_stats_desc('items'),
-            #'sizes': request.website.memcache_get_stats('sizes'), # disabled?
-            #'detail': request.website.memcache_get_stats('detail', 'dump'), # not sure how to use it. on|off|dump = error|error|empty
             'sorted': sorted,
         }
         return request.website.render('website_memcached.statistics_page', values)

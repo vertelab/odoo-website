@@ -19,12 +19,12 @@
 #
 ##############################################################################
 
-import openerp
-from openerp import http
-from openerp.addons.web.http import request
-from openerp.addons.website_memcached import memcached
-from openerp.addons.website.controllers.main import Website as WebsiteOld
-from openerp import models, fields, api, _
+import odoo
+from odoo import http
+from odoo.http import request
+from odoo.addons.website_memcached import memcached
+from odoo.addons.website.controllers.main import Website as WebsiteOld
+from odoo import models, fields, api, _
 import traceback
 
 import logging
@@ -71,7 +71,6 @@ class ir_ui_view(models.Model):
         done = done or res_ids
         self.sudo().browse(done).with_context(memcached_no_update_timestamp=True).write({'memcached_time': fields.Datetime.now()})
     
-    @api.multi
     def write(self, values):
         res = super(ir_ui_view, self).write(values)
         if not self.env.context.get('memcached_no_update_timestamp'):
@@ -83,13 +82,11 @@ class ir_ui_view(models.Model):
 class ir_translation(models.Model):
     _inherit = 'ir.translation'
 
-    @api.multi
     def write(self, vals):
         res = super(ir_translation, self).write(vals)
         self.memcached_view_translation_update()
         return res
-    
-    @api.multi
+
     def memcached_view_translation_update(self):
         view_ids = []
         for trans in self:
@@ -101,7 +98,6 @@ class ir_translation(models.Model):
 
 class Website(models.Model):
     _inherit = 'website'
-    
     
     def get_dn_groups(self):
         groups = [g.id for g in request.env.user.commercial_partner_id.access_group_ids]
@@ -181,7 +177,7 @@ class CachedWebsite(WebsiteOld):
         #~ return super(CachedWebsite, self).actions_server(path_or_xml_id_or_id, **post)
 
 
-class CachedBinary(openerp.addons.web.controllers.main.Binary):
+class CachedBinary(odoo.addons.web.controllers.main.Binary):
 
     #~ @http.route([
         #~ '/web/binary/company_logo',
@@ -193,7 +189,7 @@ class CachedBinary(openerp.addons.web.controllers.main.Binary):
         return super(CachedBinary, self).company_logo(dbname, **kw)
 
 
-class CachedHome(openerp.addons.web.controllers.main.Home):
+class CachedHome(odoo.addons.web.controllers.main.Home):
 
     #~ @http.route([
         #~ '/web/js/<xmlid>',
