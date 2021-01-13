@@ -28,23 +28,19 @@ class VarnishController(http.Controller):
     def get_user_groups_tag(self):
         """Get the logged in users' groups, create a tag based upon it, and return it"""
         return ""
-    
+
     def get_pricelist_tag(self):
         """Get the pricelist and return a tag"""
         return ""
-        
+
     def get_category_tag(self):
         """Get the category and return a tag"""
         return ""
-    
-    @http.route(['/',], type='http', auth="user", website=True)
+
+    @http.route(['/varnishurl',], type='http', auth="user", website=True)
     def varnish_page(self, key='', **post):
         _logger.warning("~ running varnish_page!")
         _logger.warning("~ TODO:")
         _logger.warning("~ * add user tag to URL?")
         _logger.warning("~ * add pricelist tag to URL?")
         _logger.warning("~ * add product tag to URL?")
-
-
-
-
