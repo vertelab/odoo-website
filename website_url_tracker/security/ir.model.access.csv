@@ -1,5 +1,0 @@
-id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
-website_url_tracker_user,Website URL Tracker - User,model_website_url_tracker,base.group_user,1,0,0,0
-website_url_tracker_manager,Website URL Tracker - Manager,model_website_url_tracker,base.group_user,1,0,0,0
-website_url_tracker_analysis_user,Website URL Tracker Analysis - User,model_website_url_tracker_analysis,base.group_user,1,0,0,0
-website_url_tracker_analysis_manager,Website URL Tracker Analysis - Manager,model_website_url_tracker_analysis,base.group_user,1,0,0,0
