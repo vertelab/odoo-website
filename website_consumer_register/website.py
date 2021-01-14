@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
-#
+##
 #    OpenERP, Open Source Management Solution, third party addon
 #    Copyright (C) 2018- Vertel AB (<http://vertel.se>).
 #
