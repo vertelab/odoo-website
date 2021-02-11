@@ -21,26 +21,38 @@
 
 from odoo import http
 
+from odoo.addons.http_routing.models.ir_http import slug
+
 import logging
 _logger = logging.getLogger(__name__)
 
 class VarnishController(http.Controller):
-    def get_user_groups_tag(self):
-        """Get the logged in users' groups, create a tag based upon it, and return it"""
-        return ""
+    # Set parameters to cache
+    relevant_pricelists = []
+    relevant_groups = []
+    relevant_categories = []
 
-    def get_pricelist_tag(self):
-        """Get the pricelist and return a tag"""
-        return ""
+    # ~ def get_user_groups_tag(self):
+        # ~ """Get the logged in users' groups, create a tag based upon it, and return it"""
+        # ~ groups = request.env.user.groups_id.mapped("id")
+        # ~ groups = list(filter(lambda x : x in self.relevant_groups, groups))
+        # ~ tag = "_" + ','.join(list(map(str, groups)))
+        # ~ return tag
 
-    def get_category_tag(self):
-        """Get the category and return a tag"""
-        return ""
+    # ~ def get_pricelist_tag(self):
+        # ~ """Get the pricelist and return a tag"""
+        # ~ tag = "_" + ','.join(list(map(str, request.env.user.property_product_pricelist.mapped("id"))))
+        # ~ return tag
 
-    @http.route(['/varnishurl',], type='http', auth="user", website=True)
-    def varnish_page(self, key='', **post):
-        _logger.warning("~ running varnish_page!")
-        _logger.warning("~ TODO:")
-        _logger.warning("~ * add user tag to URL?")
-        _logger.warning("~ * add pricelist tag to URL?")
-        _logger.warning("~ * add product tag to URL?")
+    # ~ def get_category_tag(self):
+        # ~ """Get the category and return a tag"""
+        # ~ return ""
+
+    # ~ def slug(value):
+        # ~ _logger.warning("~ running my slug!!")
+
+    # ~ @slug
+    # ~ def slug(self, key='', **post):
+        # ~ _logger.warning("~ running my slug!")
+
+#request.env.user_id.group_id.mapped("id")
