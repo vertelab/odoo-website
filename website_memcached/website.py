@@ -20,9 +20,9 @@
 ##############################################################################
 
 
-from openerp import http
-from openerp.addons.web.http import request
-from openerp.addons.website_memcached import memcached
+from odoo import http
+from odoo.http import request
+from odoo.addons.website_memcached import memcached
 import werkzeug
 
 import base64

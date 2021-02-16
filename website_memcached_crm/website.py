@@ -18,11 +18,11 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from openerp import http
-from openerp.addons.web.http import request
-from openerp.addons.website_memcached import memcached
+from odoo import http
+from odoo.http import request
+from odoo.addons.website_memcached import memcached
 
-from openerp.addons.website_crm.controllers.main import contactus
+from odoo.addons.website_crm.controllers.main import contactus
 
 import logging
 _logger = logging.getLogger(__name__)

@@ -56,3 +56,23 @@ class VarnishController(http.Controller):
         # ~ _logger.warning("~ running my slug!")
 
 #request.env.user_id.group_id.mapped("id")
+
+'''
+We are having problems overriding the slug method in core to behave how we want it to.
+The temporary solution involves modifying the core code directly. We add a tag consiting of
+four digits, each digit corresponds to a user group. The digit is '1' if user belongs to 
+that group and '0' if not. 
+Insert following code in /usr/share/core-odoo/addons/http_routing/models/ir_http.py:slug()
+
+groups_name = request.env.user.groups_id.mapped("name")
+varnish_tag = [0, 0, 0, 0]
+if "Administrator" in groups_name:
+    varnish_tag[0] = 1
+if "Slutkonsument" in groups_name:
+    varnish_tag[1] = 1
+if "SPA-Terapeut" in groups_name:
+    varnish_tag[2] = 1
+if "Hudterapeut" in groups_name:
+    varnish_tag[3] = 1
+slugname += '_' + ''.join(list(map(str, varnish_tag)))    
+'''

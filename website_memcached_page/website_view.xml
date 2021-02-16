@@ -3,13 +3,13 @@
     <data>
 
         <template id="layout" inherit_id="website.layout">
-            <xpath expr="//span[@t-esc='user_id.name']" position="replace">
+            <xpath expr="//span" position="replace">
                 <span>My Account</span>
             </xpath>
         </template>
 
         <template id="user_navbar" inherit_id="website.user_navbar" name="Inherit User Navbar">
-            <xpath expr="//ul[@id='oe_editzone']/li/button" position="attributes">
+            <xpath expr="//ul" position="attributes">
                 <attribute name="onclick">start_edit();</attribute>
             </xpath>
         </template>

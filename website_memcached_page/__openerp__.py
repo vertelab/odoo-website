@@ -36,6 +36,6 @@ This module depends on website_memcached
     'data': [
         'website_view.xml',
 ],
-    'application': False,
+    'application': True,
 }
 

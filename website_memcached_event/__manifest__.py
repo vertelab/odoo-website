@@ -20,20 +20,20 @@
 ##############################################################################
 
 {
-    'name': 'Website MemCached CRM',
+    'name': 'Website MemCached Event',
     'version': '1.0',
     'category': 'other',
-    'summary': 'website acceleration for crm using memcached',
+    'summary': 'website acceleration for event using memcached',
     'description': """
-Add mechanisms to cache rendered crm pages
+Add mechanisms to cache rendered event pages
 This module depends on website_memcached
 
 """,
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
-    'depends': ['website_memcached','website_crm'],
-    'external_dependencies': {'python': ['pymemcache',]},
+    'depends': ['website_memcached','website_event'],
+    'external_dependencies': {'python3': ['pymemcache',]},
     'data': [
 ],
     'application': False,

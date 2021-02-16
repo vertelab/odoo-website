@@ -18,16 +18,15 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from openerp import models, fields, api, _
-from openerp import http
-from openerp.addons.web.http import request
-from openerp.addons.website_memcached import memcached
+from odoo import models, fields, api, _
+from odoo import http
+from odoo.http import request
+from odoo.addons.website_memcached import memcached
 
-from openerp.addons.website_event.controllers.main import website_event
+from odoo.addons.website_event.controllers.main import website_event
 
 import logging
 _logger = logging.getLogger(__name__)
-
 
 class Event(models.Model):
     _inherit = 'event.event'
@@ -50,32 +49,32 @@ class Event(models.Model):
 class event_registration(models.Model):
     _inherit = 'event.registration'
 
-    @api.one
     def do_draft(self):
+        self.ensure_one()
         res = super(event_registration, self).do_draft()
         self.event_id.memcached_time = fields.Datetime.now()
         return res
 
-    @api.one
     def confirm_registration(self):
+        self.ensure_one()
         res = super(event_registration, self).confirm_registration()
         self.event_id.memcached_time = fields.Datetime.now()
         return res
-
-    @api.one
+        
     def registration_open(self):
+        self.ensure_one()
         res = super(event_registration, self).registration_open()
         self.event_id.memcached_time = fields.Datetime.now()
         return res
 
-    @api.one
     def button_reg_close(self):
+        self.ensure_one()
         res = super(event_registration, self).button_reg_close()
         self.event_id.memcached_time = fields.Datetime.now()
         return res
 
-    @api.one
     def button_reg_cancel(self):
+        self.ensure_one()
         res = super(event_registration, self).button_reg_cancel()
         self.event_id.memcached_time = fields.Datetime.now()
         return res

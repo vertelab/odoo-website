@@ -19,12 +19,12 @@
 #
 ##############################################################################
 
-from openerp import models, fields, api, _
-from openerp import http
-from openerp.addons.web.http import request
-from openerp.addons.website_memcached import memcached
+from odoo import models, fields, api, _
+from odoo import http
+from odoo.http import request
+from odoo.addons.website_memcached import memcached
 
-from openerp.addons.website_blog.controllers.main import QueryURL, WebsiteBlog
+from odoo.addons.website_blog.controllers.main import QueryURL, WebsiteBlog
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -41,7 +41,6 @@ class CachedBlog(WebsiteBlog):
         #~ '/blog',
         #~ '/blog/page/<int:page>',
     #~ ], type='http', auth="public", website=True)
-
     @memcached.route(      
         flush_type=lambda kw: 'blog-list',
         key=lambda kw: '{db},/blog/page/%s,{employee},{logged_in},{publisher},{designer},{lang} %s' % (
@@ -97,17 +96,16 @@ class BlogPost(models.Model):
     
     memcached_time = fields.Datetime(string='Memcached Timestamp', default=lambda *args, **kwargs: fields.Datetime.now(), help="Last modification relevant to memcached.")
     
-    @api.one
     def do_publish(self):
+        self.ensure_one()
         super(BlogPost, self).do_publish()
         self.memcached_time = fields.Datetime.now()
 
-    @api.one
     def do_unpublish(self):
+        self.ensure_one()
         super(BlogPost, self).do_unpublish()
         self.memcached_time = fields.Datetime.now()
     
-    @api.multi
     def write(self, values):
         for field in self.get_memcached_fields():
             if field in values:

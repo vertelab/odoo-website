@@ -4,10 +4,13 @@
 
         <record id="view_website_config_settings" model="ir.ui.view">
             <field name="name">Website settings.inherited.website_memcached</field>
-            <field name="model">website.config.settings</field>
-            <field name="inherit_id" ref="website.view_website_config_settings"/>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="website.res_config_settings_view_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//*[@id='domain_settings']" position="after">
+<!--
                 <group string="Domain" position="after">
+-->
                     <group string="Memcached">
                         <label for="memcached_db"/>
                         <div name="memcached_db">
@@ -16,7 +19,10 @@
                             </div>
                         </div>
                     </group>
+<!--
                 </group>
+-->
+                </xpath>
             </field>
         </record>
 
