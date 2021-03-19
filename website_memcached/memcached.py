@@ -113,7 +113,7 @@ def MEMCACHED_CLIENT():
             #    STAT items:15:number 1212
 
             items = MEMCACHED__CLIENT__.stats('items')
-            slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED__CLIENT__.stats('items').items() if k.split(':')[2] == 'number' }  # slab -> limit
+            slab_limit = {k.split(b':')[1]:v for k,v in MEMCACHED__CLIENT__.stats('items').items() if k.split(b':')[2] == 'number' }  # slab -> limit
             
             # echo "stats cachedump 15 1212 "|nc localhost 11211  # slab limit
             # ITEM 4092067750 [2231 b; 1561018218 s]
@@ -749,7 +749,6 @@ def route(route=None, **kw):
                 controller_start = timer()
                 response = f(*args, **kw) # calls original controller
                 render_start = timer()
-
                 if routing.get('content_type'):
                     response.headers['Content-Type'] = routing.get('content_type')
                     #~ if isinstance(response.headers,list) and isinstance(response.headers[0],tuple):
@@ -757,13 +756,13 @@ def route(route=None, **kw):
                     #~ header_dict = {h[0]: h[1] for h in response.headers}
                     #~ header_dict['Content-Type'] = routing.get('content_type')
                     #~ response.headers = [(h[0],h[1]) for h in header_dict.items()]
-
+                _logger.warning(response)
                 if response.template:
                     #~ _logger.error('template %s values %s response %s' % (response.template,response.qcontext,response.response))
                     page = response.render()
                 else:
-                    page = ''.join(response.response)
-                flush_type = routing['flush_type'](kw).lower().encode('ascii', 'replace').replace(' ', '-') if routing.get('flush_type', None) else ""
+                    page = b''.join(response.response)
+                flush_type = routing['flush_type'](kw).lower().replace(' ', '-') if routing.get('flush_type', None) else ""
                 page_dict = {
                     'max-age':  max_age,
                     'cache-age':cache_age,
