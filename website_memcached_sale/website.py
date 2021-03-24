@@ -3,19 +3,20 @@ from odoo import http
 from odoo.http import request
 from odoo.service import common
 from odoo.addons.website_memcached import memcached
+from odoo import models, fields, api, _
 
 from odoo.addons.website_sale.controllers.main import WebsiteSaleForm
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 from odoo.addons.website_form.controllers.main import WebsiteForm
-
+#from odoo.addons.website_sale.controllers.main import _get_pricelist_context
 
 import logging
 _logger = logging.getLogger(__name__)
 
 
-# ~ class WebsiteSaleForm(WebsiteForm):
+#class WebsiteSaleForm(WebsiteForm):
 
-    #'/shop'
+    # ~ #'/shop'
     # ~ @memcached.route(
         #key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
         # ~ flush_type=lambda kw: 'webshop',
@@ -27,7 +28,7 @@ _logger = logging.getLogger(__name__)
         # ~ return super(WebsiteSale, self).shop(page, category, search, **post)
 
 
-    #@http.route('/website_form/shop.sale.order', type='http', auth="public", methods=['POST'], website=True)
+    # ~ #@http.route('/website_form/shop.sale.order', type='http', auth="public", methods=['POST'], website=True)
     # ~ @memcached.route(
         #key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
         # ~ flush_type=lambda kw: 'webshop',
@@ -37,9 +38,43 @@ _logger = logging.getLogger(__name__)
         # ~ s_maxage=600)     # Varnish
     # ~ def shop(self, page=0, category=None, search='', **post):
         # ~ return super(WebsiteSaleForm, self).website_form_saleorder(kwargs)
+        
+class Website(models.Model):
+    _inherit = 'website'
+
+    def get_dn_groups(self):
+        groups = [g.id for g in request.env.user.commercial_partner_id.access_group_ids]
+        if self.env.ref('product_private.group_dn_ht').id in groups: # Webbplatsbehörigheter / Hudterapeut
+            return u'hudterapeut'
+        elif self.env.ref('product_private.group_dn_spa').id in groups: # Webbplatsbehörigheter / SPA-Terapeut
+            return u'SPA-terapeut'
+        elif self.env.ref('product_private.group_dn_af').id in groups: # Webbplatsbehörigheter / Återförsäljare
+            return u'Återförsäljare'
+        elif self.env.ref('product_private.group_dn_sk').id in groups: # Webbplatsbehörigheter / slutkonsument
+            return u'Slutkonsument'
+        else:
+            return u''
+        
+
+    def get_webshop_type(self, post):
+        # ~ if not request.env.user.type or request.env.user.type not in ['dn_shop', 'dn_list']: # first time use filter
+            # ~ #request.env.user.type = 'dn_shop'
+            # ~ if request.env.user.commercial_partner_id.property_product_pricelist.for_reseller: # reseller
+                # ~ request.env.user.webshop_type = 'dn_list'
+            # ~ else: # public user / not reseller
+                # ~ request.env.user.webshop_type = 'dn_shop'
+        # ~ else:
+            # ~ if post.get('webshop_type'):
+                # ~ if post.get('webshop_type') == 'dn_shop': # use imageview in view switcher
+                    # ~ request.env.user.webshop_type = 'dn_shop'
+                # ~ elif post.get('webshop_type') == 'dn_list': # use listview in view switcher
+                    # ~ request.env.user.webshop_type = 'dn_list'
+        return request.env.user.type
 
 
 class WebsiteSale(WebsiteSale):
+
+
 
     # ~ @http.route([
         # ~ '''/shop''',
@@ -48,7 +83,8 @@ class WebsiteSale(WebsiteSale):
         # ~ '''/shop/category/<model("product.public.category"):category>/page/<int:page>'''
     # ~ ], type='http', auth="public", website=True, sitemap=sitemap_shop)
     @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        key=lambda parameters: 'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country} params: %s group: %s' % (str(parameters).strip("{}"), request.website.get_dn_groups()), 
+        #key=lambda kw: 'hello',
         flush_type=lambda kw: 'webshop',
         no_cache=True,
         cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
@@ -73,15 +109,15 @@ class WebsiteSale(WebsiteSale):
 
 
     # ~ @http.route(['/shop/change_pricelist/<model("product.pricelist"):pl_id>'], type='http', auth="public", website=True, sitemap=False)
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def pricelist_change(self, pl_id, **post):
-        return super(WebsiteSale, self).pricelist_change(pl_id, **post)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def pricelist_change(self, pl_id, **post):
+        # ~ return super(WebsiteSale, self).pricelist_change(pl_id, **post)
 
     # ~ @http.route(['/shop/pricelist'], type='http', auth="public", website=True, sitemap=False)
     @memcached.route(
@@ -106,26 +142,26 @@ class WebsiteSale(WebsiteSale):
         return super(WebsiteSale, self).cart(access_token, revive, **post)
 
     # ~ @http.route(['/shop/cart/update'], type='http', auth="public", methods=['POST'], website=True)
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
-        return super(WebsiteSale, self).cart_update(product_id, add_qty, set_qty, **kw)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
+        # ~ return super(WebsiteSale, self).cart_update(product_id, add_qty, set_qty, **kw)
 
     # ~ @http.route(['/shop/cart/update_json'], type='json', auth="public", methods=['POST'], website=True, csrf=False)
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def cart_update_json(self, product_id, line_id=None, add_qty=None, set_qty=None, display=True):
-        return super(WebsiteSale, self).cart_update_json(product_id, line_id, add_qty, set_qty, display)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def cart_update_json(self, product_id, line_id=None, add_qty=None, set_qty=None, display=True):
+        # ~ return super(WebsiteSale, self).cart_update_json(product_id, line_id, add_qty, set_qty, display)
 
     # ~ @http.route(['/shop/checkout'], type='http', auth="public", website=True, sitemap=False)
     @memcached.route(
@@ -220,26 +256,26 @@ class WebsiteSale(WebsiteSale):
         return super(WebsiteSale, self).payment_transaction(acquirer_id, save_token, so_id, access_token, token, **kwargs)
 
     # ~ @http.route('/shop/payment/token', type='http', auth='public', website=True, sitemap=False)
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def payment_token(self, pm_id=None, **kwargs):
-       return super(WebsiteSale, self).payment_token(pm_id, **kwargs)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def payment_token(self, pm_id=None, **kwargs):
+       # ~ return super(WebsiteSale, self).payment_token(pm_id, **kwargs)
 
     # ~ @http.route('/shop/payment/get_status/<int:sale_order_id>', type='json', auth="public", website=True)
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def payment_get_status(self, sale_order_id, **post):
-        return super(WebsiteSale, self).payment_get_status(sale_order_id, **post)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def payment_get_status(self, sale_order_id, **post):
+        # ~ return super(WebsiteSale, self).payment_get_status(sale_order_id, **post)
 
     # ~ @http.route('/shop/payment/validate', type='http', auth="public", website=True, sitemap=False)
     @memcached.route(
@@ -275,15 +311,15 @@ class WebsiteSale(WebsiteSale):
        return super(WebsiteSale, self).payment_confirmation(**post)
 
     # ~ @http.route(['/shop/print'], type='http', auth="public", website=True, sitemap=False)
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def print_saleorder(self, **kwargs):
-        return super(WebsiteSale, self).print_saleorder(**kwargs)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def print_saleorder(self, **kwargs):
+        # ~ return super(WebsiteSale, self).print_saleorder(**kwargs)
 
     # ~ @http.route(['/shop/tracking_last_order'], type='json', auth="public")
     @memcached.route(
@@ -312,48 +348,48 @@ class WebsiteSale(WebsiteSale):
         return super(WebsiteSale, self).add_product(name, category, **post)
 
     # ~ @http.route(['/shop/change_sequence'], type='json', auth='user')
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def change_sequence(self, id, sequence):
-        return super(WebsiteSale, self).change_sequence(id, sequence)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def change_sequence(self, id, sequence):
+        # ~ return super(WebsiteSale, self).change_sequence(id, sequence)
 
     # ~ @http.route(['/shop/change_size'], type='json', auth='user')
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def change_size(self, id, x, y):
-        return super(WebsiteSale, self).change_size(id, x, y)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def change_size(self, id, x, y):
+        # ~ return super(WebsiteSale, self).change_size(id, x, y)
 
     # ~ @http.route(['/shop/change_ppg'], type='json', auth='user')
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def change_ppg(self, ppg):
-        return super(WebsiteSale, self).change_ppg(ppg)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def change_ppg(self, ppg):
+        # ~ return super(WebsiteSale, self).change_ppg(ppg)
 
     # ~ @http.route(['/shop/change_ppr'], type='json', auth='user')
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def change_ppr(self, ppr):
-        return super(WebsiteSale, self).change_ppr(ppr)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def change_ppr(self, ppr):
+        # ~ return super(WebsiteSale, self).change_ppr(ppr)
 
     def order_lines_2_google_api(self, order_lines):
         """ Transforms a list of order lines into a dict for google analytics """
@@ -384,43 +420,43 @@ class WebsiteSale(WebsiteSale):
         }
 
     # ~ @http.route(['/shop/country_infos/<model("res.country"):country>'], type='json', auth="public", methods=['POST'], website=True)
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def country_infos(self, country, mode, **kw):
-        return super(WebsiteSale, self).country_infos(country, mode, **kw)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def country_infos(self, country, mode, **kw):
+        # ~ return super(WebsiteSale, self).country_infos(country, mode, **kw)
 
     # --------------------------------------------------------------------------
     # Products Search Bar
     # --------------------------------------------------------------------------
 
     # ~ @http.route('/shop/products/autocomplete', type='json', auth='public', website=True)
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def products_autocomplete(self, term, options={}, **kwargs):
-        return super(WebsiteSale, self).products_autocomplete(term, options, **kwargs)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def products_autocomplete(self, term, options={}, **kwargs):
+        # ~ return super(WebsiteSale, self).products_autocomplete(term, options, **kwargs)
     # --------------------------------------------------------------------------
     # Products Recently Viewed
     # --------------------------------------------------------------------------
     # ~ @http.route('/shop/products/recently_viewed', type='json', auth='public', website=True)
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def products_recently_viewed(self, **kwargs):
-        return super(WebsiteSale, self).products_recently_viewed(**kwargs)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def products_recently_viewed(self, **kwargs):
+        # ~ return super(WebsiteSale, self).products_recently_viewed(**kwargs)
 
     def _get_products_recently_viewed(self):
         """
@@ -473,30 +509,30 @@ class WebsiteSale(WebsiteSale):
         # ~ return super(WebsiteSale, self).products_recently_viewed_update(product_id, **kwargs)
 
     # ~ @http.route('/shop/products/recently_viewed_delete', type='json', auth='public', website=True)
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def products_recently_viewed_delete(self, product_id, **kwargs):
-        return super(WebsiteSale, self).products_recently_viewed_delete(product_id, **kwargs)
+    # ~ @memcached.route(
+        # ~ # key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def products_recently_viewed_delete(self, product_id, **kwargs):
+        # ~ return super(WebsiteSale, self).products_recently_viewed_delete(product_id, **kwargs)
 
     # --------------------------------------------------------------------------
     # Website Snippet Filters
     # --------------------------------------------------------------------------
 
     # ~ @http.route('/website_sale/snippet/options_filters', type='json', auth='user', website=True)
-    @memcached.route(
-        # ~ key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
-        flush_type=lambda kw: 'webshop',
-        no_cache=True,
-        cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
-        max_age=31536000, # Webbläsare
-        s_maxage=600)     # Varnish
-    def get_dynamic_snippet_filters(self):
-        return super(WebsiteSale, self).get_dynamic_snippet_filters()
+    # ~ @memcached.route(
+        # ~ #key=lambda kw: u'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country}%s group: %s webshop_type: %s%s' % (request.website.get_search_values(kw), request.website.get_dn_groups(), request.website.get_webshop_type(kw), request.website.dn_handle_webshop_session(kw.get('category'), kw.get('preset'), {}, require_cat_preset=False) or ''),
+        # ~ flush_type=lambda kw: 'webshop',
+        # ~ no_cache=True,
+        # ~ cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
+        # ~ max_age=31536000, # Webbläsare
+        # ~ s_maxage=600)     # Varnish
+    # ~ def get_dynamic_snippet_filters(self):
+        # ~ return super(WebsiteSale, self).get_dynamic_snippet_filters()
 
 
 

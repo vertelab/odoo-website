@@ -47,10 +47,8 @@ import werkzeug.routing
 #TODO blacklist pages / context / sessions that not to be cached, parameter on decorator
 
 
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+
+import pickle
 
 def serialize_pickle(key, value):
     if isinstance(value, str):
@@ -652,8 +650,8 @@ def route(route=None, **kw):
                                                     version='%s' % kw.get('version'),
                                                     is_user='1' if (request.website and request.website.is_user()) else '0',
                                                     employee='1' if request.env.ref('base.group_user') in request.env.user.groups_id else '0',
-                                                    publisher='1' if request.env.ref('base.group_website_publisher') in request.env.user.groups_id else '0',
-                                                    designer='1' if request.env.ref('base.group_website_designer') in request.env.user.groups_id else '0',
+                                                    publisher='1' if request.env.ref('website.group_website_publisher') in request.env.user.groups_id else '0',
+                                                    designer='1' if request.env.ref('website.group_website_designer') in request.env.user.groups_id else '0',
                                                     ).encode('latin-1', 'replace')
                 #~ raise Warning(request.env['res.users'].browse(request.uid).group_ids)
                 key = str(MEMCACHED_HASH(key_raw))
