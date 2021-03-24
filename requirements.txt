@@ -1,3 +1,4 @@
-pyhashxx
-pymemcache
-
+sudo apt install memcached
+pip3 install pymemcache
+pip3 install pymemcach
+pip3 install pyhashxx
