@@ -44,6 +44,9 @@ class Website(models.Model):
 
     def get_dn_groups(self):
         groups = [g.id for g in request.env.user.commercial_partner_id.access_group_ids]
+        _logger.warning("#"*99)
+        _logger.warning(groups)
+        _logger.warning("#"*99)
         if self.env.ref('product_private.group_dn_ht').id in groups: # Webbplatsbehörigheter / Hudterapeut
             return u'hudterapeut'
         elif self.env.ref('product_private.group_dn_spa').id in groups: # Webbplatsbehörigheter / SPA-Terapeut
@@ -54,23 +57,14 @@ class Website(models.Model):
             return u'Slutkonsument'
         else:
             return u''
-        
 
-    def get_webshop_type(self, post):
-        # ~ if not request.env.user.type or request.env.user.type not in ['dn_shop', 'dn_list']: # first time use filter
-            # ~ #request.env.user.type = 'dn_shop'
-            # ~ if request.env.user.commercial_partner_id.property_product_pricelist.for_reseller: # reseller
-                # ~ request.env.user.webshop_type = 'dn_list'
-            # ~ else: # public user / not reseller
-                # ~ request.env.user.webshop_type = 'dn_shop'
-        # ~ else:
-            # ~ if post.get('webshop_type'):
-                # ~ if post.get('webshop_type') == 'dn_shop': # use imageview in view switcher
-                    # ~ request.env.user.webshop_type = 'dn_shop'
-                # ~ elif post.get('webshop_type') == 'dn_list': # use listview in view switcher
-                    # ~ request.env.user.webshop_type = 'dn_list'
-        return request.env.user.type
 
+    def get_pricelist(self):
+        pricelist = request.env.user.commercial_partner_id.property_product_pricelist
+        _logger.warning("#"*99)
+        _logger.warning(pricelist)
+        _logger.warning("#"*99)
+        return pricelist
 
 class WebsiteSale(WebsiteSale):
 
@@ -83,7 +77,7 @@ class WebsiteSale(WebsiteSale):
         # ~ '''/shop/category/<model("product.public.category"):category>/page/<int:page>'''
     # ~ ], type='http', auth="public", website=True, sitemap=sitemap_shop)
     @memcached.route(
-        key=lambda parameters: 'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country} params: %s group: %s' % (str(parameters).strip("{}"), request.website.get_dn_groups()), 
+        key=lambda parameters: 'db: {db} publisher: {pube.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country} params: %s group: %s pricelist: %s' % (str(parameters).strip("{}"), request.website.get_dn_groups(), request.website.get_pricelist()),
         #key=lambda kw: 'hello',
         flush_type=lambda kw: 'webshop',
         no_cache=True,

@@ -633,6 +633,11 @@ def route(route=None, **kw):
         @functools.wraps(f)
         def response_wrap(*args, **kw):
             # ~ _logger.warn('\n\npath: %s\n' % request.httprequest.path)
+            _logger.warning("#"*99)
+            _logger.warning(args)
+            _logger.warning(kw)
+            _logger.warning(request)
+            _logger.warning("#"*99)
             if routing.get('key'): # Function that returns a raw string for key making
                 # Format {path}{session}{etc}
                 key_raw = routing['key'](kw).format(path=request.httprequest.path,
