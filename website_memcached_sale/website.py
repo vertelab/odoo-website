@@ -77,7 +77,7 @@ class WebsiteSale(WebsiteSale):
         # ~ '''/shop/category/<model("product.public.category"):category>/page/<int:page>'''
     # ~ ], type='http', auth="public", website=True, sitemap=sitemap_shop)
     @memcached.route(
-        key=lambda parameters: 'db: {db} publisher: {pube.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country} params: %s group: %s pricelist: %s' % (str(parameters).strip("{}"), request.website.get_dn_groups(), request.website.get_pricelist()),
+        key=lambda parameters: 'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country} params: %s group: %s pricelist: %s' % (str(parameters).strip("{}"), request.website.get_dn_groups(), request.website.get_pricelist()),
         #key=lambda kw: 'hello',
         flush_type=lambda kw: 'webshop',
         no_cache=True,
