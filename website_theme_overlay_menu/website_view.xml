@@ -51,6 +51,19 @@
               <!-- </div>
                    <div class="mobile-slider-menu menu"> -->
               <ul>
+                  <t t-set="count" t-value="0"/> 
+                    <t t-foreach="dn_product_menu.child_id" t-as="item">
+                      <t t-if="count&lt;2"> 
+                        <li class="no_dropdown">
+                          <label>
+                            <a t-att-href="item.url" t-ignore="true">
+                              <span t-field="item.name" />
+                            </a>
+                          </label>
+                        </li>
+                      </t>
+                    <t t-set="count" t-value="count + 1"/> 
+                  </t>
                 <t t-foreach="website.menu_id.child_id" t-as="submenu">
                   <t t-if="submenu == dn_product_menu">
                     <li>
