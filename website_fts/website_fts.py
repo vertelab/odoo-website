@@ -460,7 +460,7 @@ $$ LANGUAGE plpgsql;""")
         expr = '''SELECT "%s"."id", ts_rank("%s"."%s", %%s), '%s' AS model FROM %s WHERE %s ORDER BY ts_rank DESC;''' % (
             self._table, self._table, col_name, self._name, from_clause, where_clause)
         _logger.debug(expr)
-        _logger.debug(params)
+        _logger.debug("Rank query params: {}".format(params))
         self.env.cr.execute(expr, params)
         res = {}
         results = self.env.cr.dictfetchall()
@@ -759,7 +759,7 @@ class WebsiteFullTextSearch(http.Controller):
 
     @http.route(['/search_results'], type='http', auth="public", website=True)
     def search_result(self, search='', times=0, **post):
-        terms = request.env['fts.model'].fts_term_search_browse(search)
+        terms = request.env['fts.model'].fts_term_search_browse(search, limit=50)
         vals = {'terms': terms, 'kw': search}
         return request.website.render("website_fts.search_result", vals)
 
@@ -779,7 +779,7 @@ class WebsiteFullTextSearch(http.Controller):
             if ids:
                 result_models[model] = request.env[model].browse(ids)
         result_list = []
-        
+
         # Example
         #result = [
         #    {'model': 'product.product', 'id': 3},
@@ -799,7 +799,7 @@ class WebsiteFullTextSearch(http.Controller):
         #    env['product.product'].browse([2]),
         #    env['product.category'].browse([3])
         #]
-        
+
         for record in result:
             result_list.append(result_models[record['model']].filtered(lambda r: r.id == record['id']))
         rl = []
@@ -903,4 +903,3 @@ class fts_test(models.TransientModel):
                 res += s
             inside_str = not inside_str
         return res
-
