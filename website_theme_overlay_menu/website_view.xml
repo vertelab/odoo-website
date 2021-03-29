@@ -75,6 +75,20 @@
                             <a href="/webshop">SHOW ALL PRODUCTS</a>
                           </label>
                         </div>
+
+                          <t t-set="dn_product_menu" t-value="request.env.ref('webshop_dermanord.menu_dn_shop')" />
+                          <t t-set="count" t-value="0"/> 
+                            <t t-foreach="dn_product_menu.child_id" t-as="item">
+                              <t t-if="count&lt;2">
+                                <div class="news_and_offers">
+                                  <label>
+                                    <a t-att-href="item.url"><t t-esc="item.name"/></a>
+                                  </label>
+                                </div>
+                              </t>
+                            <t t-set="count" t-value="count + 1"/> 
+                          </t>
+
                         <t t-foreach="website.get_mega_menu_categories()" t-as="categ">
                           <label t-att-for="'menu-c%s' % categ.id" t-esc="categ.name">
                             <!--  
