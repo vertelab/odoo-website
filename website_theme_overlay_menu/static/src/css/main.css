@@ -381,3 +381,21 @@ ul.dropdown-menu span{
     font-weight: bold;
 }
 
+ .news_and_offers label {
+    padding: 0;
+    background: none;
+    font-weight: bold;
+    text-decoration: none;
+}
+ .news_and_offers a {
+    display: block;
+    line-height: 50px;
+    text-decoration: none;
+    color: #000;
+    padding-left: 30px;
+    padding-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+
