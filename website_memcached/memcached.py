@@ -646,7 +646,7 @@ def route(route=None, **kw):
                                                     context='%s' % {k:v for k,v in request.env.context.items() if not k == 'uid'},
                                                     context_uid='%s' % {k:v for k,v in request.env.context.items()},
                                                     uid=request.env.context.get('uid'),
-                                                    logged_in='1' if request.env.context.get('uid') > 0 else '0',
+                                                    logged_in='1' if request.env.context.get('uid') else '0',
                                                     db=request.env.cr.dbname,
                                                     lang=request.env.context.get('lang'),
                                                     country='%s' % request.env.user.partner_id.commercial_partner_id.country_id.code,
