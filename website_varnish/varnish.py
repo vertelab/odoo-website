@@ -18,19 +18,56 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-
-from odoo import http
-
-from odoo.addons.http_routing.models.ir_http import slug
-
+import hashlib
 import logging
+
+import odoo.addons.http_routing.models.ir_http as ir_http
+from odoo import models
+from odoo.http import request
+
+# Saving a reference to original slug
+core_slug = ir_http.slug
+
 _logger = logging.getLogger(__name__)
 
-class VarnishController(http.Controller):
-    # Set parameters to cache
-    relevant_pricelists = []
-    relevant_groups = []
-    relevant_categories = []
+
+def slug(value):
+    '''
+    Slug extention to override core slug implementation.
+
+    Adds additional parameters to slug.
+    '''
+    if isinstance(value, models.BaseModel):
+        if not value.id:
+            raise ValueError(f"Cannot slug non-existent record: {value}")
+        identifier, name = value.id, getattr(value, 'seo_name', False) or value.display_name
+    else:
+        # assume name_search result tuple
+        identifier, name = value
+    slugname = ir_http.slugify(name or '').strip().strip('-')
+
+    # VARNISH TAG START
+    groups_name = request.env.user.groups_id.mapped("name")
+    names = ('Administrator', 'Slutkonsument', 'SPA-Terapeut', 'Hudterapeut')
+    varnish_tag = b"".join([b'1' if x in groups_name else b'0' for x in names])
+    slugname += f'_{hashlib.sha256(varnish_tag).hexdigest()}'
+    # VARNISH TAG END
+
+    if not slugname:
+        return str(identifier)
+    return f'{slugname}-{identifier}'
+
+
+# Overwriting original slug with our version
+ir_http.slug = slug
+
+
+# ToDo: Investigate if the following code shall be used in some way.
+#class VarnishController(http.Controller):
+#    # Set parameters to cache
+#    relevant_pricelists = []
+#    relevant_groups = []
+#    relevant_categories = []
 
     # ~ def get_user_groups_tag(self):
         # ~ """Get the logged in users' groups, create a tag based upon it, and return it"""
@@ -56,23 +93,3 @@ class VarnishController(http.Controller):
         # ~ _logger.warning("~ running my slug!")
 
 #request.env.user_id.group_id.mapped("id")
-
-'''
-We are having problems overriding the slug method in core to behave how we want it to.
-The temporary solution involves modifying the core code directly. We add a tag consiting of
-four digits, each digit corresponds to a user group. The digit is '1' if user belongs to 
-that group and '0' if not. 
-Insert following code in /usr/share/core-odoo/addons/http_routing/models/ir_http.py:slug()
-
-groups_name = request.env.user.groups_id.mapped("name")
-varnish_tag = [0, 0, 0, 0]
-if "Administrator" in groups_name:
-    varnish_tag[0] = 1
-if "Slutkonsument" in groups_name:
-    varnish_tag[1] = 1
-if "SPA-Terapeut" in groups_name:
-    varnish_tag[2] = 1
-if "Hudterapeut" in groups_name:
-    varnish_tag[3] = 1
-slugname += '_' + ''.join(list(map(str, varnish_tag)))    
-'''

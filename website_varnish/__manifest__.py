@@ -21,7 +21,7 @@
 
 {
     'name': 'Website Varnish',
-    'version': '1.0',
+    'version': '12.0.1.1.0',
     'category': 'other',
     'summary': 'website acceleration using varnish',
     'description': """
@@ -32,8 +32,6 @@ A Varnish module that adds tags to the URL -adding to the granularity of the cac
     'website': 'http://www.vertel.se',
     'depends': ['website'],
     'external_dependencies': {},
-    'data': [
-        'website_view.xml', 
-],
+    'data': [],
     'application': False,
 }
