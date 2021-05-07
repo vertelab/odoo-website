@@ -392,7 +392,7 @@ def get_keys(db=None, match_any=False, **kwargs):
     slab_limit = {k.split(':')[1]:v for k,v in MEMCACHED_CLIENT().stats('items').items() if k.split(':')[2] == 'number' }
     key_lists = [MEMCACHED_CLIENT().stats('cachedump',slab,str(limit)) for slab,limit in slab_limit.items()]
     keys =  [key for sublist in key_lists for key in sublist.keys()]
-    
+
     # Check if we will perform any filtering and convert filter terms to lists
     filter_active = False
     for field in filter_fields:
@@ -401,7 +401,7 @@ def get_keys(db=None, match_any=False, **kwargs):
             filter_active = True
             if type(value) != list:
                 kwargs[field] = [value]
-    
+
     # Load all keys at once
     data = mc_load(keys)
     # Reform keylist. Keys could potentially have disappeared between then and now.
@@ -413,7 +413,7 @@ def get_keys(db=None, match_any=False, **kwargs):
         if key.get('db') != db:
             del data[k]
             continue
-        
+
         # Perform filtering if needed
         if filter_active:
             for field in filter_fields:
@@ -423,21 +423,21 @@ def get_keys(db=None, match_any=False, **kwargs):
                         # Use OR method
                         if key.get(field) in value:
                             # One field matched. Save this key.
-                            continue
-                    
+                            break
                     else:
                         # Use AND method
                         if key.get(field) not in value:
                             # One field did not match. Delete this key.
                             del data[k]
-                            continue
-            if match_any:
-                # OR method. No filters matched.
-                del data[k]
+                            break
+            else:
+                if match_any:
+                    del data[k]
+
     if load:
         return data
     return data.keys()
-    
+
             # ~ # Filter on flush type
             # ~ if flush_type and flush_type != 'all':
                 # ~ if type(flush_type) != list:
@@ -485,7 +485,7 @@ def get_keys(db=None, match_any=False, **kwargs):
                     # ~ if key.get('path') not in path:
                         # ~ del keys[i]
                         # ~ continue
-            
+
             # ~ # Filter on status code
             # ~ if status_code and status_code != 'all':
                 # ~ if type(status_code) != list:
@@ -497,6 +497,7 @@ def get_keys(db=None, match_any=False, **kwargs):
                     # ~ if key.get('status_code') not in status_code:
                         # ~ del keys[i]
                         # ~ continue
+
 
 def get_flush_page(keys, title, url='', delete_url=''):
     def append_key(rows, key, p):
@@ -515,7 +516,7 @@ def get_flush_page(keys, title, url='', delete_url=''):
     else:
         for key in keys:
             append_key(rows, key, mc_load(key))
-    
+
     return request.website.render("website_memcached.memcached_page", {
         'title': title,
         'header': [_('Key'),_('Path'),_('Module'),_('Flush Type'),_('Key Raw'),_('Cmd')],
@@ -540,6 +541,7 @@ def mc_save(key, page_dict, cache_age):
         #~ else:
             #~ MEMCACHED_CLIENT().set('%s-c%d' % (key,i),chunk,cache_age)
 
+
 def mc_load(key):
     """Load data for the given key(s) from memcache.
     :parameter key: The key(s) that should be loaded. str or list(str).
@@ -549,18 +551,21 @@ def mc_load(key):
         return MEMCACHED_CLIENT().get_many(key)
     return MEMCACHED_CLIENT().get(key) or {}
 
+
 def mc_delete(key):
     if type(key) == list:
         MEMCACHED_CLIENT().delete_many(key)
     else:
         MEMCACHED_CLIENT().delete(key)
 
+
 def mc_flush_all():
     MEMCACHED_CLIENT().flush_all()
-    
+
+
 def mc_meta(key):
     page_dict = mc_load(key)
-    chunks = [page_dict.get('page','') if page_dict else '']
+    chunks = [page_dict.get('page', '') if page_dict else '']
     #~ i = 1
     #~ while True:
         #~ chunk = memcached.MEMCACHED_CLIENT().get('%s-c%d' % (key,i))
@@ -622,7 +627,8 @@ def route(route=None, **kw):
         'proxy_revalidate': True,
     }
     routing.update(kw)
-    assert not 'type' in routing or routing['type'] in ("http", "json")
+    assert 'type' not in routing or routing['type'] in ("http", "json")
+
     def decorator(f):
         if route:
             if isinstance(route, list):
@@ -630,6 +636,7 @@ def route(route=None, **kw):
             else:
                 routes = [route]
             routing['routes'] = routes
+
         @functools.wraps(f)
         def response_wrap(*args, **kw):
             # ~ _logger.warn('\n\npath: %s\n' % request.httprequest.path)
@@ -640,24 +647,25 @@ def route(route=None, **kw):
             _logger.warning("#"*99)
             if routing.get('key'): # Function that returns a raw string for key making
                 # Format {path}{session}{etc}
-                key_raw = routing['key'](kw).format(path=request.httprequest.path,
-                                                    session='%s' % {k:v for k,v in request.session.items() if len(k)<40},
-                                                    device_type='%s' % request.session.get('device_type','md'),  # xs sm md lg
-                                                    context='%s' % {k:v for k,v in request.env.context.items() if not k == 'uid'},
-                                                    context_uid='%s' % {k:v for k,v in request.env.context.items()},
-                                                    uid=request.env.context.get('uid'),
-                                                    logged_in='1' if request.env.context.get('uid') else '0',
-                                                    db=request.env.cr.dbname,
-                                                    lang=request.env.context.get('lang'),
-                                                    country='%s' % request.env.user.partner_id.commercial_partner_id.country_id.code,
-                                                    post='%s' % kw,
-                                                    xmlid='%s' % kw.get('xmlid'),
-                                                    version='%s' % kw.get('version'),
-                                                    is_user='1' if (request.website and request.website.is_user()) else '0',
-                                                    employee='1' if request.env.ref('base.group_user') in request.env.user.groups_id else '0',
-                                                    publisher='1' if request.env.ref('website.group_website_publisher') in request.env.user.groups_id else '0',
-                                                    designer='1' if request.env.ref('website.group_website_designer') in request.env.user.groups_id else '0',
-                                                    ).encode('latin-1', 'replace')
+                key_raw = routing['key'](kw).format(
+                    path=request.httprequest.path,
+                    session='%s' % {k: v for k, v in request.session.items() if len(k) < 40},
+                    device_type='%s' % request.session.get('device_type','md'),  # xs sm md lg
+                    context='%s' % {k: v for k, v in request.env.context.items() if not k == 'uid'},
+                    context_uid='%s' % {k: v for k, v in request.env.context.items()},
+                    uid=request.env.context.get('uid'),
+                    logged_in='1' if request.env.context.get('uid') else '0',
+                    db=request.env.cr.dbname,
+                    lang=request.env.context.get('lang'),
+                    country='%s' % request.env.user.partner_id.commercial_partner_id.country_id.code,
+                    post='%s' % kw,
+                    xmlid='%s' % kw.get('xmlid'),
+                    version='%s' % kw.get('version'),
+                    is_user='1' if (request.website and request.website.is_user()) else '0',
+                    employee='1' if request.env.ref('base.group_user') in request.env.user.groups_id else '0',
+                    publisher='1' if request.env.ref('website.group_website_publisher') in request.env.user.groups_id else '0',
+                    designer='1' if request.env.ref('website.group_website_designer') in request.env.user.groups_id else '0',
+                    ).encode('latin-1', 'replace')
                 #~ raise Warning(request.env['res.users'].browse(request.uid).group_ids)
                 key = str(MEMCACHED_HASH(key_raw))
             else:
