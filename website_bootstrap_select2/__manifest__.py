@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2017- Vertel AB (<http://vertel.se>).
+#    Copyright (C) 2004-2016 Vertel AB (<http://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,21 +20,22 @@
 ##############################################################################
 
 {
-    'name': 'Website Theme Demo Page',
-    'version': '14.0.1.0',
-    'category': 'Theme',
-    'summary': 'Demo Page',
-    'description': """
-Demo page for show all snippets, fonts, device info.
-====================================================
+    'name': 'Select2 Search Field',
+    'version': '0.1',
+    'category': '',
+    'summary': "Adds a select2 search field.",
+    'description': """Due to a naming conflict all instances of select2 have been rebranded as select9.
+Manual can be found at https://select2.github.io/
 """,
     'author': 'Vertel AB',
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
-    'depends': ['website', 'web_editor'],
+    'depends': ['website_sale'],
     'data': [
-        'demo_view.xml',
-],
+        'select2_template.xml',
+    ],
     'application': False,
+    'installable': True,
 }
 
+# vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:

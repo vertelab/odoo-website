@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="assets_frontend" inherit_id="website_sale.assets_frontend">
+            <xpath expr="." position="inside">
+                <link href="/website_bootstrap_select2/static/src/css/select2.min.css" rel="stylesheet"/>
+                <link href="/website_bootstrap_select2/static/src/css/select9.css" rel="stylesheet"/>
+                <script type="text/javascript" src="/website_bootstrap_select2/static/src/js/select2.min.js"/>
+                <script type="text/javascript" src="/website_bootstrap_select2/static/src/js/select9_search.js"/>
+            </xpath>
+        </template>
+
+        <template id="search" inherit_id="website_sale.search" name="Select2 Search" customize_show="True">
+<!--            <xpath expr="//input[@name='attrib']" position="attributes">-->
+<!--            <xpath expr="//input" position="attributes">-->
+<!--                <attribute name="t-att-class">'%s %s' % (search_class, 'oe_select9_search_form')</attribute>-->
+<!--            </xpath>-->
+
+            <xpath expr="//t[@t-call='website_sale.website_sale_products_search_box']" position="after">
+                <div class="oe_select9_search_box">
+                    <input type="text" name="search"  class="oe_select9_search_input hidden" t-att-value="search"/>
+                    <select class="oe_select9_search_field" multiple="multiple" data-placeholder="Search..." style="width: 100%;">
+                        <option t-foreach="(search or '').split()" selected="" t-as="search_word" t-att-value="search_word"><t t-esc="search_word"/></option>
+                    </select>
+                    <span class="input-group-btn" data-oe-id="693" data-oe-model="ir.ui.view" data-oe-field="arch" data-oe-xpath="/t[1]/form[1]/div[1]/span[1]">
+                        <a class="btn btn-default a-submit"><i class="fa fa-search"></i></a>
+                    </span>
+                </div>
+            </xpath>
+
+<!--            <xpath expr="//div[@class='input-group']" position="replace">-->
+<!--                <div class="oe_select9_search_box">-->
+<!--                    <input type="text" name="search"  class="oe_select9_search_input hidden" t-att-value="search"/>-->
+<!--                    <select class="oe_select9_search_field" multiple="multiple" data-placeholder="Search..." style="width: 100%;">-->
+<!--                        <option t-foreach="(search or '').split()" selected="" t-as="search_word" t-att-value="search_word"><t t-esc="search_word"/></option>-->
+<!--                    </select>-->
+<!--                    <span class="input-group-btn" data-oe-id="693" data-oe-model="ir.ui.view" data-oe-field="arch" data-oe-xpath="/t[1]/form[1]/div[1]/span[1]">-->
+<!--                        <a class="btn btn-default a-submit"><i class="fa fa-search"></i></a>-->
+<!--                    </span>-->
+<!--                </div>-->
+<!--            </xpath>-->
+        </template>
+
+    </data>
+</odoo>
