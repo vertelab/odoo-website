@@ -1,0 +1,31 @@
+.oe_select9_search_box {
+  display: inline-table;
+}
+
+.oe_select9_search_box .select9-container {
+  display: inline-cell;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.oe_select9_search_box .select9-selection {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.oe_select9_search_box .input-group-btn {
+  height: 100%;
+}
+
+.oe_select9_search_box .input-group-btn .btn {
+  height: 100%;
+  display: table;
+}
+
+.oe_select9_search_box .input-group-btn .btn .fa-search {
+  position: absolute;
+  top: 50%;
+  height: 14px;
+  margin-top: -7px;
+  margin-left: -7px;
+}
