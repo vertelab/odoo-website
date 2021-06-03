@@ -33,7 +33,7 @@ Demo page for show all snippets, fonts, device info.
     'website': 'http://www.vertel.se',
     'depends': ['website', 'web_editor'],
     'data': [
-        'demo_view.xml',
+        'views/demo_view.xml',
 ],
     'application': False,
 }
