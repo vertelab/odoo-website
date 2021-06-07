@@ -30,7 +30,6 @@
             </xpath>
         </template>
 
-
         <template id="demo_page_link" name="Link to frontend portal" inherit_id="portal.user_dropdown">
             <xpath expr="//*[@id='o_logout_divider']" position="before">
                 <div id="o_demo_divider" class="dropdown-divider" groups="base.group_system"/>
