@@ -206,15 +206,15 @@
                             <div class="container">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h1 class="text-center">H1 Rubrik-text</h1>
-                                        <h2 class="text-center">H2 Rubrik-text</h2>
-                                        <h3 class="text-center">H3 Rubrik-text</h3>
-                                        <h4 class="text-center">H4 Rubrik-text</h4>
-                                        <h5 class="text-center">H5 Rubrik-text</h5>
-                                        <h6 class="text-center">H6 Rubrik-text</h6>
+                                        <h1>H1 Rubrik-text</h1>
+                                        <h2>H2 Rubrik-text</h2>
+                                        <h3>H3 Rubrik-text</h3>
+                                        <h4>H4 Rubrik-text</h4>
+                                        <h5>H5 Rubrik-text</h5>
+                                        <h6>H6 Rubrik-text</h6>
                                         <p/>
-                                        <h1 style="text-align: center;">
-                                            Subsript
+                                        <h1>
+                                            Subscript
                                             <sub>2</sub>
                                             &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; Superscript
                                             <sup>
@@ -228,22 +228,22 @@
                                         <table class="table table-bordered table-responsive">
                                             <tbody>
                                                 <tr>
-                                                    <td style="text-align: center;">Punkterad lista</td>
-                                                    <td style="text-align: center;">Numrerad lista</td>
+                                                    <td>Punkterad lista</td>
+                                                    <td>Numrerad lista</td>
                                                 </tr>
                                                 <tr>
                                                     <td>
                                                         <ul>
-                                                            <li style="text-align: center;">Punkt 1</li>
-                                                            <li style="text-align: center;">Punkt 2</li>
-                                                            <li style="text-align: center;">Punkt 3</li>
+                                                            <li>Punkt 1</li>
+                                                            <li>Punkt 2</li>
+                                                            <li>Punkt 3</li>
                                                         </ul>
                                                     </td>
                                                     <td>
                                                         <ol>
-                                                            <li style="text-align: center;">Punkt 1</li>
-                                                            <li style="text-align: center;">Punkt 2</li>
-                                                            <li style="text-align: center;">Punkt 3</li>
+                                                            <li>Punkt 1</li>
+                                                            <li>Punkt 2</li>
+                                                            <li>Punkt 3</li>
                                                         </ol>
                                                     </td>
                                                 </tr>
