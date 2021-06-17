@@ -32,8 +32,14 @@ class SlideChannelWiz(models.TransientModel):
         ])
 
         """Get last sequence of slide channel you are transferring slides to"""
-        last_sequence = self.slide_channel_id.slide_ids.filtered(lambda slide_cat: slide_cat.is_category is True)[-1].sequence
-        last_sequence += 1
+        last_sequence = 0
+        channel_slide_ids = self.slide_channel_id.slide_ids.filtered(lambda slide_cat: slide_cat.is_category is True)
+        if channel_slide_ids:
+            last_sequence = self.slide_channel_id.slide_ids.filtered(
+                lambda slide_cat: slide_cat.is_category is True)[-1].sequence
+            last_sequence += 1
+        else:
+            last_sequence += 0
 
         # Create Category Section
         if slide_ids[0].category_id:

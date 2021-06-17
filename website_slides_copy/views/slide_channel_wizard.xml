@@ -18,8 +18,8 @@
             </field>
         </record>
 
-        <record id="slide_channelss_wizard_action" model="ir.actions.act_window">
-            <field name="name">Slide Channel Wizard Action</field>
+        <record id="slide_channel_wizard_action" model="ir.actions.act_window">
+            <field name="name">Copy Content</field>
             <field name="res_model">slide.channel.wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
