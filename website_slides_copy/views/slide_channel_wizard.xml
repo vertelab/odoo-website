@@ -1,0 +1,31 @@
+<odoo>
+    <data>
+        <record id="slide_channel_wizard_form" model="ir.ui.view">
+            <field name="name">slide.channel.wizard.form</field>
+            <field name="model">slide.channel.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="active_slide_channel_id" invisible="1"/>
+                        <field name="slide_category_id"/>
+                        <field name="slide_channel_id"/>
+                    </group>
+                    <footer>
+                        <button string="Copy" name="copy_to_selected_channel" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="btn btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="slide_channelss_wizard_action" model="ir.actions.act_window">
+            <field name="name">Slide Channel Wizard Action</field>
+            <field name="res_model">slide.channel.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="website_slides.model_slide_channel"/>
+            <field name="binding_view_types">form</field>
+        </record>
+
+    </data>
+</odoo>
