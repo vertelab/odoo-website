@@ -32,14 +32,27 @@ class SlideChannelWiz(models.TransientModel):
         ])
 
         """Get last sequence of slide channel you are transferring slides to"""
-        last_sequence = 0
-        channel_slide_ids = self.slide_channel_id.slide_ids.filtered(lambda slide_cat: slide_cat.is_category is True)
+        last_category_sequence = 0
+        last_slide_sequence = 0
+        # channel_slide_ids = self.slide_channel_id.slide_ids.filtered(lambda slide_cat: slide_cat.is_category is True)
+        # if channel_slide_ids:
+        #     last_sequence = self.slide_channel_id.slide_ids.filtered(
+        #         lambda slide_cat: slide_cat.is_category is True)[-1].sequence
+        #     last_sequence += 1
+        # else:
+        #     last_sequence += 0
+
+        channel_slide_ids = self.slide_channel_id.slide_ids.filtered(lambda slide_cat: slide_cat.is_category is False)
         if channel_slide_ids:
-            last_sequence = self.slide_channel_id.slide_ids.filtered(
-                lambda slide_cat: slide_cat.is_category is True)[-1].sequence
-            last_sequence += 1
+            # last_category_sequence = channel_slide_ids[-1].category_id.sequence
+            last_slide_sequence = channel_slide_ids[-1].sequence
+            # last_category_sequence += 1
+            last_slide_sequence += 1
         else:
-            last_sequence += 0
+            # last_category_sequence += 0
+            last_slide_sequence += 0
+        # for rec in channel_slide_ids:
+        #     print(rec.sequence, 'cat seq', rec.category_id.sequence)
 
         # Create Category Section
         if slide_ids[0].category_id:
@@ -47,12 +60,12 @@ class SlideChannelWiz(models.TransientModel):
                 'name': slide_ids[0].category_id.name,
                 'is_category': True,
                 'channel_id': self.slide_channel_id.id,
-                'sequence': last_sequence
+                'sequence': last_slide_sequence
             }).id
 
         # Create Corresponding Slides
         for slide in slide_ids:
-            last_sequence += 1
+            last_slide_sequence += 1
             self.env['slide.slide'].create({
                 'channel_id': self.slide_channel_id.id,
                 'name': slide.name,
@@ -65,5 +78,5 @@ class SlideChannelWiz(models.TransientModel):
                 'is_published': slide.is_published,
                 'website_url': slide.website_url,
                 'category_id': category_id,
-                'sequence': last_sequence
+                'sequence': last_slide_sequence
             })
