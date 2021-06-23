@@ -24,6 +24,7 @@ from odoo import models, api, fields, _
 
 _logger = logging.getLogger(__name__)
 
+
 class Slide(models.Model):
     _inherit = 'slide.slide'
 
@@ -50,4 +51,4 @@ class Slide(models.Model):
                     current_category = slide
                 elif slide.category_id != current_category:
                     slide.category_id = current_category.id
-                    
+
