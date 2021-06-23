@@ -24,17 +24,19 @@ from odoo import models, api, fields, _
 
 _logger = logging.getLogger(__name__)
 
+
 class Slide(models.Model):
     _inherit = 'slide.slide'
 
     category_id = fields.Many2one(inverse="_inverse_category_id")
 
     def _inverse_category_id(self):
-        # ~ raise Warning(self.category_id)
-        # ~ for slide in self:
-            # ~ slide.category_id = 25
 
-        self.category_id = False  # initialize whatever the state
+        # pass
+        for slide in self:
+            # xx = slide.slide_ids.filtered(lambda s: s == slide.category_id)
+            print('xx', slide)
+        # self.category_id = self.category_id.id  # initialize whatever the state
 
         channel_slides = {}
         for slide in self:
@@ -47,7 +49,29 @@ class Slide(models.Model):
             slide_list.sort(key=lambda s: (s.sequence, not s.is_category))
             for slide in slide_list:
                 if slide.is_category:
-                    current_category = slide
-                elif slide.category_id != current_category:
-                    slide.category_id = current_category.id
-                    
+                    print(slide.category_id.name)
+                    # current_category = slide
+                    slide.category_id = current_category.browse(slide).id
+                # elif slide.category_id != current_category:
+                #     slide.category_id = current_category.id
+
+    #
+    # def _inverse_category_id(self):
+    #
+    #     self.category_id = False  # initialize whatever the state
+    #
+    #     channel_slides = {}
+    #     for slide in self:
+    #         if slide.channel_id.id not in channel_slides:
+    #             channel_slides[slide.channel_id.id] = slide.channel_id.slide_ids
+    #
+    #     for cid, slides in channel_slides.items():
+    #         current_category = self.env['slide.slide']
+    #         slide_list = list(slides)
+    #         slide_list.sort(key=lambda s: (s.sequence, not s.is_category))
+    #         for slide in slide_list:
+    #             if slide.is_category:
+    #                 current_category = slide
+    #             elif slide.category_id != current_category:
+    #                 slide.category_id = current_category.id
+
