@@ -79,4 +79,5 @@ class SlideChannelWiz(models.TransientModel):
                 'embedcount_ids': slide.embedcount_ids.ids,
                 'channel_type': slide.channel_type,
                 'channel_allow_comment': slide.channel_allow_comment,
+                'image_1920': slide.image_1920
             })
