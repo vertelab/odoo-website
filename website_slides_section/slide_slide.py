@@ -31,10 +31,6 @@ class Slide(models.Model):
     category_id = fields.Many2one(inverse="_inverse_category_id")
 
     def _inverse_category_id(self):
-        # ~ raise Warning(self.category_id)
-        # ~ for slide in self:
-            # ~ slide.category_id = 25
-
         self.category_id = False  # initialize whatever the state
 
         channel_slides = {}
@@ -51,4 +47,3 @@ class Slide(models.Model):
                     current_category = slide
                 elif slide.category_id != current_category:
                     slide.category_id = current_category.id
-
