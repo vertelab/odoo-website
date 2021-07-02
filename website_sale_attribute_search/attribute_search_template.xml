@@ -3,7 +3,7 @@
     <data>
         
         <template id="products_attributes" inherit_id="website_sale.products" active="False" customize_show="True" name="Product Attribute's Search">
-            <xpath expr="//div[@class='products_pager']" position="inside">
+            <xpath expr="//div[hasclass('products_pager')]" position="inside">
                 <div class="row" style="width: 100%">
                     <form class="js_attributes" method="get">
                         <input type="hidden" name="search" t-att-value="search"/>
