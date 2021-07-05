@@ -6,7 +6,7 @@
             <xpath expr="//button[@data-target='.navbar-top-collapse']" position="replace">
                 <span class="pull-right hidden-lg hidden-md hidden-sm" style="font-size:35px; cursor:pointer;" onclick="openNav()">&#9776;</span>
             </xpath>
-            <xpath expr="//div[@class='collapse navbar-collapse navbar-top-collapse']" position="attributes">
+            <xpath expr="//div[hasclass('collapse navbar-collapse navbar-top-collapse')]" position="attributes">
                 <attribute name="class">collapse navbar-collapse navbar-top-collapse hidden-xs</attribute>
             </xpath>
             <xpath expr="//body" position="inside">
