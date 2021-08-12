@@ -99,7 +99,7 @@ Default are Database + Path + Context eg {db},{path},{context}
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website'],
-    'external_dependencies': {'python3': ['pymemcache', 'pyhashxx']},
+    'external_dependencies': {'python': ['pymemcache', 'pyhashxx']},
     'data': [
         'res_config_view.xml',
         'website_view.xml',

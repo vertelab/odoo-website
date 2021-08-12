@@ -33,7 +33,7 @@ This module depends on website_memcached
     'license': 'AGPL-3',
     'website': 'http://www.vertel.se',
     'depends': ['website_memcached','website_event'],
-    'external_dependencies': {'python3': ['pymemcache',]},
+    'external_dependencies': {'python': ['pymemcache',]},
     'data': [
 ],
     'application': False,
