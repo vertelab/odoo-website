@@ -42,18 +42,18 @@ _logger = logging.getLogger(__name__)
 class Website(models.Model):
     _inherit = 'website'
 
-    def get_dn_groups(self):
-        groups = [g.id for g in request.env.user.commercial_partner_id.access_group_ids]
-        if self.env.ref('product_private.group_dn_ht').id in groups: # Webbplatsbehörigheter / Hudterapeut
-            return u'hudterapeut'
-        elif self.env.ref('product_private.group_dn_spa').id in groups: # Webbplatsbehörigheter / SPA-Terapeut
-            return u'SPA-terapeut'
-        elif self.env.ref('product_private.group_dn_af').id in groups: # Webbplatsbehörigheter / Återförsäljare
-            return u'Återförsäljare'
-        elif self.env.ref('product_private.group_dn_sk').id in groups: # Webbplatsbehörigheter / slutkonsument
-            return u'Slutkonsument'
-        else:
-            return u''
+#    def get_dn_groups(self):
+#        groups = [g.id for g in request.env.user.commercial_partner_id.access_group_ids]
+#        if self.env.ref('product_private.group_dn_ht').id in groups: # Webbplatsbehörigheter / Hudterapeut
+#            return u'hudterapeut'
+#        elif self.env.ref('product_private.group_dn_spa').id in groups: # Webbplatsbehörigheter / SPA-Terapeut
+#            return u'SPA-terapeut'
+#        elif self.env.ref('product_private.group_dn_af').id in groups: # Webbplatsbehörigheter / Återförsäljare
+#            return u'Återförsäljare'
+#        elif self.env.ref('product_private.group_dn_sk').id in groups: # Webbplatsbehörigheter / slutkonsument
+#            return u'Slutkonsument'
+#        else:
+#            return u''
 
 
     def get_pricelist(self):
@@ -75,7 +75,11 @@ class WebsiteSale(WebsiteSale):
         # ~ '''/shop/category/<model("product.public.category"):category>/page/<int:page>'''
     # ~ ], type='http', auth="public", website=True, sitemap=sitemap_shop)
     @memcached.route(
-        key=lambda parameters: 'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} search: %s group: %s pricelist: %s attribs: %s order: %s' % (str(parameters.get("search")), request.website.get_dn_groups(), request.website.get_pricelist(), request.website.get_attribs(), str(parameters.get("order"))),
+        key=lambda parameters: 'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} search: %s pricelist: %s attribs: %s order: %s' % (
+            str(parameters.get("search")),
+            request.website.get_pricelist(),
+            request.website.get_attribs(),
+            str(parameters.get("order"))),
         flush_type=lambda kw: 'webshop',
         no_cache=True,
         cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
@@ -87,7 +91,9 @@ class WebsiteSale(WebsiteSale):
 
     # ~ @http.route(['/shop/<model("product.template"):product>'], type='http', auth="public", website=True, sitemap=True)
     @memcached.route(
-        key=lambda parameters: 'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country} params: %s group: %s pricelist: %s' % (str(parameters).strip("{}"), request.website.get_dn_groups(), request.website.get_pricelist()),
+        key=lambda parameters: 'db: {db} publisher: {publisher} base.group_website_designer: {designer} path: {path} logged_in: {logged_in} lang: {lang} country: {country} params: %s pricelist: %s' % (
+            str(parameters).strip("{}"),
+            request.website.get_pricelist()),
         flush_type=lambda kw: 'webshop',
         no_cache=True,
         cache_age=86400,  # Memcached    43200 (12 tim)  86400 (24 tim)  31536000 (1 år)
