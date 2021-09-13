@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="Membership_signup" name="Membership signup" inherit_id="website.template_header_default_oe_structure_header_default_1">
+        <xpath expr="//a[@class='btn btn-primary ml-4']" position="before">
+          <button class="btn btn-primary" id="membership_signup">Membership Signup</button>
+        </xpath>
+        <xpath expr="//a[@class='btn btn-primary ml-4']" position="replace">
+           <a href="/contactus" id="contact_us" class="btn btn-primary ml-2">Contact Us</a>
+        </xpath>
+    </template>
+</odoo>
