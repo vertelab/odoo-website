@@ -20,11 +20,11 @@
 ##############################################################################
 
 {
-    'name': 'Website MemCached',
-    'version': '1.0',
-    'category': 'other',
-    'summary': 'website acceleration using memcached',
-    'description': """
+    "name": "Website MemCached",
+    "version": "14.0.1.0.0",
+    "category": "other",
+    "summary": "website acceleration using memcached",
+    "description": """
 Add mechanisms to cache rendered pages
 
 * Retains existing paths
@@ -95,14 +95,14 @@ Default are Database + Path + Context eg {db},{path},{context}
     Update Memcached config in Website Settings with one or more server tupples; [('server1',<port>),('server2',<port>)]
 
 """,
-    'author': 'Vertel AB',
-    'license': 'AGPL-3',
-    'website': 'http://www.vertel.se',
-    'depends': ['website'],
-    'external_dependencies': {'python': ['pymemcache', 'pyhashxx']},
-    'data': [
-        'res_config_view.xml',
-        'website_view.xml',
-],
-    'application': False,
+    "author": "Vertel AB",
+    "license": "AGPL-3",
+    "website": "http://www.vertel.se",
+    "depends": ["website"],
+    "external_dependencies": {"python": ["pymemcache", "pyhashxx"]},
+    "data": [
+        "views/res_config_view.xml",
+        "views/website_view.xml",
+    ],
+    "application": False,
 }

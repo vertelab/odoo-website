@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
     <data>
         <template id="memchached_menu" inherit_id="website.user_navbar" name="Memcached Menu">
             <xpath expr="//nav[@id='oe_main_menu_navbar']" position="after">
@@ -17,7 +17,7 @@
                         <li groups="base.group_website_designer">
                             <a t-att-href="'/mcpath?path=%s' % request.httprequest.path">
                                 <span title="View all cached objects for this path">View This Path</span>
-                            </a>           
+                            </a>
                         </li>
                         <li groups="base.group_website_designer">
                             <a href="/mcflushall">
@@ -88,7 +88,7 @@
                 </div>
             </t>
         </template>
-        
+
         <template id="mcmeta_page" name="Memcached Metadata Page">
             <t t-call="website.layout">
                 <div class="oe_structure">
@@ -125,7 +125,7 @@
                 </div>
             </t>
         </template>
-        
+
         <template id="statistics_page" name="Memcached Statistics Page">
             <t t-call="website.layout">
                 <div class="container">
@@ -214,6 +214,6 @@
                 </div>
             </t>
         </template>
-        
+
     </data>
-</openerp>
+</odoo>

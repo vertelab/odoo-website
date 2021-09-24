@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
     <data>
 
         <record id="view_website_config_settings" model="ir.ui.view">
@@ -8,9 +8,6 @@
             <field name="inherit_id" ref="website.res_config_settings_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//*[@id='domain_settings']" position="after">
-<!--
-                <group string="Domain" position="after">
--->
                     <group string="Memcached">
                         <label for="memcached_db"/>
                         <div name="memcached_db">
@@ -19,12 +16,9 @@
                             </div>
                         </div>
                     </group>
-<!--
-                </group>
--->
                 </xpath>
             </field>
         </record>
 
     </data>
-</openerp>
+</odoo>
