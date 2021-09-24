@@ -20,23 +20,21 @@
 ##############################################################################
 
 {
-    'name': 'Website MemCached Sale',
-    'version': '1.0',
-    'category': 'other',
-    'summary': 'website acceleration for sale using memcached',
-    'description': """
+    "name": "Website MemCached Sale",
+    "version": "14.0.1.0.0",
+    "category": "other",
+    "summary": "website acceleration for sale using memcached",
+    "description": """
 Add mechanisms to cache rendered sale pages
 This module depends on website_memcached
-
 """,
-    'author': 'Vertel AB',
-    'license': 'AGPL-3',
-    'website': 'http://www.vertel.se',
-    'depends': ['website_memcached','website_sale'],
-    'external_dependencies': {'python': ['pymemcache',]},
-    'data': [
-        'website_view.xml',
-],
-    'application': False,
+    "author": "Vertel AB",
+    "license": "AGPL-3",
+    "website": "http://www.vertel.se",
+    "depends": ["website_memcached", "website_sale"],
+    "external_dependencies": {"python": ["pymemcache"]},
+    "data": [
+        "views/website_view.xml",
+    ],
+    "application": False,
 }
-
