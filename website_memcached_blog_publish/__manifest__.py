@@ -20,23 +20,27 @@
 ##############################################################################
 
 {
-    'name': 'DEPRECATED! Website MemCached Blog',
-    'version': '1.0',
-    'category': 'other',
-    'summary': 'website acceleration for blog using memcached',
-    'description': """
+    "name": "DEPRECATED! Website MemCached Blog",
+    "version": "1.0",
+    "category": "other",
+    "summary": "website acceleration for blog using memcached",
+    "description": """
 Add mechanisms to cache rendered blog pages
 This module depends on website_memcached
 
 """,
-    'author': 'Vertel AB',
-    'license': 'AGPL-3',
-    'website': 'http://www.vertel.se',
-    'depends': ['website_memcached','website_blog'],
-    'external_dependencies': {'python': ['pymemcache',]},
-    'data': [
-        'website_view.xml',
-],
-    'application': False,
+    "author": "Vertel AB",
+    "license": "AGPL-3",
+    "website": "http://www.vertel.se",
+    "depends": ["website_memcached", "website_blog"],
+    "external_dependencies": {
+        "python": [
+            "pymemcache",
+        ]
+    },
+    "data": [
+        "website_view.xml",
+    ],
+    "installable": True,
+    "application": False,
 }
-
