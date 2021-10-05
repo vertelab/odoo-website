@@ -2,7 +2,7 @@
 <odoo>
     <template id="Membership_signup" name="Membership signup" inherit_id="website.template_header_default_oe_structure_header_default_1">
         <xpath expr="//*[@id='oe_structure_header_default_1']/section/div/a" position="before">
-          <button class="btn btn-primary" id="membership_signup">Membership Signup</button>
+          <a class="btn btn-primary" id="membership_signup">Membership Signup</a>
         </xpath>
         <xpath expr="//*[@id='oe_structure_header_default_1']/section/div/a" position="attributes">
           <attribute name="class" add="ml-2" remove="ml-4" separator=" "/>
