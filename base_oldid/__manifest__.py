@@ -14,7 +14,7 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
 
@@ -27,7 +27,7 @@
 """,
     "author": "Vertel AB",
     "license": "AGPL-3",
-    "website": "http://www.vertel.se",
+    "website": "http://www.vertel.se/apps/website",
     "depends": ["product"],
     "data": [
         "views/res_partner_view.xml",
