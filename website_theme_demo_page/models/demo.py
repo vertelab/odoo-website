@@ -29,6 +29,6 @@ import werkzeug
 
 class Demo(http.Controller):
 
-    @http.route(['/page/demo'], type='http', auth="user", website=True)
+    @http.route(['/page/demo'], type='http', auth="public", website=True)
     def demo_pageo(self):
         return request.render('website_theme_demo_page.demo_page')
