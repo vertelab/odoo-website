@@ -6,8 +6,11 @@
     "category": "Website",
     "license": "OPL-1",
     "summary": "User can see events registered for.",
-    "description": """"User can see events registered for.""",
-    "version": "14.0.1.0",
+    "description": """"
+	User can see the events the user is registered for in My dokuments. \n
+	v14.0.1.1 Added translation. \n
+	""",
+    "version": "14.0.1.1",
     "depends": ['website_event'],
     "data": [
         'views/event_portal_templates.xml',

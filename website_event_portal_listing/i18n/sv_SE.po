@@ -1,0 +1,120 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* website_event_portal_listing
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0-20210929\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-30 18:34+0000\n"
+"PO-Revision-Date: 2021-11-30 18:34+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
+msgid ""
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-o\""
+" aria-label=\"Draft\" title=\"Draft\" role=\"img\"/><span class=\"d-none "
+"d-md-inline\"> Waiting for Confirmation</span></span>"
+msgstr ""
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-o\""
+" aria-label=\"Draft\" title=\"Draft\" role=\"img\"/><span class=\"d-none "
+"d-md-inline\"> Väntar på bekräftelse</span></span>"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
+msgid ""
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Confirmed\" title=\"Confirmed\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Confirmed</span></span>"
+msgstr ""
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Confirmed\" title=\"Confirmed\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Bekräftad</span></span>"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
+msgid ""
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Done\" title=\"Done\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Done</span></span>"
+msgstr ""
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Done\" title=\"Done\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Klar</span></span>"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
+msgid ""
+"<span class=\"badge badge-pill badge-warning\"><i class=\"fa fa-fw fa-"
+"remove\" aria-label=\"Cancelled\" title=\"Cancelled\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Cancelled</span></span>"
+msgstr ""
+"<span class=\"badge badge-pill badge-warning\"><i class=\"fa fa-fw fa-"
+"remove\" aria-label=\"Cancelled\" title=\"Cancelled\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Avbruten</span></span>"
+
+#. module: website_event_portal_listing
+#: code:addons/website_event_portal_listing/controllers/portal.py:0
+#, python-format
+msgid "All"
+msgstr "Alla"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
+msgid "Closed Date"
+msgstr "Slutdatum"
+
+#. module: website_event_portal_listing
+#: code:addons/website_event_portal_listing/controllers/portal.py:0
+#, python-format
+msgid "Date"
+msgstr "Datum"
+
+#. module: website_event_portal_listing
+#: code:addons/website_event_portal_listing/controllers/portal.py:0
+#, python-format
+msgid "Due Date"
+msgstr "Förfallodatum"
+
+#. module: website_event_portal_listing
+#: code:addons/website_event_portal_listing/controllers/portal.py:0
+#, python-format
+msgid "Event"
+msgstr "Evenemang"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
+msgid "Event Name #"
+msgstr "Evenemangsnamn #"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
+msgid "Events"
+msgstr "Evenemang"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_home_events
+msgid "My Events"
+msgstr "Mina evenemang"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
+msgid "Registration Date"
+msgstr "Registreringstdatum"
+
+#. module: website_event_portal_listing
+#: code:addons/website_event_portal_listing/controllers/portal.py:0
+#, python-format
+msgid "Status"
+msgstr "Status"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
+msgid "There are currently no events for your account."
+msgstr "Det finns inga evenemang på ditt konto"
