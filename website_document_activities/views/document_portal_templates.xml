@@ -1,0 +1,12 @@
+<odoo>
+    <template id="dms.portal_my_home_dms" name="Portal My Home : dms entries" inherit_id="portal.portal_my_home" priority="20">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-if="dms_directory_count" t-call="portal.portal_docs_entry">
+                <t t-set="title">Documents</t>
+                <t t-set="url" t-value="'/my/dms'" />
+                <t t-set="placeholder_activities_count" t-value="'dms_activities_count'"/>
+                <t t-set="count" t-value="dms_directory_count" />
+            </t>
+        </xpath>
+    </template>
+</odoo>
