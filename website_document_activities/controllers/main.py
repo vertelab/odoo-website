@@ -43,5 +43,10 @@ class CustomerPortalXtend(CustomerPortal):
             project_task_activities = project_task.mapped('activity_ids')
             values['task_activities_count'] = len(project_task_activities)
 
+        if 'dms_activities_count' in counters:
+            dms_activities = request.env['mail.activity'].search_count([('res_model', '=', 'dms.directory')]) \
+                if request.env['mail.activity'].check_access_rights('read', raise_exception=False) else 0
+            values['dms_activities_count'] = dms_activities
+
         return values
 
