@@ -6,7 +6,7 @@
     "category": "Website",
     "license": "OPL-1",
     "summary": "User can see events registered for.",
-    "description": """"
+    "description": """
         User can see activities from the portal \n	
     """,
     "version": "14.0.1.1",
