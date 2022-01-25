@@ -5,14 +5,19 @@
             <t t-set="my_details" t-value="True"/>
             <div class="o_portal_my_home">
                 <div class="oe_structure" id="oe_structure_portal_my_home_1"/>
-                <table style="width: 100%">
-                    <tr>
-                        <th>Documents</th>
-                        <th>Actions</th>
-                        <th style="text-align:right">Count</th>
-                    </tr>
-                </table>
-<!--                <h3>Documents</h3>-->
+                <div class="container">
+                    <div class="row col-lg-12">
+                        <div class="col-lg-4">
+                            <strong>Document</strong>
+                        </div>
+                        <div class="col-lg-4 text-right">
+                            <strong>Actions</strong>
+                        </div>
+                        <div class="col-lg-4 text-right">
+                            <strong>Count</strong>
+                        </div>
+                    </div>
+                </div>
                 <div class="o_portal_docs list-group">
                 </div>
             </div>
@@ -21,26 +26,31 @@
     </template>
 
     <template id="portal.portal_docs_entry" name="My Portal Docs Entry">
-        <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
-            <a t-att-href="url" t-att-title="title">
-                <t t-esc="title"/>
-            </a>
-
-            <a t-att-href="url" t-att-title="title" t-if='placeholder_activities_count'>
-                <span class="badge badge-secondary badge-pill" t-att-data-placeholder_activities_count="placeholder_activities_count">
-                    <i class="fa fa-spin fa-spinner"></i>
-                </span>
-            </a>
-
-            <t t-if='count'>
-                <span class="badge badge-secondary badge-pill" t-esc="count"/>
-            </t>
-            <t t-elif="placeholder_count">
-                <span class="badge badge-secondary badge-pill" t-att-data-placeholder_count="placeholder_count">
-                    <i class="fa fa-spin fa-spinner"></i>
-                </span>
-            </t>
-
+        <div class="container list-group-item">
+            <div class="row col-lg-12">
+                <div class="col-lg-4">
+                    <a t-att-href="url" t-att-title="title">
+                        <t t-esc="title"/>
+                    </a>
+                </div>
+                <div class="col-lg-4 text-right">
+                    <a t-att-href="activities_url" t-att-title="title" t-if='placeholder_activities_count'>
+                        <span class="badge badge-secondary badge-pill" t-att-data-placeholder_activities_count="placeholder_activities_count">
+                            <i class="fa fa-spin fa-spinner"></i>
+                        </span>
+                    </a>
+                </div>
+                <div class="col-lg-4 text-right">
+                    <t t-if='count'>
+                        <span class="badge badge-secondary badge-pill" t-esc="count"/>
+                    </t>
+                    <t t-elif="placeholder_count">
+                        <span class="badge badge-secondary badge-pill" t-att-data-placeholder_count="placeholder_count">
+                            <i class="fa fa-spin fa-spinner"></i>
+                        </span>
+                    </t>
+                </div>
+            </div>
         </div>
     </template>
 </odoo>

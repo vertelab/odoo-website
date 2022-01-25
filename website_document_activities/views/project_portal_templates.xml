@@ -4,15 +4,62 @@
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Projects</t>
                 <t t-set="url" t-value="'/my/projects'"/>
+                <t t-set="activities_url" t-value="'/my/projects/activities'"/>
                 <t t-set="placeholder_activities_count" t-value="'project_activities_count'"/>
                 <t t-set="placeholder_count" t-value="'project_count'"/>
             </t>
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Tasks</t>
                 <t t-set="url" t-value="'/my/tasks'"/>
+                <t t-set="activities_url" t-value="'/my/tasks/activities'"/>
                 <t t-set="placeholder_activities_count" t-value="'task_activities_count'"/>
                 <t t-set="placeholder_count" t-value="'task_count'"/>
             </t>
         </xpath>
+    </template>
+
+    <template id="portal_my_tasks" name="My Tasks">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Tasks</t>
+            </t>
+            <t t-if="not grouped_tasks">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no tasks.
+                </div>
+            </t>
+            <t t-if="grouped_tasks">
+                <t t-call="portal.portal_table">
+                    <thead>
+                        <tr t-attf-class="{{'thead-light'}}">
+                            <th class="text-left">Ref</th>
+                            <th>Name</th>
+                            <th class="text-center">Project</th>
+                            <th class="text-center">Stage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="grouped_tasks" t-as="task">
+                            <tr>
+                                <td class="text-left">
+                                    #<span t-esc="task.id"/>
+                                </td>
+                                <td>
+                                    <a t-attf-href="/my/task/#{task.id}?{{ keep_query() }}"><span t-field="task.name"/></a>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge badge-pill badge-info" title="Current project of the task" t-esc="task.project_id.name" />
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge badge-pill badge-info" title="Current stage of the task" t-esc="task.stage_id.name" />
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </t>
+            </t>
+        </t>
     </template>
 </odoo>

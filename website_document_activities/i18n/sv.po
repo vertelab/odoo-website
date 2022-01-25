@@ -1,0 +1,7 @@
+#. module: website_document_activities
+msgid "Actions"
+msgstr "Påminnelser"
+
+#. module: website_document_activities
+msgid "Count"
+msgstr "Antal"

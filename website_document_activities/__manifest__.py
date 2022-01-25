@@ -15,7 +15,6 @@
         'views/portal_template.xml',
         'views/sale_portal_templates.xml',
         'views/project_portal_templates.xml',
-        # 'views/document_portal_templates.xml',
         'views/assets.xml',
     ],
     "auto_install": False,
