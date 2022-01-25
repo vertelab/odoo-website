@@ -20,11 +20,12 @@ class CustomerPortal(CustomerPortal):
                         search_in='content', groupby=None, **kw):
         values = self._prepare_portal_layout_values()
 
-        project_task = request.env['project.task'].search([], limit=self._items_per_page) \
+        project_task = request.env['project.task'].sudo().search([
+            ('message_follower_ids.partner_id', '=', request.env.user.partner_id.id)], limit=self._items_per_page) \
             if request.env['project.task'].check_access_rights('read', raise_exception=False) else 0
 
         # task count
-        task_count = len(project_task.mapped('activity_ids'))
+        task_count = len(project_task.sudo().mapped('activity_ids'))
 
         # pager
         pager = portal_pager(
@@ -52,12 +53,13 @@ class CustomerPortal(CustomerPortal):
     def portal_my_projects_activities(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
         values = self._prepare_portal_layout_values()
 
-        project_activities = request.env['mail.activity'].sudo().search([('res_model', '=', 'project.project')])
+        project_activities = request.env['mail.activity'].sudo().search([('res_model', '=', 'project.project')]) \
+            if request.env['mail.activity'].check_access_rights('read', raise_exception=False) else []
 
         project_ids = []
 
         for activities in project_activities:
-            project_ids.append(request.env['project.project'].browse(activities.res_id))
+            project_ids.append(request.env['project.project'].sudo().browse(activities.res_id))
 
         # projects count
         project_count = len(set(project_ids))
