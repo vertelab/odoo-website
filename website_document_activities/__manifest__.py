@@ -8,8 +8,9 @@
     "summary": "User can see events registered for.",
     "description": """
         User can see activities from the portal \n	
+        14.0.1.2 - Link to the activities document
     """,
-    "version": "14.0.1.1",
+    "version": "14.0.1.2",
     "depends": ['portal', 'sale', 'project'],
     "data": [
         'views/portal_template.xml',
