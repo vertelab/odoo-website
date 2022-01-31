@@ -1,0 +1,7 @@
+<odoo>
+    <template id="assets_wysiwyg" inherit_id="web_editor.assets_wysiwyg" name="Portal Assets" priority="15">
+        <xpath expr="//script[last()]" position="after">
+            <script type="text/javascript" src="/website_mediabank_usergroups/static/src/js/media.js"></script>
+        </xpath>
+    </template>
+</odoo>
