@@ -28,7 +28,7 @@ class PortalEvent(CustomerPortal):
     @http.route(['/my/events', '/my/events/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_events(self, page=1, date_open=None, date_closed=None, sortby=None, filterby=None, **kw):
         values = self._prepare_portal_layout_values()
-        EventAttendee = request.env['event.registration']
+        EventAttendee = request.env['event.registration'].sudo()
 
         domain = self._get_event_domain()
 
