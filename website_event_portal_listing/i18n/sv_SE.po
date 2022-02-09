@@ -91,7 +91,7 @@ msgstr "Evenemang"
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid "Event Name #"
-msgstr "Utbildningstillfällen"
+msgstr "Evenemangsnamn #"
 
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
