@@ -6,7 +6,6 @@
 
             <div class="btn-group" t-if="widget.groups.website_designer">
                 <button type="button" class="btn btn-primary o_upload_media_button">
-                    <span t-esc="widget.groups.website_designer"/>
                     <t t-esc="uploadText"/>
                 </button>
             </div>

@@ -20,5 +20,4 @@ class WebsiteBackend(http.Controller):
                 'website_publisher': has_group_publisher
             },
         }
-        print(user_group)
         return user_group
