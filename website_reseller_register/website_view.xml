@@ -44,7 +44,7 @@
                                     </div>
                                 </div>
 -->
-                                <ul class="nav nav-tabs">
+<!--                                 <ul class="nav nav-tabs">
                                     <li id="nav_delivery" class="active">
                                         <a data-toggle="tab" href="#delivery" class="hidden-xs">Delivery Address</a>
                                         <a data-toggle="tab" href="#delivery" class="hidden-lg hidden-md hidden-sm">
@@ -63,10 +63,15 @@
                                             <i class="fa fa-users" />
                                         </a>
                                     </li>
-                                </ul>
-                                <div class="tab-content">
+                                </ul> -->
+                                <div id="no_navtabs">
+                                    <h4 id="delivery_address">
+                                        <strong>Delivery Address</strong>
+                                    </h4>
+<!--                                <div class="tab-content">
                                     <div id="delivery" class="tab-pane fade in active">
-                                        <p id="instruction_delivery" />
+                                        <p id="instruction_delivery" /> -->
+                                    <div id="delivery">
                                         <div class="form-group checkbox">
                                             <div class="col-md-7 col-md-offset-3 col-sm-8 col-sm-offset-4 mb32">
                                                 <label><input type="checkbox" class="oe_reseller_register_copy_address" name="delivery_copy_company"/>Same as company address</label>
@@ -128,8 +133,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="invoice" class="tab-pane fade">
-                                        <p id="instruction_invoice" />
+                                    <h4 id="invoice_address">
+                                        <strong>Invoice Address</strong>
+                                    </h4>
+<!--                                     <div id="invoice" class="tab-pane fade">
+                                        <p id="instruction_invoice" /> -->
+                                    <div id="invoice">
                                         <div class="form-group checkbox">
                                             <div class="col-md-7 col-md-offset-3 col-sm-8 col-sm-offset-4 mb32">
                                                 <label><input type="checkbox" class="oe_reseller_register_copy_address" name="invoice_copy_delivery"/>Same as delivery address</label>
@@ -191,7 +200,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="contact" class="tab-pane fade">
+                                    <h4 id="my_employees" class="col-md-12 mb32">
+                                        <strong>My Employees</strong>
+                                    </h4>
+<!--                                     <div id="contact" class="tab-pane fade"> -->
+                                    <div id="contact">
                                         <table class="table table-responsive table-striped table-bordered">
                                             <thead>
                                                 <th/>
