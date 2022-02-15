@@ -20,6 +20,7 @@ class AccountMove(TimesheetCustomerPortal):
         if 'timesheet_count' in counters:
             domain = request.env['account.analytic.line']._timesheet_get_portal_domain()
             domain += [('show_on_customer_portal', '=', True)]
+            domain += [('user_id', '=', request.env.user.id), ('project_id', '!=', False)]
             values['timesheet_count'] = request.env['account.analytic.line'].sudo().search_count(domain)
         return values
 
@@ -30,6 +31,7 @@ class AccountMove(TimesheetCustomerPortal):
         values = self._prepare_portal_layout_values()
         domain = request.env['account.analytic.line']._timesheet_get_portal_domain()
         domain += [('show_on_customer_portal', '=', True)]
+        domain += [('user_id', '=', request.env.user.id), ('project_id', '!=', False)]
         _items_per_page = 100
 
         searchbar_sortings = {
