@@ -18,6 +18,7 @@ class AccountMove(PortalAccount):
         values = super()._prepare_home_portal_values(counters)
         domain = self._get_invoices_domain()
         domain += [('show_on_customer_portal', '=', True)]
+        domain += [('partner_id', '=', request.env.user.partner_id.id)]
         if 'invoice_count' in counters:
             invoice_count = request.env['account.move'].search_count(domain) \
                 if request.env['account.move'].check_access_rights('read', raise_exception=False) else 0
@@ -31,6 +32,7 @@ class AccountMove(PortalAccount):
 
         domain = self._get_invoices_domain()
         domain += [('show_on_customer_portal', '=', True)]
+        domain += [('partner_id', '=', request.env.user.partner_id.id)]
 
         searchbar_sortings = {
             'date': {'label': _('Date'), 'order': 'invoice_date desc'},

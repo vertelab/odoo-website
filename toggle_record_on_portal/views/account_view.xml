@@ -4,7 +4,7 @@
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
-                <field name="invoice_payment_term_id" position="after">
+                <field name="payment_reference" position="after">
                     <field name="show_on_customer_portal"/>
                 </field>
             </field>

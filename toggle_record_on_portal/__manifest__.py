@@ -26,12 +26,21 @@
     "author": "Vertel AB",
     "license": "AGPL-3",
     "website": "https://www.vertel.se/apps/website",
-    "depends": ["sale", "account", "event", "project", "hr_timesheet"],
+    "depends": [
+        "sale",
+        "account",
+        "event",
+        "project",
+        "hr_timesheet",
+        "skogsstyrelsen_translation",
+        "website_event_portal_listing"
+    ],
     "data": [
         "views/project_task_view.xml",
         "views/sale_order_view.xml",
         "views/account_view.xml",
         "views/timesheet_view.xml",
+        "views/event_view.xml",
     ],
     "application": False,
     "installable": True,

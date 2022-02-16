@@ -14,7 +14,7 @@ class Invoices(models.Model):
 
 
 class Event(models.Model):
-    _inherit = 'event.event'
+    _inherit = 'event.registration'
 
     show_on_customer_portal = fields.Boolean(string="Show on Customer Portal")
 
