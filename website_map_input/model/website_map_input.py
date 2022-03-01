@@ -19,19 +19,20 @@
 #
 ##############################################################################
 
-from odoo import models, fields, api, exceptions, _
-from odoo.addons.http_routing.models.ir_http import slug
-from odoo.tools.translate import html_translate
+from odoo import models, fields, api, _
+
 
 import logging
 # ~ _logger = logging.getLogger(__name__)
 
 
-class MapInput(models.Model):
-    _name = 'hr.employee'
-    _inherit = ['hr.employee', 'website.seo.metadata', 'website.published.multi.mixin']
+class WebsiteMapInput(models.Model):
+    _name = 'website.map.input'
 
-    public_info = fields.Char(string='Public Info')
+    latitudeInput = fields.Char(string='Public Info')
+    longitudeInput = fields.Char(string='Public Info')
+    radiusInput = fields.Char(string='Public Info')
+    locationNameInput = fields.Char(string='Public Info')
 
     def _compute_website_url(self):
         super(HrEmployee, self)._compute_website_url()
