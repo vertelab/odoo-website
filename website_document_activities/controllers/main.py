@@ -23,15 +23,21 @@ class CustomerPortalXtend(CustomerPortal):
         if 'quotation_activities_count' in counters:
             quotation = request.env['sale.order'].search([
                 ('state', 'in', ['sent', 'cancel'])
-            ]) if request.env['sale.order'].check_access_rights('read', raise_exception=False) else 0
-            quotation_activities = quotation.sudo().mapped('activity_ids')
-            values['quotation_activities_count'] = len(quotation_activities)
+            ]) if request.env['sale.order'].check_access_rights('read', raise_exception=False) else False
+            if quotation:
+                quotation_activities = quotation.sudo().mapped('activity_ids')
+                values['quotation_activities_count'] = len(quotation_activities)
+            else:
+                values['quotation_activities_count'] = 0
         if 'sale_activities_count' in counters:
             sale_order = request.env['sale.order'].search([
                 ('state', 'in', ['sale', 'done'])
-            ]) if request.env['sale.order'].check_access_rights('read', raise_exception=False) else 0
-            sale_order_activities = sale_order.sudo().mapped('activity_ids')
-            values['sale_activities_count'] = len(sale_order_activities)
+            ]) if request.env['sale.order'].check_access_rights('read', raise_exception=False) else False
+            if sale_order:
+                sale_order_activities = sale_order.sudo().mapped('activity_ids')
+                values['sale_activities_count'] = len(sale_order_activities)
+            else:
+                values['sale_activities_count'] = 0
 
         if 'project_activities_count' in counters:
             project_project = request.env['mail.activity'].search_count([('res_model', '=', 'project.project')]) \
@@ -40,9 +46,11 @@ class CustomerPortalXtend(CustomerPortal):
 
         if 'task_activities_count' in counters:
             project_task = request.env['project.task'].search([]) \
-                if request.env['project.task'].check_access_rights('read', raise_exception=False) else 0
-            project_task_activities = project_task.sudo().mapped('activity_ids')
-            values['task_activities_count'] = len(project_task_activities)
-
+                if request.env['project.task'].check_access_rights('read', raise_exception=False) else False
+            if project_task:
+                project_task_activities = project_task.sudo().mapped('activity_ids')
+                values['task_activities_count'] = len(project_task_activities)
+            else:
+                values['task_activities_count'] = 0
         return values
 
