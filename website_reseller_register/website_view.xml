@@ -269,7 +269,7 @@
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>
                                 </div>
-                                <div id="message_box">
+<!--                                 <div id="message_box">
                                     <p>
                                         <u id="open_msgbox">Send a message</u>
                                     </p>
@@ -296,7 +296,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                             </form>
                         </div>
                     </div>
