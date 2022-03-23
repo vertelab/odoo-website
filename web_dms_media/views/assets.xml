@@ -1,0 +1,7 @@
+<odoo>
+    <template id="web_dms_media_assets" inherit_id="web.assets_frontend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/web_dms_media/static/src/js/media.js"/>
+        </xpath>
+    </template>
+</odoo>

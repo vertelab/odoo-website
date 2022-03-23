@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="template" xml:space="preserve">
+<!--    <t t-extend="wysiwyg.widgets.file">-->
+<!--        <t t-jquery="button" t-operation="replace">-->
+<!--            <ul t-if="widget.attachments.length > 1" t-attf-class="#{ classname or '' } pagination m-0 #{_classes}" t-att-style="style or None">-->
+<!--                <li t-attf-class="page-item">-->
+<!--                    <button class="btn btn-primary o_load_more d-none" type="button">Prev</button>-->
+<!--                </li>-->
+<!--                <t t-foreach="widget.attachments.length" t-as="page">-->
+<!--                    <li t-attf-class="page-item"><t t-esc="page.id"/></li>-->
+<!--                </t>-->
+<!--                <li t-attf-class="page-item">-->
+<!--                    <button class="btn btn-primary o_load_more d-none" type="button">Next</button>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </t>-->
+<!--    </t>-->
+</templates>
