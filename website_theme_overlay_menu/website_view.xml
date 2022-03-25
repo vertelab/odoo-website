@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
   <data>
     <template id="website_theme_overlay_menu_home" name="Website Theme Overlay Menu Home">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&amp;times;</a>
@@ -311,5 +311,5 @@
       </xpath>
     </template>
   </data>
-</openerp>
+</odoo>
 
