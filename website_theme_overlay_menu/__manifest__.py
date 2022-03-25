@@ -21,7 +21,7 @@
 
 {
     'name': 'Website Theme Overlay Menu',
-    'version': '1.0',
+    'version': '13.0.0.0.1',
     'category': 'Theme',
     'summary': 'Overlay Menu',
     'description': """
