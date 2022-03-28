@@ -21,7 +21,7 @@ class DMSFile(models.Model):
 
     def _compute_local_url(self):
         for attachment in self:
-            attachment.local_url = '/web/image/dms.file/%s/image_1024' % attachment.id
+            attachment.local_url = f'/web/image/dms.file/{attachment.id}/image_1024'
 
     @api.depends('mimetype', 'name')
     def _compute_image_src(self):
@@ -29,12 +29,11 @@ class DMSFile(models.Model):
             # Only add a src for supported images
             if attachment.mimetype not in SUPPORTED_IMAGE_MIMETYPES:
                 attachment.image_src = False
-                # attachment.image_src = '/web/content/'
                 continue
 
             attachment.image_src = '/web/image/dms.file/%s/image_1024' % attachment.id
 
-    @api.depends('content')
+    @api.depends('content') 
     def _compute_image_size(self):
         for attachment in self:
             try:
