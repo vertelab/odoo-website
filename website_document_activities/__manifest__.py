@@ -11,7 +11,7 @@
         14.0.1.2 - Link to the activities document
     """,
     "version": "14.0.1.2",
-    "depends": ['portal', 'sale', 'project'],
+    "depends": ['portal', 'sale', 'project', 'toggle_record_on_portal', 'record_keeping_project'],
     "data": [
         'views/portal_template.xml',
         'views/sale_portal_templates.xml',

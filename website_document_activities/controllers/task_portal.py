@@ -21,7 +21,9 @@ class CustomerPortal(CustomerPortal):
         values = self._prepare_portal_layout_values()
 
         project_task = request.env['project.task'].sudo().search([
-            ('message_follower_ids.partner_id', '=', request.env.user.partner_id.id)], limit=self._items_per_page) \
+            ('message_follower_ids.partner_id', '=', request.env.user.partner_id.id),
+            ('show_on_customer_portal', '=', True),
+        ], limit=self._items_per_page) \
             if request.env['project.task'].check_access_rights('read', raise_exception=False) else 0
 
         # task count
@@ -56,11 +58,8 @@ class CustomerPortal(CustomerPortal):
         project_activities = request.env['mail.activity'].sudo().search([('res_model', '=', 'project.project')]) \
             if request.env['mail.activity'].check_access_rights('read', raise_exception=False) else []
 
-        project_ids = []
-
-        for activities in project_activities:
-            project_ids.append(request.env['project.project'].sudo().browse(activities.res_id))
-
+        project_ids = request.env['project.project'].sudo().browse(project_activities.mapped('res_id')).\
+            filtered(lambda project: project.show_on_customer_portal)
         # projects count
         project_count = len(set(project_ids))
 

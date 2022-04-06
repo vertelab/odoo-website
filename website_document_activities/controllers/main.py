@@ -22,7 +22,7 @@ class CustomerPortalXtend(CustomerPortal):
         values = {}
         if 'quotation_activities_count' in counters:
             quotation = request.env['sale.order'].search([
-                ('state', 'in', ['sent', 'cancel'])
+                ('state', 'in', ['sent', 'cancel']), ('show_on_customer_portal', '=', True)
             ]) if request.env['sale.order'].check_access_rights('read', raise_exception=False) else False
             if quotation:
                 quotation_activities = quotation.sudo().mapped('activity_ids')
@@ -31,7 +31,7 @@ class CustomerPortalXtend(CustomerPortal):
                 values['quotation_activities_count'] = 0
         if 'sale_activities_count' in counters:
             sale_order = request.env['sale.order'].search([
-                ('state', 'in', ['sale', 'done'])
+                ('state', 'in', ['sale', 'done']), ('show_on_customer_portal', '=', True)
             ]) if request.env['sale.order'].check_access_rights('read', raise_exception=False) else False
             if sale_order:
                 sale_order_activities = sale_order.sudo().mapped('activity_ids')
@@ -40,12 +40,16 @@ class CustomerPortalXtend(CustomerPortal):
                 values['sale_activities_count'] = 0
 
         if 'project_activities_count' in counters:
-            project_project = request.env['mail.activity'].search_count([('res_model', '=', 'project.project')]) \
+            project_project_activities = request.env['mail.activity'].search([('res_model', '=', 'project.project')]) \
                 if request.env['mail.activity'].check_access_rights('read', raise_exception=False) else 0
-            values['project_activities_count'] = project_project
+
+            project_project = request.env['project.project'].sudo().browse(project_project_activities.mapped('res_id')). \
+                filtered(lambda project: project.show_on_customer_portal)
+
+            values['project_activities_count'] = len(project_project)
 
         if 'task_activities_count' in counters:
-            project_task = request.env['project.task'].search([]) \
+            project_task = request.env['project.task'].search([('show_on_customer_portal', '=', True)]) \
                 if request.env['project.task'].check_access_rights('read', raise_exception=False) else False
             if project_task:
                 project_task_activities = project_task.sudo().mapped('activity_ids')
