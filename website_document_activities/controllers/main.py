@@ -43,10 +43,13 @@ class CustomerPortalXtend(CustomerPortal):
             project_project_activities = request.env['mail.activity'].search([('res_model', '=', 'project.project')]) \
                 if request.env['mail.activity'].check_access_rights('read', raise_exception=False) else 0
 
-            project_project = request.env['project.project'].sudo().browse(project_project_activities.mapped('res_id')). \
-                filtered(lambda project: project.show_on_customer_portal)
+            if project_project_activities:
+                project_project = request.env['project.project'].sudo().browse(project_project_activities.mapped('res_id')). \
+                    filtered(lambda project: project.show_on_customer_portal)
 
-            values['project_activities_count'] = len(project_project)
+                values['project_activities_count'] = len(project_project)
+            else:
+                values['project_activities_count'] = 0
 
         if 'task_activities_count' in counters:
             project_task = request.env['project.task'].search([('show_on_customer_portal', '=', True)]) \
