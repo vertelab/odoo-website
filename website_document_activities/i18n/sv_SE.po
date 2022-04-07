@@ -81,17 +81,17 @@ msgstr "<span class=\"small mr-1 navbar-text\">Sortera med:</span>"
 #. module: portal
 #: model_terms:ir.ui.view,arch_db:portal.portal_my_home
 msgid "<strong>Actions</strong>"
-msgstr "Påminnelser"
+msgstr "<strong>Påminnelser</strong>"
 
 #. module: portal
 #: model_terms:ir.ui.view,arch_db:portal.portal_my_home
 msgid "<strong>Count</strong>"
-msgstr "Antal"
+msgstr "<strong>Antal</strong>"
 
 #. module: portal
 #: model_terms:ir.ui.view,arch_db:portal.portal_my_home
 msgid "<strong>Document</strong>"
-msgstr "Dokument"
+msgstr "<strong>Dokument</strong>"
 
 #. module: portal
 #: model_terms:ir.ui.view,arch_db:portal.portal_share_template
