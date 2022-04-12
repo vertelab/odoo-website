@@ -23,7 +23,8 @@ class PortalEvent(CustomerPortal):
 
     def _get_event_domain(self):
         partner = request.env.user.partner_id
-        return [('partner_id', '=', partner.commercial_partner_id.id)]
+        return [('email', '=', partner.email)]
+        # return [('partner_id', '=', partner.commercial_partner_id.id)]
 
     @http.route(['/my/events', '/my/events/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_events(self, page=1, date_open=None, date_closed=None, sortby=None, filterby=None, **kw):
