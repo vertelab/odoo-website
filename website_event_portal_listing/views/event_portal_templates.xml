@@ -32,7 +32,7 @@
                     <t t-foreach="events" t-as="event">
                         <tr>
                             <td>
-                                <a t-attf-href="/event/#{ slug(event.event_id) }" t-att-title="event.event_id.name">
+                                <a t-attf-href="/my/event/{{event.event_id.id}}" t-att-title="event.event_id.name">
                                     <span t-esc="event.event_id.name"/>
                                 </a>
                             </td>
@@ -57,6 +57,71 @@
                     </t>
                 </tbody>
             </t>
+        </t>
+    </template>
+
+    <template id="event_info" name="My Event">
+        <t t-call="website_event.layout">
+            <div class="container my-5 o_wereg_confirmed">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <span class="h4 text-muted" t-esc="event.name"/>
+                    </div>
+                </div>
+                <div class="row mb-3 o_wereg_confirmed_attendees">
+                    <div class="col-md-4 col-xs-12 mt-3" t-foreach="attendees" t-as="attendee">
+                        <div class="d-flex flex-column">
+                            <span class="font-weight-bold">
+                                <t t-if="attendee.name" t-esc="attendee.name"/>
+                                <t t-else="">N/A</t>
+                            </span>
+                            <span>
+                                <i class="fa fa-envelope mr-2   "></i>
+                                <t t-if="attendee.email" t-esc="attendee.email"/>
+                                <t t-else="">N/A</t>
+                            </span>
+                            <span>
+                                <i class="fa fa-phone mr-2"></i>
+                                <t t-if="attendee.phone" t-esc="attendee.phone"/>
+                                <t t-else="">N/A</t>
+                            </span>
+                            <span>
+                                <i class="fa fa-ticket mr-2"></i>
+                                <t t-if="attendee.event_ticket_id" t-esc="attendee.event_ticket_id.name"/>
+                                <t t-else="">N/A</t>
+                                (ref: <t t-esc="attendee.id"/>)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <p><b>Start</b> <span itemprop="startDate" t-esc="event.date_begin_located"/><br/> <b>End</b> <span itemprop="endDate" t-esc="event.date_end_located"/></p>
+                        <div class="mt-4">
+                            <h5 t-field="event.address_id" class="text-secondary font-weight-bold" t-options='{
+                                "widget": "contact",
+                                "fields": ["name"]
+                                }'/>
+                            <a itemprop="location" t-att-href="event.google_map_link()" target="_BLANK" temprop="location" t-field="event.address_id" t-options='{
+                                "widget": "contact",
+                                "fields": ["address"]
+                                }'/>
+                            <div itemprop="location" t-field="event.address_id" t-options='{
+                                "widget": "contact",
+                                "fields": ["phone", "mobile", "email"]
+                                }'/>
+                        </div>
+                        <div id="add_to_calendar" class="mt-4 d-flex flex-column flex-md-row">
+                            <a role="button" class="btn btn-primary" t-att-href="iCal_url">
+                                <i class="fa fa-fw fa-calendar"/> Add to iCal/Outlook
+                            </a>
+                            <a role="button" class="btn btn-primary ml-md-2 mt-2 mt-md-0" t-att-href="google_url" target='_blank'>
+                                <i class="fa fa-fw fa-calendar"/> Add to Google Calendar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </t>
     </template>
 </odoo>

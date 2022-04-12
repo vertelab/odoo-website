@@ -3,9 +3,11 @@
 
 from odoo import http, _
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
+from odoo.addons.website_event.controllers.main import WebsiteEventController
 from odoo.exceptions import AccessError, MissingError
 from collections import OrderedDict
 from odoo.http import request
+import werkzeug
 
 
 class PortalEvent(CustomerPortal):
@@ -81,3 +83,18 @@ class PortalEvent(CustomerPortal):
             'filterby': filterby,
         })
         return request.render("website_event_portal_listing.portal_my_events", values)
+
+
+class WebsiteEventControllerExtended(WebsiteEventController):
+    @http.route(['''/my/event/<int:event_id>'''], type='http', auth="public", website=True)
+    def event_details(self, event_id, **post):
+        event = request.env['event.event'].sudo().browse(event_id)
+        if not event.can_access_from_current_website():
+            raise werkzeug.exceptions.NotFound()
+
+        attendees_sudo = request.env['event.registration'].sudo().search([
+            ('event_id', '=', event.id), ('email', '=', request.env.user.partner_id.email)
+        ])
+
+        return request.render("website_event_portal_listing.event_info",
+                              self._get_registration_confirm_values(event, attendees_sudo))
