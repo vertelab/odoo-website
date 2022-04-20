@@ -11,7 +11,6 @@
     """,
     "version": "14.0.0.0",
     "depends": ['portal', 'web_editor', 'website_document_activities'],
-   # "depends": ['portal'], #, 'sale', 'project', 'toggle_record_on_portal', 'record_keeping_project'],
     "data": [
         'views/assets.xml',
         'views/portal_template.xml',
