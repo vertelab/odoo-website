@@ -10,10 +10,7 @@
                         <div class="col-lg-4">
                             <strong>Document</strong>
                         </div>
-                        <div class="col-lg-4 text-right">
-                            <strong>Actions</strong>
-                        </div>
-                        <div class="col-lg-4 text-right">
+                        <div class="col-lg-8 text-right">
                             <strong>Count</strong>
                         </div>
                     </div>
@@ -33,14 +30,7 @@
                         <t t-esc="title"/>
                     </a>
                 </div>
-                <div class="col-lg-4 text-right">
-                    <a t-att-href="activities_url" t-att-title="title" t-if='placeholder_activities_count'>
-                        <span class="badge badge-secondary badge-pill" t-att-data-placeholder_activities_count="placeholder_activities_count">
-                            <i class="fa fa-spin fa-spinner"></i>
-                        </span>
-                    </a>
-                </div>
-                <div class="col-lg-4 text-right">
+                <div class="col-lg-8 text-right">
                     <t t-if='count'>
                         <span class="badge badge-secondary badge-pill" t-esc="count"/>
                     </t>
