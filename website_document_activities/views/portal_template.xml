@@ -11,10 +11,10 @@
                             <strong>Document</strong>
                         </div>
                         <div class="col-lg-4 text-right">
-                            <strong>Påminnelser</strong>
+                            <strong>Actions</strong>
                         </div>
                         <div class="col-lg-4 text-right">
-                            <strong>Antal</strong>
+                            <strong>Count</strong>
                         </div>
                     </div>
                 </div>
