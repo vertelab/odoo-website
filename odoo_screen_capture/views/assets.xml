@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_frontend_capture" inherit_id="website.assets_frontend" priority="1">
+        <!-- Customize javascript -->
+        <xpath expr="//script[last()]" position="after">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+            <script type="text/javascript" src="/odoo_screen_capture/static/src/js/screen_capture.js"/>
+        </xpath>
+    </template>
+
+    <template id="assets_backend_capture" inherit_id="website.assets_backend">
+        <xpath expr="//script[last()]" position="after">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+            <script type="text/javascript" src="/odoo_screen_capture/static/src/js/screen_capture.js"/>
+        </xpath>
+    </template>
+</odoo>
