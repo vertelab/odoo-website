@@ -30,6 +30,8 @@ odoo.define('web_dms_media.web_media_bank', function (require) {
         },
 
         fetchAttachments: function (number, offset) {
+            debugger
+            console.warn("DMS FETCHING DATA");
             return this._rpc({
                 model: 'dms.file',
                 method: 'search_read',
