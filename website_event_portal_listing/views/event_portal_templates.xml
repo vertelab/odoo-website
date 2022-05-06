@@ -9,7 +9,7 @@
         </xpath>
     </template>
 
-    <template id="portal_my_events" name="My Invoices and Payments">
+    <template id="portal_my_events" name="My Events">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
@@ -32,7 +32,7 @@
                     <t t-foreach="events" t-as="event">
                         <tr>
                             <td>
-                                <a t-attf-href="/event/#{ slug(event.event_id) }" t-att-title="event.event_id.name">
+                                <a t-attf-href="/my/event/{{event.event_id.id}}" t-att-title="event.event_id.name">
                                     <span t-esc="event.event_id.name"/>
                                 </a>
                             </td>

@@ -143,6 +143,15 @@
                     </div>
                 </t>
             </t>
+            <div class="mt32">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="project"/>
+                    <t t-set="token" t-value="project.access_token"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+            </div>
         </t>
     </template>
 </odoo>

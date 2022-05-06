@@ -58,7 +58,7 @@ class CustomerPortal(CustomerPortal):
         project_activities = request.env['mail.activity'].sudo().search([('res_model', '=', 'project.project')]) \
             if request.env['mail.activity'].check_access_rights('read', raise_exception=False) else []
 
-        project_ids = request.env['project.project'].sudo().browse(project_activities.mapped('res_id')).\
+        project_ids = [] if not project_activities else request.env['project.project'].sudo().browse(project_activities.mapped('res_id')).\
             filtered(lambda project: project.show_on_customer_portal)
         # projects count
         project_count = len(set(project_ids))
