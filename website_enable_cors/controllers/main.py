@@ -19,10 +19,9 @@ class DatabaseInherit(Database):
 
 class DataSetInherit(DataSet):
 
-    @http.route('/web/dataset/search_read', type='json', auth='auth', cors="*")
+    @http.route('/web/dataset/search_read', type='json', auth='user', cors="*")
     def search_read(self, model, fields=False, offset=0, limit=False, domain=None, sort=None):
-        result = super().search_read(model=model, fields=fields,
-                                  offset=offset, limit=limit, domain=domain, sort=sort)
+        result = super().search_read(model, fields, offset, limit, domain, sort)
         _logger.warning(f"search_read: {result=}")
         return result
 
