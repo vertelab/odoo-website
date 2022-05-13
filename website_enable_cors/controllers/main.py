@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
 from odoo.service import common
@@ -21,7 +22,7 @@ class DataSetInherit(DataSet):
 
     @http.route('/web/dataset/search_read', type='json', auth='user', cors="*")
     def search_read(self, model, fields=False, offset=0, limit=False, domain=None, sort=None):
-        result = super().search_read(model, fields, offset, limit, domain, sort)
+        result = super(DataSetInherit, self).search_read(model, fields, offset, limit, domain, sort)
         _logger.warning(f"search_read: {result=}")
         return result
 
