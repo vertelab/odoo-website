@@ -60,6 +60,17 @@ msgstr ""
 "class=\"d-none d-md-inline\"> Avbruten</span></span>"
 
 #. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
+msgid ""
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-"
+"clock-o\" aria-label=\"Reservation\" title=\"Reservation\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Reservation</span></span>"
+msgstr ""
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-"
+"clock-o\" aria-label=\"Reservation\" title=\"Reservation\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Intresseanmälan</span></span>"
+
+#. module: website_event_portal_listing
 #: code:addons/website_event_portal_listing/controllers/portal.py:0
 #, python-format
 msgid "All"
