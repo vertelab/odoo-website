@@ -51,6 +51,9 @@
                                 <t t-if="event.state == 'cancel'">
                                     <span class="badge badge-pill badge-warning"><i class="fa fa-fw fa-remove" aria-label="Cancelled" title="Cancelled" role="img"></i><span class="d-none d-md-inline"> Cancelled</span></span>
                                 </t>
+                                <t t-if="event.state == 'reservation'">
+                                    <span class="badge badge-pill badge-info"><i class="fa fa-fw fa-clock-o" aria-label="Reservation" title="Reservation" role="img"></i><span class="d-none d-md-inline"> Reservation</span></span>
+                                </t>
                             </td>
 <!--                            <td class="text-right"><span t-esc="-invoice.amount_residual if invoice.move_type == 'out_refund' else invoice.amount_residual" t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/></td>-->
                         </tr>
