@@ -1,6 +1,6 @@
 {
     "name": "DMS Files on Website Media",
-    "author": "Vertel",
+    "author": "Vertel AB",
     "website": "https://www.vertel.se",
     "category": "Website",
     "license": "OPL-1",

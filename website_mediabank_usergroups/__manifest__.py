@@ -1,7 +1,7 @@
 # Part of Softhealer Technologies.
 {
     "name": "Website MediaBank User Groups",
-    "author": "Vertel",
+    "author": "Vertel AB",
     "website": "https://www.vertel.se",
     "category": "Website",
     "license": "OPL-1",
