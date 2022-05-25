@@ -115,7 +115,8 @@ odoo.define('web_dms_media.web_media_bank', function (require) {
             let offset = 0
             // compute offset if current_page is not 1 --- ((10 * 2) - 10) + 1 = 11
             if (current_page > 1) {
-                offset = ((this.numberOfAttachmentsToDisplay * current_page) - this.numberOfAttachmentsToDisplay) + 1
+                // offset = ((this.numberOfAttachmentsToDisplay * current_page) - this.numberOfAttachmentsToDisplay) + 1
+                offset = ((this.numberOfAttachmentsToDisplay * current_page) + (-this.numberOfAttachmentsToDisplay - 1)) + 1
             }
 
             return this.fetchAttachments(this.numberOfAttachmentsToDisplay, offset).then(() => {
