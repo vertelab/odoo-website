@@ -25,7 +25,7 @@
                         <th>Event Name #</th>
                         <th>Registration Date</th>
                         <th class='d-none d-md-table-cell'>Closed Date</th>
-                        <th/>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
