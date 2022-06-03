@@ -894,7 +894,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:portal.wizard_view
 msgid "This text is included in the email sent to new portal users."
 msgstr ""
-"Denna text inkluderas i det e-post som skickas till nya protalanvändare."
+"Denna text inkluderas i det e-post som skickas till nya portalanvändare."
 
 #. module: portal
 #: model:ir.model.fields,help:portal.field_portal_wizard__welcome_message
