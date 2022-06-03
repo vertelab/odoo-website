@@ -32,7 +32,7 @@
                     <t t-foreach="events" t-as="event">
                         <tr>
                             <td>
-                                <a t-attf-href="/my/event/{{event.event_id.id}}" t-att-title="event.event_id.name">
+                                <a t-attf-href="/event/{{event.event_id.id}}" t-att-title="event.event_id.name">
                                     <span t-esc="event.event_id.name"/>
                                 </a>
                             </td>
