@@ -28,8 +28,9 @@
 Manual can be found at https://select2.github.io/
 """,
     'author': 'Vertel AB',
-    'website': 'https://vertel.se/apps/',
+    'website': 'https://vertel.se/apps',
     'images': ['static/description/banner.png'], # 560x280 px.
+    'license': 'AGPL-3',
     'depends': ['website'],
     'data': [
         'select2_template.xml',
