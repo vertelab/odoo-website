@@ -20,7 +20,7 @@
 ##############################################################################
 
 {
-    'name': 'Select2 Search Field',
+    'name': 'Website: Select2 Search Field',
     'version': '0.1',
     'category': '',
     'summary': "Adds a select2 search field.",
@@ -28,7 +28,8 @@
 Manual can be found at https://select2.github.io/
 """,
     'author': 'Vertel AB',
-    'website': 'http://www.vertel.se',
+    'website': 'https://vertel.se/apps/',
+    'images': ['static/description/banner.png'], # 560x280 px.
     'depends': ['website'],
     'data': [
         'select2_template.xml',
