@@ -26,6 +26,9 @@
     'summary': "Adds a select2 search field.",
     'description': """Due to a naming conflict all instances of select2 have been rebranded as select9.
 Manual can be found at https://select2.github.io/
+\n
+\n
+Please visit our webpage for more Odoo modules posted at later dates. https://vertel.se/apps
 """,
     'author': 'Vertel AB',
     'website': 'https://vertel.se/apps',
