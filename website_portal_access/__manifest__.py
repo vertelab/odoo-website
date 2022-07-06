@@ -29,7 +29,7 @@
     'description': 'User cannot see draft state sale orders in draft state.',
     #'sequence': '1',
     'author': 'Vertel AB',
-    'website': 'https://vertel.se/apps/odoo-website/website_memcached_sale',
+    'website': 'https://vertel.se/apps/odoo-website/website_portal_access',
     'images': ['static/description/banner.png'], # 560x280 px.
     'license': 'AGPL-3',
 #    "license": "OPL-1",
