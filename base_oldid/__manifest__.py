@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Odoo, Open Source Management Solution, third party addon
-#    Copyright (C) 2004-2019 Vertel AB (<http://vertel.se>).
+#    Odoo SA, Open Source Management Solution, third party addon
+#    Copyright (C) 2022- Vertel AB (<https://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -19,15 +20,20 @@
 ##############################################################################
 
 {
-    "name": "Base OldID",
-    "version": "13.0.1.0.0",
-    "category": "",
-    "summary": """
-
-""",
-    "author": "Vertel AB",
-    "license": "AGPL-3",
-    "website": "http://www.vertel.se/apps/website",
+    'name': 'Website: Base OldID',
+    'version': '14.0.0.0.0',
+    # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
+    'summary': 'Show previous ID.',
+    'category': 'Technical',
+    'description': 'Show old ID.',
+    #'sequence': '1',
+    'author': 'Vertel AB',
+    'website': 'https://vertel.se/apps/odoo-website/base_oldid',
+    'images': ['static/description/banner.png'], # 560x280 px.
+    'license': 'AGPL-3',
+    'contributor': 'Show old ID.',
+    'maintainer': 'Vertel AB',
+    'repository': 'https://github.com/vertelab/odoo-website',
     "depends": ["product"],
     "data": [
         "views/res_partner_view.xml",
@@ -35,3 +41,4 @@
     "application": False,
     "installable": True,
 }
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
