@@ -18,13 +18,14 @@
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+# Part of Softhealer Technologies.
 
 {
     'name': 'Website: Website Menu Form View',
     'version': '14.0.0.1.0',
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     'summary': 'View website menu form view.',
-    'category': 'Technical',
+    'category': 'Website',
     'description': 'View website menu form view.',
     #'sequence': '1',
     'author': 'Vertel AB',
@@ -34,19 +35,6 @@
     'contributor': '',
     'maintainer': 'Vertel AB',
     'repository': 'https://github.com/vertelab/odoo-website',
-
-
-
-# Part of Softhealer Technologies.
-{
-    "name": "Website Menu Form View",
-    "author": "Vertel AB",
-    "website": "https://www.vertel.se",
-    "category": "Website",
-    "license": "OPL-1",
-    "summary": "View website menu form view",
-    "description": """"View website menu form view""",
-    "version": "14.0.1.0",
     "depends": ['website'],
     "data": [
         'views/website_views.xml',
