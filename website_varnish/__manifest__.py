@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2018- Vertel AB (<http://vertel.se>).
+#    Odoo SA, Open Source Management Solution, third party addon
+#    Copyright (C) 2022- Vertel AB (<https://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,23 +15,30 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
 
 {
-    'name': 'Website Varnish',
-    'version': '12.0.1.1.0',
-    'category': 'other',
-    'summary': 'website acceleration using varnish',
+    'name': 'Website: Website Varnish',
+    'version': '14.0.0.0.0',
+    # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
+    'summary': 'Website acceleration using varnish',
+    'category': 'Website',
     'description': """
 A Varnish module that adds tags to the URL -adding to the granularity of the caching.
 """,
+    #'sequence': '1',
     'author': 'Vertel AB',
+    'website': 'https://vertel.se/apps/odoo-website/website_varnish',
+    'images': ['static/description/banner.png'], # 560x280 px.
     'license': 'AGPL-3',
-    'website': 'http://www.vertel.se',
+    'contributor': '',
+    'maintainer': 'Vertel AB',
+    'repository': 'https://github.com/vertelab/odoo-website',
     'depends': ['website'],
     'external_dependencies': {},
     'data': [],
     'application': False,
 }
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
