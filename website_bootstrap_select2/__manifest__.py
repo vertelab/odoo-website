@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2004-2016 Vertel AB (<http://vertel.se>).
+#    Odoo SA, Open Source Management Solution, third party addon
+#    Copyright (C) 2022- Vertel AB (<https://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,21 +15,27 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
 
 {
-    'name': 'Select2 Search Field',
-    'version': '0.1',
-    'category': '',
-    'summary': "Adds a select2 search field.",
+    'name': 'Website: Select2 Search Field',
+    'version': '14.0.0.0.0',
+    # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
+    'summary': 'Adds a select2 search field.',
+    'category': 'Productivity',
     'description': """Due to a naming conflict all instances of select2 have been rebranded as select9.
 Manual can be found at https://select2.github.io/
 """,
+    #'sequence': '1',
     'author': 'Vertel AB',
+    'website': 'https://vertel.se/apps/odoo-website/website_bootstrap_select2',
+    'images': ['static/description/banner.png'], # 560x280 px.
     'license': 'AGPL-3',
-    'website': 'http://www.vertel.se',
+    'contributor': '',
+    'maintainer': 'Vertel AB',
+    'repository': 'https://github.com/vertelab/odoo-website',
     'depends': ['website_sale'],
     'data': [
         'select2_template.xml',
@@ -37,5 +43,4 @@ Manual can be found at https://select2.github.io/
     'application': False,
     'installable': True,
 }
-
 # vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:
