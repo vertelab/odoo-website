@@ -63,6 +63,7 @@
         </t>
     </template>
 
+
     <template id="project.portal_my_projects" name="My Projects">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
@@ -75,7 +76,14 @@
                     There are no projects.
                 </div>
             </t>
+
             <t t-if="projects" t-call="portal.portal_table">
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th class="text-right">Task Count</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr t-foreach="projects" t-as="project">
                         <td>
@@ -83,7 +91,7 @@
                         </td>
                         <td class="text-right">
                             <a t-attf-href="/my/tasks?{{keep_query(filterby=project.id)}}">
-                                <t t-esc="len(project.task_ids.filtered(lambda task: task.show_on_customer_portal))"/>
+                                <t t-esc="project.task_count" />
                                 <t t-esc="project.label_tasks" />
                             </a>
                         </td>

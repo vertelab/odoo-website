@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2018- Vertel AB (<http://vertel.se>).
+#    Odoo SA, Open Source Management Solution, third party addon
+#    Copyright (C) 2022- Vertel AB (<https://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,23 +15,28 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
 
 {
-    'name': 'Website MemCached Event',
-    'version': '1.0',
-    'category': 'other',
-    'summary': 'website acceleration for event using memcached',
+    'name': 'Website: Website MemCached Event',
+    'version': '14.0.0.0.0',
+    # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
+    'summary': 'Website acceleration for Event using MemCached.',
+    'category': 'Technical',
     'description': """
-Add mechanisms to cache rendered event pages
-This module depends on website_memcached
-
+Add mechanisms to cache rendered event pages.
+This module depends on website_memcached.
 """,
+    #'sequence': '1',
     'author': 'Vertel AB',
+    'website': 'https://vertel.se/apps/odoo-website/website_memcached_event',
+    'images': ['static/description/banner.png'], # 560x280 px.
     'license': 'AGPL-3',
-    'website': 'http://www.vertel.se',
+    'contributor': '',
+    'maintainer': 'Vertel AB',
+    'repository': 'https://github.com/vertelab/odoo-website',
     'depends': ['website_memcached','website_event'],
     'external_dependencies': {'python': ['pymemcache',]},
     'data': [
@@ -39,3 +44,4 @@ This module depends on website_memcached
     'application': False,
 }
 
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

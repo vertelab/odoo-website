@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    OpenERP, Open Source Management Solution, third party addon
-#    Copyright (C) 2018- Vertel AB (<http://vertel.se>).
+#    Odoo SA, Open Source Management Solution, third party addon
+#    Copyright (C) 2022- Vertel AB (<https://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,15 +15,24 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
 
 {
-    "name": "Website MemCached",
-    "version": "14.0.1.0.0",
-    "category": "other",
-    "summary": "website acceleration using memcached",
+    'name': 'Website: Website MemCached',
+    'version': '14.0.1.0.0',
+    # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
+    'summary': 'Website acceleration using memcached.',
+    'category': 'Technical',
+    #'sequence': '1',
+    'author': 'Vertel AB',
+    'website': 'https://vertel.se/apps/odoo-website/website_memcashed',
+    'images': ['static/description/banner.png'], # 560x280 px.
+    'license': 'AGPL-3',
+    'contributor': '',
+    'maintainer': 'Vertel AB',
+    'repository': 'https://github.com/vertelab/odoo-website',
     "description": """
 Add mechanisms to cache rendered pages
 
@@ -95,9 +104,6 @@ Default are Database + Path + Context eg {db},{path},{context}
     Update Memcached config in Website Settings with one or more server tupples; [('server1',<port>),('server2',<port>)]
 
 """,
-    "author": "Vertel AB",
-    "license": "AGPL-3",
-    "website": "http://www.vertel.se",
     "depends": ["website"],
     "external_dependencies": {"python": ["pymemcache", "pyhashxx"]},
     "data": [
@@ -106,3 +112,4 @@ Default are Database + Path + Context eg {db},{path},{context}
     ],
     "application": False,
 }
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
