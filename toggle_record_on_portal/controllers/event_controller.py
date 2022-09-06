@@ -22,7 +22,7 @@ class PortalEvent(CustomerPortal):
 
     def _get_event_domain(self):
         partner = request.env.user.partner_id
-        return [('email', '=', partner.email)]
+        return [('partner_id', '=', partner.id)]
         #return [('email', '=', partner.email), ('show_on_customer_portal', '=', True)]
         # return [('partner_id', '=', partner.commercial_partner_id.id), ('show_on_customer_portal', '=', True)]
 
