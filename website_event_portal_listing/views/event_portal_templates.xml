@@ -32,7 +32,7 @@
                     <t t-foreach="events" t-as="event">
                         <tr>
                             <td>
-                                <a t-attf-href="/event/{{event.event_id.id}}" t-att-title="event.event_id.name">
+                                <a t-attf-href="/event/{{event.id}}" t-att-title="event.event_id.name">
                                     <span t-esc="event.event_id.name"/>
                                 </a>
                             </td>
@@ -60,6 +60,52 @@
                     </t>
                 </tbody>
             </t>
+        </t>
+    </template>
+
+
+    <template id="event_my_event_registration" name="My Event Reservation">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                    <h5 class="mb-0">
+                         <a t-attf-href="/event/#{ slug(event_registration.event_id) }" t-att-title="event_registration.event_id.name">
+                            <span t-field="event_registration.event_id.name" class="text-truncate"/>
+                        </a>
+                    </h5>
+                </t>
+                <t t-set="card_body">
+                    <div class="row">
+                        <div t-if="event_registration.partner_id" class="col-12 col-md-6 mb-2 mb-md-0">
+                            <div class="row">
+                                <div class="col flex-grow-1 pr-3">
+                                    <p style="color:grey"><strong>Booked By:</strong> <span t-field="event_registration.partner_id.name" class="text-truncate"/></p>
+                                    <p style="color:grey"><strong>Attendee Name:</strong> <span t-field="event_registration.name" class="text-truncate"/></p>
+                                    <p style="color:grey"><strong>Attendee Email:</strong> <span t-field="event_registration.email" class="text-truncate"/></p>
+                                    <p style="color:grey"><strong>Attendee Phone:</strong> <span t-field="event_registration.phone" class="text-truncate"/></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="row">
+                                <div class="col flex-grow-1 pr-3">
+                                    <p style="color:grey"><strong>Event Ticket:</strong> <span t-field="event_registration.event_ticket_id" class="text-truncate"/></p>
+                                    <p style="color:grey"><strong>Registration Date:</strong> <span t-field="event_registration.date_open" class="text-truncate"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+            <div class="mt32">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="event_registration"/>
+                    <t t-set="token" t-value="event_registration.access_token"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+            </div>
         </t>
     </template>
 </odoo>

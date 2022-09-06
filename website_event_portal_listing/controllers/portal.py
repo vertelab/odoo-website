@@ -24,8 +24,8 @@ class PortalEvent(CustomerPortal):
 
     def _get_event_domain(self):
         partner = request.env.user.partner_id
-        return [('email', '=', partner.email)]
-        # return [('partner_id', '=', partner.commercial_partner_id.id)]
+        # return [('email', '=', partner.email)]
+        return [('partner_id', '=', partner.id)]
 
     @http.route(['/my/events', '/my/events/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_events(self, page=1, date_open=None, date_closed=None, sortby=None, filterby=None, **kw):
@@ -82,3 +82,21 @@ class PortalEvent(CustomerPortal):
             'filterby': filterby,
         })
         return request.render("website_event_portal_listing.portal_my_events", values)
+
+    def _event_get_page_view_values(self, event_registration, access_token, **kwargs):
+        values = {
+            'page_name': 'event_registration',
+            'event_registration': event_registration,
+        }
+        return self._get_page_view_values(
+            event_registration, access_token, values, 'my_event_reservation_history', False, **kwargs)
+
+    @http.route(['/event/<int:event_registration_id>'], type='http', auth="user", website=True)
+    def portal_my_event_reservations(self, event_registration_id=None, access_token=None, **kw):
+        try:
+            event_reg_sudo = self._document_check_access('event.registration', event_registration_id, access_token)
+        except (AccessError, MissingError):
+            return request.redirect('/my')
+
+        values = self._event_get_page_view_values(event_reg_sudo, access_token, **kw)
+        return request.render("website_event_portal_listing.event_my_event_registration", values)
