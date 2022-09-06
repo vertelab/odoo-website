@@ -66,6 +66,12 @@
 
     <template id="event_my_event_registration" name="My Event Reservation">
         <t t-call="portal.portal_layout">
+            <t t-set="o_portal_fullwidth_alert" groups="event.group_event_user">
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#model=event.registration&amp;id=%s&amp;view_type=form' % (event_registration.id)"/>
+                </t>
+            </t>
+
             <t t-call="portal.portal_record_layout">
                 <t t-set="card_header">
                     <h5 class="mb-0">
