@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0-20211230\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-07 06:43+0000\n"
-"PO-Revision-Date: 2022-09-07 06:43+0000\n"
+"POT-Creation-Date: 2022-09-07 09:03+0000\n"
+"PO-Revision-Date: 2022-09-07 09:03+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -121,6 +121,11 @@ msgid "Activity Type Icon"
 msgstr ""
 
 #. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Add to Calendar"
+msgstr ""
+
+#. module: website_event_portal_listing
 #: code:addons/website_event_portal_listing/controllers/portal.py:0
 #, python-format
 msgid "All"
@@ -148,6 +153,11 @@ msgid "Date"
 msgstr ""
 
 #. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Date &amp; Time"
+msgstr ""
+
+#. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__display_name
 msgid "Display Name"
 msgstr ""
@@ -161,6 +171,11 @@ msgstr ""
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__email_cc
 msgid "Email cc"
+msgstr ""
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "End -"
 msgstr ""
 
 #. module: website_event_portal_listing
@@ -185,6 +200,13 @@ msgid "Events"
 msgstr ""
 
 #. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid ""
+"Find out what people see and say about this event, and join the "
+"conversation."
+msgstr ""
+
+#. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_follower_ids
 msgid "Followers"
 msgstr ""
@@ -202,6 +224,16 @@ msgstr ""
 #. module: website_event_portal_listing
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Get the direction"
+msgstr ""
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Google"
 msgstr ""
 
 #. module: website_event_portal_listing
@@ -244,6 +276,11 @@ msgstr ""
 #. module: website_event_portal_listing
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__email_cc
 msgid "List of cc from incoming emails."
+msgstr ""
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Location"
 msgstr ""
 
 #. module: website_event_portal_listing
@@ -312,6 +349,11 @@ msgid "Number of unread messages"
 msgstr ""
 
 #. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Organizer"
+msgstr ""
+
+#. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__access_url
 msgid "Portal Access URL"
 msgstr ""
@@ -327,6 +369,11 @@ msgid "Responsible User"
 msgstr ""
 
 #. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "SHARE"
+msgstr ""
+
+#. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_has_sms_error
 msgid "SMS Delivery error"
 msgstr ""
@@ -334,6 +381,11 @@ msgstr ""
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__access_token
 msgid "Security Token"
+msgstr ""
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Start -"
 msgstr ""
 
 #. module: website_event_portal_listing
@@ -380,4 +432,9 @@ msgstr ""
 #. module: website_event_portal_listing
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__website_message_ids
 msgid "Website communication history"
+msgstr ""
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "iCal/Outlook"
 msgstr ""
