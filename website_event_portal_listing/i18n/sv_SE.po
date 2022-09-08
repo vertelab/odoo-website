@@ -6,71 +6,69 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0-20211230\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-07 06:43+0000\n"
-"PO-Revision-Date: 2022-09-07 09:27+0200\n"
+"POT-Creation-Date: 2022-09-07 08:57+0000\n"
+"PO-Revision-Date: 2022-09-07 08:57+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3\n"
-"Last-Translator: \n"
-"Language: sv\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
 
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid ""
-"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-o\" "
-"aria-label=\"Draft\" title=\"Draft\" role=\"img\"/><span class=\"d-none d-md-"
-"inline\"> Waiting for Confirmation</span></span>"
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-o\""
+" aria-label=\"Draft\" title=\"Draft\" role=\"img\"/><span class=\"d-none "
+"d-md-inline\"> Waiting for Confirmation</span></span>"
 msgstr ""
-"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-o\" "
-"aria-label=\"Draft\" title=\"Draft\" role=\"img\"/><span class=\"d-none d-md-"
-"inline\"> Väntar på bekräftelse</span></span>"
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-o\""
+" aria-label=\"Draft\" title=\"Draft\" role=\"img\"/><span class=\"d-none "
+"d-md-inline\"> Väntar på bekräftelse</span></span>"
 
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid ""
-"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-o\" "
-"aria-label=\"Reservation\" title=\"Reservation\" role=\"img\"/><span class="
-"\"d-none d-md-inline\"> Reservation</span></span>"
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-o\""
+" aria-label=\"Reservation\" title=\"Reservation\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Reservation</span></span>"
 msgstr ""
-"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-o\" "
-"aria-label=\"Reservation\" title=\"Reservation\" role=\"img\"/><span class="
-"\"d-none d-md-inline\"> Intresseanmälan</span></span>"
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-o\""
+" aria-label=\"Reservation\" title=\"Reservation\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Intresseanmälan</span></span>"
 
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid ""
-"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-check"
-"\" aria-label=\"Confirmed\" title=\"Confirmed\" role=\"img\"/><span class="
-"\"d-none d-md-inline\"> Confirmed</span></span>"
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Confirmed\" title=\"Confirmed\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Confirmed</span></span>"
 msgstr ""
-"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-check"
-"\" aria-label=\"Confirmed\" title=\"Confirmed\" role=\"img\"/><span class="
-"\"d-none d-md-inline\"> Bekräftad</span></span>"
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Confirmed\" title=\"Confirmed\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Bekräftad</span></span>"
 
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid ""
-"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-check"
-"\" aria-label=\"Done\" title=\"Done\" role=\"img\"/><span class=\"d-none d-"
-"md-inline\"> Done</span></span>"
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Done\" title=\"Done\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Done</span></span>"
 msgstr ""
-"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-check"
-"\" aria-label=\"Done\" title=\"Done\" role=\"img\"/><span class=\"d-none d-"
-"md-inline\"> Klar</span></span>"
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Done\" title=\"Done\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Klar</span></span>"
 
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid ""
-"<span class=\"badge badge-pill badge-warning\"><i class=\"fa fa-fw fa-remove"
-"\" aria-label=\"Cancelled\" title=\"Cancelled\" role=\"img\"/><span class="
-"\"d-none d-md-inline\"> Cancelled</span></span>"
+"<span class=\"badge badge-pill badge-warning\"><i class=\"fa fa-fw fa-"
+"remove\" aria-label=\"Cancelled\" title=\"Cancelled\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Cancelled</span></span>"
 msgstr ""
-"<span class=\"badge badge-pill badge-warning\"><i class=\"fa fa-fw fa-remove"
-"\" aria-label=\"Cancelled\" title=\"Cancelled\" role=\"img\"/><span class="
-"\"d-none d-md-inline\"> Avbruten</span></span>"
+"<span class=\"badge badge-pill badge-warning\"><i class=\"fa fa-fw fa-"
+"remove\" aria-label=\"Cancelled\" title=\"Cancelled\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Avbruten</span></span>"
 
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
@@ -110,7 +108,7 @@ msgstr "<strong>Registreringsdatum:</strong>"
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__access_warning
 msgid "Access warning"
-msgstr ""
+msgstr "Åtkomstvarning"
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_needaction
@@ -125,17 +123,22 @@ msgstr "Aktiviteter"
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_exception_decoration
 msgid "Activity Exception Decoration"
-msgstr ""
+msgstr "Dekoration för aktivitetsundantag"
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_state
 msgid "Activity State"
-msgstr ""
+msgstr "Aktivitetsstatus"
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_type_icon
 msgid "Activity Type Icon"
-msgstr ""
+msgstr "Aktivitetstypsikon"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Add to Calendar"
+msgstr "Lägg till i kalender"
 
 #. module: website_event_portal_listing
 #: code:addons/website_event_portal_listing/controllers/portal.py:0
@@ -165,9 +168,14 @@ msgid "Date"
 msgstr "Datum"
 
 #. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Date &amp; Time"
+msgstr "Datum &amp; Tid"
+
+#. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Visningsnamn"
 
 #. module: website_event_portal_listing
 #: code:addons/website_event_portal_listing/controllers/portal.py:0
@@ -179,6 +187,11 @@ msgstr "Förfallodatum"
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__email_cc
 msgid "Email cc"
 msgstr "Epost cc"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "End -"
+msgstr "Slut -"
 
 #. module: website_event_portal_listing
 #: code:addons/website_event_portal_listing/controllers/portal.py:0
@@ -202,6 +215,15 @@ msgid "Events"
 msgstr "Evenemang"
 
 #. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid ""
+"Find out what people see and say about this event, and join the "
+"conversation."
+msgstr ""
+"Upptäck vad folk säger om det här evenemanget och delta i "
+"konversationen."
+
+#. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_follower_ids
 msgid "Followers"
 msgstr "Följare"
@@ -209,16 +231,26 @@ msgstr "Följare"
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_channel_ids
 msgid "Followers (Channels)"
-msgstr ""
+msgstr "Följare (Kanaler)"
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_partner_ids
 msgid "Followers (Partners)"
-msgstr ""
+msgstr "Följare (kontakter)"
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Font awesomeikon t.ex fa-tasks"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Get the direction"
+msgstr "Vägbeskrivning"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Google"
 msgstr ""
 
 #. module: website_event_portal_listing
@@ -229,24 +261,25 @@ msgstr ""
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_exception_icon
 msgid "Icon"
-msgstr ""
+msgstr "Ikon"
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__activity_exception_icon
 msgid "Icon to indicate an exception activity."
-msgstr ""
+msgstr "Ikon för att indikera en undantagsaktivitet."
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__message_needaction
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__message_unread
 msgid "If checked, new messages require your attention."
 msgstr ""
+"Om den är markerad så finns det meddelanden som kräver din uppmärksamhet."
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__message_has_error
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
-msgstr ""
+msgstr "Om markerad har det uppstått leveransfel för vissa meddelanden."
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_is_follower
@@ -262,6 +295,11 @@ msgstr "Senast ändrad"
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__email_cc
 msgid "List of cc from incoming emails."
 msgstr "Lista av cc from inkommande epost."
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Location"
+msgstr "Plats"
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_main_attachment_id
@@ -286,7 +324,7 @@ msgstr "Min aktivitetstidsfrist"
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_home_events
 msgid "My Events"
-msgstr "Mina evenemang"
+msgstr "Mina Evenemang"
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_date_deadline
@@ -329,6 +367,11 @@ msgid "Number of unread messages"
 msgstr "Antal olästa meddelanden"
 
 #. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Organizer"
+msgstr "Organiserare"
+
+#. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__access_url
 msgid "Portal Access URL"
 msgstr "Portallåtkomst URL"
@@ -344,6 +387,11 @@ msgid "Responsible User"
 msgstr "Ansvarig användare"
 
 #. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "SHARE"
+msgstr "DELA"
+
+#. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_has_sms_error
 msgid "SMS Delivery error"
 msgstr "SMS leveransfel"
@@ -352,6 +400,11 @@ msgstr "SMS leveransfel"
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__access_token
 msgid "Security Token"
 msgstr ""
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Start -"
+msgstr "Start -"
 
 #. module: website_event_portal_listing
 #: code:addons/website_event_portal_listing/controllers/portal.py:0
@@ -381,7 +434,7 @@ msgstr "Det finns inga evenemang på ditt konto."
 #. module: website_event_portal_listing
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__activity_exception_decoration
 msgid "Type of the exception activity on record."
-msgstr ""
+msgstr "Typ av undantagsaktivitet i posten"
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_unread
@@ -391,7 +444,7 @@ msgstr "Olästa meddelanden"
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_unread_counter
 msgid "Unread Messages Counter"
-msgstr ""
+msgstr "Räknare olästa meddelanden"
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__website_message_ids
@@ -401,4 +454,9 @@ msgstr "Webbplatsmeddelanden"
 #. module: website_event_portal_listing
 #: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__website_message_ids
 msgid "Website communication history"
-msgstr "Webbplats kommunikationshistoria"
+msgstr "Webbplatsens kommunikationshistoria"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "iCal/Outlook"
+msgstr ""
