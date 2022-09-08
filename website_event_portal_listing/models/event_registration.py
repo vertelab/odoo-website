@@ -18,9 +18,10 @@ class EventRegistration(models.Model):
         if registrations._check_auto_confirmation():
             registrations.sudo().action_confirm()
 
-        vals = dict(ChainMap(*vals_list))
-        if vals.get('partner_id') or vals.get('attendee_partner_id'):
-            partner_ids = registrations.partner_id + registrations.attendee_partner_id
+        partner_ids = registrations.partner_id + registrations.attendee_partner_id + registrations.event_id.organizer_id
+
+        if partner_ids:
             registrations.message_subscribe(partner_ids=partner_ids.ids)
+            registrations.event_id.message_subscribe(partner_ids=partner_ids.ids)
 
         return registrations
