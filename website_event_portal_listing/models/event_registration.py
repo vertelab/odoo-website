@@ -10,7 +10,7 @@ from collections import ChainMap
 
 class EventRegistration(models.Model):
     _name = 'event.registration'
-    _inherit = ['portal.mixin', 'mail.thread.cc', 'mail.activity.mixin', 'event.registration']
+    _inherit = ['portal.mixin', 'mail.thread', 'mail.thread.cc', 'mail.activity.mixin', 'event.registration']
 
     @api.model_create_multi
     def create(self, vals_list):
