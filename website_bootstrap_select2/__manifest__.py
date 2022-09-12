@@ -24,7 +24,7 @@
     'version': '14.0.0.0.0',
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     'summary': 'Adds a select2 search field.',
-    'category': 'Productivity',
+    'category': 'Website',
     'description': """Due to a naming conflict all instances of select2 have been rebranded as select9.
 Manual can be found at https://select2.org.io/ https://select2.org/
 
