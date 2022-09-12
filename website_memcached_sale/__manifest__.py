@@ -24,7 +24,7 @@
     'version': '14.0.1.0.0',
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     'summary': 'Website acceleration for Sale using MemCached.',
-    'category': 'Technical',
+    'category': 'Website',
     "description": """
 Add mechanisms to cache rendered sale pages.
 This module depends on website_memcached.
