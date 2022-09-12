@@ -21,13 +21,17 @@
 
 from odoo import models, fields, api, _
 
+
 import logging
 # ~ _logger = logging.getLogger(__name__)
 
-class WebsiteMapInput(models.Model):
-    _name = 'website.map.input'
 
-    latitudeInput = fields.Char(string='Public Info')
-    longitudeInput = fields.Char(string='Public Info')
-    radiusInput = fields.Char(string='Public Info')
-    locationNameInput = fields.Char(string='Public Info')
+class WebsiteMapInput(models.Model):
+    _name = 'input.map.website'
+    
+    @api.model
+    def website_map_input(self):
+        latitudeInput = fields.Char(string='Latitude input')
+        longitudeInput = fields.Char(string='Longitude input')
+        radiusInput = fields.Char(string='Radius input')
+        locationNameInput = fields.Char(string='Location name input')

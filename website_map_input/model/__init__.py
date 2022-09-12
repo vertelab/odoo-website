@@ -1,1 +1,1 @@
-import * from website_map_input
+from . import website_map_input

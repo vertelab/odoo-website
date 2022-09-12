@@ -26,7 +26,10 @@
     'summary': 'Adds a select2 search field.',
     'category': 'Productivity',
     'description': """Due to a naming conflict all instances of select2 have been rebranded as select9.
-Manual can be found at https://select2.github.io/
+Manual can be found at https://select2.org.io/ https://select2.org/
+
+Select2 gives you a customizable select box with support for searching, tagging, remote data sets, 
+infinite scrolling, and many other highly used options.
 """,
     #'sequence': '1',
     'author': 'Vertel AB',
