@@ -27,9 +27,9 @@
     'summary': 'User can see events registered for.',
     'category': 'Website',
     "description": """
-        User can see activities from the portal.
-        14.0.1.3 - Removed 'Actions' from this module and moved to new module.
-        14.0.1.2 - Link to the activities document.
+    User can see activities from the portal.
+    14.0.1.3 - Removed 'Actions' from this module and moved to new module.
+    14.0.1.2 - Link to the activities document.
     """,
     #'sequence': '1',
     'author': 'Vertel AB',
