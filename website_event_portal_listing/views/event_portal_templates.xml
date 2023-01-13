@@ -39,7 +39,7 @@
                             <td><span t-field="event.date_open"/></td>
                             <td class='d-none d-md-table-cell'><span t-field="event.date_closed"/></td>
                             <td class="tx_status">
-                                <t t-if="event.state == 'posted'">
+                                <t t-if="event.state == 'draft'">
                                     <span class="badge badge-pill badge-info"><i class="fa fa-fw fa-clock-o" aria-label="Draft" title="Draft" role="img"></i><span class="d-none d-md-inline"> Waiting for Confirmation</span></span>
                                 </t>
                                 <t t-if="event.state == 'done'">
