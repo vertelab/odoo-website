@@ -26,7 +26,7 @@
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     "summary": "Only the right group will be able to use the website media.",
     "description": """
-        User with the right group will use the website media.
+    User with the right group will use the website media.
     """,
     'description': 'Help with e-services.',
     #'sequence': '1',

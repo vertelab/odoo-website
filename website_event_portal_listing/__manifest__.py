@@ -27,8 +27,8 @@
     'summary': 'User can see the events the user is registered for in My documents.',
     'category': 'Website',
     "description": """"
-        User can see the events the user is registered for in My documents. \n
-        v14.0.1.1 Added translation. \n
+    User can see the events the user is registered for in My documents. \n
+    v14.0.1.1 Added translation. \n
     """,
     # 'sequence': '1',
     'author': 'Vertel AB',

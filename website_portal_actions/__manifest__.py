@@ -26,7 +26,9 @@
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     'summary': 'User can see events registered for the portal.',
     'category': 'Website',
-    'description': 'User can see actions from the portal.',
+    'description': """
+    User can see actions from the portal.
+    """,
     #'sequence': '1',
     'author': 'Vertel AB',
     'website': 'https://vertel.se/apps/odoo-website/website_portal_actions',

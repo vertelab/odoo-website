@@ -23,9 +23,11 @@
     'name': 'Website: Toggle Record on Portal',
     'version': '14.0.0.0.0',
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
-    'summary': '',
+    'summary': 'Toggle Record on Portal',
     'category': 'Website',
-    'description': '',
+    'description': """
+    Toggle Record on Portal
+    """,
     #'sequence': '1',
     'author': 'Vertel AB',
     'website': 'https://vertel.se/apps/odoo-website/toggle_record_on_portal',

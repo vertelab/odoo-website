@@ -26,7 +26,9 @@
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     "summary": "Wizard to copy slide section with slides into selected slide.channel object.",
     'category': 'Website',
-    "description": """"Wizard to copy slide section with slides into selected slide.channel object.""",
+    "description": """"
+    Wizard to copy slide section with slides into selected slide.channel object.
+    """,
     #'sequence': '1',
     'author': 'Vertel AB',
     'website': 'https://vertel.se/apps/odoo-website/website_slide_copy',
