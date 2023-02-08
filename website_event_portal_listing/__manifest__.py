@@ -39,7 +39,7 @@
     'maintainer': 'Vertel AB',
     'repository': 'https://github.com/vertelab/odoo-website',
     "version": "14.0.1.1",
-    "depends": ['website_event', 'mail'],
+    'depends': ['website_event', 'mail'],
     "data": [
         'views/event_portal_templates.xml',
         'security/security.xml',
