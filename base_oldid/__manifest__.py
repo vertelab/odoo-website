@@ -36,7 +36,7 @@
     'contributor': 'Show old ID.',
     'maintainer': 'Vertel AB',
     'repository': 'https://github.com/vertelab/odoo-website',
-    "depends": ["product"],
+    'depends': ['product'],
     "data": [
         "views/res_partner_view.xml",
     ],
