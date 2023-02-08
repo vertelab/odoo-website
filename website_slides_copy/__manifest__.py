@@ -38,7 +38,7 @@
     'contributor': '',
     'maintainer': 'Vertel AB',
     'repository': 'https://github.com/vertelab/odoo-website',
-    "depends": ['website_slides'],
+    'depends': ['website_slides'],
     "data": [
         'security/ir.model.access.csv',
         'views/slide_channel_wizard.xml',
