@@ -12,7 +12,7 @@ class SaleOrder(CustomerPortal):
         values = super()._prepare_home_portal_values(counters)
         partner = request.env.user.partner_id
 
-        SaleOrder = request.env['sale.order']
+        SaleOrder = request.env['sale.order'].sudo()
         if 'quotation_count' in counters:
             values['quotation_count'] = SaleOrder.search_count([
                 ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
@@ -32,7 +32,7 @@ class SaleOrder(CustomerPortal):
     def portal_my_quotes(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
-        SaleOrder = request.env['sale.order']
+        SaleOrder = request.env['sale.order'].sudo()
 
         domain = [
             ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
@@ -83,7 +83,7 @@ class SaleOrder(CustomerPortal):
     def portal_my_orders(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
-        SaleOrder = request.env['sale.order']
+        SaleOrder = request.env['sale.order'].sudo()
 
         domain = [
             ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
