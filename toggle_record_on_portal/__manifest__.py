@@ -36,15 +36,7 @@
     'contributor': '',
     'maintainer': 'Vertel AB',
     'repository': 'https://github.com/vertelab/odoo-website',
-    "depends": [
-        "sale",
-        "account",
-        "event",
-        "project",
-        "hr_timesheet",
-        "skogsstyrelsen_translation",
-        "website_event_portal_listing"
-    ],
+    'depends': ['sale','account','event','project','hr_timesheet','website_event_portal_listing',],
     "data": [
         "views/project_task_view.xml",
         "views/sale_order_view.xml",

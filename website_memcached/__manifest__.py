@@ -104,7 +104,7 @@ Default are Database + Path + Context eg {db},{path},{context}
     Update Memcached config in Website Settings with one or more server tupples; [('server1',<port>),('server2',<port>)]
 
 """,
-    "depends": ["website"],
+    'depends': ['website'],
     "external_dependencies": {"python": ["pymemcache", "pyhashxx"]},
     "data": [
         "views/res_config_view.xml",

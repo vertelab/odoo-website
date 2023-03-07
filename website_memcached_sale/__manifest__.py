@@ -37,7 +37,7 @@ This module depends on website_memcached.
     'contributor': '',
     'maintainer': 'Vertel AB',
     'repository': 'https://github.com/vertelab/odoo-website',
-    "depends": ["website_memcached", "website_sale"],
+    'depends': ['website_memcached', 'website_sale'],
     "external_dependencies": {"python": ["pymemcache"]},
     "data": [
         "views/website_view.xml",
