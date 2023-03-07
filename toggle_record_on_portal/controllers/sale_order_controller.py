@@ -128,4 +128,3 @@ class SaleOrder(CustomerPortal):
             'sortby': sortby,
         })
         return request.render("sale.portal_my_orders", values)
-
