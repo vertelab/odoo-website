@@ -21,7 +21,7 @@
 # Part of Softhealer Technologies.
 
 {
-    'name': 'Website: Website Portal Access',
+    'name': 'Website: Portal Access',
     'version': '14.0.0.0.0',
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     'summary': 'Fixes portal access rights for user.',
