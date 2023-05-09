@@ -21,7 +21,7 @@
 # Part of Softhealer Technologies.
 
 {
-    'name': 'Website: Website MediaBank User Groups',
+    'name': 'Website: MediaBank User Groups',
     'version': '14.0.1.2',
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     "summary": "Only the right group will be able to use the website media.",
