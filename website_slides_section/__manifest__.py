@@ -20,7 +20,7 @@
 ##############################################################################
 
 {
-    'name': 'Website: Slide Section',
+    'name': 'Website: Slides Section',
     'version': '14.0.0.0.0',
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     'summary': 'Adding inverse to category_id / section',
@@ -30,7 +30,7 @@ Section is a computed field in standard. This module adds an inverse-function so
 """,
     #'sequence': '1',
     'author': 'Vertel AB',
-    'website': 'https://vertel.se/apps/odoo-website/website_slide_section',
+    'website': 'https://vertel.se/apps/odoo-website/website_slides_section',
     'images': ['static/description/banner.png'], # 560x280 px.
     'license': 'AGPL-3',
     'contributor': '',
