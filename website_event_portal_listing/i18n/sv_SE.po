@@ -192,7 +192,7 @@ msgstr "Anmälan"
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid "Event Start"
-msgstr "Evenemangsstart"
+msgstr "Startdatum"
 
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
@@ -353,7 +353,7 @@ msgstr "Organiserare"
 #. module: website_event_portal_listing
 #: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid "Registration Date"
-msgstr "Registreringstdatum"
+msgstr "Registreringsdatum"
 
 #. module: website_event_portal_listing
 #: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_user_id

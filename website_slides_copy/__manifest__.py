@@ -21,7 +21,7 @@
 # Part of Softhealer Technologies.
 
 {
-    'name': 'Website: Website Slide Copy',
+    'name': 'Website: Slide Copy',
     'version': '14.0.0.0.0',
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     "summary": "Wizard to copy slide section with slides into selected slide.channel object.",

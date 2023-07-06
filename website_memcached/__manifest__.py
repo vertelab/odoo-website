@@ -20,14 +20,14 @@
 ##############################################################################
 
 {
-    'name': 'Website: Website MemCached',
+    'name': 'Website: MemCached',
     'version': '14.0.1.0.0',
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     'summary': 'Website acceleration using memcached.',
     'category': 'Website',
     #'sequence': '1',
     'author': 'Vertel AB',
-    'website': 'https://vertel.se/apps/odoo-website/website_memcashed',
+    'website': 'https://vertel.se/apps/odoo-website/website_memcached',
     'images': ['static/description/banner.png'], # 560x280 px.
     'license': 'AGPL-3',
     'contributor': '',
