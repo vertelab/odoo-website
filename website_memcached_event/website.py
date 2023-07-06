@@ -38,7 +38,6 @@ class Event(models.Model):
         """Return a list of fields that should trigger an update of memcached."""
         return ['website_published', 'name', 'description', 'user_id', 'address_id', 'type', 'date_begin', 'date_end', 'date_tz', 'company_id', 'organizer_id']
     
-    @api.multi
     def write(self, values):
         for field in self.get_memcached_fields():
             if field in values:
