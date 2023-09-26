@@ -34,7 +34,7 @@ odoo.define('website_restaurant_menu_snippet.s_restaurant_menu_snippet_options',
             const filterProductCategories = this.$el.find("we-select[data-attribute-name='productCategoryId'] we-selection-items we-button");
             if (filterProductCategories.length > 0) {
                 this._setOptionValue('productCategoryId', 'all');
-                this._setOptionValue('numberOfRecords', 6);
+                this._setOptionValue('numberOfRecords', 16);
             }
             this.options.wysiwyg.odooEditor.observerActive();
         },

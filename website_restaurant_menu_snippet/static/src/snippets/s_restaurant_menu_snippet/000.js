@@ -92,39 +92,8 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
                     searchDomain.push(['pos_categ_id', 'child_of', parseInt(productCategoryId)]);
                 }
             }
-            return searchDomain;
-        },
-
-        _getCategorySearchDomain() {
-            const searchDomain = [];
-            let productCategoryId = this.$el.get(0).dataset.productCategoryId;
-            if (productCategoryId && productCategoryId !== 'all') {
-                if (productCategoryId === 'current') {
-                    productCategoryId = undefined;
-                    const productCategoryField = $("#product_details").find(".product_category_id");
-                    if (productCategoryField && productCategoryField.length) {
-                        productCategoryId = parseInt(productCategoryField[0].value);
-                    }
-                    if (!productCategoryId) {
-                        this.trigger_up('main_object_request', {
-                            callback: function (value) {
-                                if (value.model === "product.public.category") {
-                                    productCategoryId = value.id;
-                                }
-                            },
-                        });
-                    }
-                    if (!productCategoryId) {
-                        const productTemplateId = $("#product_details").find(".product_template_id");
-                        if (productTemplateId && productTemplateId.length) {
-                            searchDomain.push(['pos_categ_id.product_tmpl_ids', '=', parseInt(productTemplateId[0].value)]);
-                        }
-                    }
-                }
-                if (productCategoryId) {
-                    searchDomain.push(['pos_categ_id', 'child_of', parseInt(productCategoryId)]);
-                }
-            }
+            searchDomain.push(['available_in_pos', '=', true])
+            searchDomain.push(['available_in_pos', '=', true])
             return searchDomain;
         },
 
@@ -140,6 +109,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         async _fetchData() {
             if (this._isConfigComplete()) {
                 const nodeData = this.el.dataset;
+                console.log(this._getSearchDomain())
                 const filterFragments = await this._rpc({
                     'route': '/restaurant/snippet/filters',
                     'params': Object.assign({

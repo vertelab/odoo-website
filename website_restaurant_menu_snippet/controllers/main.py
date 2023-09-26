@@ -41,4 +41,4 @@ class Website(Home):
         dynamic_filter = request.env['website.snippet.filter'].sudo().search(
             [('id', '=', 1)] + request.website.website_domain()
         )
-        return dynamic_filter and dynamic_filter._render(template_key, limit, search_domain, with_sample) or []
+        return dynamic_filter and dynamic_filter._render_restaurant_data(template_key, limit, search_domain, with_sample) or []

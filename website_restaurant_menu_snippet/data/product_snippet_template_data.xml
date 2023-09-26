@@ -3,25 +3,46 @@
     <data>
         <template id="dynamic_filter_template_product_product_restaurant_menu_1" name="Restaurant Menu">
             <div class="s_restaurant_product_catalog oe_img_bg o_bg_img_center oe_custom_bg" data-vcss="001" style="width: 100%">
-                <div class="container s_allow_columns">
+                <div class="container">
                     <div class="row">
-                        <div class="col-lg-12 pt16 pb16">
-                            <ul class="list-unstyled my-3">
-                                <t t-foreach="records" t-as="data" data-thumb="/website_sale/static/src/img/snippets_options/product_borderless_2.svg">
-                                    <t t-set="record" t-value="data['_record']"/>
-                                    <div class="o_carousel_product_card card w-100 border-0 bg-transparent" t-att-data-add2cart-rerender="data.get('_add2cart_rerender')">
-                                        <input type="hidden" name="product-id" t-att-data-product-id="record.id"/>
+                        <t t-foreach="records" t-as="data" data-thumb="/website_sale/static/src/img/snippets_options/product_borderless_2.svg">
+                            <div class="col-lg-6">
+                                <ul class="list-unstyled my-3">
+                                    <strong t-esc="data['Category']"/>
 
-                                        <li class="s_restaurant_product_catalog_dish" data-name="Product">
-                                            <p class="s_restaurant_product_catalog_dish_title d-flex align-items-baseline pb-2">
-                                                <span t-esc="record.display_name" class="s_restaurant_product_catalog_dish_name s_restaurant_product_catalog_dish_dot_leaders"/>
-                                                <span t-esc="record._get_contextual_price_tax_selection()" class="s_restaurant_product_catalog_dish_price ms-auto ps-2" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                                            </p>
-                                        </li>
-                                    </div>
-                                </t>
-                            </ul>
-                        </div>
+                                    <t t-foreach="data['Items']" t-as="items">
+                                        <t t-set="record" t-value="items['_record']"/>
+
+                                        <div class="o_carousel_product_card card w-100 border-0 bg-transparent pt16 pb16" t-att-data-add2cart-rerender="data.get('_add2cart_rerender')">
+                                            <input type="hidden" name="product-id" t-att-data-product-id="record.id"/>
+                                            <li class="s_restaurant_product_catalog_dish" data-name="Product">
+                                                <p class="s_restaurant_product_catalog_dish_title d-flex align-items-baseline pb-2">
+                                                    <span t-esc="record.display_name" class="s_restaurant_product_catalog_dish_name s_restaurant_product_catalog_dish_dot_leaders"/>
+                                                    <span t-esc="record._get_contextual_price_tax_selection()" class="s_restaurant_product_catalog_dish_price ms-auto ps-2" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                </p>
+                                            </li>
+                                        </div>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+<!--                        <t t-foreach="records" t-as="data" data-thumb="/website_sale/static/src/img/snippets_options/product_borderless_2.svg">-->
+<!--                            <t t-set="record" t-value="data['_record']"/>-->
+<!--                            <div class="col-lg-6">-->
+<!--                                <ul class="list-unstyled my-3">-->
+<!--                                    <div class="o_carousel_product_card card w-100 border-0 bg-transparent" t-att-data-add2cart-rerender="data.get('_add2cart_rerender')">-->
+<!--                                        <input type="hidden" name="product-id" t-att-data-product-id="record.id"/>-->
+<!--                                        <li class="s_restaurant_product_catalog_dish" data-name="Product">-->
+<!--                                            <p class="s_restaurant_product_catalog_dish_title d-flex align-items-baseline pb-2">-->
+<!--                                                <span t-esc="record.display_name" class="s_restaurant_product_catalog_dish_name s_restaurant_product_catalog_dish_dot_leaders"/>-->
+<!--                                                <span t-esc="record._get_contextual_price_tax_selection()" class="s_restaurant_product_catalog_dish_price ms-auto ps-2" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>-->
+<!--                                            </p>-->
+<!--                                        </li>-->
+<!--                                    </div>-->
+<!--                                </ul>-->
+<!--                            </div>-->
+<!--                        </t>-->
                     </div>
                 </div>
             </div>

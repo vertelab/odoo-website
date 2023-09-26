@@ -2,7 +2,7 @@
 <odoo>
     <template id="s_restaurant_menu_snippet">
         <section class="s_restaurant_menu oe_img_bg o_bg_img_center oe_custom_bg pt48 pb32" style="background-image: url('/website_restaurant_menu_snippet/static/img/s_product_catalog_default_image.jpg');" data-vcss="001">
-            <div class="container"> <!-- s_allow_columns -->
+            <div class="container s_allow_columns">
                 <h2>Menu</h2>
                 <p>Add a menu description.</p>
                 <div class="dynamic_snippet_template"/>
