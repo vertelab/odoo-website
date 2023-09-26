@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <template id="common_screen_capture_script" inherit_id="web.assets_common" priority="1">
-        <!-- Customize javascript -->
-        <xpath expr="//script[last()]" position="after">
-            <script type="text/javascript" src="/odoo_screen_capture/static/src/js/html2pdf.bundle.min.10.1.js"/>
-        </xpath>
-    </template>
-</odoo>
