@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template name="Embed Code" id="s_embed_code">
+        <section class="s_embed_code text-center pt64 pb64">
+            <div class="s_embed_code_embedded container o_not_editable">
+                <!-- Keep the next line as a one-liner, this is to nicely show the
+                code in the ace editor when the user is replacing it. The `&#10;`
+                acts as line returns. -->
+                <div class="font-monospace pt8 bg-light">&#10;    Click on <b>"Edit"</b> in the right panel to replace this with your own HTML code&#10;</div>
+            </div>
+        </section>
+    </template>
+
+    <template id="custom_snippets_web_snippets" inherit_id="website.snippets" name="Custom   Snippets">
+        <xpath expr="//div[@id='snippet_structure']"  position="inside">
+            <div class="o_panel_body">
+                <t t-snippet="embed_code_snippet.s_embed_code" string="Embed Code" t-thumbnail="/embed_code_snippet/static/src/img/snippets_thumbs/s_embed_code.svg" t-forbid-sanitize="true"/>
+            </div>
+        </xpath>
+    </template>
+
+
+    <!-- Snippet's Options -->
+    <template id="s_embed_code_options" inherit_id="website.snippet_options">
+        <xpath expr="//div[@data-js='Box']" position="before">
+            <div data-js="EmbedCode" data-selector=".s_embed_code">
+                <we-row string="Code">
+                    <we-button data-edit-code="" data-no-preview="true"
+                            class="o_we_edit_code o_we_no_toggle o_we_bg_success active"
+                            title="Edit embedded code">Edit</we-button>
+                </we-row>
+                <we-button-group string="Alignment">
+                    <we-button class="fa fa-fw fa-align-left" title="Left" data-select-class="text-start"/>
+                    <we-button class="fa fa-fw fa-align-center" title="Center" data-select-class="text-center"/>
+                    <we-button class="fa fa-fw fa-align-right" title="Right" data-select-class="text-end"/>
+                </we-button-group>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="assets_snippet_s_dynamic_snippet_css_000" inherit_id="website.assets_frontend">
+        <xpath expr="//link[last()]" position="after">
+            <link rel="stylesheet" type="text/scss" href="/embed_code_snippet/static/src/snippets/s_embed_code/000.scss"/>
+        </xpath>
+    </template>
+
+    <template id="assets_snippet_s_dynamic_snippet_js_000" inherit_id="website.assets_frontend">
+        <xpath expr="//script[last()]" position="after">
+            <script type="text/javascript" src="/embed_code_snippet/static/src/snippets/s_embed_code/options.js"/>
+        </xpath>
+    </template>
+
+</odoo>
