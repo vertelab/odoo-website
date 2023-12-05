@@ -17,7 +17,6 @@ odoo.define('embed_code_snippet.s_embed_code_options', function (require) {
             '/web/static/lib/ace/ace.js',
             [
                 '/web/static/lib/ace/mode-xml.js',
-                '/web/static/lib/ace/mode-qweb.js',
             ]
         ],
 
