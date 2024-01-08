@@ -21,7 +21,7 @@
 
 {
     'name': 'Website: Restaurant Menu Snippet',
-    'version': '16.0.0.0.0',
+    'version': '17.0.0.0.0',
     'summary': 'Makes it easy to archive information.',
     'category': 'Website',
     'description': """
