@@ -19,12 +19,12 @@ class POSCategory(models.Model):
     product_tmpl_ids = fields.Many2many('product.template', string="Products",
                                         compute=_set_products, store=True)
 
-    # @api.depends('product_tmpl_ids')
-    # def _set_has_published_products(self):
-    #     for rec in self:
-    #         if rec.product_tmpl_ids and rec.product_tmpl_ids.filtered(lambda prod: prod.website_published):
-    #             rec.has_published_products = True
-    #         else:
-    #             rec.has_published_products = False
-    #
-    # has_published_products = fields.Boolean(compute=_set_has_published_products)
+    @api.depends('product_tmpl_ids')
+    def _set_has_published_products(self):
+        for rec in self:
+            if rec.product_tmpl_ids and rec.product_tmpl_ids.filtered(lambda prod: prod.website_published):
+                rec.has_published_products = True
+            else:
+                rec.has_published_products = False
+
+    has_published_products = fields.Boolean(compute=_set_has_published_products)

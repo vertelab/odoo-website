@@ -42,7 +42,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
 
 
     _fetchProductCategories: function () {
-        return this.orm.searchRead("pos.category", wUtils.websiteDomain(this), ["id", "name"]);
+        return this.orm.searchRead("pos.category", wUtils.websiteDomain(this), ["id", "name", "has_published_products"]);
     },
     /**
      *
@@ -59,9 +59,9 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
      * @param {HTMLElement} uiFragment
      */
     _renderProductCategorySelector: async function (uiFragment) {
-//        const AllPOSCategories = await this._fetchProductCategories();
-        const publishedCategories = await this._fetchProductCategories();
-//        const publishedCategories = AllPOSCategories.filter(x => x.has_published_products);
+        const AllPOSCategories = await this._fetchProductCategories();
+//        const publishedCategories = await this._fetchProductCategories();
+        const publishedCategories = AllPOSCategories.filter(x => x.has_published_products);
         for (let index in publishedCategories) {
             this.productCategories[publishedCategories[index].id] = publishedCategories[index];
         }
