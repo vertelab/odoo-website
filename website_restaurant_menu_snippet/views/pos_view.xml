@@ -7,6 +7,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//sheet/group[1]" position="after">
                     <group invisible="0">
+                        <field name="has_published_products"/>
                         <field name="product_tmpl_ids"/>
                     </group>
                 </xpath>
