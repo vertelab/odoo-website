@@ -37,12 +37,16 @@
     'data': [
         'views/snippets/s_restaurant_menu_snippet.xml',
         'data/product_snippet_template_data.xml',
+        'data/data.xml',
         'views/pos_view.xml',
     ],
     'assets': {
         'website.assets_wysiwyg': [
             'website_restaurant_menu_snippet/static/src/snippets/s_restaurant_menu_snippet/options.js',
         ],
+        'web.assets_frontend': [
+            'https://fonts.googleapis.com/css2?family=Satisfy&display=swap'
+        ]
     },
     'auto_install': False,
 }

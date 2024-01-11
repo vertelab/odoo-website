@@ -92,8 +92,8 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
                     searchDomain.push(['pos_categ_id', 'child_of', parseInt(productCategoryId)]);
                 }
             }
-            searchDomain.push(['available_in_pos', '=', true])
-            searchDomain.push(['available_in_pos', '=', true])
+//            searchDomain.push(['available_in_pos', '=', true])
+//            searchDomain.push(['available_in_pos', '=', true])
             return searchDomain;
         },
 

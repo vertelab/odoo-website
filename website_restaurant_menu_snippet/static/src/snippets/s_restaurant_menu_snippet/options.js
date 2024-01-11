@@ -12,21 +12,22 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
      init: function () {
         this._super.apply(this, arguments);
         this.modelNameFilter = 'product.product';
+
         this.productCategories = {};
     },
 
     async onBuilt() {
         this._super.apply(this, arguments);
 
-        this.$target[0].dataset['snippet'] = 's_dynamic_snippet_restaurant_menu';
+//        this.$target[0].dataset['snippet'] = 's_dynamic_snippet_restaurant_menu';
         await this._setOptionsDefaultValues();
 
-        const classList = [...this.$target[0].classList];
-        if (classList.includes('d-none') && !classList.some(className => className.match(/^d-(md|lg)-(?!none)/))) {
-            // Remove the 'd-none' of the old template if it is not related to
-            // the visible on mobile option.
-            this.$target[0].classList.remove('d-none');
-        }
+//        const classList = [...this.$target[0].classList];
+//        if (classList.includes('d-none') && !classList.some(className => className.match(/^d-(md|lg)-(?!none)/))) {
+//            // Remove the 'd-none' of the old template if it is not related to
+//            // the visible on mobile option.
+//            this.$target[0].classList.remove('d-none');
+//        }
         return this._refreshPublicWidgets();
     },
 
@@ -42,7 +43,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
 
 
     _fetchProductCategories: function () {
-        return this.orm.searchRead("pos.category", wUtils.websiteDomain(this), ["id", "name", "has_published_products"]);
+        return this.orm.searchRead("pos.category", wUtils.websiteDomain(this), ["id", "name"]);
     },
     /**
      *
@@ -59,9 +60,8 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
      * @param {HTMLElement} uiFragment
      */
     _renderProductCategorySelector: async function (uiFragment) {
-        const AllPOSCategories = await this._fetchProductCategories();
-//        const publishedCategories = await this._fetchProductCategories();
-        const publishedCategories = AllPOSCategories.filter(x => x.has_published_products);
+        const publishedCategories = await this._fetchProductCategories();
+
         for (let index in publishedCategories) {
             this.productCategories[publishedCategories[index].id] = publishedCategories[index];
         }

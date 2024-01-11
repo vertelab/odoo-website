@@ -1,5 +1,22 @@
+
+@font-face {
+    font-family: "Satisfy-Regular";
+    src: url("/website_restaurant_menu_snippet/static/src/fonts/Satisfy-Regular.ttf") format("truetype");
+    font-weight: normal;
+}
+
+
 .s_restaurant_product_catalog[data-vcss='001'] {
     background-color: 'red';
+
+    .s_restaurant_product_description {
+        font-size: 13px;
+        font-style: italic;
+    }
+
+    .s_restaurant_product_catalog_title {
+        font-family: 'Satisfy-Regular';
+    }
 
     .s_restaurant_product_catalog_dish {
         // Title

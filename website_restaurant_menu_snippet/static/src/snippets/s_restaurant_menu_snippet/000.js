@@ -96,11 +96,11 @@ const DynamicSnippet = publicWidget.Widget.extend({
                 }
             }
             if (productCategoryId) {
-                searchDomain.push(['pos_categ_ids', 'in', parseInt(productCategoryId)]);
+                searchDomain.push(['id', '=', parseInt(productCategoryId)]);
             }
         }
-        searchDomain.push(['available_in_pos', '=', true])
-        searchDomain.push(['available_in_pos', '=', true])
+//        searchDomain.push(['available_in_pos', '=', true])
+//        searchDomain.push(['available_in_pos', '=', true])
         return searchDomain;
     },
 

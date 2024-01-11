@@ -14,17 +14,7 @@ class POSCategory(models.Model):
     @api.depends('name')
     def _set_products(self):
         for rec in self:
-            rec.product_tmpl_ids = self.env['product.template'].search([('pos_categ_ids', 'in', rec.id)])
+            rec.product_tmpl_ids = self.env['product.product'].search([('pos_categ_ids', 'in', rec.id)])
 
-    product_tmpl_ids = fields.Many2many('product.template', string="Products",
+    product_tmpl_ids = fields.Many2many('product.product', string="Products",
                                         compute=_set_products, store=True)
-
-    @api.depends('product_tmpl_ids')
-    def _set_has_published_products(self):
-        for rec in self:
-            if rec.product_tmpl_ids and rec.product_tmpl_ids.filtered(lambda prod: prod.website_published):
-                rec.has_published_products = True
-            else:
-                rec.has_published_products = False
-
-    has_published_products = fields.Boolean(compute=_set_has_published_products)
