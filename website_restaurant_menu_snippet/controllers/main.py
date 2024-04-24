@@ -37,7 +37,7 @@ class Website(Home):
 
     @http.route('/restaurant/snippet/filters', type='json', auth='public', website=True)
     def custom_get_dynamic_filter(self, filter_id, template_key=None, limit=None, search_domain=None, with_sample=False):
-        template_key = "website_restaurant_menu_snippet.dynamic_filter_template_pos_category_restaurant_menu_1"
+        template_key = "website_restaurant_menu_snippet.dynamic_filter_template_pos_category_restaurant_menu_2"
         filter_template_id = request.env.ref('website_restaurant_menu_snippet.dynamic_filter_pos_categories')
         dynamic_filter = request.env['website.snippet.filter'].sudo().search(
             [('id', '=', filter_template_id.id)] + request.website.website_domain(), limit=1

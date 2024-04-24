@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="template" xml:space="preserve">
+    <t t-extend="website.slides.fullscreen.content">
+        <t t-jquery="t:last" t-operation="after">
+            <t t-if="widget.get('slide').category === 'scorm'">
+                <div class="player ratio ratio-16x9 embed-responsive-item h-100">
+                    <iframe t-att-src="widget.get('slide').embedUrl" class="o_wslides_iframe_viewer" allowFullScreen="true" frameborder="0"></iframe>
+                </div>
+            </t>
+        </t>
+    </t>
+</templates>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="slide_content_detailed_inherit_scorm" inherit_id="website_slides.slide_content_detailed">
+            <!-- <t t-set="allow_done_btn" position="attributes">
+                <attribute name="t-value">slide.slide_type in ['infographic', 'presentation', 'document', 'webpage', 'video', 'scorm'] and not slide.question_ids and not channel_progress[slide.id].get('completed') and slide.channel_id.is_member</attribute>
+            </t> -->
+            <div class="ratio ratio-16x9 embed-responsive-item mb8" position="before">
+                <div t-if="slide.slide_category == 'scorm'" id="scorm_content" t-att-slide_id="slide.id"
+                    class="ratio ratio-4x3 embed-responsive-item mb8" style="height: 600px;">
+                    <input type="hidden" id="iframe_src" t-att-value="slide.embed_code" t-att-data-slide-category="slide.slide_category"/>
+                </div>
+            </div>
+            <span t-attf-class="mx-2 my-1 badge #{'text-bg-success' if slide_completed else 'text-bg-info'}" position="attributes">
+                <attribute name="t-if">slide.question_ids and (slide_completed or quiz_karma_gain) or slide.slide_category == 'scorm'</attribute>
+            </span>
+        </template>
+        <template inherit_id="website_slides.slide_aside_training_category" id="slide_aside_training_category_inherited_scorm">
+            <span class="align-items-end" position="attributes">
+                <attribute name="t-if" separator=" or " add="aside_slide.slide_type == 'scorm'"/>
+            </span>
+        </template>
+        <template id="slide_icon_scorm" inherit_id="website_slides.slide_icon">
+            <i t-if="slide.slide_type == 'quiz'" position="after">
+                <i t-if="slide.slide_type == 'scorm'" t-att-class="'fa fa-file-archive-o %s' % icon_class"></i>
+            </i>
+        </template>
+        <template id="slide_fullscreen_sidebar_category_scorm_inherit" inherit_id="website_slides.slide_fullscreen_sidebar_category">
+            <li t-attf-class="o_wslides_fs_sidebar_list_item d-flex py-1 #{'active' if slide.id == current_slide.id else ''}" position="attributes">
+                <attribute name="t-att-data-embed-code">slide.embed_code if slide.slide_category in ['video', 'document', 'infographic','scorm'] else False</attribute>
+            </li>
+        </template>
+    </data>
+</odoo>

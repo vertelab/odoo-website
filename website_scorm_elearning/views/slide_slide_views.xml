@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_slide_slide_form_inherit_scorm" model="ir.ui.view">
+            <field name="name">slide.slide.form</field>
+            <field name="model">slide.slide</field>
+            <field name="inherit_id" ref="website_slides.view_slide_slide_form"/>
+            <field name="arch" type="xml">
+                <field name="document_binary_content" position="after">
+                    <field name="scorm_version" attrs="{'invisible': [('slide_category', '!=', 'scorm')], 'required':[('slide_category', '=', 'scorm')]}"/>
+                    <field name="scorm_data" widget="many2many_binary" attrs="{'invisible': [('slide_category', '!=', 'scorm')]}"/>
+                    <field name="filename" attrs="{'invisible': [('slide_category', '!=', 'scorm')]}" string="File Path"/>
+                    <field name="scorm_passed_xp" attrs="{'invisible': [('slide_category', '!=', 'scorm')], 'required':[('slide_category', '=', 'scorm')]}"/>
+                    <field name="scorm_completed_xp" attrs="{'invisible': [('slide_category', '!=', 'scorm')], 'required':[('slide_category', '=', 'scorm')]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
