@@ -1,15 +1,11 @@
 <odoo>
-    <template id="website_description" name="Portal Template">
-        <t t-out="qweb"/>
-        <div class="oe_structure o_editable o_dirty" id="oe_structure_portal_department_header" contenteditable="true">
-        </div>
-    </template>
-
-    <template id="portal_my_home" inherit_id="portal.portal_my_home" name="My Portal">
+    <template id="portal_my_home" inherit_id="portal.portal_my_home" name="Department Header - Portal">
         <xpath expr="//div[hasclass('o_portal_my_home')]/div[@id='oe_structure_portal_my_home_1']" position="replace">
+            <div class="alert alert-info mt16 css_non_editable_mode_hidden o_not_editable" role="status">
+                Only members of the <strong><t t-esc="env.user.employee_id.department_id.name"/></strong> department,
+                will see the design below.
+            </div>
             <div itemprop="department_header" class="oe_structure o_editable mt16" t-field="env.user.department_header"/>
-
-<!--            <div t-out="request.env['hr.department'].render_from_field('website_portal_department.website_description', env.user.department_header, env.user)"/>-->
         </xpath>
     </template>
 </odoo>

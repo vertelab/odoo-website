@@ -7,7 +7,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//page[last()]" position="after">
                     <page string="Portal Design" name="user_portal_design">
-                        <field name="department_header" string="View Architecture" widget="code" options="{'mode': 'xml'}"/>
+                        <field name="department_header" string="View Architecture" widget="code" options="{'mode': 'xml'}" invisible="1"/>
                     </page>
                 </xpath>
             </field>
