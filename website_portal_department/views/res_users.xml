@@ -6,8 +6,8 @@
             <field name="inherit_id" ref="base.view_users_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//page[last()]" position="after">
-                    <page string="Portal Design" name="user_portal_design">
-                        <field name="department_header" string="View Architecture" widget="code" options="{'mode': 'xml'}" invisible="1"/>
+                    <page string="Portal Design" name="user_portal_design" invisible="1">
+                        <field name="department_header" string="View Architecture" widget="code" options="{'mode': 'xml'}"/>
                     </page>
                 </xpath>
             </field>
