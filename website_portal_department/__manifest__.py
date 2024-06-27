@@ -33,7 +33,7 @@
     'contributor': '',
     'maintainer': 'Vertel AB',
     'repository': 'https://github.com/vertelab/odoo-website',
-    'depends': ['portal', 'hr'],
+    'depends': ['portal', 'hr', 'website'],
     'data': [
         'views/hr_department.xml',
         'views/res_users.xml',

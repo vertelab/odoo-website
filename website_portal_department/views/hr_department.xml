@@ -5,8 +5,17 @@
             <field name="model">hr.department</field>
             <field name="inherit_id" ref="hr.view_department_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//sheet/div[hasclass('oe_button_box')]" position="inside">
+                    <div class="oe_button_box" name="button_box" groups="base.group_user">
+                        <field name="website_url" invisible="1"/>
+                        <field name="is_published" widget="website_redirect_button"/>
+                    </div>
+                </xpath>
+                <field name="color" position="after">
+                    <field name="website_id" invisible="1"/>
+                </field>
                 <xpath expr="//group[1]" position="after">
-                    <field name="department_header" string="View Architecture" widget="code" options="{'mode': 'xml'}" invisible="1"/>
+                    <field name="department_header" string="View Architecture" widget="code" options="{'mode': 'xml'}" invisible="0"/>
                 </xpath>
             </field>
         </record>

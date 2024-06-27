@@ -8,4 +8,32 @@
             <div itemprop="department_header" class="oe_structure o_editable mt16" t-field="env.user.department_header"/>
         </xpath>
     </template>
+
+    <!-- Template to edit the department template with the website editor -->
+    <template id="dept_template" name="Department Template">
+        <t t-call="website.layout">
+            <body>
+                <t t-set="o_portal_fullwidth_alert">
+                    <t t-call="portal.portal_back_in_edit_mode">
+                        <t t-set="backend_url" t-value="'/web#model=%s&amp;id=%s&amp;action=%s&amp;view_type=form' % (hr_department._name, hr_department.id, request.env.ref('hr.hr_department_tree_action').id)"/>
+                        <t t-set="custom_html">This is a preview of the <strong><t t-esc="hr_department.name"/></strong> department portal template.</t>
+                    </t>
+                </t>
+                <div class="container o_sale_order">
+                    <div class="row mt16 mb32">
+                        <div class="col-lg-12 ms-auto">
+                            <div class="alert alert-info text-center" t-ignore="True" role="status">
+                                <p>
+                                    <strong>Template Header:</strong> this content
+                                    will appear to all employees in the <strong><t t-esc="hr_department.name"/></strong> department.
+                                </p>
+                            </div>
+                            <div itemprop="department_header" class="oe_structure o_editable mt16" t-field="hr_department.department_header"/>
+                        </div>
+                    </div>
+                </div>
+            </body>
+        </t>
+    </template>
+
 </odoo>
