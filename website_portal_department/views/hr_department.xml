@@ -15,7 +15,7 @@
                     <field name="website_id" invisible="1"/>
                 </field>
                 <xpath expr="//group[1]" position="after">
-                    <field name="department_header" string="View Architecture" widget="code" options="{'mode': 'xml'}" invisible="0"/>
+                    <field name="department_header" string="View Architecture" widget="code" options="{'mode': 'xml'}" invisible="1"/>
                 </xpath>
             </field>
         </record>
