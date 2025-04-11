@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    Odoo SA, Open Source Management Solution, third party addon
-#    Copyright (C) 2022- Vertel AB (<https://vertel.se>).
+#    Copyright (C) 2024- Vertel AB (<https://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -21,11 +21,11 @@
 
 {
     'name': 'Website: Restaurant Menu Snippet',
-    'version': '17.0.0.0.0',
+    'version': '0.1',
     'summary': 'Makes it easy to archive information.',
     'category': 'Website',
     'description': """
-        Use Pos category to sort the meny.
+
     """,
     'author': 'Vertel AB',
     'website': 'https://vertel.se/apps/odoo-website/website_restaurant_menu_snippet',
