@@ -33,7 +33,7 @@
     'contributor': '',
     'maintainer': 'Vertel AB',
     'repository': 'https://github.com/vertelab/odoo-website',
-    'depends': ['website', 'point_of_sale', 'pos_restaurant'],
+    'depends': ['website', 'point_of_sale', 'pos_restaurant', 'website_sale'],
     'data': [
         'views/snippets/s_restaurant_menu_snippet.xml',
         'data/product_snippet_template_data.xml',

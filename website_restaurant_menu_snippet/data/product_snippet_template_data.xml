@@ -16,7 +16,7 @@
                                             <li class="s_restaurant_product_catalog_dish" data-name="Product">
                                                 <p class="s_restaurant_product_catalog_dish_title d-flex align-items-baseline pb-2">
                                                     <span t-esc="product.display_name" class="s_restaurant_product_catalog_dish_name s_restaurant_product_catalog_dish_dot_leaders"/>
-                                                    <span t-esc="product._get_contextual_price_tax_selection()" class="s_restaurant_product_catalog_dish_price ms-auto ps-2" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                    <span t-esc="product._get_contextual_price_tax_selection()" class="s_restaurant_product_catalog_dish_price ms-auto ps-2" t-options="{'widget': 'monetary', 'display_currency': website.company_id.currency_id}"/>
                                                 </p>
                                             </li>
                                             <t t-if="product.description_self_order">
@@ -56,7 +56,7 @@
                                                                 <h4 t-esc="product.display_name" class="s_restaurant_product_catalog_title s_restaurant_product_catalog_dish_dot_leaders"/><br/>
                                                                 <p class="s_restaurant_product_description"  t-esc="product.description_self_order"/>
                                                                 <p><strong>
-                                                                    <span t-esc="product._get_contextual_price_tax_selection()" class="s_restaurant_product_catalog_dish_price ms-auto ps-2" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                                    <span t-esc="product._get_contextual_price_tax_selection()" class="s_restaurant_product_catalog_dish_price ms-auto ps-2" t-options="{'widget': 'monetary', 'display_currency': website.company_id.currency_id}"/>
                                                                 </strong><br/></p>
                                                             </div>
                                                         </div>
