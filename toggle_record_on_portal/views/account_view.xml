@@ -14,7 +14,7 @@
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_out_invoice_tree"/>
             <field name="arch" type="xml">
-                <field name="payment_state" position="after">
+                <field name="move_type" position="before">
                     <field name="show_on_customer_portal"/>
                 </field>
             </field>

@@ -22,7 +22,7 @@
 
 {
     'name': 'Website: Event Portal Listing',
-    'version': '14.0.1.1.0',
+    'version': '1.1',
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     'summary': 'User can see the events the user is registered for in My documents.',
     'category': 'Website',
@@ -38,7 +38,6 @@
     'contributor': '',
     'maintainer': 'Vertel AB',
     'repository': 'https://github.com/vertelab/odoo-website',
-    "version": "14.0.1.1",
     'depends': ['website_event', 'mail'],
     "data": [
         'views/event_portal_templates.xml',
