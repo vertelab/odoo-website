@@ -45,9 +45,10 @@
             'website_restaurant_menu_snippet/static/src/snippets/s_restaurant_menu_snippet/options.js',
         ],
         'web.assets_frontend': [
-            'https://fonts.googleapis.com/css2?family=Satisfy&display=swap'
-        ]
+            'https://fonts.googleapis.com/css2?family=Satisfy&display=swap',
+        ],
     },
+    
     'auto_install': False,
 }
 # vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:

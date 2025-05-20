@@ -20,10 +20,12 @@ class WebsiteSnippetFilter(models.Model):
 
     @api.model
     def _get_website_currency(self):
+        _logger.info("_get_website_currency körs")
         pricelist = self.env['website'].get_current_website().get_current_pricelist()
         return pricelist.currency_id
 
     def _render_restaurant_data(self, template_key, limit, search_domain=None, with_sample=False):
+        _logger.info("_rende_restaurant_data körs")
         """Renders the website dynamic snippet items"""
         self.ensure_one()
         assert '.dynamic_filter_template_' in template_key, _(
@@ -49,6 +51,7 @@ class WebsiteSnippetFilter(models.Model):
                 html.fromstring('<root>%s</root>' % str(content)).getchildren()]
 
     def _prepare_pos_category_values(self, limit=None, search_domain=None):
+        _logger.info("_prepare_pos_category_values körs")
         """Gets the data and returns it the right format for render."""
         self.ensure_one()
 

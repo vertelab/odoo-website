@@ -4,6 +4,7 @@ import publicWidget from "@web/legacy/js/public/public_widget";
 import { uniqueId } from "@web/core/utils/functions";
 import { renderToString } from "@web/core/utils/render";
 import { listenSizeChange, utils as uiUtils } from "@web/core/ui/ui_service";
+import { rpc } from "@web/core/network/rpc";
 
 import { markup } from "@odoo/owl";
 
@@ -18,6 +19,7 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
     init: function () {
+        console.log("000.js: init")
         this._super.apply(this, arguments);
 
         this.data = [];
@@ -26,10 +28,10 @@ const DynamicSnippet = publicWidget.Widget.extend({
         this.unique_id = uniqueId("s_dynamic_restaurant_snippet_");
         this.template_key = 's_dynamic_restaurant_snippet';
 
-        this.rpc = this.bindService("rpc");
     },
 
     willStart: function () {
+        console.log("000.js: willStart")
         return this._super.apply(this, arguments).then(
             () => Promise.all([
                 this._fetchData(),
@@ -38,6 +40,7 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
     start: function () {
+        console.log("000.js: start")
         return this._super.apply(this, arguments)
             .then(() => {
                 this._setupSizeChangedManagement(true);
@@ -48,6 +51,7 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
     destroy: function () {
+        console.log("000.js: destroy")
         this.options.wysiwyg && this.options.wysiwyg.odooEditor.observerUnactive();
         this._toggleVisibility(false);
         this._setupSizeChangedManagement(false);
@@ -57,6 +61,7 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
     _clearContent: function () {
+        console.log("000.js: _clearContent")
         const $templateArea = this.$el.find('.dynamic_snippet_template');
         this.trigger_up('widgets_stop_request', {
             $target: $templateArea,
@@ -65,10 +70,12 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
     _isConfigComplete: function () {
+        console.log("000.js: _isConfigComplete")
         return this.$el.get(0).dataset.productCategoryId !== undefined && this.$el.get(0).dataset.numberOfRecords !== undefined;
     },
 
      _getCategorySearchDomain() {
+        console.log("000.js: _getCategorySearchDomain")
         const searchDomain = [];
         let productCategoryId = this.$el.get(0).dataset.productCategoryId;
         if (productCategoryId && productCategoryId !== 'all') {
@@ -105,26 +112,30 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
      _getSearchDomain: function () {
+        console.log("000.js: _getSearhDomain")
         const searchDomain = this._getCategorySearchDomain();
         return searchDomain;
     },
 
     _getRpcParameters: function () {
+        console.log("000.js: _getRpcParameters")
         return {};
     },
 
     async _fetchData() {
+        console.log("000.js: _fetchData")
         if (this._isConfigComplete()) {
             const nodeData = this.el.dataset;
-            const filterFragments = await this.rpc(
+            const filterFragments = await rpc(
                 '/restaurant/snippet/filters',
-                Object.assign({
+                {
                     'filter_id': parseInt(nodeData.filterId),
                     'template_key': nodeData.templateKey,
                     'limit': parseInt(nodeData.numberOfRecords),
                     'search_domain': this._getSearchDomain(),
                     'with_sample': this.editableMode,
-                }, this._getRpcParameters())
+                    ...this._getRpcParameters(),
+                }
             );
             this.data = filterFragments.map(markup);
         } else {
@@ -133,6 +144,7 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
     _prepareContent: function () {
+        console.log("000.js: _prepareContent")
         this.renderedContent = renderToString(
             this.template_key,
             this._getQWebRenderOptions()
@@ -140,6 +152,7 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
      _getQWebRenderOptions: function () {
+        console.log("000.js: _getQWebRenderOptions")
         const dataset = this.el.dataset;
         const numberOfRecords = parseInt(dataset.numberOfRecords);
         let numberOfElements;
@@ -158,6 +171,7 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
     _render: function () {
+        console.log("000.js: _render")
         if (this.data.length > 0 || this.editableMode) {
             this.$el.removeClass('o_dynamic_empty');
             this._prepareContent();
@@ -178,6 +192,7 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
     _renderContent: function () {
+        console.log("000.js: _renderContent")
         const $templateArea = this.$el.find('.dynamic_snippet_template');
         this.trigger_up('widgets_stop_request', {
             $target: $templateArea,
@@ -190,6 +205,7 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
     _setupSizeChangedManagement: function (enable) {
+        console.log("000.js: _setupSizeChangedManagement")
         if (enable === true) {
             this.removeSizeListener = listenSizeChange(this._onSizeChanged.bind(this));
         } else {
@@ -199,15 +215,18 @@ const DynamicSnippet = publicWidget.Widget.extend({
     },
 
     _toggleVisibility: function (visible) {
+        console.log("000.js: _toggleVisibility")
         this.$el.toggleClass('o_dynamic_empty', !visible);
     },
 
 
     _onCallToAction: function (ev) {
+        console.log("000.js: _onCallToAction")
         window.location = $(ev.currentTarget).attr('data-url');
     },
 
     _onSizeChanged: function () {
+        console.log("000.js: init")
         if (this.isDesplayedAsMobile !== uiUtils.isSmall()) {
             this.isDesplayedAsMobile = uiUtils.isSmall();
             this._render();

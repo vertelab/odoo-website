@@ -29,13 +29,14 @@ from odoo.addons.portal.controllers.web import Home
 from odoo.addons.web.controllers.binary import Binary
 from odoo.addons.website.tools import get_base_domain
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class Website(Home):
 
     @http.route('/restaurant/snippet/filters', type='json', auth='public', website=True)
     def custom_get_dynamic_filter(self, filter_id, template_key=None, limit=None, search_domain=None, with_sample=False):
+        _logger.info("custom  körs")
         template_key = "website_restaurant_menu_snippet.dynamic_filter_template_pos_category_restaurant_menu_2"
         filter_template_id = request.env.ref('website_restaurant_menu_snippet.dynamic_filter_pos_categories')
         dynamic_filter = request.env['website.snippet.filter'].sudo().search(

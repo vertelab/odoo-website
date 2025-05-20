@@ -13,6 +13,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         disabledInEditableMode: false,
 
         init: function () {
+            console.log("001.js: init")
             this._super.apply(this, arguments);
 
             this.data = [];
@@ -23,6 +24,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
         willStart: function () {
+            console.log("001.js: willStart")
             return this._super.apply(this, arguments).then(
                 () => Promise.all([
                     this._fetchData(),
@@ -31,6 +33,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
         start: function () {
+            console.log("001.js: start")
             return this._super.apply(this, arguments)
                 .then(() => {
                     this._setupSizeChangedManagement(true);
@@ -41,6 +44,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
         destroy: function () {
+            console.log("001.js: destroy")
             this.options.wysiwyg && this.options.wysiwyg.odooEditor.observerUnactive();
             this._toggleVisibility(false);
             this._setupSizeChangedManagement(false);
@@ -50,6 +54,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
         _clearContent: function () {
+            console.log("001.js: _clearContent")
             const $templateArea = this.$el.find('.dynamic_snippet_template');
             this.trigger_up('widgets_stop_request', {
                 $target: $templateArea,
@@ -58,10 +63,12 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
         _isConfigComplete: function () {
+            console.log("001.js: _isConfigComplete")
             return this.$el.get(0).dataset.productCategoryId !== undefined && this.$el.get(0).dataset.numberOfRecords !== undefined;
         },
 
         _getCategorySearchDomain() {
+            console.log("001.js: _getCategorySearchDomain")
             const searchDomain = [];
             let productCategoryId = this.$el.get(0).dataset.productCategoryId;
             if (productCategoryId && productCategoryId !== 'all') {
@@ -98,15 +105,18 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
         _getSearchDomain: function () {
+            console.log("001.js: _getSearchDomain")
             const searchDomain = this._getCategorySearchDomain();
             return searchDomain;
         },
 
         _getRpcParameters: function () {
+            console.log("001.js: _getRpcParameters")
             return {};
         },
 
         async _fetchData() {
+            console.log("001.js: _fetchData")
             if (this._isConfigComplete()) {
                 const nodeData = this.el.dataset;
                 console.log(this._getSearchDomain())
@@ -130,6 +140,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
         _prepareContent: function () {
+            console.log("001.js: _prepareContent")
             this.renderedContent = core.qweb.render(
                 this.template_key,
                 this._getQWebRenderOptions()
@@ -137,6 +148,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
          _getQWebRenderOptions: function () {
+            console.log("001.js: _getQWebRenderOptions")
             const dataset = this.$target[0].dataset;
             const numberOfRecords = parseInt(dataset.numberOfRecords);
             let numberOfElements;
@@ -155,6 +167,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
         _render: function () {
+            console.log("001.js: _redner")
             if (this.data.length > 0 || this.editableMode) {
                 this.$el.removeClass('o_dynamic_empty');
                 this._prepareContent();
@@ -175,6 +188,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
         _renderContent: function () {
+            console.log("001.js: _renderContent")
             const $templateArea = this.$el.find('.dynamic_snippet_template');
             this.trigger_up('widgets_stop_request', {
                 $target: $templateArea,
@@ -187,6 +201,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
         _setupSizeChangedManagement: function (enable) {
+            console.log("001.js: _setupSizeChangedManagement")
             if (enable === true) {
                 config.device.bus.on('size_changed', this, this._onSizeChanged);
             } else {
@@ -195,11 +210,13 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
         },
 
         _toggleVisibility: function (visible) {
+            console.log("001.js: _toggleVisibility")
             this.$el.toggleClass('o_dynamic_empty', !visible);
         },
 
 
         _onSizeChanged: function (size) {
+            console.log("001.js: _onSizeChanged")
             if (this.isDesplayedAsMobile !== config.device.isMobile) {
                 this.isDesplayedAsMobile = config.device.isMobile;
                 this._render();

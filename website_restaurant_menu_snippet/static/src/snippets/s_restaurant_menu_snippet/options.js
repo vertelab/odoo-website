@@ -1,7 +1,7 @@
 /** @odoo-module **/
 import options from '@web_editor/js/editor/snippets.options';
 //import core from 'web.core';
-import { jsonrpc } from "@web/core/network/rpc_service";
+import { rpc } from "@web/core/network/rpc";
 import s_dynamic_snippet_carousel_options from "@website/snippets/s_dynamic_snippet_carousel/options";
 import wUtils from "@website/js/utils";
 
@@ -10,6 +10,7 @@ import wUtils from "@website/js/utils";
 const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
 
      init: function () {
+        console.log("options.js: init")
         this._super.apply(this, arguments);
         this.modelNameFilter = 'product.product';
 
@@ -17,6 +18,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
     },
 
     async onBuilt() {
+        console.log("options.js: onBuilt")
         this._super.apply(this, arguments);
 
 //        this.$target[0].dataset['snippet'] = 's_dynamic_snippet_restaurant_menu';
@@ -32,6 +34,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
     },
 
     async _setOptionsDefaultValues() {
+        console.log("options.js: _setOptionsDefaultValues")
         this.options.wysiwyg.odooEditor.observerUnactive();
         const filterProductCategories = this.$el.find("we-select[data-attribute-name='productCategoryId'] we-selection-items we-button");
         if (filterProductCategories.length > 0) {
@@ -43,6 +46,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
 
 
     _fetchProductCategories: function () {
+        console.log("options.js: _fetchProductCategories")
         return this.orm.searchRead("pos.category", wUtils.websiteDomain(this), ["id", "name"]);
     },
     /**
@@ -51,6 +55,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
      * @private
      */
     _renderCustomXML: async function (uiFragment) {
+        console.log("options.js: _renderCustomXML")
         await this._super.apply(this, arguments);
         await this._renderProductCategorySelector(uiFragment);
     },
@@ -60,6 +65,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
      * @param {HTMLElement} uiFragment
      */
     _renderProductCategorySelector: async function (uiFragment) {
+        console.log("options.js: _renderProductCategorySelector")
         const publishedCategories = await this._fetchProductCategories();
 
         for (let index in publishedCategories) {
@@ -70,6 +76,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
     },
 
     _renderSelectUserValueWidgetButtons: async function (selectUserValueWidgetElement, data) {
+        console.log("options.js: _renderSelectUserValueWidgetButtons")
         for (let id in data) {
             const button = document.createElement('we-button');
             button.dataset.selectDataAttribute = id;
@@ -83,6 +90,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
     },
 
     _setOptionValue: function (optionName, value) {
+        console.log("options.js: init")
         if (this.$target.get(0).dataset[optionName] === undefined || this.isOptionDefault[optionName]) {
             this.$target.get(0).dataset[optionName] = value;
         }

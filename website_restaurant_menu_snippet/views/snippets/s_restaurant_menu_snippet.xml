@@ -2,7 +2,13 @@
 <odoo>
 
     <template id="s_restaurant_menu_snippet_template">
-        <section t-att-data-snippet="snippet_name" class="s_restaurant_menu oe_img_bg o_bg_img_center oe_custom_bg pt48 pb32" style="background-image: url('/website_restaurant_menu_snippet/static/img/s_product_catalog_default_image.jpg');" data-vcss="001">
+        <section t-att-data-snippet="snippet_name"
+                 t-att-data-filter-id="env.ref('website_restaurant_menu_snippet.dynamic_filter_pos_categories').id"
+                 t-att-data-template-key="'dynamic_filter_template_pos_category_restaurant_menu_2'"
+                 data-number-of-records="16"
+                 class="s_restaurant_menu oe_img_bg o_bg_img_center oe_custom_bg pt48 pb32"
+                 style="background-image: url('/website_restaurant_menu_snippet/static/img/s_product_catalog_default_image.jpg');"
+                 data-vcss="001">
             <div class="container s_allow_columns">
                 <h2>Menu</h2>
 <!--                <p>Add a menu description.</p>-->
@@ -39,7 +45,7 @@
 
     <template id="snippets" inherit_id="website.snippets" name="restaurant snippets">
         <xpath expr="//snippets[@id='snippet_content']//t[@t-snippet][last()]" position="after">
-            <t t-snippet="website.website.avdelare_fancy_guld_f0e22d3781c64180b8bff7fc0a118493" string="Avdelare Fancy Guld" group="custom" t-thumbnail="/website/static/src/img/snippets_thumbs/s_text_block.svg"/>
+            <t t-snippet="website_restaurant_menu_snippet.s_restaurant_menu_snippet" string="Restaurant Menu" t-thumbnail="/website/static/src/img/snippets_thumbs/s_text_block.svg"/>
         </xpath>
     </template>
 
