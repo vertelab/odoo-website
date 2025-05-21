@@ -2,7 +2,8 @@
 <odoo>
 
     <template id="s_restaurant_menu_snippet_template">
-        <section t-att-data-snippet="snippet_name"
+        <section data-js="dynamic_restaurant_menu_snippet" 
+                 t-att-data-snippet="snippet_name"
                  t-att-data-filter-id="env.ref('website_restaurant_menu_snippet.dynamic_filter_pos_categories').id"
                  t-att-data-template-key="'dynamic_filter_template_pos_category_restaurant_menu_2'"
                  data-number-of-records="16"

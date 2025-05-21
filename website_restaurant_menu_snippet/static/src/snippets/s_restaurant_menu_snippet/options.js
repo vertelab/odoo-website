@@ -13,8 +13,9 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
         console.log("options.js: init")
         this._super.apply(this, arguments);
         this.modelNameFilter = 'product.product';
-
         this.productCategories = {};
+        
+        this.isOptionDefault = {};
     },
 
     async onBuilt() {
@@ -90,8 +91,8 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
     },
 
     _setOptionValue: function (optionName, value) {
-        console.log("options.js: init")
-        if (this.$target.get(0).dataset[optionName] === undefined || this.isOptionDefault[optionName]) {
+        console.log("options.js: _setOptionValue körs")
+        if (!this.$target.get(0).dataset[optionName]) {
             this.$target.get(0).dataset[optionName] = value;
         }
     },
