@@ -124,7 +124,7 @@ odoo.define('website_restaurant_menu_snippet.s_dynamic_snippet_restaurant_menu',
                     'route': '/restaurant/snippet/filters',
                     'params': Object.assign({
                         'filter_id': parseInt(nodeData.filterId),
-                        'template_key': nodeData.templateKey,
+                        'template_key': `website_restaurant_menu_snippet.${nodeData.templateKey}`,
                         'limit': parseInt(nodeData.numberOfRecords),
                         'search_domain': this._getSearchDomain(),
                         'with_sample': this.editableMode,

@@ -21,10 +21,10 @@
 
                                                 </p>
                                             </li>
-                                            <t t-if="product.description_sale">
+                                            <t t-if="product.public_description">
                                                 <hr style="border: 1px dashed black; margin-top: 10px; margin-bottom: 10px;"/>
                                                 <span class="s_restaurant_product_description"
-                                                      t-esc="product.description_sale"/>
+                                                      t-esc="product.public_description"/>
                                             </t>
                                         </div>
                                     </t>
@@ -57,10 +57,10 @@
                                                         <div class="col-lg-6 d-flex align-items-center s_features_grid_content">
                                                             <div class="s_restaurant_product_catalog_dish">
                                                                 <h4 t-esc="product.display_name" class="s_restaurant_product_catalog_title s_restaurant_product_catalog_dish_dot_leaders"/><br/>
-                                                                <t t-if="product.description_sale">
+                                                                <t t-if="product.public_description">
                                                                     <hr style="border: 1px dashed black; margin-top: 10px; margin-bottom: 10px;"/>
                                                                     <p class="s_restaurant_product_description"
-                                                                       t-esc="product.description_sale"/>
+                                                                       t-esc="product.public_description"/>
                                                                 </t>
                                                                 <p><strong>
                                                                     <span t-esc="product.lst_price" class="s_restaurant_product_catalog_dish_price ms-auto ps-2"

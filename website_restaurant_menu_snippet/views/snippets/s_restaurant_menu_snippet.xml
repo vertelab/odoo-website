@@ -32,8 +32,10 @@
                     <we-select string="Category" data-name="product_category_opt" data-attribute-name="productCategoryId" data-no-preview="true">
                         <we-button data-select-data-attribute="all">All Categories</we-button>
                     </we-select>
-<!--                    <we-select string="Template" data-name="template_opt" data-attribute-name="templateKey" data-no-preview="true">-->
-<!--                    </we-select>-->
+                    <we-select string="Template" data-name="template_opt" data-attribute-name="templateKey" data-no-preview="true">
+                        <we-button data-select-data-attribute="dynamic_filter_template_pos_category_restaurant_menu_1">List Menu</we-button>
+                        <we-button data-select-data-attribute="dynamic_filter_template_pos_category_restaurant_menu_2">Picture Menu</we-button>
+                    </we-select>
                     <we-select string="Fetched elements" data-name="number_of_records_opt" data-attribute-name="numberOfRecords" data-no-preview="true">
                         <we-button t-foreach="range(1, 17)" t-as="value" t-att-data-select-data-attribute="value" t-esc="value"/>
                     </we-select>

@@ -19,7 +19,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
 
     async onBuilt() {
         console.log("options.js: onBuilt")
-        this._super.apply(this, arguments);
+        await this._super.apply(this, arguments);
 
 //        this.$target[0].dataset['snippet'] = 's_dynamic_snippet_restaurant_menu';
         await this._setOptionsDefaultValues();
@@ -39,8 +39,8 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
         const filterProductCategories = this.$el.find("we-select[data-attribute-name='productCategoryId'] we-selection-items we-button");
         if (filterProductCategories.length > 0) {
             this._setOptionValue('productCategoryId', 'all');
-            this._setOptionValue('numberOfRecords', 16);
         }
+        this._setOptionValue('templateKey', 'dynamic_filter_template_pos_category_restaurant_menu_1');
         this.options.wysiwyg.odooEditor.observerActive();
     },
 
@@ -95,6 +95,12 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
             this.$target.get(0).dataset[optionName] = value;
         }
     },
+    
+    async onTemplateKey(templateKey) {
+        console.log("onTemplateKey körs med:", templateKey);
+        this.$target.get(0).dataset.templateKey = templateKey;
+        await this._refreshPublicWidgets();
+    }
 
 })
 
