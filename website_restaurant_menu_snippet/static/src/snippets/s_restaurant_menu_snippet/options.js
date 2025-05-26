@@ -23,8 +23,10 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
         await this._super.apply(this, arguments);
 
 //        this.$target[0].dataset['snippet'] = 's_dynamic_snippet_restaurant_menu';
-        await this._setOptionsDefaultValues();
 
+        if (this._isNewSnippet()) {
+            await this._setOptionsDefaultValues();
+        }
 //        const classList = [...this.$target[0].classList];
 //        if (classList.includes('d-none') && !classList.some(className => className.match(/^d-(md|lg)-(?!none)/))) {
 //            // Remove the 'd-none' of the old template if it is not related to
@@ -33,15 +35,30 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
 //        }
         return this._refreshPublicWidgets();
     },
+    
+    /** 
+     * @private
+     * @returns {boolean}
+     */
+     
+     _isNewSnippet: function() {
+        const dataset = this.$target[0].dataset;
+        return !dataset.productCategoryId && !dataset.templateKey;
+    },    
 
     async _setOptionsDefaultValues() {
         console.log("options.js: _setOptionsDefaultValues")
         this.options.wysiwyg.odooEditor.observerUnactive();
-        const filterProductCategories = this.$el.find("we-select[data-attribute-name='productCategoryId'] we-selection-items we-button");
-        if (filterProductCategories.length > 0) {
-            this._setOptionValue('productCategoryId', 'all');
+        
+        if (!this.$target[0].dataset.productCategoryId) {
+            const filterProductCategories = this.$el.find("we-select[data-attribute-name='productCategoryId'] we-selection-items we-button");
+            if (filterProductCategories.length > 0) {
+                this._setOptionValue('productCategoryId', 'all');
+            }
         }
-        this._setOptionValue('templateKey', 'dynamic_filter_template_pos_category_restaurant_menu_1');
+        if (!this.$target[0].dataset.templateKey) {
+            this._setOptionValie('templateKey', 'dynamic_filter_template_pos_category_restaurant_menu_1');
+        }
         this.options.wysiwyg.odooEditor.observerActive();
     },
 
@@ -92,9 +109,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
 
     _setOptionValue: function (optionName, value) {
         console.log("options.js: _setOptionValue körs")
-        if (!this.$target.get(0).dataset[optionName]) {
-            this.$target.get(0).dataset[optionName] = value;
-        }
+        this.$target.get(0).dataset[optionName] = value;
     },
     
     async onTemplateKey(templateKey) {
