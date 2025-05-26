@@ -57,7 +57,7 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
             }
         }
         if (!this.$target[0].dataset.templateKey) {
-            this._setOptionValie('templateKey', 'dynamic_filter_template_pos_category_restaurant_menu_1');
+            this._setOptionValue('templateKey', 'dynamic_filter_template_pos_category_restaurant_menu_1');
         }
         this.options.wysiwyg.odooEditor.observerActive();
     },
