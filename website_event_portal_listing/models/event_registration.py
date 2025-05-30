@@ -6,7 +6,7 @@ from odoo import _, api, fields, models, SUPERUSER_ID
 from odoo.tools import format_datetime
 from odoo.exceptions import AccessError, ValidationError
 from collections import ChainMap
-
+import logging
 
 class EventRegistration(models.Model):
     _name = 'event.registration'
@@ -14,9 +14,8 @@ class EventRegistration(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        logging.warning(f"mar /usr/share/odoo-website/website_event_portal_listing/ {vals_list=}")
         registrations = super(EventRegistration, self).create(vals_list)
-        if registrations._check_auto_confirmation():
-            registrations.sudo().action_confirm()
 
         partner_ids = registrations.partner_id + registrations.attendee_partner_id + registrations.event_id.organizer_id
 
