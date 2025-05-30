@@ -6,6 +6,7 @@
                  t-att-data-snippet="snippet_name"
                  t-att-data-filter-id="env.ref('website_restaurant_menu_snippet.dynamic_filter_pos_categories').id"
                  t-att-data-template-key="'dynamic_filter_template_pos_category_restaurant_menu_2'"
+                 t-att-data-pos-category-id="'all'"
                  data-number-of-records="16"
                  class="s_restaurant_menu oe_img_bg o_bg_img_center oe_custom_bg pt48 pb32"
                  style="background-image: url('/website_restaurant_menu_snippet/static/img/s_product_catalog_default_image.jpg');"
@@ -30,7 +31,7 @@
         <xpath expr="." position="inside">
             <t t-if="snippet_name == 's_dynamic_snippet_restaurant_menu' or 's_restaurant_menu_snippet'">
                 <div data-js="dynamic_restaurant_menu_snippet" data-selector="section.s_restaurant_menu">
-                    <we-select string="Category" data-name="product_category_opt" data-attribute-name="productCategoryId" data-no-preview="true">
+                    <we-select string="Category" data-name="pos_category_opt" data-attribute-name="posCategoryId" data-no-preview="true">
                         <we-button data-select-data-attribute="all">All Categories</we-button>
                     </we-select>
                     <we-select string="Template" data-name="template_opt" data-attribute-name="templateKey" data-no-preview="true">

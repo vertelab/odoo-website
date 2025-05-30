@@ -12,8 +12,8 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
      init: function () {
         console.log("options.js: init")
         this._super.apply(this, arguments);
-        this.modelNameFilter = 'product.product';
-        this.productCategories = {};
+        this.modelNameFilter = 'pos.category';
+        this.posCategories = {};
         
         this.isOptionDefault = {};
     },
@@ -43,28 +43,29 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
      
      _isNewSnippet: function() {
         const dataset = this.$target[0].dataset;
-        return !dataset.productCategoryId && !dataset.templateKey;
+        return !dataset.posCategoryId && !dataset.templateKey;
     },    
 
     async _setOptionsDefaultValues() {
         console.log("options.js: _setOptionsDefaultValues")
         this.options.wysiwyg.odooEditor.observerUnactive();
         
-        if (!this.$target[0].dataset.productCategoryId) {
-            const filterProductCategories = this.$el.find("we-select[data-attribute-name='productCategoryId'] we-selection-items we-button");
-            if (filterProductCategories.length > 0) {
-                this._setOptionValue('productCategoryId', 'all');
-            }
+        if (!this.$target[0].dataset.posCategoryId) {
+            this._setOptionValue('posCategoryId', 'all');
         }
         if (!this.$target[0].dataset.templateKey) {
             this._setOptionValue('templateKey', 'dynamic_filter_template_pos_category_restaurant_menu_1');
         }
+        if (!this.$target[0].dataset.numberOfRecords) {
+            this._setOptionValue('numberOfRecords', '16');
+        }
+        
         this.options.wysiwyg.odooEditor.observerActive();
     },
 
 
-    _fetchProductCategories: function () {
-        console.log("options.js: _fetchProductCategories")
+    _fetchPosCategories: function () {
+        console.log("options.js: _fetchPosCategories")
         return this.orm.searchRead("pos.category", wUtils.websiteDomain(this), ["id", "name"]);
     },
     /**
@@ -75,22 +76,22 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
     _renderCustomXML: async function (uiFragment) {
         console.log("options.js: _renderCustomXML")
         await this._super.apply(this, arguments);
-        await this._renderProductCategorySelector(uiFragment);
+        await this._renderPosCategorySelector(uiFragment);
     },
     /**
      * Renders the product categories option selector content into the provided uiFragment.
      * @private
      * @param {HTMLElement} uiFragment
      */
-    _renderProductCategorySelector: async function (uiFragment) {
-        console.log("options.js: _renderProductCategorySelector")
-        const publishedCategories = await this._fetchProductCategories();
+    _renderPosCategorySelector: async function (uiFragment) {
+        console.log("options.js: _renderPosCategorySelector")
+        const publishedPosCategories = await this._fetchPosCategories();
 
-        for (let index in publishedCategories) {
-            this.productCategories[publishedCategories[index].id] = publishedCategories[index];
+        for (let index in publishedPosCategories) {
+            this.posCategories[publishedPosCategories[index].id] = publishedPosCategories[index];
         }
-        const productCategoriesSelectorEl = uiFragment.querySelector('[data-name="product_category_opt"]');
-        return this._renderSelectUserValueWidgetButtons(productCategoriesSelectorEl, this.productCategories);
+        const posCategoriesSelectorEl = uiFragment.querySelector('[data-name="pos_category_opt"]');
+        return this._renderSelectUserValueWidgetButtons(posCategoriesSelectorEl, this.posCategories);
     },
 
     _renderSelectUserValueWidgetButtons: async function (selectUserValueWidgetElement, data) {
@@ -112,9 +113,21 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
         this.$target.get(0).dataset[optionName] = value;
     },
     
+    async onPosCategoryId(posCategoryId) {
+        console.log("onPosCategoryId runs with:", posCategoryId);
+        this.$target.get(0).dataset.posCategoryId = posCategoryId;
+        await this._refreshPublicWidgets();
+    },
+    
     async onTemplateKey(templateKey) {
         console.log("onTemplateKey körs med:", templateKey);
         this.$target.get(0).dataset.templateKey = templateKey;
+        await this._refreshPublicWidgets();
+    },
+    
+    async onNumberOfRecords(numberOfRecords) {
+        console.log("onNumberOfRecords runs with:", numberOfRecords);
+        this.$target.get(0).dataset.numberOfRecords = numberOfRecords;
         await this._refreshPublicWidgets();
     }
 

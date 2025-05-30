@@ -13,12 +13,19 @@ class POSCategory(models.Model):
         return len(websites) == 1 and websites or Website
 
     website_id = fields.Many2one('website', default=_get_default_website_id)
+    
+    available_in_menu = fields.Boolean(
+        string="Available in website menu",
+        help="If the combo is displayed in the website menu or not",
+        default=True,
+    )
 
     @api.depends('name')
     def _set_products(self):
         _logger.info("_set_products körs")
         for rec in self:
-            rec.product_tmpl_ids = self.env['product.product'].search([('pos_categ_ids', 'in', rec.id)])
+            rec.product_tmpl_ids = self.env['product.template'].search([('pos_categ_ids', 'in', rec.id), ('available_in_menu', '=', True)])
 
-    product_tmpl_ids = fields.Many2many('product.product', string="Products",
-                                        compute=_set_products, store=False)
+    product_tmpl_ids = fields.Many2many('product.template', string="Products",
+                                        compute=_set_products, store=True)
+

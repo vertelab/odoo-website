@@ -16,7 +16,7 @@
                                             <li class="s_restaurant_product_catalog_dish" data-name="Product">
                                                 <p class="s_restaurant_product_catalog_dish_title d-flex align-items-baseline pb-2">
                                                     <span t-esc="product.display_name" class="s_restaurant_product_catalog_dish_name s_restaurant_product_catalog_dish_dot_leaders"/>
-                                                    <span t-esc="product.lst_price" class="s_restaurant_product_catalog_dish_price ms-auto ps-2"
+                                                    <span t-esc="product.list_price" class="s_restaurant_product_catalog_dish_price ms-auto ps-2"
                                                         t-options="{'widget': 'monetary', 'display_currency': website.company_id.currency_id}"/>
 
                                                 </p>
@@ -51,7 +51,7 @@
                                                 <div class="col-lg-4">
                                                     <div class="row col-lg-12 pt16 pb16 o_colored_level">
                                                         <div class="col-lg-6 d-flex align-items-center">
-                                                            <img t-attf-src="/web/image/product.product/{{ product.id }}/image_1920" style="max-width: 100%; height: auto; object-fit: contain;" class="s_features_grid_icon img img-fluid o_we_custom_image rounded-circle" alt="Product image"/>
+                                                            <img t-attf-src="/web/image/product.template/{{ product.id }}/image_1920" style="max-width: 100%; height: auto; object-fit: contain;" class="s_features_grid_icon img img-fluid o_we_custom_image rounded-circle" alt="Product image"/>
 
                                                         </div>
                                                         <div class="col-lg-6 d-flex align-items-center s_features_grid_content">
@@ -63,7 +63,7 @@
                                                                        t-esc="product.public_description"/>
                                                                 </t>
                                                                 <p><strong>
-                                                                    <span t-esc="product.lst_price" class="s_restaurant_product_catalog_dish_price ms-auto ps-2"
+                                                                    <span t-esc="product.list_price" class="s_restaurant_product_catalog_dish_price ms-auto ps-2"
                                                                         t-options="{'widget': 'monetary', 'display_currency': website.company_id.currency_id}"/>
 
                                                                 </strong><br/></p>

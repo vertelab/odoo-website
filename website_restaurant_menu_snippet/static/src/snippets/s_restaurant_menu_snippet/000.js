@@ -71,49 +71,26 @@ const DynamicSnippet = publicWidget.Widget.extend({
 
     _isConfigComplete: function () {
         console.log("000.js: _isConfigComplete")
-        return this.$el.get(0).dataset.productCategoryId !== undefined && this.$el.get(0).dataset.numberOfRecords !== undefined;
+        return this.$el.get(0).dataset.posCategoryId !== undefined && this.$el.get(0).dataset.numberOfRecords !== undefined;
     },
 
-     _getCategorySearchDomain() {
-        console.log("000.js: _getCategorySearchDomain")
+    _getPosCategorySearchDomain() {
+        console.log("000.js: _getPosCategorySearchDomain")
         const searchDomain = [];
-        let productCategoryId = this.$el.get(0).dataset.productCategoryId;
-        if (productCategoryId && productCategoryId !== 'all') {
-            if (productCategoryId === 'current') {
-                productCategoryId = undefined;
-                const productCategoryField = $("#product_details").find(".product_category_id");
-                if (productCategoryField && productCategoryField.length) {
-                    productCategoryId = parseInt(productCategoryField[0].value);
-                }
-                if (!productCategoryId) {
-                    this.trigger_up('main_object_request', {
-                        callback: function (value) {
-                            if (value.model === "product.public.category") {
-                                productCategoryId = value.id;
-                            }
-                        },
-                    });
-                }
-                if (!productCategoryId) {
-                    // Try with categories from product, unfortunately the category hierarchy is not matched with this approach
-                    const productTemplateId = $("#product_details").find(".product_template_id");
-                    if (productTemplateId && productTemplateId.length) {
-                        searchDomain.push(['pos_categ_ids.product_tmpl_ids', 'in', parseInt(productTemplateId[0].value)]);
-                    }
-                }
-            }
-            if (productCategoryId) {
-                searchDomain.push(['id', '=', parseInt(productCategoryId)]);
+        let posCategoryId = this.$el.get(0).dataset.posCategoryId;
+        if (posCategoryId && posCategoryId !== 'all') {
+            const categoryId = parseInt(posCategoryId);
+            if (!isNaN(categoryId)) {
+                searchDomain.push(['id', '=', categoryId]);
             }
         }
-//        searchDomain.push(['available_in_pos', '=', true])
-//        searchDomain.push(['available_in_pos', '=', true])
+        
         return searchDomain;
     },
 
-     _getSearchDomain: function () {
-        console.log("000.js: _getSearhDomain")
-        const searchDomain = this._getCategorySearchDomain();
+    _getSearchDomain: function () {
+        console.log("000.js: _getSearchDomain")
+        const searchDomain = this._getPosCategorySearchDomain();
         return searchDomain;
     },
 
@@ -151,7 +128,7 @@ const DynamicSnippet = publicWidget.Widget.extend({
         );
     },
 
-     _getQWebRenderOptions: function () {
+    _getQWebRenderOptions: function () {
         console.log("000.js: _getQWebRenderOptions")
         const dataset = this.el.dataset;
         const numberOfRecords = parseInt(dataset.numberOfRecords);

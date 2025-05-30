@@ -1,0 +1,215 @@
+<odoo>
+<!-- Product product variant list view w/ toggle switch-->
+    <record id="product_product_tree_view_menu_available" model="ir.ui.view">
+        <field name="name">product.product.list.menu.available</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_favorite']" position="before">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    readonly="0"/>
+            </xpath>
+            <xpath expr="//field[@name='available_in_menu']" position="before">
+                <field name="sequence" widget="handle"/>
+            </xpath>
+        </field>
+    </record>
+    
+<!-- Product product kanban view w/ toggle switch -->
+    <record id="product_product_kanban_view_menu_available" model="ir.ui.view">
+        <field name="name">product.product.kanban.menu.available></field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_favorite']" position="before">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    nolabel="1"
+                    readonly="0"/>
+            </xpath>
+            <xpath expr="//field[@name='available_in_menu']" position="before">
+                <field name="sequence" widget="handle"/>
+            </xpath>
+        </field>
+    </record>
+    
+<!-- Product template form view w/ toggle switch -->
+    <record id="product_template_form_view_menu_available" model="ir.ui.view">
+        <field name="name">product.template.product.form.menu.available</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="point_of_sale.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='pos']//group[@name='pos']/field[@name='to_weight']" position="before">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    readonly="0"/>
+            </xpath>
+        </field>
+    </record>
+    
+<!-- Product template list view w/ toggle switch-->
+    <record id="product_template_tree_view_menu_available" model="ir.ui.view">
+        <field name="name">product.template.product.list.menu.available</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_favorite']" position="before">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    readonly="0"/>
+            </xpath>
+            <xpath expr="//field[@name='available_in_menu']" position="before">
+                <field name="sequence" widget="handle"/>
+            </xpath>
+        </field>
+    </record>
+    
+<!-- Product template kanban view w/ toggle switch -->
+    <record id="product_template_kanban_view_menu_available" model="ir.ui.view">
+        <field name="name">product.template.product.kanban.menu.available></field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_favorite']" position="before">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    nolabel="1"
+                    readonly="0"/>
+            </xpath>
+            <xpath expr="//field[@name='available_in_menu']" position="before">
+                <field name="sequence" widget="handle"/>
+            </xpath>
+        </field>
+    </record>
+
+<!-- Product combo form view w/ toggle switch -->
+    <record id="product_combo_form_view_menu_available" model="ir.ui.view">
+        <field name="name">product.combo.combo.form.menu.available</field>
+        <field name="model">product.combo</field>
+        <field name="inherit_id" ref="product.product_combo_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position="before">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    readonly="0"/>
+            </xpath>
+        </field>
+    </record>
+
+<!-- Product combo list view w/ toggle switch -->
+    <record id="produt_combo_tree_view_menu_available" model="ir.ui.view">
+        <field name="name">product.combo.combo.list.menu.available</field>
+        <field name="model">product.combo</field>
+        <field name="inherit_id" ref="product.product_combo_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sequence']" position="before">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    readonly="0"/>
+            </xpath>
+            <xpath expr="//field[@name='sequence']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='available_in_menu']" position="before">
+                <field name="sequence" widget="handle"/>
+            </xpath>
+        </field>
+    </record>
+    
+<!-- Product Category form view w/ toggle switch -->
+    <record id="product_category_form_view_menu_available" model="ir.ui.view">
+        <field name="name">product.category.form.menu.available</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="before">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    readonly="0"/>
+            </xpath>
+        </field>
+    </record>
+    
+<!-- Product Category list view w/ toggle switch -->
+    <record id="product_category_list_view_menu_available" model="ir.ui.view">
+        <field name="name">product.category.list.menu.available</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_list_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='display_name']" position="before">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    readonly="0"/>
+            </xpath>
+            <xpath expr="//field[@name='available_in_menu']" position="before">
+                <field name="sequence" widget="handle"/>
+            </xpath>
+        </field>
+    </record>
+    
+<!-- POS Category list view w/ toggle switch -->
+    <record id="product_pos_category_tree_view_menu_available" model="ir.ui.view">
+        <field name="name">pos.category.list.menu.available</field>
+        <field name="model">pos.category</field>
+        <field name="inherit_id" ref="point_of_sale.product_pos_category_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='display_name']" position="before">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    readonly="0"/>
+            </xpath>
+            <xpath expr="//field[@name='sequence']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='available_in_menu']" position="before">
+                <field name="sequence" widget="handle"/>
+            </xpath>
+        </field>
+    </record>
+    
+<!-- POS Category form view w/ toggle switch -->
+    <record id="product_pos_category_form_view_menu_available" model="ir.ui.view">
+        <field name="name">pos.category.form.menu.available</field>
+        <field name="model">pos.category</field>
+        <field name="inherit_id" ref="point_of_sale.product_pos_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    readonly="0"/>
+            </xpath>
+        </field>
+    </record>
+
+<!-- POS Category kanban view w/ toggle switch -->
+    <record id="product_pos_category_kanban_view_menu_available" model="ir.ui.view">
+        <field name="name">pos.category.kanban.menu.available></field>
+        <field name="model">pos.category</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_category_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='image_128']" position="before">
+                <field name="available_in_menu" 
+                    string="Available in Menu" 
+                    widget="boolean_toggle" 
+                    nolabel="1"
+                    readonly="0"/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="sequence" widget="handle"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

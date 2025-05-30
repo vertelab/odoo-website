@@ -39,8 +39,13 @@ class Website(Home):
         _logger.info("custom  körs")
         if not template_key:
             template_key = "website_restaurant_menu_snippet.dynamic_filter_template_pos_category_restaurant_menu_1"
-        filter_template_id = request.env.ref('website_restaurant_menu_snippet.dynamic_filter_pos_categories')
-        dynamic_filter = request.env['website.snippet.filter'].sudo().search(
-            [('id', '=', filter_template_id.id)] + request.website.website_domain(), limit=1
-        )
+        
+        dynamic_filter = request.env['website.snippet.filter'].sudo().browse(filter_id)
+        if not dynamic_filter:
+            return []
+            
+        if search_domain is None:
+            search_domain = []
+        
         return dynamic_filter and dynamic_filter._render_restaurant_data(template_key, limit, search_domain, with_sample) or []
+

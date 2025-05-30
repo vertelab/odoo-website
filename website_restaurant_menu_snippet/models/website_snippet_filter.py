@@ -79,7 +79,24 @@ class WebsiteSnippetFilter(models.Model):
                     order=','.join(literal_eval(filter_sudo.sort)) or None,
                     limit=limit
                 )
-                return self._filter_records_to_values(records)
+                
+                filtered_records = []
+                for record in records:
+                    available_products = self.env['product.template'].search([
+                        ('pos_categ_ids', 'in', record.id),
+                        ('available_in_menu', '=', True)
+                    ], order='sequence asc')
+
+                    record_data = {
+                        'id': record.id,
+                        'name': record.name,
+                        'image_128': record.image_128,
+                        'product_tmpl_ids': available_products,
+                    }
+                    filtered_records.append(record_data)
+                
+                return filtered_records
+                
             except MissingError:
                 _logger.warning("The provided domain %s in 'ir.filters' generated a MissingError in '%s'", domain, self._name)
                 return []

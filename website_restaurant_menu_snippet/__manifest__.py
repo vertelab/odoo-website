@@ -39,6 +39,7 @@
         'data/product_snippet_template_data.xml',
         'data/data.xml',
         'views/pos_view.xml',
+        'views/product_view.xml',
     ],
     'assets': {
         'website.assets_wysiwyg': [
