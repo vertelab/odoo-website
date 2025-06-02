@@ -71,22 +71,32 @@ const DynamicSnippet = publicWidget.Widget.extend({
 
     _isConfigComplete: function () {
         console.log("000.js: _isConfigComplete")
-        return this.$el.get(0).dataset.posCategoryId !== undefined && this.$el.get(0).dataset.numberOfRecords !== undefined;
+        const dataset = this.el.dataset;
+        const hasFilterId = dataset.filterId !== undefined && dataset.filterId !== '';
+        const hasTemplateKey = dataset.templateKey !== undefined && dataset.templateKey !== '';
+        const hasNumberOfRecords = dataset.numberOfRecords !== undefined && dataset.numberOfRecords !== '';
+        
+        return hasFilterId && hasTemplateKey && hasNumberOfRecords;
     },
 
     _getPosCategorySearchDomain() {
         console.log("000.js: _getPosCategorySearchDomain")
         const searchDomain = [];
-        let posCategoryId = this.$el.get(0).dataset.posCategoryId;
-        if (posCategoryId && posCategoryId !== 'all') {
-            const categoryId = parseInt(posCategoryId);
-            if (!isNaN(categoryId)) {
-                searchDomain.push(['id', '=', categoryId]);
+        let posCategoryIds = this.$el.get(0).dataset.posCategoryIds;
+        
+        if (posCategoryIds && posCategoryIds !== 'all') {
+            const categoryIds = posCategoryIds.split(',')
+                .map(id => id.trim())
+                .filter(id => id && !isNaN(parseInt(id)))
+                .map(id => parseInt(id));
+            
+            if (categoryIds.length > 0) {
+                searchDomain.push(['id', 'in', categoryIds]);
             }
         }
-        
         return searchDomain;
     },
+
 
     _getSearchDomain: function () {
         console.log("000.js: _getSearchDomain")

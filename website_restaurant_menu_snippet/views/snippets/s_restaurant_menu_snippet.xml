@@ -26,14 +26,16 @@
         </t>
     </template>
 
-
     <template id="restaurant_menu_snippet_options" inherit_id="website.snippet_options">
         <xpath expr="." position="inside">
             <t t-if="snippet_name == 's_dynamic_snippet_restaurant_menu' or 's_restaurant_menu_snippet'">
                 <div data-js="dynamic_restaurant_menu_snippet" data-selector="section.s_restaurant_menu">
-                    <we-select string="Category" data-name="pos_category_opt" data-attribute-name="posCategoryId" data-no-preview="true">
-                        <we-button data-select-data-attribute="all">All Categories</we-button>
-                    </we-select>
+                    <we-row string="Categories">
+                        <we-collapse>
+                            <div data-name="pos_category_opt" class="we-category-multiselect">
+                            </div>
+                        </we-collapse>
+                    </we-row>
                     <we-select string="Template" data-name="template_opt" data-attribute-name="templateKey" data-no-preview="true">
                         <we-button data-select-data-attribute="dynamic_filter_template_pos_category_restaurant_menu_1">List Menu</we-button>
                         <we-button data-select-data-attribute="dynamic_filter_template_pos_category_restaurant_menu_2">Picture Menu</we-button>
@@ -46,13 +48,11 @@
         </xpath>
     </template>
 
-
     <template id="snippets" inherit_id="website.snippets" name="restaurant snippets">
         <xpath expr="//snippets[@id='snippet_content']//t[@t-snippet][last()]" position="after">
             <t t-snippet="website_restaurant_menu_snippet.s_restaurant_menu_snippet" string="Restaurant Menu" t-thumbnail="/website/static/src/img/snippets_thumbs/s_text_block.svg"/>
         </xpath>
     </template>
-
 
     <record id="website_restaurant_menu_snippet.s_restaurant_menu_snippet_000_js" model="ir.asset">
         <field name="name">Restaurant Menu Dynamic Snippet 000 JS</field>
@@ -71,6 +71,5 @@
         <field name="bundle">web.assets_frontend</field>
         <field name="path">website_restaurant_menu_snippet/static/src/snippets/s_restaurant_menu_snippet/000.xml</field>
     </record>
-
 
 </odoo>
