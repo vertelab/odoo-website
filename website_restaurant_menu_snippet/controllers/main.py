@@ -35,7 +35,8 @@ _logger = logging.getLogger(__name__)
 class Website(Home):
 
     @http.route('/restaurant/snippet/filters', type='json', auth='public', website=True)
-    def custom_get_dynamic_filter(self, filter_id, template_key=None, limit=None, search_domain=None, with_sample=False):
+    def custom_get_dynamic_filter(self, filter_id, template_key=None, limit=None, search_domain=None, with_sample=False, show_price=True, show_category_name=True):
+
         _logger.info("custom  körs")
         if not template_key:
             template_key = "website_restaurant_menu_snippet.dynamic_filter_template_pos_category_restaurant_menu_1"
@@ -47,5 +48,6 @@ class Website(Home):
         if search_domain is None:
             search_domain = []
         
-        return dynamic_filter and dynamic_filter._render_restaurant_data(template_key, limit, search_domain, with_sample) or []
+        return dynamic_filter and dynamic_filter._render_restaurant_data(template_key, limit, search_domain, with_sample, show_price, show_category_name) or []
+
 

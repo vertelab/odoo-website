@@ -8,12 +8,15 @@
                  t-att-data-template-key="'dynamic_filter_template_pos_category_restaurant_menu_2'"
                  t-att-data-pos-category-id="'all'"
                  data-number-of-records="16"
+                 data-show-price="true"
+                 data-show-category-name="true"
                  class="s_restaurant_menu oe_img_bg o_bg_img_center oe_custom_bg pt48 pb32"
                  style="background-image: url('/website_restaurant_menu_snippet/static/img/s_product_catalog_default_image.jpg');"
                  data-vcss="001">
             <div class="container s_allow_columns">
                 <h2>Menu</h2>
-<!--                <p>Add a menu description.</p>-->
+                <h3>Sub-heading</h3>
+                <p>Add a menu description.</p>
 <!--                <t t-esc="snippet_name"/>-->
                 <div class="dynamic_snippet_template"/>
             </div>
@@ -44,6 +47,15 @@
                     </we-select>
                     <we-select string="Fetched elements" data-name="number_of_records_opt" data-attribute-name="numberOfRecords" data-no-preview="true">
                         <we-button t-foreach="range(1, 17)" t-as="value" t-att-data-select-data-attribute="value" t-esc="value"/>
+                    </we-select>
+
+                    <we-select string="Prices" data-name="show_price_opt" data-attribute-name="showPrice" data-no-preview="true">
+                        <we-button data-select-data-attribute="true">Show</we-button>
+                        <we-button data-select-data-attribute="false">Hide</we-button>
+                    </we-select>
+                    <we-select string="Category Names" data-name="show_category_name_opt" data-attribute-name="showCategoryName" data-no-preview="true">
+                        <we-button data-select-data-attribute="true">Show</we-button>
+                        <we-button data-select-data-attribute="false">Hide</we-button>
                     </we-select>
                 </div>
             </t>

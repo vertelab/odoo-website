@@ -122,6 +122,8 @@ const DynamicSnippet = publicWidget.Widget.extend({
                     'search_domain': this._getSearchDomain(),
                     'with_sample': this.editableMode,
                     ...this._getRpcParameters(),
+                    'show_price': this.el.dataset.showPrice !== "false",
+                    'show_category_name': this.el.dataset.showCategoryName !== "false",
                 }
             );
             this.data = filterFragments.map(markup);
@@ -154,6 +156,8 @@ const DynamicSnippet = publicWidget.Widget.extend({
             data: this.data,
             unique_id: this.unique_id,
             extraClasses: dataset.extraClasses || '',
+            showPrice: dataset.showPrice !== "false",
+            showCategoryName: dataset.showCategoryName !== "false",
         };
     },
 

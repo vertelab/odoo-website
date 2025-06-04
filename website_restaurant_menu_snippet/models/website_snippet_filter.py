@@ -24,7 +24,7 @@ class WebsiteSnippetFilter(models.Model):
         pricelist = self.env['website'].get_current_website().get_current_pricelist()
         return pricelist.currency_id
 
-    def _render_restaurant_data(self, template_key, limit, search_domain=None, with_sample=False):
+    def _render_restaurant_data(self, template_key, limit, search_domain=None, with_sample=False, show_price=True, show_category_name=True):
         _logger.info("_rende_restaurant_data körs")
         """Renders the website dynamic snippet items"""
         self.ensure_one()
@@ -46,6 +46,8 @@ class WebsiteSnippetFilter(models.Model):
         content = self.env['ir.qweb'].with_context(inherit_branding=False)._render(template_key, dict(
             records=records,
             is_sample=is_sample,
+            showPrice=show_price,
+            showCategoryName=show_category_name,
         ))
         return [etree.tostring(el, encoding='unicode') for el in
                 html.fromstring('<root>%s</root>' % str(content)).getchildren()]

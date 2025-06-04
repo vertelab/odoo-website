@@ -65,6 +65,12 @@ const dynamicRestaurantMenuSnippetOptions = options.Class.extend({
         if (!this.$target[0].dataset.posCategoryIds) {
             this._setOptionValue('posCategoryIds', 'all');
         }
+        if (!this.$target[0].dataset.showPrice) {
+            this._setOptionValue('showPrice', 'true');
+        }
+        if (!this.$target[0].dataset.showCategoryName) {
+            this._setOptionValue('showCategoryName', 'true');
+        }
         
         this.options.wysiwyg.odooEditor.observerActive();
     },
