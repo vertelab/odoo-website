@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <template id="dynamic_filter_template_pos_category_restaurant_menu_1" name="Restaurant Menu">
+        <template id="dynamic_filter_template_pos_category_restaurant_menu_1" name="List Menu - Dark">
             <div class="s_restaurant_product_catalog oe_img_bg o_bg_img_center oe_custom_bg" data-vcss="001" style="width: 100%">
                 <div class="container">
                     <div class="row">
@@ -35,8 +35,44 @@
                 </div>
             </div>
         </template>
+        
+        <template id="dynamic_filter_template_pos_category_restaurant_menu_1_light" name="List Menu - Light">
+            <div class="s_restaurant_product_catalog oe_img_bg o_bg_img_center oe_custom_bg" data-vcss="001" style="width: 100%">
+                <div class="container">
+                    <div class="row">
+                        <t t-foreach="records" t-as="data" data-thumb="/website_sale/static/src/img/snippets_options/product_borderless_2.svg">
+                            <div class="col-lg-6">
+                                <ul class="list-unstyled my-3">
+                                    <h3 t-esc="data['name']" class="s_restaurant_product_catalog_title" style="color: white;"/>
 
-        <template id="dynamic_filter_template_pos_category_restaurant_menu_2" name="Restaurant Menu 2">
+                                    <t t-foreach="data['product_tmpl_ids']" t-as="product">
+                                        <div class="o_carousel_product_card card w-100 border-0 bg-transparent pt16 pb16">
+                                            <input type="hidden" name="product-id" t-att-data-product-id="product.id"/>
+                                            <li class="s_restaurant_product_catalog_dish" data-name="Product">
+                                                <p class="s_restaurant_product_catalog_dish_title d-flex align-items-baseline pb-2" style="color: white;">
+                                                    <span t-esc="product.display_name" class="s_restaurant_product_catalog_dish_name s_restaurant_product_catalog_dish_dot_leaders"/>
+                                                    <span t-esc="product.list_price" class="s_restaurant_product_catalog_dish_price ms-auto ps-2"
+                                                        t-options="{'widget': 'monetary', 'display_currency': website.company_id.currency_id}"/>
+
+                                                </p>
+                                            </li>
+                                            <t t-if="product.public_description">
+                                                <hr style="border: 1px dashed white; margin-top: 10px; margin-bottom: 10px;"/>
+                                                <span class="s_restaurant_product_description"
+                                                      t-esc="product.public_description"
+                                                      style="color: white;"/>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template id="dynamic_filter_template_pos_category_restaurant_menu_2" name="Piucture Menu - Dark">
             <div class="s_restaurant_product_catalog oe_img_bg o_bg_img_center oe_custom_bg" data-vcss="001" style="width: 100%">
                 <div class="container">
                     <div class="row">
@@ -64,8 +100,56 @@
                                                                 </t>
                                                                 <p><strong>
                                                                     <span t-esc="product.list_price" class="s_restaurant_product_catalog_dish_price ms-auto ps-2"
-                                                                        t-options="{'widget': 'monetary', 'display_currency': website.company_id.currency_id}"/>
+                                                                          t-options="{'widget': 'monetary', 'display_currency': website.company_id.currency_id}"/>
+                                                                </strong><br/></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </ul>
+                            </div>
+                        </t>
+                    </div>
+                </div>
 
+            </div>
+        </template>
+        
+        <template id="dynamic_filter_template_pos_category_restaurant_menu_2_light" name="Piucture Menu - Light">
+            <div class="s_restaurant_product_catalog oe_img_bg o_bg_img_center oe_custom_bg" data-vcss="001" style="width: 100%">
+                <div class="container">
+                    <div class="row">
+                        <t t-foreach="records" t-as="data" data-thumb="/website_restaurant_menu_snippet/static/img/öltapp.jpeg">
+                            <div class="col-lg-12">
+                                <ul class="list-unstyled my-3">
+                                    <h3 t-esc="data['name']" class="s_restaurant_product_catalog_title" style="color: white;"/>
+
+                                    <div class="container">
+                                        <div class="row col-lg-12">
+                                            <t t-foreach="data['product_tmpl_ids']" t-as="product">
+                                                <div class="col-lg-4">
+                                                    <div class="row col-lg-12 pt16 pb16 o_colored_level">
+                                                        <div class="col-lg-6 d-flex align-items-center">
+                                                            <img t-attf-src="/web/image/product.template/{{ product.id }}/image_1920" style="max-width: 100%; height: auto; object-fit: contain;" class="s_features_grid_icon img img-fluid o_we_custom_image rounded-circle" alt="Product image"/>
+
+                                                        </div>
+                                                        <div class="col-lg-6 d-flex align-items-center s_features_grid_content">
+                                                            <div class="s_restaurant_product_catalog_dish">
+                                                                <h4 t-esc="product.display_name" class="s_restaurant_product_catalog_title s_restaurant_product_catalog_dish_dot_leaders"
+                                                                    style="color: white;"/><br/>
+                                                                <t t-if="product.public_description">
+                                                                    <hr style="border: 1px dashed white; margin-top: 10px; margin-bottom: 10px;"/>
+                                                                    <p class="s_restaurant_product_description"
+                                                                       t-esc="product.public_description"
+                                                                       style="color: white;"/>
+                                                                </t>
+                                                                <p><strong>
+                                                                    <span t-esc="product.list_price" class="s_restaurant_product_catalog_dish_price ms-auto ps-2"
+                                                                          t-options="{'widget': 'monetary', 'display_currency': website.company_id.currency_id}"
+                                                                          style="color: white;"/>
                                                                 </strong><br/></p>
                                                             </div>
                                                         </div>
