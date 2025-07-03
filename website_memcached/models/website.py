@@ -36,7 +36,7 @@ class MemCachedController(http.Controller):
     def memcached_check_group(self, user=None):
         """Check if the logged in user is allowed to administrate the cache."""
         user = user or request.env.user
-        if not user.has_group('base.group_website_designer'):
+        if not user.has_group('website.group_website_designer'):
             raise Warning("Only website administrators are allowed to administrate the cache!")
 
     @http.route(['/mcpage/<string:key>',], type='http', auth="user", website=True)
