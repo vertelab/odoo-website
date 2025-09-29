@@ -19,11 +19,18 @@ class AccountMove(PortalAccount):
         domain = self._get_invoices_domain()
         domain += [('show_on_customer_portal', '=', True)]
         domain += [('partner_id', '=', request.env.user.partner_id.id)]
+        if 'overdue_invoice_count' in counters:
+            values['overdue_invoice_count'] = self._get_overdue_invoice_count()
         if 'invoice_count' in counters:
-            invoice_count = request.env['account.move'].search_count(domain) \
-                if request.env['account.move'].check_access_rights('read', raise_exception=False) else 0
+            invoice_count = request.env['account.move'].search_count(self._get_invoices_domain('out'), limit=1) \
+                if request.env['account.move'].has_access('read') else 0
             values['invoice_count'] = invoice_count
+        if 'bill_count' in counters:
+            bill_count = request.env['account.move'].search_count(self._get_invoices_domain('in'), limit=1) \
+                if request.env['account.move'].has_access('read') else 0
+            values['bill_count'] = bill_count
         return values
+
 
     @http.route(['/my/invoices', '/my/invoices/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_invoices(self, page=1, date_begin=None, date_end=None, sortby=None, filterby=None, **kw):
