@@ -16,9 +16,8 @@ from odoo.osv.expression import OR
 _logger = logging.getLogger(__name__)
 
 class AccountMove(PortalAccount):
-    def _prepare_home_portal_values(self, counters):
-        _logger.error(f"toggle_record_on_portal module loaded {counters=}")
 
+    def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
 
         domain = self._get_invoices_domain('out')
