@@ -1,5 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
+import logging
 from collections import OrderedDict
 from operator import itemgetter
 
@@ -12,9 +12,12 @@ from odoo.tools import groupby as groupbyelem
 
 from odoo.osv.expression import OR
 
+_logger = logging.getLogger(__name__)
 
 class AccountMove(PortalAccount):
     def _prepare_home_portal_values(self, counters):
+        _logger.error(f"toggle_record_on_portal module loaded {counters=}")
+
         values = super()._prepare_home_portal_values(counters)
 
         domain = self._get_invoices_domain('out')
