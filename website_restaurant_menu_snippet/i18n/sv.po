@@ -1,0 +1,222 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* website_restaurant_menu_snippet
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20250925\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-09-29 09:37+0000\n"
+"PO-Revision-Date: 2025-09-29 11:57+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_website_snippet_filter__product_cross_selling
+msgid "About cross selling products"
+msgstr "Om korsförsäljning av produkter"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.s_restaurant_menu_snippet_template
+msgid "Add a menu description."
+msgstr "Lägg till en menybeskrivning."
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.product_category_form_view_menu_available
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.product_category_list_view_menu_available
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.product_combo_form_view_menu_available
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.product_pos_category_form_view_menu_available
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.product_pos_category_kanban_view_menu_available
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.product_pos_category_tree_view_menu_available
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.product_product_kanban_view_menu_available
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.product_product_tree_view_menu_available
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.product_template_form_view_menu_available
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.product_template_kanban_view_menu_available
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.product_template_tree_view_menu_available
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.produt_combo_tree_view_menu_available
+msgid "Available in Menu"
+msgstr "Tillgänglig i menyn"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_pos_category__available_in_menu
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_product_category__available_in_menu
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_product_combo__available_in_menu
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_product_product__available_in_menu
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_product_template__available_in_menu
+msgid "Available in website menu"
+msgstr "Tillgänglig i webbplatsens meny"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.restaurant_menu_snippet_options
+msgid "Categories"
+msgstr "Kategorier"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.restaurant_menu_snippet_options
+msgid "Category Names"
+msgstr "Namn på kategorier"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.restaurant_menu_snippet_options
+msgid "Fetched elements"
+msgstr "Fetcherade element"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model.fields,help:website_restaurant_menu_snippet.field_product_category__sequence
+#: model:ir.model.fields,help:website_restaurant_menu_snippet.field_product_combo__sequence
+#: model:ir.model.fields,help:website_restaurant_menu_snippet.field_product_product__sequence
+#: model:ir.model.fields,help:website_restaurant_menu_snippet.field_product_template__sequence
+msgid "Gives the sequence order when displaying a list of product categories."
+msgstr "Ger ordningsföljden vid visning av en produktlista."
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.restaurant_menu_snippet_options
+msgid "Hide"
+msgstr "Göm"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model.fields,help:website_restaurant_menu_snippet.field_product_category__available_in_menu
+msgid "If the Point of Sale category is displayed in the website menu or not"
+msgstr "Om kategorin Point of Sale visas i webbplatsens meny eller inte"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model.fields,help:website_restaurant_menu_snippet.field_pos_category__available_in_menu
+#: model:ir.model.fields,help:website_restaurant_menu_snippet.field_product_combo__available_in_menu
+msgid "If the combo is displayed in the website menu or not"
+msgstr "Om kombinationen visas i webbplatsens meny eller inte"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model.fields,help:website_restaurant_menu_snippet.field_product_product__available_in_menu
+#: model:ir.model.fields,help:website_restaurant_menu_snippet.field_product_template__available_in_menu
+msgid "If the product is displayed in the website menu or not"
+msgstr "Om produkten visas i webbplatsens meny eller inte"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.restaurant_menu_snippet_options
+msgid "List Menu - Dark"
+msgstr "Listmeny - Mörk"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.restaurant_menu_snippet_options
+msgid "List Menu - Light"
+msgstr "Meny Lista - Ljus"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.s_restaurant_menu_snippet_template
+msgid "Menu"
+msgstr "Meny"
+
+#. module: website_restaurant_menu_snippet
+#: model:website.snippet.filter,name:website_restaurant_menu_snippet.dynamic_filter_pos_categories
+msgid "POS Categories"
+msgstr "POS-kategorier"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.restaurant_menu_snippet_options
+msgid "Picture Menu - Dark"
+msgstr "Bildmeny - Mörk"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.restaurant_menu_snippet_options
+msgid "Picture Menu - Light"
+msgstr "Bildmeny - Ljus"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model,name:website_restaurant_menu_snippet.model_pos_category
+msgid "Point of Sale Category"
+msgstr "Kassakategori"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.restaurant_menu_snippet_options
+msgid "Prices"
+msgstr "Priserna"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model,name:website_restaurant_menu_snippet.model_product_template
+msgid "Product"
+msgstr "Produkt"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model,name:website_restaurant_menu_snippet.model_product_category
+msgid "Product Category"
+msgstr "Produktkategori"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model,name:website_restaurant_menu_snippet.model_product_combo
+msgid "Product Combo"
+msgstr "Produktkombination"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model,name:website_restaurant_menu_snippet.model_product_product
+msgid "Product Variant"
+msgstr "Produktvariant"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.dynamic_filter_template_pos_category_restaurant_menu_2
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.dynamic_filter_template_pos_category_restaurant_menu_2_light
+msgid "Product image"
+msgstr "Produktbild"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_pos_category__product_tmpl_ids
+msgid "Products"
+msgstr "Produkter"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.snippets
+msgid "Restaurant Menu"
+msgstr "Meny för restaurang"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_product_category__sequence
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_product_combo__sequence
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_product_product__sequence
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_product_template__sequence
+msgid "Sequence"
+msgstr "Sekvens"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.restaurant_menu_snippet_options
+msgid "Show"
+msgstr "Visa"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.s_restaurant_menu_snippet_template
+msgid "Sub-heading"
+msgstr "Underrubrik"
+
+#. module: website_restaurant_menu_snippet
+#: model_terms:ir.ui.view,arch_db:website_restaurant_menu_snippet.restaurant_menu_snippet_options
+msgid "Template"
+msgstr "Mall"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model.fields,help:website_restaurant_menu_snippet.field_website_snippet_filter__product_cross_selling
+msgid ""
+"True only for product filters that require a product_id because they relate "
+"to cross selling"
+msgstr ""
+"Gäller endast för produktfilter som kräver ett product_id eftersom de "
+"relaterar till korsförsäljning"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model.fields,field_description:website_restaurant_menu_snippet.field_pos_category__website_id
+msgid "Website"
+msgstr "Webbplats"
+
+#. module: website_restaurant_menu_snippet
+#: model:ir.model,name:website_restaurant_menu_snippet.model_website_snippet_filter
+msgid "Website Snippet Filter"
+msgstr "Filter för Webplatssnippet"
+
+#. module: website_restaurant_menu_snippet
+#. odoo-python
+#: code:addons/website_restaurant_menu_snippet/models/website_snippet_filter.py:0
+msgid "You can only use template prefixed by dynamic_filter_template_ "
+msgstr "Du kan bara använda mallar som föregås av dynamic_filter_template_ "
