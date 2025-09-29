@@ -16,13 +16,15 @@ from odoo.osv.expression import OR
 class AccountMove(PortalAccount):
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
-        domain = self._get_invoices_domain()
+
+        domain = self._get_invoices_domain('out')
         domain += [('show_on_customer_portal', '=', True)]
         domain += [('partner_id', '=', request.env.user.partner_id.id)]
+
         if 'overdue_invoice_count' in counters:
             values['overdue_invoice_count'] = self._get_overdue_invoice_count()
         if 'invoice_count' in counters:
-            invoice_count = request.env['account.move'].search_count(self._get_invoices_domain('out'), limit=1) \
+            invoice_count = request.env['account.move'].search_count(domain, limit=1) \
                 if request.env['account.move'].has_access('read') else 0
             values['invoice_count'] = invoice_count
         if 'bill_count' in counters:
@@ -54,7 +56,7 @@ class AccountMove(PortalAccount):
 
         searchbar_filters = {
             'all': {'label': _('All'), 'domain': []},
-            'invoices': {'label': _('Invoices'), 'domain': [('move_type', '=', ('out_invoice', 'out_refund'))]},
+            'invoices': {'label': _('Invoices'), 'domain': [('move_type', 'in', ('out_invoice', 'out_refund'))]},
             'bills': {'label': _('Bills'), 'domain': [('move_type', '=', ('in_invoice', 'in_refund'))]},
         }
         # default filter by value
