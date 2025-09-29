@@ -28,21 +28,21 @@ class PortalEvent(CustomerPortal):
         return [('partner_id', '=', partner.id)]
 
     @http.route(['/my/events', '/my/events/page/<int:page>'], type='http', auth="user", website=True)
-    def portal_my_events(self, page=1, date_open=None, date_closed=None, sortby=None, filterby=None, **kw):
+    def portal_my_events(self, page=1, create_date=None, date_closed=None, sortby=None, filterby=None, **kw):
         values = self._prepare_portal_layout_values()
         EventAttendee = request.env['event.registration'].sudo()
 
         domain = self._get_event_domain()
 
         searchbar_sortings = {
-            'date_open': {'label': _('Date'), 'order': 'date_open desc'},
+            'create_date': {'label': _('Date'), 'order': 'create_date desc'},
             'date_closed': {'label': _('Due Date'), 'order': 'date_closed desc'},
             'name': {'label': _('Event'), 'order': 'name desc'},
             'state': {'label': _('Status'), 'order': 'state'},
         }
         # default sort by order
         if not sortby:
-            sortby = 'date_open'
+            sortby = 'create_date'
         order = searchbar_sortings[sortby]['order']
 
         searchbar_filters = {
@@ -53,15 +53,15 @@ class PortalEvent(CustomerPortal):
             filterby = 'all'
         domain += searchbar_filters[filterby]['domain']
 
-        if date_open and date_closed:
-            domain += [('create_date', '>', date_open), ('date_closed', '<=', date_closed)]
+        if create_date and date_closed:
+            domain += [('create_date', '>', create_date), ('date_closed', '<=', date_closed)]
 
         # count for pager
         event_count = EventAttendee.search_count(domain)
         # pager
         pager = portal_pager(
             url="/my/events",
-            url_args={'date_open': date_open, 'date_closed': date_closed, 'sortby': sortby},
+            url_args={'create_date': create_date, 'date_closed': date_closed, 'sortby': sortby},
             total=event_count,
             page=page,
             step=self._items_per_page
@@ -71,7 +71,7 @@ class PortalEvent(CustomerPortal):
         request.session['my_events_history'] = event_registrations.ids[:100]
 
         values.update({
-            'date': date_open,
+            'date': create_date,
             'events': event_registrations,
             'page_name': 'events',
             'pager': pager,
