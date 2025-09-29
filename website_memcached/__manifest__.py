@@ -108,7 +108,7 @@ Default are Database + Path + Context eg {db},{path},{context}
     "external_dependencies": {"python": ["pymemcache", "pyhashxx"]},
     "data": [
         "views/res_config_view.xml",
-        "views/website_view.xml",
+        #"views/website_view.xml",
     ],
     "application": False,
 }
