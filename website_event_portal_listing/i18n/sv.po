@@ -1,0 +1,261 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* website_event_portal
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20250925\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-09-29 09:34+0000\n"
+"PO-Revision-Date: 2025-09-29 11:54+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+msgid ""
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-"
+"o\" aria-label=\"Draft\" title=\"Draft\" role=\"img\"/><span class=\"d-none "
+"d-md-inline\"> Waiting for Confirmation</span></span>"
+msgstr ""
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-"
+"o\" aria-label=\"Draft\" title=\"Draft\" role=\"img\"/><span class=\"d-none "
+"d-md-inline\">Väntar på bekräftelse</span></span>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+msgid ""
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-"
+"o\" aria-label=\"Reservation\" title=\"Reservation\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Reservation</span></span>"
+msgstr ""
+"<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-"
+"o\" aria-label=\"Reservation\" title=\"Reservation\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Reservation</span></span>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+msgid ""
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Confirmed\" title=\"Confirmed\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Confirmed</span></span>"
+msgstr ""
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Confirmed\" title=\"Confirmed\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Bekräftad</span></span>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+msgid ""
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Done\" title=\"Done\" role=\"img\"/><span class=\"d-"
+"none d-md-inline\"> Done</span></span>"
+msgstr ""
+"<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
+"check\" aria-label=\"Done\" title=\"Done\" role=\"img\"/><span class=\"d-"
+"none d-md-inline\"> Klar</span></span>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+msgid ""
+"<span class=\"badge badge-pill badge-warning\"><i class=\"fa fa-fw fa-"
+"remove\" aria-label=\"Cancelled\" title=\"Cancelled\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Cancelled</span></span>"
+msgstr ""
+"<span class=\"badge badge-pill badge-warning\"><i class=\"fa fa-fw fa-"
+"remove\" aria-label=\"Cancelled\" title=\"Cancelled\" role=\"img\"/><span "
+"class=\"d-none d-md-inline\"> Avbruten</span></span>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "<strong>Attendee Email:</strong>"
+msgstr "<strong>Deltagares e-post:</strong>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "<strong>Attendee Name:</strong>"
+msgstr "<strong>Namn på deltagare:</strong>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "<strong>Attendee Phone:</strong>"
+msgstr "<strong>Telefon till deltagare:</strong>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "<strong>Booked By:</strong>"
+msgstr "<strong>Bokad av:</strong>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "<strong>Event Ticket:</strong>"
+msgstr "<strong>Eventbiljett:</strong>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "<strong>Message and communication history</strong>"
+msgstr "<strong>Meddelande- och kommunikationshistoria</strong>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "<strong>Registration Date:</strong>"
+msgstr "<strong>Registreringsdatum:</strong>"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "Add to Calendar"
+msgstr "Lägg till i kalender"
+
+#. module: website_event_portal
+#. odoo-python
+#: code:addons/website_event_portal/controllers/portal.py:0
+msgid "All"
+msgstr "Alla"
+
+#. module: website_event_portal
+#. odoo-python
+#: code:addons/website_event_portal/controllers/portal.py:0
+msgid "Cancelled"
+msgstr "Avbruten"
+
+#. module: website_event_portal
+#. odoo-python
+#: code:addons/website_event_portal/controllers/portal.py:0
+msgid "Confirmed"
+msgstr "Bekräftad"
+
+#. module: website_event_portal
+#. odoo-python
+#: code:addons/website_event_portal/controllers/portal.py:0
+msgid "Date"
+msgstr "Datum"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "Date &amp; Time"
+msgstr "Datum &amp; Tid"
+
+#. module: website_event_portal
+#. odoo-python
+#: code:addons/website_event_portal/controllers/portal.py:0
+msgid "Due Date"
+msgstr "Förfallodatum"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "End -"
+msgstr "Slut -"
+
+#. module: website_event_portal
+#. odoo-python
+#: code:addons/website_event_portal/controllers/portal.py:0
+msgid "Event"
+msgstr "Evenemang"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+msgid "Event Name #"
+msgstr "Evenemangsnamn #"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+msgid "Event Start"
+msgstr "Evenemangsstart"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+msgid "Events"
+msgstr "Händelser"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid ""
+"Find out what people see and say about this event, and join the "
+"conversation."
+msgstr ""
+"Ta reda på vad folk ser och säger om detta evenemang och delta i "
+"konversationen."
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_home_events
+msgid "Follow, view or manage your event registration"
+msgstr "Följ, se eller hantera din evenemangsregistrering"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "Get the direction"
+msgstr "Få riktningen"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "Google"
+msgstr "Google"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "Location"
+msgstr "Plats"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_home_events
+msgid "My Events"
+msgstr "Mina evenemang"
+
+#. module: website_event_portal
+#. odoo-python
+#: code:addons/website_event_portal/controllers/portal.py:0
+msgid "Ongoing"
+msgstr "Pågående"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "Organizer"
+msgstr "Arrangör"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+msgid "Registration Date"
+msgstr "Registreringsdatum"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "SHARE"
+msgstr "DELA"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "Start -"
+msgstr "Starta -"
+
+#. module: website_event_portal
+#. odoo-python
+#: code:addons/website_event_portal/controllers/portal.py:0
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+msgid "Status"
+msgstr "Status"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+msgid "There are currently no events for your account."
+msgstr "Det finns för närvarande inga evenemang för ditt konto."
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "Un-Reserve Seat"
+msgstr "Ej reserverad plats"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "Unsubscribed"
+msgstr "Avregistrerad"
+
+#. module: website_event_portal
+#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+msgid "iCal/Outlook"
+msgstr "iCal/Outlook"
