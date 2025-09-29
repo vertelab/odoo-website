@@ -54,7 +54,7 @@ class PortalEvent(CustomerPortal):
         domain += searchbar_filters[filterby]['domain']
 
         if date_open and date_closed:
-            domain += [('date_open', '>', date_open), ('date_closed', '<=', date_closed)]
+            domain += [('create_date', '>', date_open), ('date_closed', '<=', date_closed)]
 
         # count for pager
         event_count = EventAttendee.search_count(domain)
@@ -67,12 +67,12 @@ class PortalEvent(CustomerPortal):
             step=self._items_per_page
         )
         # content according to pager and archive selected
-        events = EventAttendee.search(domain, order=order, limit=self._items_per_page, offset=pager['offset'])
-        request.session['my_events_history'] = events.ids[:100]
+        event_registrations = EventAttendee.search(domain, order=order, limit=self._items_per_page, offset=pager['offset'])
+        request.session['my_events_history'] = event_registrations.ids[:100]
 
         values.update({
             'date': date_open,
-            'events': events,
+            'events': event_registrations,
             'page_name': 'events',
             'pager': pager,
             'default_url': '/my/events',

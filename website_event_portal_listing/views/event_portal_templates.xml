@@ -2,8 +2,10 @@
     <template id="portal_my_home_events" name="Show My Events" inherit_id="portal.portal_my_home" customize_show="True" priority="30">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/website_event_portal_listing/static/src/img/event.svg'"/>
                 <t t-set="title">My Events</t>
                 <t t-set="url" t-value="'/my/events'"/>
+                <t t-set="text">Follow, view or manage your events</t>
                 <t t-set="placeholder_count" t-value="'event_count'"/>
             </t>
         </xpath>
@@ -29,29 +31,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <t t-foreach="events" t-as="event">
+                    <t t-foreach="event_registrations" t-as="event_registration">
                         <tr>
                             <td>
-                                <a t-attf-href="/event/{{event.id}}" t-att-title="event.event_id.name">
-                                    <span t-esc="event.event_id.name"/>
+                                <a t-attf-href="/event/{{event_registration.id}}" t-att-title="event_registration.event_id.name">
+                                    <span t-esc="event_registration.event_id.name"/>
                                 </a>
                             </td>
-                            <td><span t-field="event.date_open"/></td>
-                            <td class='d-none d-md-table-cell'><span t-field="event.event_begin_date"/></td>
+                            <td><span t-field="event_registration.create_date"/></td>
+                            <td class='d-none d-md-table-cell'><span t-field="event_registration.event_begin_date"/></td>
                             <td class="tx_status">
-                                <t t-if="event.state == 'draft'">
+                                <t t-if="event_registration.state == 'draft'">
                                     <span class="badge badge-pill badge-info"><i class="fa fa-fw fa-clock-o" aria-label="Draft" title="Draft" role="img"></i><span class="d-none d-md-inline"> Waiting for Confirmation</span></span>
                                 </t>
-                                <t t-if="event.state == 'done'">
+                                <t t-if="event_registration.state == 'done'">
                                     <span class="badge badge-pill badge-success"><i class="fa fa-fw fa-check" aria-label="Done" title="Done" role="img"></i><span class="d-none d-md-inline"> Done</span></span>
                                 </t>
-                                <t t-if="event.state == 'open'">
+                                <t t-if="event_registration.state == 'open'">
                                     <span class="badge badge-pill badge-success"><i class="fa fa-fw fa-check" aria-label="Confirmed" title="Confirmed" role="img"></i><span class="d-none d-md-inline"> Confirmed</span></span>
                                 </t>
-                                <t t-if="event.state == 'cancel'">
+                                <t t-if="event_registration.state == 'cancel'">
                                     <span class="badge badge-pill badge-warning"><i class="fa fa-fw fa-remove" aria-label="Cancelled" title="Cancelled" role="img"></i><span class="d-none d-md-inline"> Cancelled</span></span>
                                 </t>
-                                <t t-if="event.state == 'reservation'">
+                                <t t-if="event_registration.state == 'reservation'">
                                     <span class="badge badge-pill badge-info"><i class="fa fa-fw fa-clock-o" aria-label="Reservation" title="Reservation" role="img"></i><span class="d-none d-md-inline"> Reservation</span></span>
                                 </t>
                             </td>
@@ -96,7 +98,7 @@
                             <div class="row">
                                 <div class="col flex-grow-1 pr-3">
                                     <p style="color:grey"><strong>Event Ticket:</strong> <span t-field="event_registration.event_ticket_id" class="text-truncate"/></p>
-                                    <p style="color:grey"><strong>Registration Date:</strong> <span t-field="event_registration.date_open" class="text-truncate"/></p>
+                                    <p style="color:grey"><strong>Registration Date:</strong> <span t-field="event_registration.create_date" class="text-truncate"/></p>
                                 </div>
                             </div>
                         </div>
