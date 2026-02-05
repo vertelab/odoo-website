@@ -18,7 +18,7 @@ class PortalEvent(CustomerPortal):
         EventAttendee = request.env['event.registration'].sudo()
         if 'event_count' in counters:
             event_count = EventAttendee.search_count(self._get_event_domain()) \
-                if EventAttendee.check_access_rights('read', raise_exception=False) else 0
+                if EventAttendee.check_access('read') else 0
             values['event_count'] = event_count
         return values
 
