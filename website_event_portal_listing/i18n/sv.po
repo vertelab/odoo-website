@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* website_event_portal
+# 	* website_event_portal_listing
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0-20250925\n"
+"Project-Id-Version: Odoo Server 18.0-20251205\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-29 09:34+0000\n"
-"PO-Revision-Date: 2025-09-29 11:54+0200\n"
+"POT-Creation-Date: 2025-12-08 10:09+0000\n"
+"PO-Revision-Date: 2025-12-08 12:03+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv\n"
@@ -17,8 +17,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.4.2\n"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid ""
 "<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-"
 "o\" aria-label=\"Draft\" title=\"Draft\" role=\"img\"/><span class=\"d-none "
@@ -26,10 +26,10 @@ msgid ""
 msgstr ""
 "<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-"
 "o\" aria-label=\"Draft\" title=\"Draft\" role=\"img\"/><span class=\"d-none "
-"d-md-inline\">Väntar på bekräftelse</span></span>"
+"d-md-inline\"> Väntar på bekräftelse</span></span>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid ""
 "<span class=\"badge badge-pill badge-info\"><i class=\"fa fa-fw fa-clock-"
 "o\" aria-label=\"Reservation\" title=\"Reservation\" role=\"img\"/><span "
@@ -39,8 +39,8 @@ msgstr ""
 "o\" aria-label=\"Reservation\" title=\"Reservation\" role=\"img\"/><span "
 "class=\"d-none d-md-inline\"> Reservation</span></span>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid ""
 "<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
 "check\" aria-label=\"Confirmed\" title=\"Confirmed\" role=\"img\"/><span "
@@ -50,8 +50,8 @@ msgstr ""
 "check\" aria-label=\"Confirmed\" title=\"Confirmed\" role=\"img\"/><span "
 "class=\"d-none d-md-inline\"> Bekräftad</span></span>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid ""
 "<span class=\"badge badge-pill badge-success\"><i class=\"fa fa-fw fa-"
 "check\" aria-label=\"Done\" title=\"Done\" role=\"img\"/><span class=\"d-"
@@ -61,8 +61,8 @@ msgstr ""
 "check\" aria-label=\"Done\" title=\"Done\" role=\"img\"/><span class=\"d-"
 "none d-md-inline\"> Klar</span></span>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid ""
 "<span class=\"badge badge-pill badge-warning\"><i class=\"fa fa-fw fa-"
 "remove\" aria-label=\"Cancelled\" title=\"Cancelled\" role=\"img\"/><span "
@@ -72,190 +72,336 @@ msgstr ""
 "remove\" aria-label=\"Cancelled\" title=\"Cancelled\" role=\"img\"/><span "
 "class=\"d-none d-md-inline\"> Avbruten</span></span>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "<strong>Attendee Email:</strong>"
-msgstr "<strong>Deltagares e-post:</strong>"
+msgstr "<strong>Deltagarens adress:</strong>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "<strong>Attendee Name:</strong>"
-msgstr "<strong>Namn på deltagare:</strong>"
+msgstr "<strong>Deltagarens namn:</strong>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "<strong>Attendee Phone:</strong>"
-msgstr "<strong>Telefon till deltagare:</strong>"
+msgstr "<strong>Deltagarens telefonnummer:</strong>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "<strong>Booked By:</strong>"
-msgstr "<strong>Bokad av:</strong>"
+msgstr "<strong>Bokad av: </strong>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "<strong>Event Ticket:</strong>"
-msgstr "<strong>Eventbiljett:</strong>"
+msgstr "<strong>Evenemangsbiljett:</strong>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "<strong>Message and communication history</strong>"
-msgstr "<strong>Meddelande- och kommunikationshistoria</strong>"
+msgstr "<strong>Meddelande- och kommunikationshistorik</strong>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "<strong>Registration Date:</strong>"
 msgstr "<strong>Registreringsdatum:</strong>"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_needaction
+msgid "Action Needed"
+msgstr "Åtgärd Krävs"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_ids
+msgid "Activities"
+msgstr "Aktiviteter"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Aktivitet undantaget dekoration"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_state
+msgid "Activity State"
+msgstr "Aktivitetsläge"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "AktivitetstypsIkon"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "Add to Calendar"
 msgstr "Lägg till i kalender"
 
-#. module: website_event_portal
+#. module: website_event_portal_listing
 #. odoo-python
-#: code:addons/website_event_portal/controllers/portal.py:0
+#: code:addons/website_event_portal_listing/controllers/portal.py:0
 msgid "All"
 msgstr "Alla"
 
-#. module: website_event_portal
-#. odoo-python
-#: code:addons/website_event_portal/controllers/portal.py:0
-msgid "Cancelled"
-msgstr "Avbruten"
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_attachment_count
+msgid "Attachment Count"
+msgstr "Antal bilagor"
 
-#. module: website_event_portal
+#. module: website_event_portal_listing
 #. odoo-python
-#: code:addons/website_event_portal/controllers/portal.py:0
-msgid "Confirmed"
-msgstr "Bekräftad"
-
-#. module: website_event_portal
-#. odoo-python
-#: code:addons/website_event_portal/controllers/portal.py:0
+#: code:addons/website_event_portal_listing/controllers/portal.py:0
 msgid "Date"
 msgstr "Datum"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "Date &amp; Time"
 msgstr "Datum &amp; Tid"
 
-#. module: website_event_portal
+#. module: website_event_portal_listing
 #. odoo-python
-#: code:addons/website_event_portal/controllers/portal.py:0
+#: code:addons/website_event_portal_listing/controllers/portal.py:0
 msgid "Due Date"
 msgstr "Förfallodatum"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "End -"
 msgstr "Slut -"
 
-#. module: website_event_portal
+#. module: website_event_portal_listing
 #. odoo-python
-#: code:addons/website_event_portal/controllers/portal.py:0
+#: code:addons/website_event_portal_listing/controllers/portal.py:0
 msgid "Event"
 msgstr "Evenemang"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid "Event Name #"
 msgstr "Evenemangsnamn #"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+#. module: website_event_portal_listing
+#: model:ir.model,name:website_event_portal_listing.model_event_registration
+msgid "Event Registration"
+msgstr "Evenemangsregistrering"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid "Event Start"
 msgstr "Evenemangsstart"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid "Events"
-msgstr "Händelser"
+msgstr "Evenemang"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid ""
 "Find out what people see and say about this event, and join the "
 "conversation."
 msgstr ""
-"Ta reda på vad folk ser och säger om detta evenemang och delta i "
-"konversationen."
+"Ta reda på vad folk ser och säger om det här evenemanget och delta i "
+"diskussionen."
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_home_events
-msgid "Follow, view or manage your event registration"
-msgstr "Följ, se eller hantera din evenemangsregistrering"
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_home_events
+msgid "Follow, view or manage your events"
+msgstr "Följ, visa eller hantera dina evenemang"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_follower_ids
+msgid "Followers"
+msgstr "Följare"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Följare (Partners)"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Font Awesome-ikon t.ex. fa-tasks"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "Get the direction"
 msgstr "Få riktningen"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "Google"
 msgstr "Google"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__has_message
+msgid "Has Message"
+msgstr "Har meddelande"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_exception_icon
+msgid "Icon"
+msgstr "Ikon"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Ikon för att indikera en undantagsaktivitet."
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Om markerad, nya meddelanden kräver din uppmärksamhet."
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__message_has_error
+#: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Om markerad, några meddelanden har ett leveransfel."
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_is_follower
+msgid "Is Follower"
+msgstr "Är Följare"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "Location"
 msgstr "Plats"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_home_events
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_has_error
+msgid "Message Delivery error"
+msgstr "Fel vid leverans meddelande"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_ids
+msgid "Messages"
+msgstr "Meddelanden"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Min aktivitets tidsfrist"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_home_events
 msgid "My Events"
 msgstr "Mina evenemang"
 
-#. module: website_event_portal
-#. odoo-python
-#: code:addons/website_event_portal/controllers/portal.py:0
-msgid "Ongoing"
-msgstr "Pågående"
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Tidsfrist för nästa aktivitet"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_summary
+msgid "Next Activity Summary"
+msgstr "Nästa aktivitetssammanställning"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_type_id
+msgid "Next Activity Type"
+msgstr "Nästa aktivitetstyp"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Antal åtgärder"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_has_error_counter
+msgid "Number of errors"
+msgstr "Antal fel"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Antal meddelanden som kräver åtgärd"
+
+#. module: website_event_portal_listing
+#: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Antal meddelanden med leveransfel"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "Organizer"
-msgstr "Arrangör"
+msgstr "Orgaisatör"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__rating_ids
+msgid "Ratings"
+msgstr "Betyg"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid "Registration Date"
 msgstr "Registreringsdatum"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__activity_user_id
+msgid "Responsible User"
+msgstr "Ansvarig användare"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "SHARE"
 msgstr "DELA"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
-msgid "Start -"
-msgstr "Starta -"
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "SMS leveransfel"
 
-#. module: website_event_portal
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
+msgid "Start -"
+msgstr "Start -"
+
+#. module: website_event_portal_listing
 #. odoo-python
-#: code:addons/website_event_portal/controllers/portal.py:0
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+#: code:addons/website_event_portal_listing/controllers/portal.py:0
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid "Status"
 msgstr "Status"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.portal_my_events
+#. module: website_event_portal_listing
+#: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Status baserad på aktiviteter\n"
+"Försenade: Leveranstidpunkten har passerat\n"
+"Idag: Aktivitetsdatum är idag\n"
+"Kommande: Framtida aktiviteter."
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.portal_my_events
 msgid "There are currently no events for your account."
 msgstr "Det finns för närvarande inga evenemang för ditt konto."
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
-msgid "Un-Reserve Seat"
-msgstr "Ej reserverad plats"
+#. module: website_event_portal_listing
+#: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Typ av undantagsaktivitet som har registrerats."
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
-msgid "Unsubscribed"
-msgstr "Avregistrerad"
+#. module: website_event_portal_listing
+#: model:ir.model.fields,field_description:website_event_portal_listing.field_event_registration__website_message_ids
+msgid "Website Messages"
+msgstr "Webbplatsmeddelanden"
 
-#. module: website_event_portal
-#: model_terms:ir.ui.view,arch_db:website_event_portal.event_my_event_registration
+#. module: website_event_portal_listing
+#: model:ir.model.fields,help:website_event_portal_listing.field_event_registration__website_message_ids
+msgid "Website communication history"
+msgstr "Webbplatsens kommunikationshistorik"
+
+#. module: website_event_portal_listing
+#: model_terms:ir.ui.view,arch_db:website_event_portal_listing.event_my_event_registration
 msgid "iCal/Outlook"
 msgstr "iCal/Outlook"
