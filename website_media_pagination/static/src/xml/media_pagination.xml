@@ -1,3 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates id="template" xml:space="preserve">
+
+<!-- html_editor image edit button -->
+<t t-name="website_media_pagination.html_editor.AutoResizeImage" t-extend="html_editor.AutoResizeImage">
+    <t t-jquery="div.o_existing_attachment_cell" t-operation="prepend">
+        <a class="o_we_edit_attachment position-absolute top-0 start-0 p-2 z-1 opacity-0 opacity-100-hover cursor-pointer text-dark bg-white-25 rounded-1"
+           t-att-data-attachment-id="props.id"
+           title="Edit attachment"
+           role="button">
+            <i class="fa fa-pencil"/>
+        </a>
+    </t>
+</t>
+
+<!-- html_editor document edit button -->
+<t t-name="website_media_pagination.html_editor.DocumentAttachment" t-extend="html_editor.DocumentAttachment">
+    <t t-jquery="div.o_existing_attachment_cell" t-operation="prepend">
+        <a class="o_we_edit_attachment position-absolute top-0 start-0 p-2 z-1 opacity-0 opacity-100-hover cursor-pointer text-dark bg-white-25 rounded-1"
+           t-att-data-attachment-id="props.id"
+           title="Edit attachment"
+           role="button">
+            <i class="fa fa-pencil"/>
+        </a>
+    </t>
+</t>
+
+<!-- web_editor image edit button -->
+<t t-name="website_media_pagination.web_editor.AutoResizeImage" t-extend="web_editor.AutoResizeImage">
+    <t t-jquery="div.o_existing_attachment_cell" t-operation="prepend">
+        <a class="o_we_edit_attachment position-absolute top-0 start-0 p-2 z-1 opacity-0 opacity-100-hover cursor-pointer text-dark bg-white-25 rounded-1"
+           t-att-data-attachment-id="props.id"
+           title="Edit attachment"
+           role="button">
+            <i class="fa fa-pencil"/>
+        </a>
+    </t>
+</t>
+
+<!-- web_editor document edit button -->
+<t t-name="website_media_pagination.web_editor.DocumentAttachment" t-extend="web_editor.DocumentAttachment">
+    <t t-jquery="div.o_existing_attachment_cell" t-operation="prepend">
+        <a class="o_we_edit_attachment position-absolute top-0 start-0 p-2 z-1 opacity-0 opacity-100-hover cursor-pointer text-dark bg-white-25 rounded-1"
+           t-att-data-attachment-id="props.id"
+           title="Edit attachment"
+           role="button">
+            <i class="fa fa-pencil"/>
+        </a>
+    </t>
+</t>
+
 </templates>

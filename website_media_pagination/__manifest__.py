@@ -1,6 +1,6 @@
 {
     'name': 'Website Media Pagination',
-    'version': '18.0.1.0.2',
+    'version': '18.0.1.1.0',
     'category': 'Website',
     'summary': 'Add pagination to website media library dialog',
     'depends': ['website'],

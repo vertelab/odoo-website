@@ -1,7 +1,9 @@
 import { patch } from "@web/core/utils/patch";
 import { FileSelector as HtmlFileSelector } from "@html_editor/main/media/media_dialog/file_selector";
 import { FileSelector as WebFileSelector } from "@web_editor/components/media_dialog/file_selector";
-import { useEffect } from "@odoo/owl";
+import { useEffect, onMounted } from "@odoo/owl";
+
+const editHandledParents = new WeakSet();
 
 function buildPaginationHTML(component) {
     const currentPage = component.state.currentPage;
@@ -53,6 +55,18 @@ function patchFileSelector(FileSelector) {
             this.state.currentPage = 1;
             this.state.totalCount = 0;
             this.state.pageSize = this.NUMBER_OF_ATTACHMENTS_TO_DISPLAY;
+            this.state.canEditAttachment = false;
+
+            this._checkEditPermission();
+
+            onMounted(() => {
+                const loadMoreEl = this.loadMoreButtonRef?.el;
+                const parent = loadMoreEl?.parentNode;
+                if (parent && !editHandledParents.has(parent)) {
+                    editHandledParents.add(parent);
+                    parent.addEventListener("click", this._onEditClick);
+                }
+            });
 
             useEffect(
                 () => {
@@ -87,6 +101,11 @@ function patchFileSelector(FileSelector) {
                             container.remove();
                         }
                     }
+
+                    const editBtns = parent.querySelectorAll("[data-attachment-id]");
+                    for (const btn of editBtns) {
+                        btn.classList.toggle("d-none", !this.state.canEditAttachment);
+                    }
                 },
                 () => [
                     this.state.attachments.length,
@@ -94,6 +113,7 @@ function patchFileSelector(FileSelector) {
                     this.state.totalCount,
                     this.state.pageSize,
                     this.state.needle,
+                    this.state.canEditAttachment,
                 ]
             );
         },
@@ -174,6 +194,33 @@ function patchFileSelector(FileSelector) {
 
         async handleLoadMore() {
             await this.goToPage(this.state.currentPage + 1);
+        },
+
+        async _checkEditPermission() {
+            try {
+                const canEdit = await this.orm.call(
+                    "ir.attachment", "check_access_rights",
+                    ["write"], { raise_exception: false }
+                );
+                this.state.canEditAttachment = canEdit;
+            } catch {
+                this.state.canEditAttachment = false;
+            }
+        },
+
+        _onEditClick(ev) {
+            const btn = ev.target.closest("[data-attachment-id]");
+            if (btn) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                const attachmentId = btn.dataset.attachmentId;
+                if (attachmentId) {
+                    window.open(
+                        `/web#model=ir.attachment&id=${attachmentId}&view_type=form`,
+                        "_blank"
+                    );
+                }
+            }
         },
     });
 }
