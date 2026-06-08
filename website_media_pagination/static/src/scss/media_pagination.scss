@@ -1,0 +1,26 @@
+.o_we_pagination {
+    .o_we_pagination_info {
+        white-space: nowrap;
+        font-size: 0.85rem;
+    }
+    .o_we_pagination_nav {
+        .pagination {
+            margin: 0;
+        }
+        .page-link {
+            cursor: pointer;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.8rem;
+        }
+    }
+    .o_we_pagination_page_size {
+        select {
+            font-size: 0.8rem;
+            padding: 0.15rem 0.4rem;
+        }
+        label {
+            font-size: 0.8rem;
+            margin: 0 0.3rem 0 0;
+        }
+    }
+}
