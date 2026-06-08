@@ -1,7 +1,7 @@
 import { patch } from "@web/core/utils/patch";
 import { FileSelector as HtmlFileSelector } from "@html_editor/main/media/media_dialog/file_selector";
 import { FileSelector as WebFileSelector } from "@web_editor/components/media_dialog/file_selector";
-import { useEffect, onMounted } from "@odoo/owl";
+import { useEffect } from "@odoo/owl";
 
 const editHandledParents = new WeakSet();
 
@@ -59,15 +59,6 @@ function patchFileSelector(FileSelector) {
 
             this._checkEditPermission();
 
-            onMounted(() => {
-                const loadMoreEl = this.loadMoreButtonRef?.el;
-                const parent = loadMoreEl?.parentNode;
-                if (parent && !editHandledParents.has(parent)) {
-                    editHandledParents.add(parent);
-                    parent.addEventListener("click", this._onEditClick);
-                }
-            });
-
             useEffect(
                 () => {
                     const loadMoreEl = this.loadMoreButtonRef?.el;
@@ -100,6 +91,11 @@ function patchFileSelector(FileSelector) {
                         if (container) {
                             container.remove();
                         }
+                    }
+
+                    if (!editHandledParents.has(parent)) {
+                        editHandledParents.add(parent);
+                        parent.addEventListener("click", this._onEditClick);
                     }
 
                     const editBtns = parent.querySelectorAll("[data-attachment-id]");

@@ -2,51 +2,51 @@
 <templates id="template" xml:space="preserve">
 
 <!-- html_editor image edit button -->
-<t t-name="website_media_pagination.html_editor.AutoResizeImage" t-extend="html_editor.AutoResizeImage">
-    <t t-jquery="div.o_existing_attachment_cell" t-operation="prepend">
+<t t-inherit="html_editor.AutoResizeImage" t-inherit-mode="extension">
+    <xpath expr="//div[hasclass('o_existing_attachment_cell')]" position="prepend">
         <a class="o_we_edit_attachment position-absolute top-0 start-0 p-2 z-1 opacity-0 opacity-100-hover cursor-pointer text-dark bg-white-25 rounded-1"
            t-att-data-attachment-id="props.id"
            title="Edit attachment"
            role="button">
             <i class="fa fa-pencil"/>
         </a>
-    </t>
+    </xpath>
 </t>
 
 <!-- html_editor document edit button -->
-<t t-name="website_media_pagination.html_editor.DocumentAttachment" t-extend="html_editor.DocumentAttachment">
-    <t t-jquery="div.o_existing_attachment_cell" t-operation="prepend">
+<t t-inherit="html_editor.DocumentAttachment" t-inherit-mode="extension">
+    <xpath expr="//div[hasclass('o_existing_attachment_cell')]" position="prepend">
         <a class="o_we_edit_attachment position-absolute top-0 start-0 p-2 z-1 opacity-0 opacity-100-hover cursor-pointer text-dark bg-white-25 rounded-1"
            t-att-data-attachment-id="props.id"
            title="Edit attachment"
            role="button">
             <i class="fa fa-pencil"/>
         </a>
-    </t>
+    </xpath>
 </t>
 
 <!-- web_editor image edit button -->
-<t t-name="website_media_pagination.web_editor.AutoResizeImage" t-extend="web_editor.AutoResizeImage">
-    <t t-jquery="div.o_existing_attachment_cell" t-operation="prepend">
+<t t-inherit="web_editor.AutoResizeImage" t-inherit-mode="extension">
+    <xpath expr="//div[hasclass('o_existing_attachment_cell')]" position="prepend">
         <a class="o_we_edit_attachment position-absolute top-0 start-0 p-2 z-1 opacity-0 opacity-100-hover cursor-pointer text-dark bg-white-25 rounded-1"
            t-att-data-attachment-id="props.id"
            title="Edit attachment"
            role="button">
             <i class="fa fa-pencil"/>
         </a>
-    </t>
+    </xpath>
 </t>
 
 <!-- web_editor document edit button -->
-<t t-name="website_media_pagination.web_editor.DocumentAttachment" t-extend="web_editor.DocumentAttachment">
-    <t t-jquery="div.o_existing_attachment_cell" t-operation="prepend">
+<t t-inherit="web_editor.DocumentAttachment" t-inherit-mode="extension">
+    <xpath expr="//div[hasclass('o_existing_attachment_cell')]" position="prepend">
         <a class="o_we_edit_attachment position-absolute top-0 start-0 p-2 z-1 opacity-0 opacity-100-hover cursor-pointer text-dark bg-white-25 rounded-1"
            t-att-data-attachment-id="props.id"
            title="Edit attachment"
            role="button">
             <i class="fa fa-pencil"/>
         </a>
-    </t>
+    </xpath>
 </t>
 
 </templates>
