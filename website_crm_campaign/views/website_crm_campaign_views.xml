@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="crm_tracking_campaign_form" model="ir.ui.view">
+        <field name="name">crm.tracking.campaign.form.inherited.website</field>
+        <field name="model">crm.tracking.campaign</field>
+        <field name="inherit_id" ref="crm_campaign_addons.crm_tracking_campaign_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//h1" position="before">
+                <field name="website_published" class="pull-right" widget="website_button"/>
+            </xpath>
+            <field name="section_id" position="after">
+                <field name="website_url" invisible="1"/>
+            </field>
+            <notebook position="inside">
+                <page string="Description">
+                    <field name="website_description"/>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <template id="products_item" inherit_id="website_sale.products_item" name="Product item">
+        <xpath expr="//section/h5" position="after">
+            <p class="text-muted" t-field="product.default_code"/>
+        </xpath>
+        <xpath expr="//div[@itemprop='offers']" position="after">
+            <b t-if="product.sudo().qty_available &gt; 0.0"
+               class="" style="color: #1CB807;">In stock</b>
+            <b t-if="product.sudo().qty_available &lt;= 0.0"
+               class="" style="color: #f00;">Not in stock</b>
+        </xpath>
+    </template>
+
+</odoo>
