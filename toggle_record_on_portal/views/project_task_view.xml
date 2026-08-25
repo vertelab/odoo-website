@@ -4,9 +4,12 @@
             <field name="model">project.project</field>
             <field name="inherit_id" ref="project.edit_project"/>
             <field name="arch" type="xml">
-                <field name="privacy_visibility" position="after">
+                <!-- Anchor on the visible radio widget in the Settings tab
+                     (base field), NOT on the invisible privacy_visibility copy
+                     that sale_project adds in the button_box (T/11305). -->
+                <xpath expr="//field[@name='privacy_visibility'][@widget='radio']" position="after">
                     <field name="show_on_customer_portal"/>
-                </field>
+                </xpath>
             </field>
         </record>
 
