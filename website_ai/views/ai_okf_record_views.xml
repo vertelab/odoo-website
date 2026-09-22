@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        website.page-formulär med OKF-fälten (okf-mixin F3b.3).
+
+        En tunn utökning: mixinens generiska vy (ai_agent_core) visar
+        okf_*-fälten; denna lägger dem som en egen sida på sidformuläret så
+        en administratör ser dem utan att gå via skalbaggen.
+
+        Skrivskyddat: fälten GENERERAS. Vill man ändra texten ändrar man
+        källan (arch_db) — inte kopian.
+    -->
+    <record id="view_website_page_form_okf" model="ir.ui.view">
+        <field name="name">website.page.form.okf</field>
+        <field name="model">website.page</field>
+        <field name="inherit_id" ref="website.website_pages_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='menu_ids']" position="after">
+                <group string="OKF" name="okf" groups="base.group_no_one">
+                    <group>
+                        <group string="Status">
+                            <field name="okf_dirty" readonly="1"/>
+                            <field name="okf_indexed_at" readonly="1"/>
+                        </group>
+                        <group string="Struktur">
+                            <field name="okf_tags" widget="json" readonly="1"/>
+                            <field name="okf_links" widget="json" readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Sammanfattning (söks och embeddas)"/>
+                    <field name="okf_summary" readonly="1" nolabel="1"/>
+                    <separator string="Text (hela kopian)"/>
+                    <field name="okf_text" readonly="1" nolabel="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
