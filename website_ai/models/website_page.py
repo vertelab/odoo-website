@@ -19,6 +19,7 @@ _logger = logging.getLogger(__name__)
 
 
 class WebsitePage(models.Model):
+    _name = 'website.page'
     _inherit = ['website.page', 'ai.okf.mixin']
 
     # ── Källmetoder ────────────────────────────────────────────────────
