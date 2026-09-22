@@ -13,7 +13,7 @@ att vi behöver känna till lagringsformatet.
 
 import logging
 
-from odoo import models
+from odoo import api, models
 
 _logger = logging.getLogger(__name__)
 
@@ -67,11 +67,12 @@ class WebsitePage(models.Model):
     def _okf_dirty_fields(self):
         """Fält vars ändring gör OKF-fälten inaktuella.
 
-        `arch_db` bor på `view_id` (via `_inherits`), men `write` på sidan
-        propagerar dit — så `arch_db` fångas här. `is_published` (från
-        `website.published.mixin`) styr om sidan ska indexeras alls.
+        `arch_db` finns INTE här — den bor på `view_id` (via `_inherits`),
+        och `_inherits` delegerar bara LÄSNING. Ett `view_id.write()` går
+        genom `ir.ui.view`s hook, inte genom sidans. Den fångas därför i
+        `IrUiView.write()` nedan (okf-mixin F5.1).
         """
-        return {'arch_db', 'url', 'name', 'is_published', 'website_id'}
+        return {'url', 'name', 'is_published', 'website_id'}
 
     def _okf_skip_reason(self):
         """Opublicerad sida = "tomt just nu", inte "tomt för alltid".
@@ -90,6 +91,22 @@ class WebsitePage(models.Model):
         self.ensure_one()
         company = self.website_id.company_id or self.env.company
         return {'owner_company_id': company.id}
+
+    def _register_hook(self):
+        """Registrera webbplatsmodellen för dirty-indexering (F4.4).
+
+        VARFÖR `_register_hook` OCH INTE EN ÖVERRIDNING AV
+        `_okf_indexable_models()`: den metoden är `@api.model` på en abstrakt
+        modell. En brygga som ärver mixinen kan inte påverka vad
+        `ai.okf.mixin._okf_indexable_models()` returnerar — uppslagningen
+        sker på den abstrakta modellen. Mätt i test på luke18 2026-09-22.
+
+        `_register_hook()` körs en gång per registerladdning, vilket är rätt
+        tillfälle: modellen finns då, och registreringen är idempotent.
+        """
+        res = super()._register_hook()
+        self.env['ai.okf.mixin']._okf_register_indexable('website.page')
+        return res
 
     # ── Hjälpare ───────────────────────────────────────────────────────
 
@@ -110,3 +127,31 @@ class WebsitePage(models.Model):
         except Exception:  # noqa: BLE001 — fallback är ett giltigt utfall
             _logger.debug('website_ai: _html_to_text saknas — använder rå text')
             return html
+
+
+class IrUiView(models.Model):
+    """ir.ui.view — flagga sidan när dess arch ändras (okf-mixin F5.1).
+
+    VARFÖR HÄR OCH INTE PÅ website.page: `website.page` ärver `ir.ui.view`
+    via `_inherits`. Det ger delegerad LÄSNING — `page.arch_db` läser
+    `view_id.arch_db` — men `view_id.write()` är en skrivning på en ANNAN
+    modell och går genom `ir.ui.view`s write(), inte genom sidans.
+
+    Utan denna hook: en redigerad sida förblir `okf_dirty = False` och
+    indexeras aldrig om. Mätt i test på luke18 2026-09-22.
+
+    Hooken rör bara vyer som faktiskt är en publicerad sidas `view_id` —
+    andra vyer (formulär, kanban, …) påverkas inte.
+    """
+
+    _inherit = 'ir.ui.view'
+
+    def write(self, vals):
+        result = super().write(vals)
+        if 'arch_db' in vals:
+            pages = self.env['website.page'].sudo().search([
+                ('view_id', 'in', self.ids),
+            ])
+            if pages:
+                pages._set_okf_dirty()
+        return result

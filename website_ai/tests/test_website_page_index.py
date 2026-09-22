@@ -66,9 +66,30 @@ class TestWebsitePageIndex(common.TransactionCase):
         self.assertIn('om-oss', tags)
 
     def test_dirty_fields_cover_content(self):
+        """`arch_db` fångas av ir.ui.view-hooken, inte av sidans fältlista.
+
+        `_inherits` delegerar bara LÄSNING — ett `view_id.write()` går genom
+        `ir.ui.view`s write(). Därför står `arch_db` INTE i sidans
+        `_okf_dirty_fields()`, och testet kontrollerar båda halvorna.
+        """
         fields = self._make_page()._okf_dirty_fields()
-        self.assertIn('arch_db', fields)
+        self.assertNotIn('arch_db', fields,
+                         'arch_db bor på view_id — fångas av IrUiView.write')
         self.assertIn('is_published', fields)
+        self.assertIn('url', fields)
+
+    def test_view_edit_flags_page(self):
+        """Redigering av arch_db ska flagga sidan (via IrUiView-hooken)."""
+        page = self._make_page()
+        page._okf_index_record()
+        page.invalidate_recordset(['okf_dirty'])
+        self.assertFalse(page.okf_dirty)
+        page.view_id.write({
+            'arch_db': '<div><p>Ny text i vyn.</p></div>',
+        })
+        page.invalidate_recordset(['okf_dirty'])
+        self.assertTrue(page.okf_dirty,
+                        'view_id.write(arch_db) ska flagga sidan')
 
     def test_owner_is_website_company(self):
         """Sajtens företag — inte env.company (multisite)."""
@@ -137,7 +158,8 @@ class TestWebsitePageIndex(common.TransactionCase):
     def test_cron_covers_website_page(self):
         """F4.2: cronen hittar webbplatsmodellen via den utökningsbara listan."""
         page = self._make_page()
-        self.assertIn('website.page', self.Mixin._okf_indexable_models())
+        self.assertIn('website.page', self.Mixin._okf_indexable_models(),
+                      'bryggan ska ha registrerat modellen')
         total = self.Mixin._okf_cron_index_dirty(batch_size=20)
         self.assertGreaterEqual(total, 1)
         page.invalidate_recordset(['okf_dirty'])
