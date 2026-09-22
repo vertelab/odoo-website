@@ -7,7 +7,7 @@
     'category': 'Marketing/Campaigns',
     'summary': 'Publish CRM campaigns on website',
     'author': 'Vertel Sverige AB',
-    'website': 'https://vertel.se',
+    'website': 'https://vertel.se/apps/odoo-website/website_crm_campaign',
     'license': 'AGPL-3',
     'depends': ['website_sale', 'sale_crm', 'crm_campaign_product'],
     'data': [

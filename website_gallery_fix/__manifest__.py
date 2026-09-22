@@ -1,4 +1,5 @@
 {
+    'website': 'https://vertel.se/apps/odoo-website/website_gallery_fix',
     'name': 'Website Gallery Template Fix',
     'version': '1.0',
     'category': 'Website',

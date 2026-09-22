@@ -7,7 +7,7 @@
     'category': 'Marketing/Campaigns',
     'summary': 'Link blog posts to CRM campaigns',
     'author': 'Vertel Sverige AB',
-    'website': 'https://vertel.se',
+    'website': 'https://vertel.se/apps/odoo-website/crm_campaign_blog',
     'license': 'AGPL-3',
     'depends': ['crm_campaign_addons', 'website_blog'],
     'installable': True,

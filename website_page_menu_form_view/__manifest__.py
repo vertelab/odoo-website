@@ -31,7 +31,7 @@
     """,
     #'sequence': '1',
     'author': 'Vertel AB',
-    'website': 'https://vertel.se/apps/odoo-website/website_memcached_sale',
+    'website': 'https://vertel.se/apps/odoo-website/website_page_menu_form_view',
     'images': ['static/description/banner.png'], # 560x280 px.
     'license': 'AGPL-3',
     'contributor': '',

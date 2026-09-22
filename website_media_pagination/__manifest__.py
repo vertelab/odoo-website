@@ -1,4 +1,5 @@
 {
+    'website': 'https://vertel.se/apps/odoo-website/website_media_pagination',
     'name': 'Website Media Pagination',
     'version': '18.0.1.1.0',
     'category': 'Website',
