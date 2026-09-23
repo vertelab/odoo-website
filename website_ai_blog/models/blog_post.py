@@ -11,7 +11,7 @@ normala inlägg. LLM:en är fallback för riktigt långa texter.
 
 import logging
 
-from odoo import models
+from odoo import models, fields
 
 _logger = logging.getLogger(__name__)
 
@@ -19,6 +19,13 @@ _logger = logging.getLogger(__name__)
 class BlogPost(models.Model):
     _name = 'blog.post'
     _inherit = ['blog.post', 'ai.okf.mixin']
+
+    # OKF-taggar: egen relationstabell (en many2many kan inte ligga
+    # pa en abstrakt mixin — den ger samma tabell for alla arvande).
+    okf_tags = fields.Many2many(
+        'ai.okf.tag', 'blog_post_okf_tag_rel', 'res_id', 'tag_id',
+        string='OKF Tags')
+
 
     # ── Källmetoder ────────────────────────────────────────────────────
 

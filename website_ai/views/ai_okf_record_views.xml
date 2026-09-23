@@ -23,14 +23,13 @@
                             <field name="okf_indexed_at" readonly="1"/>
                         </group>
                         <group string="Struktur">
-                            <field name="okf_tags" widget="json" readonly="1"/>
                             <field name="okf_links" widget="json" readonly="1"/>
                         </group>
                     </group>
                     <separator string="Sammanfattning (söks och embeddas)"/>
                     <field name="okf_summary" readonly="1" nolabel="1"/>
                     <separator string="Text (hela kopian)"/>
-                    <field name="okf_text" readonly="1" nolabel="1"/>
+                    <field name="okf_body" readonly="1" nolabel="1"/>
                 </group>
             </xpath>
         </field>

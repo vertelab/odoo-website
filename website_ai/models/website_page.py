@@ -13,7 +13,7 @@ att vi behöver känna till lagringsformatet.
 
 import logging
 
-from odoo import api, models
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -21,6 +21,13 @@ _logger = logging.getLogger(__name__)
 class WebsitePage(models.Model):
     _name = 'website.page'
     _inherit = ['website.page', 'ai.okf.mixin']
+
+    # OKF-taggar: egen relationstabell (en many2many kan inte ligga
+    # pa en abstrakt mixin — den ger samma tabell for alla arvande).
+    okf_tags = fields.Many2many(
+        'ai.okf.tag', 'website_page_okf_tag_rel', 'res_id', 'tag_id',
+        string='OKF Tags')
+
 
     # ── Källmetoder ────────────────────────────────────────────────────
 
