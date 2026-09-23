@@ -22,7 +22,7 @@ class EventEvent(models.Model):
 
     # ── Källmetoder ────────────────────────────────────────────────────
 
-    def _okf_text_source(self):
+    def _okf_body_source(self):
         """Evenemangets text — namn + beskrivning.
 
         `description` är `html_translate`. Namnet läggs först: det är den
@@ -54,15 +54,6 @@ class EventEvent(models.Model):
             bits.append('Typ: %s' % self.event_type_id.name)
         summary = ' — '.join(b for b in bits if b)
         return summary or None
-
-    def _okf_tags_source(self):
-        """Taggarna: evenemangstypen + evenemangets egna taggar."""
-        self.ensure_one()
-        tags = []
-        if self.event_type_id:
-            tags.append(self.event_type_id.name)
-        tags.extend(self.tag_ids.mapped('name'))
-        return tags
 
     def _okf_dirty_fields(self):
         """Fält vars ändring gör OKF-fälten inaktuella."""

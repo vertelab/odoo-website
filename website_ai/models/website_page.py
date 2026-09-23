@@ -24,7 +24,7 @@ class WebsitePage(models.Model):
 
     # ── Källmetoder ────────────────────────────────────────────────────
 
-    def _okf_text_source(self):
+    def _okf_body_source(self):
         """Sidans text ur `view_id.arch_db` — hela materialet.
 
         `arch_db` är `xml_translate`: jsonb per nod, inte en hel sträng.
@@ -47,22 +47,6 @@ class WebsitePage(models.Model):
         används den som den är; är den lång tar Allmän assistent vid.
         """
         return None
-
-    def _okf_tags_source(self):
-        """Taggarna: sajtens namn + sidans URL-segment.
-
-        URL:en är en ärlig tagg — `/om-oss` säger vad sidan handlar om,
-        och den är stabil över innehållsändringar.
-        """
-        self.ensure_one()
-        tags = []
-        if self.website_id:
-            tags.append(self.website_id.name)
-        if self.url and self.url not in ('/', '/homepage'):
-            segment = self.url.strip('/').split('/')[0]
-            if segment:
-                tags.append(segment)
-        return tags
 
     def _okf_dirty_fields(self):
         """Fält vars ändring gör OKF-fälten inaktuella.

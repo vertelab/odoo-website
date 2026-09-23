@@ -22,7 +22,7 @@ class BlogPost(models.Model):
 
     # ── Källmetoder ────────────────────────────────────────────────────
 
-    def _okf_text_source(self):
+    def _okf_body_source(self):
         """Inläggets text ur `content` — hela materialet.
 
         `content` är `html_translate`: jsonb per nod. Att läsa via `self`
@@ -53,15 +53,6 @@ class BlogPost(models.Model):
         if not parts:
             return None
         return ' — '.join(p for p in parts if p)
-
-    def _okf_tags_source(self):
-        """Taggarna: bloggens namn + inläggets egna taggar."""
-        self.ensure_one()
-        tags = []
-        if self.blog_id:
-            tags.append(self.blog_id.name)
-        tags.extend(self.tag_ids.mapped('name'))
-        return tags
 
     def _okf_dirty_fields(self):
         """Fält vars ändring gör OKF-fälten inaktuella.
