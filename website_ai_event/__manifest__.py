@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Website: AI — Event',
-    'version': '18.0.1.0.1',
+    'version': '18.0.1.0.2',
     'summary': 'OKF-indexering av evenemang (event.event)',
     'category': 'Website',
     'author': 'Vertel AB',
@@ -23,7 +23,6 @@
     ],
     'data': [
         'data/okf_artifact_types_event.xml',
-        'data/okf_debug_actions.xml',
     ],
     'demo': [],
     'application': False,
