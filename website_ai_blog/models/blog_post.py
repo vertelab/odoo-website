@@ -76,6 +76,10 @@ class BlogPost(models.Model):
         """Opublicerat inlägg = "tomt just nu", inte "tomt för alltid"."""
         return None
 
+    def _okf_artifact_type(self):
+        """Bryggans egen typ (okf-mixin D12) — spårbar till website_ai_blog."""
+        return 'blog_post'
+
     def _okf_owner_vals(self):
         """Bloggens företag — inte `env.company` (multisite)."""
         self.ensure_one()

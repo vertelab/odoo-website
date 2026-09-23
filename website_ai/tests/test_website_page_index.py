@@ -106,22 +106,30 @@ class TestWebsitePageIndex(common.TransactionCase):
         self.assertEqual(concept.concept_key, 'website.page,%s' % page.id)
         self.assertEqual(concept.source_ref, 'website.page,%s' % page.id)
 
-    def test_artifact_type_is_generic(self):
-        """F5.8: ingen domänspecifik artefakttyp — domänen bor i source_ref."""
+    def test_artifact_type_is_website(self):
+        """D12: bryggan äger sin typ — 'website', inte generisk."""
         page = self._make_page()
         concept = page._okf_index_record()
-        self.assertEqual(concept.artifact_type_id.name, 'knowledge')
+        self.assertEqual(concept.artifact_type_id.name, 'website')
 
-    def test_no_domain_artifact_types_created(self):
+    def test_artifact_type_traces_to_bridge(self):
+        """Taxonomin ska gå att spåra till bryggan."""
         self._make_page()._okf_index_record()
-        for name in ('website', 'blog_post', 'event', 'job_posting',
-                     'crm_lead'):
+        atype = self.env['ai.artifact.type'].search(
+            [('name', '=', 'website')], limit=1)
+        self.assertTrue(atype)
+        self.assertIn(atype.bridge_module, ('website_ai', 'ai_agent_core'))
+
+    def test_no_foreign_artifact_types_created(self):
+        """website_ai ska inte skapa typer för ANDRA domäner."""
+        self._make_page()._okf_index_record()
+        for name in ('blog_post', 'event', 'job_posting', 'crm_lead'):
             found = self.env['ai.artifact.type'].search(
                 [('name', '=', name)], limit=1)
             if found:
-                self.assertEqual(
-                    found.bridge_module, 'ai_agent_core',
-                    'artefakttypen %r ska inte skapas av website_ai' % name)
+                self.assertNotEqual(
+                    found.bridge_module, 'website_ai',
+                    'website_ai ska inte äga typen %r' % name)
 
     def test_flag_cleared_after_index(self):
         page = self._make_page()

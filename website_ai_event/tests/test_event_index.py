@@ -48,7 +48,7 @@ class TestEventIndex(common.TransactionCase):
         concept = event._okf_index_record()
         self.assertTrue(concept)
         self.assertEqual(concept.concept_key, 'event.event,%s' % event.id)
-        self.assertEqual(concept.artifact_type_id.name, 'knowledge')
+        self.assertEqual(concept.artifact_type_id.name, 'event')
 
     def test_summary_comes_from_model(self):
         event = self._make_event()

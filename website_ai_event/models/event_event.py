@@ -73,6 +73,10 @@ class EventEvent(models.Model):
         """Opublicerat evenemang = "tomt just nu"."""
         return None
 
+    def _okf_artifact_type(self):
+        """Bryggans egen typ (okf-mixin D12) — spårbar till website_ai_event."""
+        return 'event'
+
     def _okf_owner_vals(self):
         """Evenemangets företag — inte `env.company` (multisite)."""
         self.ensure_one()

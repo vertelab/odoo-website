@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Website: AI',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.1',
     'summary': 'OKF-indexering av webbplatsinnehåll — website.page, blog.post, event.event',
     'category': 'Website',
     'author': 'Vertel AB',
@@ -28,6 +28,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/okf_artifact_types_website.xml',
         'views/ai_okf_record_views.xml',
         'data/okf_debug_actions.xml',
     ],

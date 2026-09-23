@@ -64,7 +64,7 @@ class TestBlogPostIndex(common.TransactionCase):
         concept = post._okf_index_record()
         self.assertTrue(concept)
         self.assertEqual(concept.concept_key, 'blog.post,%s' % post.id)
-        self.assertEqual(concept.artifact_type_id.name, 'knowledge')
+        self.assertEqual(concept.artifact_type_id.name, 'blog_post')
 
     def test_summary_comes_from_model_not_llm(self):
         """Sammanfattningen ska vara modellens egen, inte LLM:ens."""

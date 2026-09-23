@@ -82,6 +82,15 @@ class WebsitePage(models.Model):
         """
         return None
 
+    def _okf_artifact_type(self):
+        """Artefakttypen 'website' (okf-mixin D12).
+
+        Kärnan har redan en typ med det namnet (artifact_type_website,
+        bridge_module='ai_agent_core') — vi återanvänder den i stället för
+        att skapa en dubblett (UNIQUE(name) hade kraschat).
+        """
+        return 'website'
+
     def _okf_owner_vals(self):
         """Sajtens företag — inte `env.company`.
 
