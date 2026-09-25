@@ -27,9 +27,17 @@
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
     'summary': 'Module to allow users to capture website content using javascript.',
     'category': 'Website',
-    'description': """
+    'description': '''
+Odoo Screen Capture
+===================
+
     Module to allow users to capture website content using javascript.
-    """,
+
+    Features:
+
+        - Web integration: Exposes HTTP endpoints for external systems.
+        - UI Integration: Extends 2 view(s) in the Odoo interface.
+    ''',
     #'sequence': '1',
     'author': 'Vertel AB',
     'website': 'https://vertel.se/apps/odoo-website/odoo_screen_capture',

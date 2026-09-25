@@ -21,13 +21,22 @@
 
 {
     'name': 'Website: Toggle Record on Portal',
-    'version': '1.0',
+    'version': '18.0.1.0.0',
     # Version ledger: 14.0 = Odoo version. 1 = Major. Non regressionable code. 2 = Minor. New features that are regressionable. 3 = Bug fixes
-    'summary': 'Toggle Record on Portal',
+    'summary': 'Toggle Record on Portal.',
     'category': 'Website',
-    'description': """
-    Toggle Record on Portal
-    """,
+    'description': '''
+Toggle Record on Portal
+=======================
+
+    Toggle Record on Portal.
+
+    Features:
+
+        - Web integration: Exposes HTTP endpoints for external systems.
+        - UI Integration: Extends 5 view(s) in the Odoo interface.
+        - Extends Odoo: Builds on account.analytic.line, account.move, event.registration, project.project.
+    ''',
     #'sequence': '1',
     'author': 'Vertel AB',
     'website': 'https://vertel.se/apps/odoo-website/toggle_record_on_portal',

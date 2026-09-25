@@ -5,7 +5,17 @@
     'name': 'Website CRM Campaign',
     'version': '18.0.1.0.0',
     'category': 'Marketing/Campaigns',
-    'summary': 'Publish CRM campaigns on website',
+    'summary': 'Publish CRM campaigns on website.',
+    'description': '''
+Website CRM Campaign
+====================
+
+    Publish CRM campaigns on website.
+
+    Features:
+
+        - UI Integration: Extends 2 view(s) in the Odoo interface.
+    ''',
     'author': 'Vertel Sverige AB',
     'website': 'https://vertel.se/apps/odoo-website/website_crm_campaign',
     'license': 'AGPL-3',

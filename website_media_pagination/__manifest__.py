@@ -3,7 +3,17 @@
     'name': 'Website Media Pagination',
     'version': '18.0.1.1.0',
     'category': 'Website',
-    'summary': 'Add pagination to website media library dialog',
+    'summary': 'Add pagination to website media library dialog.',
+    'description': '''
+Website Media Pagination
+========================
+
+    Add pagination to website media library dialog.
+
+    Features:
+
+        - Focused Fix: A small, targeted improvement to standard Odoo behaviour.
+    ''',
     'depends': ['website'],
     'assets': {
         'web.assets_frontend': [

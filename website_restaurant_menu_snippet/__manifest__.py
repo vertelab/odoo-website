@@ -21,12 +21,21 @@
 
 {
     'name': 'Website: Restaurant Menu Snippet',
-    'version': '0.1',
+    'version': '18.0.1.0.0',
     'summary': 'Makes it easy to archive information.',
     'category': 'Website',
-    'description': """
+    'description': '''
+Restaurant Menu Snippet
+=======================
 
-    """,
+    Makes it easy to archive information.
+
+    Features:
+
+        - Web integration: Exposes HTTP endpoints for external systems.
+        - UI Integration: Extends 2 view(s) in the Odoo interface.
+        - Extends Odoo: Builds on pos.category, product.category, product.combo, product.product.
+    ''',
     'author': 'Vertel AB',
     'website': 'https://vertel.se/apps/odoo-website/website_restaurant_menu_snippet',
     'license': 'AGPL-3',
