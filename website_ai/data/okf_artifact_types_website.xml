@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Artefakttyp för website_ai (okf-mixin D12).
+
+        Kärnans okf_default_artifact_types.xml får inga nya rader — kärnan
+        förblir domän-ren. Bryggan registrerar sin egen typ, med
+        bridge_module satt så taxonomin går att spåra tillbaka hit.
+
+        OBS: kärnan har redan en typ som heter 'website' (artifact_type_website,
+        bridge_module='ai_agent_core'). Vi ÅTERANVÄNDER den — att skapa en
+        dubblett med samma namn kraschar på UNIQUE(name).
+    -->
+</odoo>
