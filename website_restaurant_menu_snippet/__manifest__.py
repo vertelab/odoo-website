@@ -61,4 +61,3 @@ Restaurant Menu Snippet
     
     'auto_install': False,
 }
-# vim:expandtab:smartindent:tabstop=4s:softtabstop=4:shiftwidth=4:

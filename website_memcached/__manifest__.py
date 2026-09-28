@@ -123,4 +123,3 @@ Default are Database + Path + Context eg {db},{path},{context}
     ],
     "application": False,
 }
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
