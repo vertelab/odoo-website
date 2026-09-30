@@ -63,7 +63,11 @@ class TestBlogPostIndex(common.TransactionCase):
         post = self._make_post()
         concept = post._okf_index_record()
         self.assertTrue(concept)
-        self.assertEqual(concept.concept_key, 'blog.post,%s' % post.id)
+        # Språkmedveten nyckel (D4): suffix på flerspråkig DB.
+        base = 'blog.post,%s' % post.id
+        self.assertTrue(
+            concept.concept_key == base
+            or concept.concept_key.startswith(base + ','))
         self.assertEqual(concept.artifact_type_id.name, 'blog_post')
 
     def test_summary_comes_from_model_not_llm(self):

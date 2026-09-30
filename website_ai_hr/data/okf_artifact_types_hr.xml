@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Artefakttyp för website_ai_hr (okf-mixin D12). -->
+    <record id="artifact_type_job_posting" model="ai.artifact.type">
+        <field name="name">job_posting</field>
+        <field name="kind">knowledge</field>
+        <field name="bridge_module">website_ai_hr</field>
+        <field name="model_id" ref="hr.model_hr_job"/>
+        <field name="okf_contract" eval="{'generated_by': 'process', 'stale_policy': 'source', 'stale_ttl_days': 0, 'retention_purpose': 'none', 'retention_days': 0}"/>
+    </record>
+</odoo>

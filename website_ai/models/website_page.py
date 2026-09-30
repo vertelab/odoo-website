@@ -65,6 +65,37 @@ class WebsitePage(models.Model):
         """
         return {'url', 'name', 'is_published', 'website_id'}
 
+    def _okf_langs(self):
+        """Webbinnehåll är flerspråkigt — indexera per installerat språk.
+
+        `arch_db` är xml_translate (jsonb per nod), så en svensk sida och
+        en engelsk är samma post i två språkversioner. Utan detta hade en
+        svensk fråga matchat engelsk text (okf-website-mixin D4).
+        """
+        return self._okf_installed_langs()
+
+    def _okf_tags_source(self):
+        """Sidans taggar: webbplatsens namn + URL-sluggen.
+
+        Den generiska defaulten letar taggfält — en webbsida har inga.
+        Det som ETIKETTERAR en sida är vilken sajt den hör till och var på
+        sajten den ligger, så vi härleder dem ur `website_id` och `url`.
+        Sluggen normaliseras till gemener utan inledande snedstreck.
+        """
+        self.ensure_one()
+        names = []
+        if self.website_id and self.website_id.name:
+            names.append(self.website_id.name)
+        if self.url:
+            slug = self.url.strip('/').lower()
+            # Hela sökvägen OCH sista ledet — '/om-oss/team' ger båda.
+            if slug:
+                names.append(slug)
+                last = slug.rsplit('/', 1)[-1]
+                if last and last != slug:
+                    names.append(last)
+        return names
+
     def _okf_skip_reason(self):
         """Opublicerad sida = "tomt just nu", inte "tomt för alltid".
 

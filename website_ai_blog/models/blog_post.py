@@ -70,6 +70,26 @@ class BlogPost(models.Model):
         return {'name', 'subtitle', 'content', 'teaser_manual',
                 'tag_ids', 'is_published', 'blog_id'}
 
+    def _okf_langs(self):
+        """Översättbart innehåll — indexera per installerat språk (D4).
+
+        En svensk version blir ett syskon-koncept, inte en ny version.
+        """
+        return self._okf_installed_langs()
+
+    def _okf_tags_source(self):
+        """Inläggets taggar: bloggens namn + inläggets egna taggar.
+
+        Den generiska defaulten hittar `tag_ids` (blog.tag), men inte
+        vilken blogg inlägget hör till — och bloggen är en etikett på
+        samma sätt som en tagg. Lägg till den, behåll de egna.
+        """
+        self.ensure_one()
+        names = list(super()._okf_tags_source())
+        if self.blog_id and self.blog_id.name:
+            names.append(self.blog_id.name)
+        return names
+
     def _okf_skip_reason(self):
         """Opublicerat inlägg = "tomt just nu", inte "tomt för alltid"."""
         return None

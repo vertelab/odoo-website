@@ -47,7 +47,11 @@ class TestEventIndex(common.TransactionCase):
         event = self._make_event()
         concept = event._okf_index_record()
         self.assertTrue(concept)
-        self.assertEqual(concept.concept_key, 'event.event,%s' % event.id)
+        # Språkmedveten nyckel (D4): suffix på flerspråkig DB.
+        base = 'event.event,%s' % event.id
+        self.assertTrue(
+            concept.concept_key == base
+            or concept.concept_key.startswith(base + ','))
         self.assertEqual(concept.artifact_type_id.name, 'event')
 
     def test_summary_comes_from_model(self):

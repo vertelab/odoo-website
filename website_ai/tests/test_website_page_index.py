@@ -103,7 +103,13 @@ class TestWebsitePageIndex(common.TransactionCase):
         page = self._make_page()
         concept = page._okf_index_record()
         self.assertTrue(concept, 'sidan ska bli ett koncept')
-        self.assertEqual(concept.concept_key, 'website.page,%s' % page.id)
+        # Nyckeln är språkmedveten: på en flerspråkig DB får den ett
+        # suffix (okf-website-mixin D4). På en enspråkig är den exakt
+        # 'website.page,<id>' — samma som före språkstödet.
+        base = 'website.page,%s' % page.id
+        self.assertTrue(
+            concept.concept_key == base
+            or concept.concept_key.startswith(base + ','))
         self.assertEqual(concept.source_ref, 'website.page,%s' % page.id)
 
     def test_artifact_type_is_website(self):
