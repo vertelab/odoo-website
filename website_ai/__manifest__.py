@@ -12,9 +12,9 @@
 
         Lägger `ai.okf.mixin` på website.page, blog.post och event.event så
         att deras text blir OKF-koncept: taggar, länkar, en kopia av texten
-        (okf_text) och en sammanfattning (okf_summary) som embeddas och söks.
+        (okf_body) och en sammanfattning (okf_summary) som embeddas och söks.
 
-        Modellen äger sina KÄLLOR (_okf_text_source, _okf_summary_source,
+        Modellen äger sina KÄLLOR (_okf_body_source, _okf_summary_source,
         _okf_tags_source, _okf_dirty_fields); mixinen i ai_agent_core äger
         fälten och flaggan. Ingen domän nämns i kärnan.
 
@@ -29,6 +29,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/okf_artifact_types_website.xml',
+        'data/okf_debug_actions.xml',
         'views/ai_okf_record_views.xml',
     ],
     'demo': [],

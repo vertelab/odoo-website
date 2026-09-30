@@ -40,7 +40,7 @@ class TestWebsitePageIndex(common.TransactionCase):
     # ── Mixinen är på modellen ─────────────────────────────────────────
 
     def test_mixin_is_inherited(self):
-        for f in ('okf_text', 'okf_summary', 'okf_tags', 'okf_links',
+        for f in ('okf_body', 'okf_summary', 'okf_tags', 'okf_links',
                   'okf_dirty', 'okf_indexed_at'):
             self.assertIn(f, self.Page._fields, f)
 
@@ -51,7 +51,7 @@ class TestWebsitePageIndex(common.TransactionCase):
 
     def test_text_source_reads_arch_db(self):
         page = self._make_page()
-        text = page._okf_text_source()
+        text = page._okf_body_source()
         self.assertIn('IT-konsultbolag', text)
         self.assertNotIn('<p>', text, 'HTML ska vara strippad')
 
@@ -164,12 +164,28 @@ class TestWebsitePageIndex(common.TransactionCase):
         self.assertEqual(v1.id, v2.id, 'oförändrad källa = ingen ny version')
 
     def test_cron_covers_website_page(self):
-        """F4.2: cronen hittar webbplatsmodellen via den utökningsbara listan."""
+        """F4.2: cronen hittar webbplatsmodellen via den utökningsbara listan.
+
+        Bevisar ATT modellen täcks av cronen — inte att just denna post
+        hinner med i ett varv. Taket fördelas rättvist mellan alla
+        registrerade modeller (F4.2), så en enskild post kan vänta till
+        nästa varv. Testet mäter därför att cronen BEARBETAR modellen.
+        """
         page = self._make_page()
         self.assertIn('website.page', self.Mixin._okf_indexable_models(),
                       'bryggan ska ha registrerat modellen')
         total = self.Mixin._okf_cron_index_dirty(batch_size=20)
         self.assertGreaterEqual(total, 1)
+        # Modellen täcks: cronen har skapat minst ett website.page-koncept.
+        covered = self.Concept.search_count([
+            ('source_ref', 'like', 'website.page,%')])
+        self.assertGreaterEqual(
+            covered, 1, 'cronen ska ha indexerat minst en website.page')
+        # Och just denna post blir indexerad när modellen får sin andel —
+        # kör ett varv till med modellen först i kön.
+        self.env['ir.config_parameter'].sudo().set_param(
+            'ai_agent_core.okf_cron_rotation', '0')
+        self.Mixin._okf_cron_index_dirty(batch_size=200)
         page.invalidate_recordset(['okf_dirty'])
         self.assertFalse(page.okf_dirty)
 

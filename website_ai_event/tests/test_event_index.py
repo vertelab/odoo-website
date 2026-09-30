@@ -25,12 +25,12 @@ class TestEventIndex(common.TransactionCase):
         })
 
     def test_mixin_is_inherited(self):
-        for f in ('okf_text', 'okf_summary', 'okf_tags', 'okf_dirty'):
+        for f in ('okf_body', 'okf_summary', 'okf_tags', 'okf_dirty'):
             self.assertIn(f, self.Event._fields, f)
 
     def test_text_source_has_name_and_description(self):
         event = self._make_event()
-        text = event._okf_text_source()
+        text = event._okf_body_source()
         self.assertIn('OKF-evenemang', text)
         self.assertIn('Odoo och AI', text)
         self.assertNotIn('<p>', text)

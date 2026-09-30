@@ -30,12 +30,12 @@ class TestBlogPostIndex(common.TransactionCase):
         })
 
     def test_mixin_is_inherited(self):
-        for f in ('okf_text', 'okf_summary', 'okf_tags', 'okf_dirty'):
+        for f in ('okf_body', 'okf_summary', 'okf_tags', 'okf_dirty'):
             self.assertIn(f, self.Post._fields, f)
 
     def test_text_source_reads_content(self):
         post = self._make_post()
-        text = post._okf_text_source()
+        text = post._okf_body_source()
         self.assertIn('Vertel', text)
         self.assertNotIn('<p>', text, 'HTML ska vara strippad')
 
