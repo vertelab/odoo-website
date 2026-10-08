@@ -4,7 +4,7 @@
     'version': '18.0.1.0.1',
     'summary': 'OKF-indexering av jobbannonser (hr.job)',
     'category': 'Website',
-    'author': 'Vertel AB',
+    'author': 'Vertel Sverige AB',
     'website': 'https://vertel.se',
     'license': 'AGPL-3',
     'description': """

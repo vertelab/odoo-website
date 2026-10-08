@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    Odoo SA, Open Source Management Solution, third party addon
-#    Copyright (C) 2024- Vertel AB (<https://vertel.se>).
+#    Copyright (C) 2024- Vertel Sverige AB (<https://vertel.se>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -36,11 +36,11 @@ Restaurant Menu Snippet
         - UI Integration: Extends 2 view(s) in the Odoo interface.
         - Extends Odoo: Builds on pos.category, product.category, product.combo, product.product.
     ''',
-    'author': 'Vertel AB',
+    'author': 'Vertel Sverige AB',
     'website': 'https://vertel.se/apps/odoo-website/website_restaurant_menu_snippet',
     'license': 'AGPL-3',
     'contributor': '',
-    'maintainer': 'Vertel AB',
+    'maintainer': 'Vertel Sverige AB',
     'repository': 'https://github.com/vertelab/odoo-website',
     'depends': ['website', 'point_of_sale', 'pos_restaurant', 'website_sale'],
     'data': [
