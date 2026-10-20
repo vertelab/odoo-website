@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Declarative replacements for the demo content Odoo ships with.
+
+        These used to be done imperatively in models/website_seed.py by
+        reading arch_db, calling str.replace() on English demo text and
+        writing the result back per language. That approach matched on any
+        occurrence of a string anywhere in the view and bypassed the view
+        inheritance system entirely.
+
+        Everything here is a normal inherited template: xpath selects the
+        node, the replacement is declarative, and Odoo handles the
+        translation layer.
+    -->
+
+    <!-- ================================================================
+         Header: phone / e-mail block
+         ================================================================ -->
+    <template id="header_text_element_company"
+              inherit_id="website.header_text_element"
+              name="Elevata Header Contact Info">
+        <!-- The phone number appears twice: in the tel: href and in the
+             visible span. Both are replaced by company data. -->
+        <xpath expr="//t[@t-elif=&quot;_txt_elt_content == 'phone_mail'&quot;]//a[starts-with(@href, 'tel:')]"
+               position="attributes">
+            <attribute name="t-att-href">'tel:' + (website.company_id.phone or '')</attribute>
+        </xpath>
+        <xpath expr="//t[@t-elif=&quot;_txt_elt_content == 'phone_mail'&quot;]//a[starts-with(@href, 'tel:')]//span[@class='o_force_ltr']"
+               position="replace">
+            <span class="o_force_ltr" t-esc="website.company_id.phone"/>
+        </xpath>
+        <xpath expr="//t[@t-elif=&quot;_txt_elt_content == 'phone_mail'&quot;]//a[starts-with(@href, 'mailto:')]"
+               position="attributes">
+            <attribute name="t-att-href">'mailto:' + (website.company_id.email or '')</attribute>
+        </xpath>
+        <xpath expr="//t[@t-elif=&quot;_txt_elt_content == 'phone_mail'&quot;]//a[starts-with(@href, 'mailto:')]//small"
+               position="replace">
+            <small>
+                <i class="fa fa-1x fa-fw fa-envelope me-1"/>
+                <t t-esc="website.company_id.email"/>
+            </small>
+        </xpath>
+    </template>
+
+    <!-- ================================================================
+         Contact form: field labels in Swedish
+         ================================================================ -->
+    <template id="contactus_form_labels"
+              inherit_id="website.contactus"
+              name="Elevata Contact Form Labels">
+        <!-- The form labels are s_website_form_label_content spans, not
+             <label for=...> elements. Matching on the span text keeps the
+             xpath anchored to the visible label. -->
+        <xpath expr="//span[@class='s_website_form_label_content'][normalize-space()='Name']" position="replace">
+            <span class="s_website_form_label_content">Namn</span>
+        </xpath>
+        <xpath expr="//span[@class='s_website_form_label_content'][normalize-space()='Phone Number']" position="replace">
+            <span class="s_website_form_label_content">Telefonnummer</span>
+        </xpath>
+        <xpath expr="//span[@class='s_website_form_label_content'][normalize-space()='Email']" position="replace">
+            <span class="s_website_form_label_content">E-post</span>
+        </xpath>
+        <xpath expr="//span[@class='s_website_form_label_content'][normalize-space()='Company']" position="replace">
+            <span class="s_website_form_label_content">Företag</span>
+        </xpath>
+        <xpath expr="//span[@class='s_website_form_label_content'][normalize-space()='Subject']" position="replace">
+            <span class="s_website_form_label_content">Ämne</span>
+        </xpath>
+        <xpath expr="//span[@class='s_website_form_label_content'][normalize-space()='Question']" position="replace">
+            <span class="s_website_form_label_content">Meddelande</span>
+        </xpath>
+        <xpath expr="//p[contains(., 'Contact us about anything related to our company')]" position="replace">
+            <p class="lead">
+                Kontakta oss om du har frågor om våra tjänster eller vill ha en
+                offert. Vi återkommer så snart som möjligt.
+            </p>
+        </xpath>
+        <xpath expr="//h1[normalize-space()='Contact us']" position="replace">
+            <h1>Kontakta oss</h1>
+        </xpath>
+    </template>
+
+    <!-- ================================================================
+         Contact page: company address block replaces the demo block
+         ================================================================ -->
+    <template id="contactus_company_info"
+              inherit_id="website.contactus"
+              name="Elevata Contact Page Company Info">
+        <xpath expr="//h5[normalize-space()='My Company']/.." position="replace">
+            <div>
+                <h5 t-esc="website.company_id.name"/>
+                <ul class="list-unstyled mb-0 ps-2">
+                    <li>
+                        <i class="fa fa-map-marker fa-fw me-2" role="presentation"/>
+                        <span class="o_force_ltr">
+                            <t t-esc="website.company_id.street"/>,
+                            <t t-esc="website.company_id.zip"/>
+                            <t t-esc="website.company_id.city"/>
+                        </span>
+                    </li>
+                    <li>
+                        <i class="fa fa-phone fa-fw me-2" role="presentation"/>
+                        <a t-att-href="'tel:' + (website.company_id.phone or '')"
+                           t-esc="website.company_id.phone"/>
+                    </li>
+                    <li>
+                        <i class="fa fa-1x fa-fw fa-envelope me-2" role="presentation"/>
+                        <a t-att-href="'mailto:' + (website.company_id.email or '')"
+                           t-esc="website.company_id.email"/>
+                    </li>
+                </ul>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- ================================================================
+         Thank-you page: Swedish text + company info
+         ================================================================ -->
+    <template id="contactus_thanks_company"
+              inherit_id="website.contactus_thanks"
+              name="Elevata Thank You Page">
+        <xpath expr="//h1[normalize-space()='Thank You!']" position="replace">
+            <h1 class="fw-bolder">Tack!</h1>
+        </xpath>
+        <xpath expr="//p[normalize-space()='Your message has been sent.']" position="replace">
+            <p class="lead mb-0">Ditt meddelande har skickats.</p>
+        </xpath>
+        <xpath expr="//p[normalize-space()='We will get back to you shortly.']" position="replace">
+            <p class="lead">Vi återkommer så snart som möjligt.</p>
+        </xpath>
+        <xpath expr="//a[@href='/']" position="replace">
+            <a href="/">Till startsidan</a>
+        </xpath>
+        <xpath expr="//h5[normalize-space()='My Company']/.." position="replace">
+            <div>
+                <h5 t-esc="website.company_id.name"/>
+                <ul class="list-unstyled mb-0 ps-2">
+                    <li>
+                        <i class="fa fa-map-marker fa-fw me-2" role="presentation"/>
+                        <span class="o_force_ltr">
+                            <t t-esc="website.company_id.street"/>,
+                            <t t-esc="website.company_id.zip"/>
+                            <t t-esc="website.company_id.city"/>
+                        </span>
+                    </li>
+                    <li>
+                        <i class="fa fa-phone fa-fw me-2" role="presentation"/>
+                        <a t-att-href="'tel:' + (website.company_id.phone or '')"
+                           t-esc="website.company_id.phone"/>
+                    </li>
+                    <li>
+                        <i class="fa fa-1x fa-fw fa-envelope me-2" role="presentation"/>
+                        <a t-att-href="'mailto:' + (website.company_id.email or '')"
+                           t-esc="website.company_id.email"/>
+                    </li>
+                </ul>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- ================================================================
+         Job page sidebar: replace demo image, text and contact block
+         ================================================================ -->
+    <template id="job_sidebar_elevata"
+              inherit_id="website_hr_recruitment.job_right_side_bar"
+              name="Elevata Job Sidebar">
+        <xpath expr="//img[@src='/website_hr_recruitment/static/src/img/job_image_8.jpg']"
+               position="attributes">
+            <attribute name="src">/elevata_website/static/src/img/tekniker.jpg</attribute>
+            <attribute name="alt">Om oss</attribute>
+        </xpath>
+        <xpath expr="//p[contains(., 'We are a team of passionate people')]"
+               position="replace">
+            <p>Vi är ett team av passionerade människor som brinner för hissar
+               och kundservice.</p>
+        </xpath>
+        <xpath expr="//p[contains(., 'We build great products')]" position="replace">
+            <p>Vi bygger långsiktiga relationer med våra kunder genom personlig
+               service och hög kvalitet.</p>
+        </xpath>
+        <!-- Contact us: the <a> sits inside a <li><span>; replace the whole
+             list item so the icon stays. -->
+        <xpath expr="//li[.//a[@href='/contactus']]" position="replace">
+            <li>
+                <i class="fa fa-comment fa-fw me-2" role="presentation"/>
+                <span><a t-att-href="'/contactus'">Kontakta oss</a></span>
+            </li>
+        </xpath>
+        <xpath expr="//li[.//a[starts-with(@href, 'mailto:')]]" position="replace">
+            <li>
+                <i class="fa fa-envelope fa-fw me-2" role="presentation"/>
+                <span>
+                    <a t-att-href="'mailto:' + (website.company_id.email or '')"
+                       t-esc="website.company_id.email"/>
+                </span>
+            </li>
+        </xpath>
+        <xpath expr="//li[.//a[starts-with(@href, 'tel:')]]" position="replace">
+            <li>
+                <i class="fa fa-phone fa-fw me-2" role="presentation"/>
+                <span class="o_force_ltr">
+                    <a t-att-href="'tel:' + (website.company_id.phone or '')"
+                       t-esc="website.company_id.phone"/>
+                </span>
+            </li>
+        </xpath>
+    </template>
+
+    <!-- ================================================================
+         Header: hide the language selector and the CTA button
+         ================================================================ -->
+    <!-- The language selector lives in the footer; the one in the header
+         is redundant. Deactivating the inherited view is the supported way
+         to remove it - no arch patching needed. -->
+    <record id="website.header_language_selector" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- The CTA button is hidden rather than removed: the inherited
+         variants (large, sidebar, stretched) xpath the <a> element, so
+         deleting it would break them. Hiding via the parent view keeps the
+         node in the tree. -->
+    <template id="header_call_to_action_hidden"
+              inherit_id="website.header_call_to_action"
+              name="Elevata Hide Header CTA">
+        <xpath expr="//a[contains(@class, 'btn_cta')]" position="attributes">
+            <attribute name="class" add="d-none" separator=" "/>
+        </xpath>
+    </template>
+
+</odoo>

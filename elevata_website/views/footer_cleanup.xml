@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Deactivate the default "Company name" copyright snippet
+         (footer already contains our own copyright line) -->
+    <record id="website.footer_copyright_company_name" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+
+    <template id="footer_cleanup" inherit_id="website.layout" name="Elevata Footer Cleanup" priority="99">
+        <!-- Remove duplicated copyright text, keep the language selector -->
+        <xpath expr="//div[hasclass('o_footer_copyright')]//span[hasclass('o_footer_copyright_name')]" position="replace"/>
+        <!-- Remove "Powered by Odoo" brand promotion -->
+        <xpath expr="//t[@t-call='web.brand_promotion']/.." position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+        <!-- Remove Odoo generator meta tag -->
+        <xpath expr="//head/meta[@name='generator']" position="replace"/>
+    </template>
+
+</odoo>

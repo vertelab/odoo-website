@@ -1,0 +1,147 @@
+// Elevata webbprofil — lugna färger: marinblå, vitt, ljusgrått
+// Färger dokumenterade i elevata_docs/Grafisk Profil/Grafisk_profil_web.md
+
+// ---------- Fonter ----------
+@font-face {
+    font-family: 'Eurostile Extended';
+    src: url('/elevata_website/static/src/fonts/EurostileExtendedBold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Elevata Roboto';
+    src: url('/elevata_website/static/src/fonts/Roboto-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Elevata Roboto';
+    src: url('/elevata_website/static/src/fonts/Roboto-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-display: swap;
+}
+
+// ---------- Variabler ----------
+$elevata-navy: #16324f;
+$elevata-navy-dark: #0f2438;
+$elevata-blue: #2e5a88;
+$elevata-light: #f5f7fa;
+$elevata-grey: #6b7785;
+$elevata-border: #dde3ea;
+
+// ---------- Bas ----------
+body {
+    font-family: 'Elevata Roboto', 'Roboto', sans-serif;
+    color: #333;
+}
+
+h1, h2, h3, h4, h5, h6,
+.font-eurostile {
+    font-family: 'Eurostile Extended', 'Arial Black', sans-serif;
+    letter-spacing: 0.01em;
+}
+
+// ---------- Header ----------
+#top .navbar,
+header#top nav.navbar {
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 4px rgba($elevata-navy-dark, 0.08);
+
+    .nav-link, .nav-link span {
+        color: $elevata-navy;
+        font-weight: 500;
+    }
+    .nav-link:hover {
+        color: $elevata-blue;
+    }
+    .navbar-brand img {
+        max-height: 48px;
+    }
+}
+
+// ---------- Elevata-sektioner ----------
+.elevata-hero {
+    min-height: 60vh;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    display: flex;
+    align-items: center;
+
+    .elevata-hero-overlay {
+        background: linear-gradient(90deg, rgba($elevata-navy-dark, 0.85), rgba($elevata-navy-dark, 0.35));
+        padding: 6rem 0;
+        width: 100%;
+    }
+
+    h1 { color: #fff; }
+    .lead { color: #dfe6ee; }
+}
+
+.elevata-section-light {
+    background-color: $elevata-light;
+    padding: 4rem 0;
+}
+
+.elevata-section-dark {
+    background-color: $elevata-navy;
+    color: #fff;
+    padding: 4rem 0;
+
+    h2, h3 { color: #fff; }
+}
+
+.elevata-card {
+    background: #fff;
+    border: 1px solid $elevata-border;
+    border-radius: 8px;
+    padding: 2rem;
+    height: 100%;
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 8px 24px rgba($elevata-navy-dark, 0.12);
+    }
+}
+
+.elevata-value-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: $elevata-navy;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+}
+
+.btn-elevata,
+.btn_cta,
+.btn-primary {
+    background-color: $elevata-blue;
+    border-color: $elevata-blue;
+    color: #fff;
+
+    &:hover {
+        background-color: $elevata-navy;
+        border-color: $elevata-navy;
+        color: #fff;
+    }
+}
+
+// ---------- Footer ----------
+#footer {
+    background-color: $elevata-navy-dark !important;
+    color: #cfd8e3;
+
+    a, h5 { color: #fff; }
+
+    // Mörkblå logotyp blir osynlig mot navy — invertera till vitt
+    .navbar-brand img,
+    img[src*="logo"] {
+        filter: brightness(0) invert(1);
+    }
+}
