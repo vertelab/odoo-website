@@ -15,34 +15,10 @@
         translation layer.
     -->
 
-    <!-- ================================================================
-         Header: phone / e-mail block
-         ================================================================ -->
-    <template id="header_text_element_company"
-              inherit_id="website.header_text_element"
-              name="Elevata Header Contact Info">
-        <!-- The phone number appears twice: in the tel: href and in the
-             visible span. Both are replaced by company data. -->
-        <xpath expr="//t[@t-elif=&quot;_txt_elt_content == 'phone_mail'&quot;]//a[starts-with(@href, 'tel:')]"
-               position="attributes">
-            <attribute name="t-att-href">'tel:' + (website.company_id.phone or '')</attribute>
-        </xpath>
-        <xpath expr="//t[@t-elif=&quot;_txt_elt_content == 'phone_mail'&quot;]//a[starts-with(@href, 'tel:')]//span[@class='o_force_ltr']"
-               position="replace">
-            <span class="o_force_ltr" t-esc="website.company_id.phone"/>
-        </xpath>
-        <xpath expr="//t[@t-elif=&quot;_txt_elt_content == 'phone_mail'&quot;]//a[starts-with(@href, 'mailto:')]"
-               position="attributes">
-            <attribute name="t-att-href">'mailto:' + (website.company_id.email or '')</attribute>
-        </xpath>
-        <xpath expr="//t[@t-elif=&quot;_txt_elt_content == 'phone_mail'&quot;]//a[starts-with(@href, 'mailto:')]//small"
-               position="replace">
-            <small>
-                <i class="fa fa-1x fa-fw fa-envelope me-1"/>
-                <t t-esc="website.company_id.email"/>
-            </small>
-        </xpath>
-    </template>
+    <!-- Odoo 18 already renders res_company.phone and res_company.email in
+         website.header_text_element, and the links use t-att-href rather than
+         href. The 17.0 patch that rewrote them is no longer needed. -->
+
 
     <!-- ================================================================
          Contact form: field labels in Swedish
@@ -119,7 +95,7 @@
          Thank-you page: Swedish text + company info
          ================================================================ -->
     <template id="contactus_thanks_company"
-              inherit_id="website.contactus_thanks"
+              inherit_id="website.contactus_thanks_ir_ui_view"
               name="Elevata Thank You Page">
         <xpath expr="//h1[normalize-space()='Thank You!']" position="replace">
             <h1 class="fw-bolder">Tack!</h1>
@@ -171,14 +147,16 @@
             <attribute name="src">/elevata_website/static/src/img/tekniker.jpg</attribute>
             <attribute name="alt">Om oss</attribute>
         </xpath>
+        <!-- Both sentences live in the same <p>. Replacing it once, with
+             both translations, is the only thing that works: a second xpath
+             on the second sentence would find nothing after the first
+             replace. -->
         <xpath expr="//p[contains(., 'We are a team of passionate people')]"
                position="replace">
-            <p>Vi är ett team av passionerade människor som brinner för hissar
-               och kundservice.</p>
-        </xpath>
-        <xpath expr="//p[contains(., 'We build great products')]" position="replace">
-            <p>Vi bygger långsiktiga relationer med våra kunder genom personlig
-               service och hög kvalitet.</p>
+            <p class="mt24 mb8">Vi är ett team av passionerade människor som
+               brinner för hissar och kundservice. Vi bygger långsiktiga
+               relationer med våra kunder genom personlig service och hög
+               kvalitet.</p>
         </xpath>
         <!-- Contact us: the <a> sits inside a <li><span>; replace the whole
              list item so the icon stays. -->

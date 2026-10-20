@@ -516,10 +516,18 @@ class ElevataWebsiteSeed(models.AbstractModel):
             })
 
     def _seed_homepage(self, site):
+        """Replace the homepage body.
+
+        Odoo ships a global homepage page (website_id = False) and
+        ir_http._serve_page() picks with order='website_id asc'. In
+        PostgreSQL NULL sorts first, so a site-specific '/' page would
+        never be served. Write to the global page instead of creating a
+        second one.
+        """
         page = self.env['website.page'].search([
             ('url', '=', '/'),
-            ('website_id', '=', site.id),
-        ], limit=1)
+            ('website_id', 'in', [site.id, False]),
+        ], limit=1, order='website_id asc')
         if page and page.view_id:
             page.view_id.arch = (
                 '<t t-name="%s"><t t-call="website.layout">%s</t></t>'
