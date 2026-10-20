@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2026 Vertel Sverige AB
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 """Seeds the Elevata website: pages, menus, homepage, footer, site settings.
@@ -39,7 +38,7 @@ def _hero(title, subtitle, img, small=False):
 
 
 def _cta():
-    return f'''
+    return '''
 <section class="elevata-section-dark text-center">
     <div class="container">
         <h2 class="mb-3">Behöver du hjälp med hissen?</h2>
@@ -145,7 +144,7 @@ HOMEPAGE = _wrap(f'''
 
 PAGE_SERVICE = _wrap(
     _hero('Service &amp; Underhåll', 'Skötsel, serviceavtal och besiktning — för alla hissar.', 'hero_bil.jpg', small=True)
-    + f'''
+    + '''
 <section class="elevata-section-light">
     <div class="container" style="max-width: 860px;">
         <h2 class="mb-4">Service &amp; Underhåll</h2>
@@ -189,7 +188,7 @@ PAGE_SERVICE = _wrap(
 
 PAGE_REPARATIONER = _wrap(
     _hero('Reparationer', 'Prisvärd åtgärd när hissen behöver mer än service.', 'tekniker.jpg', small=True)
-    + f'''
+    + '''
 <section class="elevata-section-light">
     <div class="container" style="max-width: 860px;">
         <h2 class="mb-4">Reparationer av hissar</h2>
@@ -214,7 +213,7 @@ PAGE_REPARATIONER = _wrap(
 
 PAGE_MODERNISERING = _wrap(
     _hero('Modernisering', 'Förläng hissens livslängd — med öppna system.', 'hiss_gammal.jpg', small=True)
-    + f'''
+    + '''
 <section class="elevata-section-light">
     <div class="container" style="max-width: 860px;">
         <h2 class="mb-4">Modernisering av hissar</h2>
@@ -275,7 +274,7 @@ PAGE_MODERNISERING = _wrap(
 
 PAGE_NYINSTALLATION = _wrap(
     _hero('Nyinstallation', 'Hisslösningar för nya och befintliga fastigheter.', 'hiss_schakt.jpg', small=True)
-    + f'''
+    + '''
 <section class="elevata-section-light">
     <div class="container" style="max-width: 860px;">
         <h2 class="mb-4">Nyinstallation av hiss</h2>
@@ -297,7 +296,7 @@ PAGE_NYINSTALLATION = _wrap(
 
 PAGE_OM_OSS = _wrap(
     _hero('Om Elevata', 'Personligt engagemang och helhetsansvar.', 'hiss2.jpg', small=True)
-    + f'''
+    + '''
 <section class="elevata-section-light">
     <div class="container" style="max-width: 860px;">
         <h2 class="mb-4">Om oss</h2>
@@ -432,6 +431,7 @@ class ElevataWebsiteSeed(models.AbstractModel):
     def _seed_logo(self, site):
         """Set the dark Elevata logo as the website logo + favicon."""
         import base64
+
         from odoo.tools import misc
         with misc.file_open(
                 'elevata_website/static/src/img/elevata_logo_dark.png',
