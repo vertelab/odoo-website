@@ -1,35 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="crm_tracking_campaign_form" model="ir.ui.view">
-        <field name="name">crm.tracking.campaign.form.inherited.website</field>
-        <field name="model">crm.tracking.campaign</field>
-        <field name="inherit_id" ref="crm_campaign_addons.crm_tracking_campaign_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//h1" position="before">
-                <field name="website_published" class="pull-right" widget="website_button"/>
-            </xpath>
-            <field name="section_id" position="after">
-                <field name="website_url" invisible="1"/>
-            </field>
-            <notebook position="inside">
-                <page string="Description">
-                    <field name="website_description"/>
-                </page>
-            </notebook>
-        </field>
-    </record>
+    <!-- Odoo 18: crm.tracking.campaign (crm_campaign_addons) aer inte
+         langre website.published.mixin och har varken section_id,
+         website_url eller website_description. Arvvyn gjorde inget
+         langre, och en tom arch faller RelaxNG-schemat
+         ("Element odoo has extra content: record").
+         Borttagen 2026-11-10 (lantteknik, Odoo 18). -->
 
-    <template id="products_item" inherit_id="website_sale.products_item" name="Product item">
-        <xpath expr="//section/h5" position="after">
-            <p class="text-muted" t-field="product.default_code"/>
-        </xpath>
-        <xpath expr="//div[@itemprop='offers']" position="after">
-            <b t-if="product.sudo().qty_available &gt; 0.0"
-               class="" style="color: #1CB807;">In stock</b>
-            <b t-if="product.sudo().qty_available &lt;= 0.0"
-               class="" style="color: #f00;">Not in stock</b>
-        </xpath>
-    </template>
+    <!-- Odoo 18: website_sale.products_item aer omstrukturerad och har
+         varken //section/h5 eller //div[@itemprop=offers]. Bada
+         xpath-uttrycken faller med
+           Element '<xpath expr="//section/h5">' cannot be located
+           in parent view
+         Templaten ar borttagen 2026-11-10 (lantteknik). -->
 
 </odoo>
